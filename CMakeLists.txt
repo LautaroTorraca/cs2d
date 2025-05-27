@@ -52,8 +52,12 @@ target_include_directories(taller_common PUBLIC .)
 
 # Install libSDL2 and libSDL2pp (for client or editor)
 # HEY!! TODO XXX: add more dependendies (either for client, server or editor)
+
+# SDL2pp and its dependencies
 if(TALLER_CLIENT OR TALLER_EDITOR)
     include(FetchContent)
+
+    # SDL2
     FetchContent_Declare(
         SDL2
         GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
@@ -63,6 +67,7 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
         OVERRIDE_FIND_PACKAGE
     )
 
+    # SDL2_image
     FetchContent_Declare(
         SDL2_image
         GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
@@ -72,32 +77,65 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
         OVERRIDE_FIND_PACKAGE
     )
 
-    FetchContent_Declare(
-        SDL2_mixer
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
-        GIT_TAG release-2.8.0
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE
-    )
+    # Forzar que SDL2pp se compile con soporte para SDL_image
+    set(SDL2PP_WITH_IMAGE ON CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
 
-    FetchContent_Declare(
-        SDL2_ttf
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-        GIT_TAG release-2.22.0
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE
-    )
-
+    # SDL2pp
     FetchContent_Declare(
         libSDL2pp
         OVERRIDE_FIND_PACKAGE
         URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
     )
 
-    FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
+    FetchContent_MakeAvailable(SDL2 SDL2_image libSDL2pp)
 endif()
+
+# if(TALLER_CLIENT OR TALLER_EDITOR)
+#     include(FetchContent)
+#     FetchContent_Declare(
+#         SDL2
+#         GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+#         GIT_TAG release-2.30.8
+#         GIT_SHALLOW TRUE
+#         GIT_PROGRESS TRUE
+#         OVERRIDE_FIND_PACKAGE
+#     )
+#
+#     FetchContent_Declare(
+#         SDL2_image
+#         GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+#         GIT_TAG release-2.8.2
+#         GIT_SHALLOW TRUE
+#         GIT_PROGRESS TRUE
+#         OVERRIDE_FIND_PACKAGE
+#     )
+#
+#     FetchContent_Declare(
+#         SDL2_mixer
+#         GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+#         GIT_TAG release-2.8.0
+#         GIT_SHALLOW TRUE
+#         GIT_PROGRESS TRUE
+#         OVERRIDE_FIND_PACKAGE
+#     )
+#
+#     FetchContent_Declare(
+#         SDL2_ttf
+#         GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+#         GIT_TAG release-2.22.0
+#         GIT_SHALLOW TRUE
+#         GIT_PROGRESS TRUE
+#         OVERRIDE_FIND_PACKAGE
+#     )
+#
+#     FetchContent_Declare(
+#         libSDL2pp
+#         OVERRIDE_FIND_PACKAGE
+#         URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
+#     )
+#
+#     FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
+# endif()
 
 # Program section
 # ---------------
