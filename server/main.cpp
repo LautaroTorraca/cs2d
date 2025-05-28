@@ -3,3 +3,4 @@
 int main() {
     return foo(6);
 }
+

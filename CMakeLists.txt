@@ -141,7 +141,19 @@ endif()
 # ---------------
 if(TALLER_CLIENT)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
-    add_executable(taller_client)
+    add_executable(taller_client
+            server/Constants/KeyContants.h
+            server/Sender/Sender.cpp
+            server/Sender/Sender.h
+            server/Constants/MapTypeConstants.h
+            client/Protocol/Protocol.cpp
+            client/Protocol/Protocol.h
+            client/Protocol/Protocol.cpp
+            client/Protocol/Protocol.h
+            client/Constants/MoveConstants.h
+            server/Constants/GameDataConstant.h
+            server/Constants/SnapshotConstants.h
+    )
 
     # Make them depend on taller_common lib
     add_dependencies(taller_client taller_common SDL2pp::SDL2pp)
@@ -161,7 +173,17 @@ endif()
 
 if(TALLER_SERVER)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
-    add_executable(taller_server)
+    add_executable(taller_server
+            server/Constants/OpCodesConstans.h
+            server/Readers/Reader.cpp
+            server/Readers/Reader.h
+            server/Interfaces/ServerLobbyProtocolInterface.h
+            server/Interfaces/GameLobbyProtocolInterface.h
+            server/Interfaces/InGameProtocolInterface.h
+            server/ServerGameLobby.cpp
+            server/ServerGameLobby.h
+            server/ServerInGame.cpp
+            server/ServerInGame.h)
 
     # Make them depend on taller_common lib
     add_dependencies(taller_server taller_common)
