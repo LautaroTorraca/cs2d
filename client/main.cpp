@@ -28,7 +28,6 @@ using namespace DTO;
 // constexpr int RES_HEIGTH = 400;
 
 // TODO: cono de luz
-// TODO: poner los obstaculos
 
 snapshot fillDummies() {
 
@@ -135,18 +134,8 @@ snapshot fillDummies() {
 
 int main() try {
 
-  // Initialize SDL library
   SDL sdl(SDL_INIT_VIDEO);
-
   GameRenderer renderer;
-  // Create main window
-  // Window window("Cubo q muevo con flechas", SDL_WINDOWPOS_UNDEFINED,
-  //               SDL_WINDOWPOS_UNDEFINED, RES_WIDTH, RES_HEIGTH, 0);
-
-  // Create renderer
-  // Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
-  // std::vector<Rect> cubeList;
-
   snapshot gameSnapshot = fillDummies();
 
   // Cubo properties   ()//x, y, width, height

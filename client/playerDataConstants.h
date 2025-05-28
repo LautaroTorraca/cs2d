@@ -73,14 +73,13 @@ struct PlayerData {
 
 // Mapa
 struct GameMap {
-  std::vector<std::vector<int>> tileMap;
   std::vector<DroppedWeaponDTO> droppedWeapons;
 };
 
 // Estructura de juego
 struct Game {
-  int playersCount;
-  std::string gameName;
+  // int playersCount;
+  // std::string gameName;
   GameMap map;
   std::vector<PlayerData> players;
 };
@@ -101,10 +100,14 @@ struct JoinDTO {
 // - tileMap
 // - tu_id puede ser
 //
-struct snapshot {
+//
 
+struct preSnapshot {
   size_t clientId;
   std::vector<std::vector<int>> tileMap;
+};
+
+struct snapshot {
   Game game;
 };
 } // namespace DTO
