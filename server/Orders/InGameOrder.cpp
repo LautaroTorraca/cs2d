@@ -71,7 +71,7 @@ InGameOrder& InGameOrder::operator=(InGameOrder&& other) noexcept {
 }
 
 const OrderType& InGameOrder::getOrderType() const {
-    return orderType;
+    return orderTranslator.at(this->orderType);
 }
 
 const size_t& InGameOrder::getPlayerId() const {

@@ -53,6 +53,16 @@ void ClientHandler::run() {
     }
 }
 
+
+void ClientHandler::sendSnapshot(const Snapshot & snapshot) {
+    this->userSocket.sendall(&snapshot, sizeof(snapshot));
+
+}
+
+void ClientHandler::sendPreSnapshot(const PreSnapshot & preSnapshot) {
+    this->userSocket.sendall(&preSnapshot, sizeof(preSnapshot));
+}
+
 ClientHandler::~ClientHandler() {
     this->userSocket.close();
 }

@@ -14,7 +14,6 @@ target_include_directories(taller_server
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# Forzar el include explícito de subcarpetas, útil si hay includes rotos
 target_include_directories(taller_server
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}

@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 constexpr std::size_t SINGLE_VALUE = 1;
 
 constexpr uint8_t OPCODE_CREATE_GAME = 0x01;

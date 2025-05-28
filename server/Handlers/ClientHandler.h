@@ -12,6 +12,7 @@
 
 #include "GameLobbyHandler.h"
 #include "InGameHandler.h"
+#include "SnapshotConstants.h"
 
 class ClientHandler final : public Thread {
     Socket& userSocket;
@@ -32,4 +33,7 @@ public:
     void run() override;
 
     ~ClientHandler() override;
+
+    void sendSnapshot(const Snapshot & snapshot);
+    void sendPreSnapshot(const PreSnapshot & preSnapshot);
 };

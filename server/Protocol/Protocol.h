@@ -11,6 +11,7 @@
 #include "GameLobbyProtocol.h"
 #include "InGameProtocol.h"
 #include "ServerLobbyProtocol.h"
+#include "SnapshotConstants.h"
 #include "../common/thread.h"
 #include "../common/queue.h"
 #include "../Requests/Request.h"
@@ -64,6 +65,9 @@ public:
     InGameOrder plantBomb(const Request& request);
     InGameOrder defuseBomb(const Request& request);
     InGameOrder exit(const Request& request);
+
+    void sendSnapshot(const Snapshot& snapshot, const size_t& userId);
+    void sendPreSnapshot(const PreSnapshot& preSnapshot, const size_t& userId);
 
     void end();
 

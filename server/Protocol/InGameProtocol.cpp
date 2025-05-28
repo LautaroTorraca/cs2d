@@ -34,7 +34,7 @@ InGameOrder InGameProtocol::movementHandler(const Request& request) {
     const size_t clientId = request.getId();
     const std::map<std::string, std::vector<char>> message = request.getRequest();
 
-    const uint8_t direction = message.at(directionKey).front();
+    const uint16_t direction = message.at(directionKey).front();
 
     return InGameOrder(ProtocolConstants::PLAYER_MOVEMENT, clientId, direction);
 }

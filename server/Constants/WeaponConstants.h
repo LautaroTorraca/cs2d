@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "PlayerDataConstants.h"
 
 enum class WeaponId : uint8_t {
     KNIFE = 0x00,

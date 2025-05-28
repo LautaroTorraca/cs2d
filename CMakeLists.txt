@@ -108,6 +108,13 @@ if(TALLER_CLIENT)
             server/Sender/Sender.cpp
             server/Sender/Sender.h
             server/Constants/MapTypeConstants.h
+            client/Protocol/Protocol.cpp
+            client/Protocol/Protocol.h
+            client/Protocol/Protocol.cpp
+            client/Protocol/Protocol.h
+            client/Constants/MoveConstants.h
+            server/Constants/GameDataConstant.h
+            server/Constants/SnapshotConstants.h
     )
 
     # Make them depend on taller_common lib

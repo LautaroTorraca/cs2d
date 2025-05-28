@@ -87,7 +87,7 @@ ServerLobbyOrder& ServerLobbyOrder::operator=(ServerLobbyOrder&& other) noexcept
 }
 
 const OrderType& ServerLobbyOrder::getOrderType() const {
-    return this->orderType;
+    return this->orderTranslator.at(this->orderType);
 }
 
 const std::string& ServerLobbyOrder::getGameName() const {

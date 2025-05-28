@@ -24,8 +24,4 @@
 Order -> protocol -> Handlers -> Servers
 
 
-Nos queda:
 
-Server_*
-ClientHandler
-Protocol e implementar las interfaces

@@ -46,12 +46,12 @@ struct PlayerData {
     Inventory inventory;
     Stats stats;
     Team team;
+    Skin skin;
 };
 
-struct Snapshot {
-    std::vector<PlayerData> players;
-    int yourId;
-};
+
+
+
 
 
 

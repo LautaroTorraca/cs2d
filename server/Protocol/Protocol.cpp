@@ -3,12 +3,12 @@
 #include <sys/socket.h>
 
 #include "ServerLobbyProtocol.h"
+#include "SnapshotConstants.h"
 #include "Handlers/ClientHandler.h"
 #include "Constants/KeyContants.h"
 #include "Constants/ProtocolContants.h"
 
 
-//TODO IMPLEMENTAR LAS INTERFACES *Protocol
 Protocol::Protocol(const std::string& port)
     : acceptorSocket(port.c_str()),
       acceptorThread([this]() { this->handleNewConnection(); }),
@@ -194,7 +194,16 @@ InGameOrder Protocol::exit(const Request& request) {
     return inGameProtocol.handleRequest(request);
 }
 
+//TODO ARREGLAR EN COMO *** VAMOS A MANDAR LA SNAPSHOT
+void Protocol::sendSnapshot(const Snapshot& snapshot, const size_t& userId) {
+    this->clientsHandlers.at(userId)->sendSnapshot(snapshot);
 
+
+}
+
+void Protocol::sendPreSnapshot(const PreSnapshot& preSnapshot, const size_t& userId) {
+    this->clientsHandlers.at(userId)->sendPreSnapshot(preSnapshot);
+}
 
 
 void Protocol::end() {

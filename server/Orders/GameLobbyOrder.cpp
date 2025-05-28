@@ -1,6 +1,8 @@
 #include "GameLobbyOrder.h"
 
 #include <stdexcept>
+
+#include "TeamConstants.h"
 #include "Constants/ProtocolDefaults.h"
 #include "Constants/ProtocolContants.h"
 
@@ -14,6 +16,26 @@ GameLobbyOrder::GameLobbyOrder(const uint8_t& code, const size_t& playerId, cons
         {ProtocolConstants::READY, GAME_LOBBY_READY},
         {ProtocolConstants::EXIT_LOBBY, GAME_LOBBY_EXIT}
     };
+
+    teamTranslator = {
+        {TeamConstants::TERRORISTS, TERRORISTS},
+        {TeamConstants::COUNTER_TERRORISTS, COUNTER_TERRORISTS}
+    };
+
+    skinTranslator = {
+        // Terrorist skins
+        {SkinConstants::PHOENIX, PHOENIX},
+        {SkinConstants::L337_KREW, L337_KREW},
+        {SkinConstants::ARCTIC_AVENGER, ARCTIC_AVENGER},
+        {SkinConstants::GUERRILLA, GUERRILLA},
+
+        // Counter-Terrorist skins
+        {SkinConstants::SEAL_FORCE, SEAL_FORCE},
+        {SkinConstants::GERMAN_GSG9, GERMAN_GSG9},
+        {SkinConstants::UK_SAS, UK_SAS},
+        {SkinConstants::FRENCH_GIGN, FRENCH_GIGN}
+    };
+
 
     orderType = DO_NOTHING;
     if (orderTranslator.contains(code)) {
@@ -52,17 +74,17 @@ GameLobbyOrder& GameLobbyOrder::operator=(GameLobbyOrder&& other) noexcept {
 }
 
 const OrderType& GameLobbyOrder::getOrderType() const {
-    return this->orderType;
+    return this->orderTranslator.at(this->orderType);
 }
 
 const size_t& GameLobbyOrder::getPlayerId() const {
     return this->playerId;
 }
 
-const uint8_t& GameLobbyOrder::getTeamId() const {
-    return this->teamId;
+const Team& GameLobbyOrder::getTeamId() const {
+    return this->teamTranslator.at(this->teamId);
 }
 
-const uint8_t& GameLobbyOrder::getSkinId() const {
-    return this->skinId;
+const Skin& GameLobbyOrder::getSkinId() const {
+    return this->teamTranslator.at(this->skinId);
 }
