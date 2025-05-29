@@ -1,11 +1,13 @@
 #pragma once
 #include "SDL2pp/Texture.hh"
 #include "TextureManager.h"
-#include "playerDataConstants.h"
+#include "common/Constants/PlayerDataConstants.h"
+#include "common/Constants/SnapshotConstants.h"
 // #include "weaponConstants.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2pp/SDL2pp.hh>
+#include <cstddef>
 
 using namespace SDL2pp;
 using namespace DTO;
@@ -37,6 +39,8 @@ private:
   Window window;
   Renderer renderer;
   TextureManager textureManager;
+  std::vector<std::vector<int>> tileMap;
+  size_t clientID;
 
   void renderMap(std::vector<std::vector<int>> tileMap, Coords offset);
   void renderPlayers(std::vector<PlayerData> players, Coords offset,
@@ -53,6 +57,6 @@ private:
   void renderPlayersAsCubes(std::vector<PlayerData> players);
 
 public:
-  GameRenderer();
-  void renderScreen(snapshot gameSnapshot);
+  GameRenderer(std::vector<std::vector<int>> tileMap, size_t clientId);
+  void renderScreen(Snapshot gameSnapshot);
 };

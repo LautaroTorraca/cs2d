@@ -6,12 +6,10 @@
 class ServerLobbyProtocolInterface {
 
 public:
+  virtual ServerLobbyOrder sendGamesList(const Request &request) = 0;
+  virtual ServerLobbyOrder join(const Request &request) = 0;
+  virtual ServerLobbyOrder create(const Request &request) = 0;
+  virtual ServerLobbyOrder disconnect(const Request &request) = 0;
 
-    virtual ServerLobbyOrder sendGamesListHandler(const Request& request) const;
-    virtual ServerLobbyOrder joinHandler(const Request& request);
-    virtual ServerLobbyOrder createHandler(const Request& request);
-    virtual ServerLobbyOrder disconnectHandler(const Request& request);
-
-    virtual ~ServerLobbyProtocolInterface() = default;
-
+  virtual ~ServerLobbyProtocolInterface() = default;
 };

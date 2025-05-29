@@ -99,15 +99,4 @@ struct JoinDTO {
 // etc....
 // - tileMap
 // - tu_id puede ser
-//
-//
-
-struct preSnapshot {
-  size_t clientId;
-  std::vector<std::vector<int>> tileMap;
-};
-
-struct snapshot {
-  Game game;
-};
 } // namespace DTO

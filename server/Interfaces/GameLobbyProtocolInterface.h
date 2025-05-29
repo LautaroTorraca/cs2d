@@ -4,13 +4,9 @@
 
 class GameLobbyProtocolInterface {
 
-
 public:
+  virtual GameLobbyOrder ready(const Request &request) = 0;
+  virtual GameLobbyOrder exitLobby(const Request &request) = 0;
 
-    virtual GameLobbyOrder readyHandler(const Request& request);
-    virtual GameLobbyOrder exitLobbyHandler(const Request& request);
-
-    virtual ~GameLobbyProtocolInterface() = default;
-
+  virtual ~GameLobbyProtocolInterface() = default;
 };
-

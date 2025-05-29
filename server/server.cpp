@@ -1,99 +1,106 @@
-#include "Server.h"
+#include "server.h"
 
-
-Server::Server(const char* port): protocol(port) {
-    setupLobbyOrders();
-    setupGameLobbyOrders();
-    setupInGameOrders();
+Server::Server(const char *port) : protocol(port) {
+  setupLobbyOrders();
+  setupGameLobbyOrders();
+  setupInGameOrders();
 }
 
 void Server::setupLobbyOrders() {
-    orderTranslator[LOBBY_CREATE] = [this](const std::unique_ptr<Order>& order) {
-        serverLobby.handle(order);
-    };
+  orderTranslator[LOBBY_CREATE] = [this](const std::unique_ptr<Order> &order) {
+    serverLobby.handle(order);
+  };
 
-    orderTranslator[LOBBY_LIST] = [this](const std::unique_ptr<Order>& order) {
-        serverLobby.handle(order);
-    };
+  orderTranslator[LOBBY_LIST] = [this](const std::unique_ptr<Order> &order) {
+    serverLobby.handle(order);
+  };
 
-    orderTranslator[LOBBY_JOIN] = [this](const std::unique_ptr<Order>& order) {
-        serverLobby.handle(order);
-    };
+  orderTranslator[LOBBY_JOIN] = [this](const std::unique_ptr<Order> &order) {
+    serverLobby.handle(order);
+  };
 
-    orderTranslator[LOBBY_DISCONNECT] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[LOBBY_DISCONNECT] =
+      [this](const std::unique_ptr<Order> &order) {
         serverLobby.handle(order);
-    };
+      };
 }
 
 void Server::setupGameLobbyOrders() {
-    orderTranslator[GAME_LOBBY_READY] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[GAME_LOBBY_READY] =
+      [this](const std::unique_ptr<Order> &order) {
         gameLobbyServer.handle(order);
-    };
+      };
 
-    orderTranslator[GAME_LOBBY_EXIT] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[GAME_LOBBY_EXIT] =
+      [this](const std::unique_ptr<Order> &order) {
         gameLobbyServer.handle(order);
-    };
-
+      };
 }
 
 void Server::setupInGameOrders() {
-    orderTranslator[IN_GAME_MOVE] = [this](const std::unique_ptr<Order>& order) {
-        inGameServer.handle(order);
-    };
+  orderTranslator[IN_GAME_MOVE] = [this](const std::unique_ptr<Order> &order) {
+    inGameServer.handle(order);
+  };
 
-    orderTranslator[IN_GAME_SHOOT] = [this](const std::unique_ptr<Order>& order) {
-        inGameServer.handle(order);
-    };
+  orderTranslator[IN_GAME_SHOOT] = [this](const std::unique_ptr<Order> &order) {
+    inGameServer.handle(order);
+  };
 
-    orderTranslator[IN_GAME_PICK_UP_ITEM] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[IN_GAME_PICK_UP_ITEM] =
+      [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-    };
+      };
 
-    orderTranslator[IN_GAME_DROP_ITEM] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[IN_GAME_DROP_ITEM] =
+      [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-    };
+      };
 
-    orderTranslator[IN_GAME_BUY_AMMO] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[IN_GAME_BUY_AMMO] =
+      [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-    };
+      };
 
-    orderTranslator[IN_GAME_BUY_WEAPON] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[IN_GAME_BUY_WEAPON] =
+      [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-    };
+      };
 
-    orderTranslator[IN_GAME_SWITCH_WEAPON] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[IN_GAME_SWITCH_WEAPON] =
+      [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-    };
+      };
 
-    orderTranslator[IN_GAME_PLANT_BOMB] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[IN_GAME_PLANT_BOMB] =
+      [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-    };
+      };
 
-    orderTranslator[IN_GAME_DEFUSE_BOMB] = [this](const std::unique_ptr<Order>& order) {
+  orderTranslator[IN_GAME_DEFUSE_BOMB] =
+      [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-    };
+      };
 
-    orderTranslator[IN_GAME_EXIT] = [this](const std::unique_ptr<Order>& order) {
-        inGameServer.handle(order);
-    };
-
+  orderTranslator[IN_GAME_EXIT] = [this](const std::unique_ptr<Order> &order) {
+    inGameServer.handle(order);
+  };
 }
 
 void Server::run() {
-    while (true) {
-        try {
-            std::unique_ptr<Order> order = protocol.getNextOrder();
-            OrderType type = order->getOrderType();
+  while (true) {
+    try {
+      std::unique_ptr<Order> order = protocol.getNextOrder();
+      OrderType type = order->getOrderType();
 
-            if (!orderTranslator.contains(type)) {
-                //TODO FIX
-                continue;
-            }
+      if (!orderTranslator.contains(type)) {
+        // TODO FIX
+        continue;
+      }
 
-            orderTranslator.at(type)(order);
-        } catch (...) {
-            //TODO FIX
-            break;
-        }
+      orderTranslator.at(type)(order);
+    } catch (...) {
+      // TODO FIX
+      break;
     }
+  }
 }

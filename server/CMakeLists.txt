@@ -1,27 +1,58 @@
-file(GLOB_RECURSE SERVER_SOURCES
-        CONFIGURE_DEPENDS
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-)
+# # server/CMakeLists.txt
+#
+# set(SERVER_SOURCES Protocol/ServerLobbyProtocol.cpp Readers/Reader.cpp
+# Requests/Request.cpp Sender/Sender.cpp ServerGameLobby.cpp ServerInGame.cpp
+# ServerLobby.cpp main.cpp server.cpp )
+#
+# target_sources(taller_server PRIVATE ${SERVER_SOURCES})
+#
+# target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+# ${CMAKE_CURRENT_SOURCE_DIR}/Protocol ${CMAKE_CURRENT_SOURCE_DIR}/Readers
+# ${CMAKE_CURRENT_SOURCE_DIR}/Requests ${CMAKE_CURRENT_SOURCE_DIR}/Sender )
 
-target_sources(taller_server
-        PRIVATE
-        ${SERVER_SOURCES}
-)
+# Glob all .cpp files en las subcarpetas relevantes
 
-target_include_directories(taller_server
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
-)
+file(
+  GLOB
+  COMMON_SOURCES
+  ${CMAKE_SOURCE_DIR}/common/*.cpp
+  ${CMAKE_SOURCE_DIR}/common/Protocol/*.cpp
+  ${CMAKE_SOURCE_DIR}/common/Interfaces/*.cpp
+  ${CMAKE_SOURCE_DIR}/common/Constants/*.cpp)
 
-target_include_directories(taller_server
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/Handlers
-        ${CMAKE_CURRENT_SOURCE_DIR}/Protocol
-        ${CMAKE_CURRENT_SOURCE_DIR}/Orders
-        ${CMAKE_CURRENT_SOURCE_DIR}/Requests
-        ${CMAKE_CURRENT_SOURCE_DIR}/Constants
-        ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces
-)
+file(
+  GLOB
+  SERVER_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Protocol/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Readers/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Requests/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Sender/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Orders/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Handlers/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Constants/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/*.cpp)
 
+# Agregar las fuentes al target existente
+target_sources(taller_server PRIVATE ${SERVER_SOURCES})
+target_sources(taller_server PRIVATE ${COMMON_SOURCES})
+
+# Asegurar que los headers sean visibles
+target_include_directories(
+  taller_server
+  PRIVATE ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/common/Protocol
+          ${CMAKE_SOURCE_DIR}/common/Interfaces
+          ${CMAKE_SOURCE_DIR}/common/Constants)
+
+target_include_directories(
+  taller_server
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+          ${CMAKE_CURRENT_SOURCE_DIR}/Protocol
+          ${CMAKE_CURRENT_SOURCE_DIR}/../common/WeaponConstants.h
+          ${CMAKE_CURRENT_SOURCE_DIR}/Readers
+          ${CMAKE_CURRENT_SOURCE_DIR}/Requests
+          ${CMAKE_CURRENT_SOURCE_DIR}/Sender
+          ${CMAKE_CURRENT_SOURCE_DIR}/Orders
+          ${CMAKE_CURRENT_SOURCE_DIR}/Handlers
+          ${CMAKE_CURRENT_SOURCE_DIR}/Constants
+          ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces)

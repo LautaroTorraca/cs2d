@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MapTypeConstants.h"
 #include <cstdint>
 
 constexpr uint8_t INVALID_OPCODE = 0x00;
@@ -16,6 +17,5 @@ constexpr uint8_t DEFAULT_PLAYER_ID = 0;
 constexpr uint8_t DEFAULT_ITEM = 0;
 constexpr uint8_t DEFAULT_WEAPON_INFORMATION = 0;
 constexpr uint16_t DEFAULT_AMMO = 0;
-
 
 constexpr uint8_t DEFAULT_GAME_MAP_TYPE = static_cast<uint8_t>(MapType::DUMMY);

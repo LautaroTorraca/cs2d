@@ -2,7 +2,6 @@
 // #include "SDL_blendmode.h"
 // #include "SDL_timer.h"
 #include "SDL2pp/Optional.hh"
-#include "client/playerDataConstants.h"
 #include "gameConstants.h"
 // #include "weaponConstants.h"
 #include <SDL2pp/SDL2pp.hh>
@@ -17,26 +16,28 @@
 // #include <cstddef>
 #include <cstddef>
 #include <cstdlib>
-#include <iostream>
+// #include <iostream>
 #include <linux/kd.h>
 // #include <memory>
+#include <stddef.h>
 #include <string>
 #include <vector>
 // #include <vector>
 
-GameRenderer::GameRenderer()
+GameRenderer::GameRenderer(std::vector<std::vector<int>> tileMap,
+                           size_t clientId)
     : window("CS-Go 2D???", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
              RES_WIDTH, RES_HEIGTH, 0),
-      renderer(window, -1, SDL_RENDERER_ACCELERATED), textureManager(renderer) {
-}
+      renderer(window, -1, SDL_RENDERER_ACCELERATED), textureManager(renderer),
+      tileMap(tileMap), clientID(clientId) {}
 
-void GameRenderer::renderScreen(snapshot gameSnapshot) {
+void GameRenderer::renderScreen(Snapshot gameSnapshot) {
   renderer.Clear();
 
   // std::unique_ptr<PlayerData> currentPlayer;
   Coords offsetCoords;
   for (PlayerData player : gameSnapshot.game.players) {
-    if (player.id == gameSnapshot.clientId) {
+    if (player.id == clientID) {
       offsetCoords = player.coords;
       break;
     }
@@ -51,9 +52,9 @@ void GameRenderer::renderScreen(snapshot gameSnapshot) {
   offsetCoords.x -= RES_WIDTH / 2;
   offsetCoords.y -= RES_HEIGTH / 2;
 
-  renderMap(gameSnapshot.game.map.tileMap, offsetCoords);
+  renderMap(tileMap, offsetCoords);
   renderFloorItems(gameSnapshot.game.map.droppedWeapons, offsetCoords);
-  renderPlayers(gameSnapshot.game.players, offsetCoords, gameSnapshot.clientId);
+  renderPlayers(gameSnapshot.game.players, offsetCoords, clientID);
   // renderPlayersAsCubes(gameSnapshot.players);
 
   renderer.Present();

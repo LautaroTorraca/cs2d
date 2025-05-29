@@ -6,17 +6,13 @@
 
 #include "common/socket.h"
 
-
 class Sender {
 public:
-    Sender::Sender() = default;
+  Sender() = default;
 
-    static void send(Socket& socket, std::string data);
+  static void send(Socket &socket, std::string data);
 
-    static void bytesChecker(const int& sendBytes);
-
+  static void bytesChecker(const int &sendBytes);
 };
 
-
-
-#endif //SENDER_H
+#endif // SENDER_H
