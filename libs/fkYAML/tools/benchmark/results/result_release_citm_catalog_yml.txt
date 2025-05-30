@@ -1,0 +1,17 @@
+2025-01-22T01:18:43+09:00
+Running ./build_bm_release/tools/benchmark/benchmarker
+Run on (16 X 3193.92 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x8)
+  L1 Instruction 32 KiB (x8)
+  L2 Unified 512 KiB (x8)
+  L3 Unified 16384 KiB (x1)
+Load Average: 0.53, 0.33, 0.30
+-------------------------------------------------------------------------------------
+Benchmark                           Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------
+bm_fkyaml_parse              17653677 ns     17653735 ns           40 bytes_per_second=38.7563Mi/s items_per_second=56.6452/s
+bm_yamlcpp_parse            105749049 ns    105748129 ns            7 bytes_per_second=6.47003Mi/s items_per_second=9.45643/s
+bm_libfyaml_parse            27641204 ns     27641304 ns           26 bytes_per_second=24.7526Mi/s items_per_second=36.1777/s
+bm_rapidyaml_parse_inplace      17598 ns        17598 ns        39483 bytes_per_second=37.9676Gi/s items_per_second=56.8242k/s
+bm_rapidyaml_parse_arena      9999307 ns      9999242 ns           67 bytes_per_second=68.4245Mi/s items_per_second=100.008/s

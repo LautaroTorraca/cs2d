@@ -9,7 +9,7 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
 endif()
 
 set(CMAKE_CXX_EXTENSIONS ON)
-
+# set(YAML_CPP_BUILD_TESTS OFF CACHE INTERNAL "Disable yaml-cpp tests")
 project(
   taller_tp
   VERSION 1.0
@@ -78,11 +78,9 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE)
 
-  FetchContent_Declare(
-    libSDL2pp
-    OVERRIDE_FIND_PACKAGE
-    URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
-  )
+  # FetchContent_Declare( libSDL2pp OVERRIDE_FIND_PACKAGE URL
+  # https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
+  # )
 
   FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
 endif()
@@ -97,11 +95,29 @@ if(TALLER_CLIENT)
 endif()
 
 if(TALLER_SERVER)
+
+  project(
+    fkYAML
+    VERSION 0.4.2
+    LANGUAGES CXX)
+  FetchContent_Declare(
+    fkYAML
+    GIT_REPOSITORY https://github.com/fktn-k/fkYAML.git
+    GIT_TAG v0.4.2)
+  # HACK: arreglar esa cosa dudosa de lio
+  #
+
+  # ) FetchContent_Declare( yaml-cpp GIT_REPOSITORY
+  # https://github.com/jbeder/yaml-cpp.git GIT_TAG yaml-cpp-0.6.3 # ✅ esta es la
+  # tag válida para esa versión ) FetchContent_MakeAvailable(yaml-cpp)
+  FetchContent_MakeAvailable(fkYAML)
+
   add_executable(taller_server)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
+  # add_subdirectory(libs/fkYAML)
   set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
-  target_link_libraries(taller_server taller_common)
+  target_link_libraries(taller_server taller_common fkYAML)
 
 endif()
 

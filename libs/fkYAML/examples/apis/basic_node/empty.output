@@ -1,0 +1,8 @@
+true
+false
+false
+type_error: The target node is not of a container type. type=NULL_OBJECT
+type_error: The target node is not of a container type. type=BOOLEAN
+type_error: The target node is not of a container type. type=INTEGER
+type_error: The target node is not of a container type. type=FLOAT
+false

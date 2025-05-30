@@ -1,0 +1,59 @@
+name: PublishDocs
+
+# make the documentation up to date with the develop branch
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - .github/workflows/publish_docs.yml
+      - examples/**
+      - docs/**
+  workflow_dispatch:
+
+# no cancellation during uploads to avoid broken publications
+concurrency:
+  group: documentation
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    if: github.repository == 'fktn-k/fkYAML'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build examples
+        run: |
+          cmake -B ${{github.workspace}}/build -S ${{github.workspace}} -DCMAKE_BUILD_TYPE=Debug -DFK_YAML_BUILD_EXAMPLES=ON
+          cmake --build ${{github.workspace}}/build --config Debug
+
+      - name: Build documentation
+        run: make build-docs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload API documents
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{github.workspace}}/docs/site
+
+  deploy:
+    if: github.repository == 'fktn-k/fkYAML'
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
