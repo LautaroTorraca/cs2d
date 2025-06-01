@@ -8,31 +8,39 @@
 #include <vector>
 
 #include "CoordinateDTO.h"
+#include "Skin.h"
 #include "WeaponInfoDTO.h"
 
 class PlayerInfoDTO {
     size_t id;
     std::string name;
+    Skin skin;
     CoordinateDTO coordinate;
     double angle;
     uint16_t actualMoney;
     uint8_t actualHealthPoints;
     std::vector<WeaponInfoDTO> weaponsInfo;
     WeaponInfoDTO actualWeapon;
+    uint8_t kills;
     public:
-    PlayerInfoDTO(const size_t& id, const std::string& name, const CoordinateDTO& coordinate,
+    PlayerInfoDTO(const size_t& id, const std::string& name, const Skin& skin, const CoordinateDTO& coordinate,
         const double& angle, const uint16_t& actualMoney, const uint8_t& actualHealthPoints,
-        std::vector<WeaponInfoDTO>& weaponInfo, WeaponInfoDTO& actualWeaponInfo):
-    id(id), name(name), coordinate(coordinate), angle(angle), actualMoney(actualMoney),
+        std::vector<WeaponInfoDTO>& weaponInfo, WeaponInfoDTO& actualWeaponInfo, const uint8_t& kills):
+    id(id), name(name), skin(skin), coordinate(coordinate), angle(angle), actualMoney(actualMoney),
     actualHealthPoints(actualHealthPoints), weaponsInfo(std::move(weaponInfo)),
-    actualWeapon(std::move(actualWeaponInfo)) {}
+    actualWeapon(std::move(actualWeaponInfo)),
+    kills(kills) {}
 
     [[nodiscard]] const size_t& getId() const;
     [[nodiscard]]const std::string& getName() const;
+    [[nodiscard]]const Skin& getSkin() const;
     [[nodiscard]]const CoordinateDTO& getCoordinate() const;
     [[nodiscard]]const double& getAngle() const;
+    [[nodiscard]]const uint16_t& getMoney() const;
+    [[nodiscard]]const uint8_t& getHealth() const;
     [[nodiscard]]const std::vector<WeaponInfoDTO>& getWeaponsInfo() const;
     [[nodiscard]]const WeaponInfoDTO& getActualWeapon() const;
+    [[nodiscard]]const uint8_t& getKills() const;
 
 };
 

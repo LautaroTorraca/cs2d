@@ -16,6 +16,10 @@ void Wallet::addMoney(const uint16_t &amount) {
     this->money += amount;
 }
 
+void Wallet::wasteAll() {
+    this->money = 0;
+}
+
 const uint16_t & Wallet::getInfo() {
     return this->money;
 }

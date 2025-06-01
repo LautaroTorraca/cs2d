@@ -1,11 +1,125 @@
-# tests/CMakeLists.txt
+target_sources(taller_tests
+    PRIVATE
+    # .cpp files
+        ../server/ActivatedBacker.cpp
+        ../server/Coordinate.cpp
+        ../server/CounterPlayer.cpp
+        ../server/CountersTeam.cpp
+        ../server/DeactivatedBacker.cpp
+        ../server/Game.cpp
+        ../server/GameMap.cpp
+        ../server/GameMapParser.cpp
+        ../server/GameParser.cpp
+        ../server/Path.cpp
+        ../server/Player.cpp
+        ../server/Position.cpp
+        ../server/TerroristPlayer.cpp
+        ../server/TerroristsTeam.cpp
+        ../server/PlayerInfoDTO.cpp
+        ../server/Shop.cpp
+        ../server/ShopParser.cpp
+        ../server/Wallet.cpp
+        ../server/PlayerInventory.cpp
+        ../server/Product.cpp
+        ../server/AKFactory.cpp
+        ../server/M3Factory.cpp
+        ../server/AwpFactory.cpp
+        ../server/PrimaryAmmoFactory.cpp
+        ../server/SecondaryAmmoFactory.cpp
+        ../server/Ak.cpp
+        ../server/M3.cpp
+        ../server/Awp.cpp
+        ../server/PrimaryAmmo.cpp
+        ../server/SecondaryAmmo.cpp
+        ../server/Glock.cpp
+        ../server/Knife.cpp
+        ../server/Bomb.cpp
+        ../server/PrimaryWeapon.cpp
+        ../server/WeaponInfoDTO.cpp
+        ../server/CountersTeam.cpp
+        ../server/WeaponsInfoParser.cpp
+        ../server/Projectile.cpp
+        ../server/ActivedDrop.cpp
+        ../server/DeactivatedDrop.cpp
+        ../server/DropBox.cpp
+        ../server/DropDTO.cpp
+        ../server/Randomizator.cpp
+        ../server/DirectProjectile.cpp
+        ../server/ProjectileDTO.cpp
+        ../server/GameInfoDTO.cpp
+        ../server/GenericWeapon.cpp
+        ../server/DistanceWeapon.cpp
+        ../server/RechargeableWeapon.cpp
+        ../server/GameInfoParser.cpp
 
-set(TEST_SOURCES
-    foo.cpp
-)
 
-target_sources(taller_tests PRIVATE ${TEST_SOURCES})
+    foo.cpp UseCases.cpp
+    PUBLIC
+    # .h files
+        ../server/ActivatedBacker.h
+        ../server/Backer.h
+        ../server/Coordinate.h
+        ../server/CounterPlayer.h
+        ../server/Damageable.h
+        ../server/Damager.h
+        ../server/DeactivatedBacker.h
+        ../server/Entity.h
+        ../server/Game.h
+        ../server/GameMap.h
+        ../server/GameMapParser.h
+        ../server/GameParser.h
+        ../server/Path.h
+        ../server/Player.h
+        ../server/Position.h
+        ../server/Team.h
+        ../server/TerroristPlayer.h
+        ../server/TerroristsTeam.h
+        ../server/Tile.h
+        ../server/PlayerInfoDTO.h
+        ../server/Shop.h
+        ../server/ShopParser.h
+        ../server/Wallet.h
+        ../server/PlayerInventory.h
+        ../server/Product.h
+        ../server/AKFactory.h
+        ../server/M3Factory.h
+        ../server/AwpFactory.h
+        ../server/PrimaryAmmoFactory.h
+        ../server/SecondaryAmmoFactory.h
+        ../server/Ak.h
+        ../server/M3.h
+        ../server/Awp.h
+        ../server/PrimaryAmmo.h
+        ../server/SecondaryAmmo.h
+        ../server/Glock.h
+        ../server/Knife.h
+        ../server/Bomb.h
+        ../server/PrimaryWeapon.h
+        ../server/WeaponInfoDTO.h
+        ../server/CountersTeam.h
+        ../server/WeaponsInfoParser.h
+        ../server/Advancer.h
+        ../server/Projectile.h
+        ../server/Drop.h
+        ../server/DropPlacer.h
+        ../server/ActivedDrop.h
+        ../server/DeactivatedDrop.h
+        ../server/DropBox.h
+        ../server/DropDTO.h
+        ../server/Randomizator.h
+        ../server/DirectProjectile.h
+        ../server/ProjectileDTO.h
+        ../server/Explosive.h
+        ../server/Finalizable.h
+        ../server/GameStatus.h
+        ../server/Spawner.h
+        ../server/GameInfoDTO.h
+        ../server/Informable.h
+        ../server/Owner.h
+        ../server/GenericWeapon.h
+        ../server/DistanceWeapon.h
+        ../server/RechargeableWeapon.h
+        ../server/GameInfoParser.h
 
-target_include_directories(taller_tests PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
+
+    )

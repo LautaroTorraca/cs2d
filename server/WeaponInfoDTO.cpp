@@ -28,3 +28,7 @@ const uint16_t& WeaponInfoDTO::getAmmoAmount() const {
 const WeaponType& WeaponInfoDTO::getWeaponType() const {
     return this->weaponType;
 }
+
+const std::vector<ProjectileDTO> & WeaponInfoDTO::getProjectilesInfo() const {
+    return this->projectilesInfo;
+}

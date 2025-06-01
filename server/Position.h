@@ -16,10 +16,12 @@ class Position {
     public:
     Position(): width(0), height(0) {}
     Position(const uint32_t& x, const uint32_t& y, const uint16_t& width, const uint16_t& height) : reference(x, y), width(width), height(height) {}
-    Position(Coordinate& reference, const uint16_t& width, const uint16_t& height) : reference(std::move(reference)), width(width), height(height) {}
+    Position(const Coordinate& reference, const uint16_t& width, const uint16_t& height) : width(width), height(height) {
+        this->reference.update(reference);
+    }
     Position(Position&& other) noexcept;
     Position& operator=(Position&& other) noexcept;
-    std::vector<Coordinate> getArea() const;
+    [[nodiscard]] std::vector<Coordinate> getArea() const;
     friend Position operator+(const Position& a, const Position& b) {
         Position result;
         result.reference = std::move(a.reference + b.reference);
@@ -38,7 +40,11 @@ class Position {
     double getAngleTo(const Coordinate & coordinate) const;
     void updateTo(const Position & position);
     Coordinate getCenter() const;
+    bool operator<(const Position& other) const;
+    bool intersects(const Position & position) const;
+    bool contains(const Coordinate& coordinate) const;
     CoordinateDTO getPoint() const;
+
 };
 
 

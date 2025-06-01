@@ -4,8 +4,6 @@
 
 #include "Position.h"
 
-#include "GameMap.h"
-
 Position::Position(Position &&other) noexcept : reference(std::move(other.reference)), width(other.width), height(other.height) {
     if (this != &other) {
         other.reference = std::move(Coordinate());
@@ -37,7 +35,7 @@ void Position::updateLocationTo(const Position &position) {
 }
 
 double Position::getAngleTo(const Coordinate &coordinate) const {
-    Coordinate center = this->reference.getCenter(this->width, this->height);
+    Coordinate center = this->getCenter();
     return center.getAngleTo(coordinate);
 }
 
@@ -49,6 +47,31 @@ void Position::updateTo(const Position &position) {
 
 Coordinate Position::getCenter() const {
     return this->reference.getCenter(this->width, this->height);
+}
+
+bool Position::operator<(const Position &other) const {
+    return this->reference < other.reference && this->width == other.width && this->height == other.height; //TODO: Comprobar que esto funcione bien.
+}
+
+bool Position::intersects(const Position &position) const {
+    uint32_t xStart = this->reference.addingX(0);
+    uint32_t yStart = this->reference.addingY(0);
+    uint32_t xLimit = this->reference.addingX(this->width);
+    uint32_t yLimit = this->reference.addingY(this->height);
+
+    uint32_t positionXStart = position.reference.addingX(0);
+    uint32_t positionYStart = position.reference.addingY(0);
+    uint32_t positionXLimit = position.reference.addingX(position.width);
+    uint32_t positionYLimit = position.reference.addingY(position.height);
+
+    return !(xLimit < positionXStart ||
+             xStart > positionXLimit ||
+             yLimit < positionYStart ||
+             yStart > positionYLimit);
+}
+
+bool Position::contains(const Coordinate &coordinate) const {
+    return this->intersects(Position(coordinate,0,0));
 }
 
 CoordinateDTO Position::getPoint() const {

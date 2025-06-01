@@ -4,10 +4,10 @@
 
 #ifndef KNIFE_H
 #define KNIFE_H
-#include "Weapon.h"
+#include "DistanceWeapon.h"
 
 
-class Knife : public Weapon {
+class Knife : public DistanceWeapon {
     double knifeMinDamage;
     double knifeMaxDamage;
     double knifeSpeed;
@@ -19,11 +19,11 @@ public:
         knifeMinDamage(knifeMinDamage),
         knifeMaxDamage(knifeMaxDamage),
         knifeSpeed(knifeSpeed),
-        knifeRange(knifeRange) {}
+        knifeRange(knifeRange){}
 
-    void attack(Positionable &mover, const Position &actualPosition, const Coordinate &destination) override;
+    void attack(Positionable &mover, const Position &actualPosition, const double &destination) override;
 
-    void recharge(uint16_t &amount) override;
+    void recharge(uint16_t &) override {}
 
     WeaponInfoDTO getInfo() override;
 

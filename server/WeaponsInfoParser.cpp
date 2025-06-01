@@ -12,6 +12,7 @@
 #define AK_KEY "ak47"
 #define M3_KEY "m3"
 #define AWP_KEY "awp"
+#define BOMB_KEY "bomb"
 
 WeaponsInfoParser::WeaponsInfoParser(const std::string& weaponsFilePath) {
 
@@ -56,5 +57,6 @@ void WeaponsInfoParser::fillWeaponTranslator() {
     this->weaponsTranslator.emplace(AK_KEY, WeaponType::AK47);
     this->weaponsTranslator.emplace(M3_KEY, WeaponType::M3);
     this->weaponsTranslator.emplace(AWP_KEY, WeaponType::AWP);
+    this->weaponsTranslator.emplace(BOMB_KEY, WeaponType::BOMB);
 
 }

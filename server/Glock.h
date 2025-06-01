@@ -4,33 +4,21 @@
 
 #ifndef GLOCK_H
 #define GLOCK_H
+#include <map>
+
 #include "Weapon.h"
 #include "Projectile.h"
+#include <vector>
+
+#include "RechargeableWeapon.h"
 
 #define GLOCK_INITIAL_AMMO 30
 
-class Glock : public Weapon {
-    uint16_t ammo;
-    double glockDamagePerBullet;
-    double glockPrecision;
-    double glockRange;
-    double glockCadence;
-    double glockSpeed;
-    double glockBulletsPerShot;
-    double lastShotTime;
-    std::vector<Projectile> projectiles;
+class Glock : public RechargeableWeapon {
     public:
-    Glock(const double& glockDamagePerBullet, const double& glockPrecision, const double& glockRange, const double& glockCadence, const double& glockSpeed, const double& glockBulletsPerShot) :
-    ammo(GLOCK_INITIAL_AMMO),
-    glockDamagePerBullet(glockDamagePerBullet),
-    glockPrecision(glockPrecision),
-    glockRange(glockRange),
-    glockCadence(glockCadence),
-    glockSpeed(glockSpeed),
-    glockBulletsPerShot(glockBulletsPerShot),
-    lastShotTime(0) {}
-    void attack(Positionable &positionable, const Position &actualPosition, const Coordinate &destination) override;
-    void recharge(uint16_t &amount) override;
+    Glock(const double& weaponDamagePerBullet, const double& weaponPrecision, const double& weaponRange, const double& weaponCadence, const double& weaponSpeed, const int& weaponBulletsPerShot) :
+    RechargeableWeapon(GLOCK_INITIAL_AMMO, weaponDamagePerBullet, weaponPrecision, weaponRange, weaponCadence, weaponSpeed,weaponBulletsPerShot) {}
+    void attack(Positionable &positionable, const Position &actualPosition, const double &angle) override;
     WeaponInfoDTO getInfo() override;
 
 };

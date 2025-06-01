@@ -9,8 +9,9 @@
 
 class Randomizator {
 public:
-    static int getRandom(const int& min, const int& max);
+    int getRandom(const int& min, const int& max);
 
+    int getRandom(const int &max);
 };
 
 

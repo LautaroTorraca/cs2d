@@ -7,16 +7,16 @@
 #include <map>
 
 #include "Buyer.h"
-#include "ProductTypes.h"
+#include "ProductType.h"
 #include "Factory.h"
 
 class Shop {
-    std::map<ProductTypes, std::unique_ptr<Factory>> shopCatalog;
+    std::map<ProductType, std::unique_ptr<Factory>> shopCatalog;
 public:
-    void add(const ProductTypes& type, std::unique_ptr<Factory>& factory);
-    void buy(Buyer &buyer, const ProductTypes &productType);
+    void add(const ProductType& type, std::unique_ptr<Factory>& factory);
+    void buy(Buyer &buyer, const ProductType &productType);
 
-    void buy(Buyer &buyer, const ProductTypes &productType, const uint16_t &amount);
+    void buy(Buyer &buyer, const ProductType &productType, const uint16_t &amount);
 };
 
 

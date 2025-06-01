@@ -6,11 +6,13 @@
 #define COORDINATEDTO_H
 
 class  CoordinateDTO {
+    double x;
+    double y;
 public:
-    const double x;
-    const double y;
 
-    CoordinateDTO(double x, double y) : x(x), y(y) {}
+    CoordinateDTO(const double& x, const double& y) : x(x), y(y) {}
+    [[nodiscard]] const double& getX() const { return x; }
+    [[nodiscard]] const double& getY() const { return y; }
 };
 
 #endif //COORDINATEDTO_H

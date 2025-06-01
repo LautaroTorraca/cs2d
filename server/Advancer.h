@@ -8,7 +8,7 @@
 class Advancer {
     public:
     virtual ~Advancer() = default;
-    virtual void advance(double &actualTime) = 0;
+    virtual void advance(const double &actualTime) = 0;
 };
 
 #endif //ADVANCER_H

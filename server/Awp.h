@@ -20,7 +20,7 @@ public:
         const double& weaponRange,
         const double& weaponCadence,
         const double& weaponSpeed,
-        const double& weaponBulletsPerShot) : PrimaryWeapon(cost,
+        const int& weaponBulletsPerShot) : PrimaryWeapon(cost,
             weaponDamagePerBullet,
             weaponPrecision,
             weaponRange,
@@ -28,11 +28,11 @@ public:
             weaponSpeed,
             weaponBulletsPerShot) {}
 
-    void attack(Positionable &positionable, const Position &actualPosition, const Coordinate &destination) override;
+    void attack(Positionable &positionable, const Position &actualPosition, const double &destination) override;
 
     void addTo(Inventory &inventory) override;
 
-    ~Awp() override = default;
+ ~Awp() override = default;
 };
 
 

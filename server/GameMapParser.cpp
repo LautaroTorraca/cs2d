@@ -14,6 +14,7 @@
 #define PATHS_KEY "paths"
 #define TERRORISTS_SPAWN_KEY "terroristsSpawnPoints"
 #define COUNTERS_SPAWN_KEY "countersSpawnPoints"
+#define BOMB_PLANT_POINTS_KEY "bombPlantPoints"
 #define X_POSITION "x"
 #define Y_POSITION "y"
 
@@ -38,6 +39,7 @@ GameMapParser::GameMapParser(const std::string &mapFilePath) {
 
     this->terroristsSpawns = root[TERRORISTS_SPAWN_KEY].get_value<std::vector<std::map<std::string, double>>>();
     this->countersSpawns = root[COUNTERS_SPAWN_KEY].get_value<std::vector<std::map<std::string, double>>>();
+    this->bombPlantPoints = root[BOMB_PLANT_POINTS_KEY].get_value<std::vector<std::map<std::string, double>>>();
 
 }
 
@@ -45,6 +47,7 @@ GameMapParser::GameMapParser(GameMapParser &&other) noexcept :
             gameMap(std::move(other.gameMap)),
             terroristsSpawns(std::move(other.terroristsSpawns)),
             countersSpawns(std::move(other.countersSpawns)),
+            bombPlantPoints(std::move(other.bombPlantPoints)),
             typeInfo(std::move(other.typeInfo)) {
     //TODO: Implementar lo que le pasa a other
 }
@@ -76,7 +79,7 @@ std::map<Coordinate, Tile> GameMapParser::getMap() const {
     return mapPath;
 }
 
-std::vector<Coordinate> GameMapParser::getSpawnPoints(std::vector<std::map<std::string, double>> source) const {
+std::vector<Coordinate> GameMapParser::getPoints(std::vector<std::map<std::string, double>> source) const {
     std::vector<Coordinate> spawnPoints;
     for ( auto& coord : source ) {
         spawnPoints.emplace_back(coord.at(X_POSITION), coord.at(Y_POSITION));
@@ -86,9 +89,13 @@ std::vector<Coordinate> GameMapParser::getSpawnPoints(std::vector<std::map<std::
 
 
 std::vector<Coordinate> GameMapParser::getCountersSpawnPoints() const {
-    return this->getSpawnPoints(this->countersSpawns);
+    return this->getPoints(this->countersSpawns);
 }
 
 std::vector<Coordinate> GameMapParser::getTerroristsSpawnPoints() const {
-    return this->getSpawnPoints(this->terroristsSpawns);
+    return this->getPoints(this->terroristsSpawns);
+}
+
+std::vector<Coordinate> GameMapParser::getBombPlantPoints() const {
+    return this->getPoints(this->bombPlantPoints);
 }

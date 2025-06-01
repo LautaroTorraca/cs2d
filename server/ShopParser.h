@@ -10,18 +10,18 @@
 #include <memory>
 #include <string>
 #include "Factory.h"
-#include "ProductTypes.h"
+#include "ProductType.h"
 #include "WeaponInformer.h"
 
 
 class ShopParser {
     std::map<std::string, uint16_t> shopPrices;
     std::map<std::string, std::function<std::unique_ptr<Factory>(const uint16_t&, WeaponInformer&)>> factoryMaker;
-    std::map<std::string, ProductTypes> typeTranslator;
+    std::map<std::string, ProductType> typeTranslator;
 public:
     explicit ShopParser(const std::string& shopFile);
     ShopParser(ShopParser&& other) noexcept;
-    std::map<ProductTypes, std::unique_ptr<Factory>> getShopFactories(WeaponInformer& weaponsInfo);
+    std::map<ProductType, std::unique_ptr<Factory>> getShopFactories(WeaponInformer& weaponsInfo);
 };
 
 

@@ -9,7 +9,6 @@
 class Damager {
     public:
     virtual ~Damager() = default;
-
     virtual void damage(uint8_t& healthPoints) = 0;
 };
 

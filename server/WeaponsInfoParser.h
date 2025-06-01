@@ -9,6 +9,8 @@
 #include <fkYAML/node.hpp>
 #include "WeaponConstants.h"
 #include "WeaponInformer.h"
+#define BOMB_ACTIVATION_TIME_KEY "activationTime"
+#define BOMB_DEACTIVATION_TIME_KEY "deactivationTime"
 
 class WeaponsInfoParser : public WeaponInformer {
     std::map<WeaponType, std::map<std::string, double>> weaponsInfo;

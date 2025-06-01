@@ -3,13 +3,19 @@
 //
 
 #include "Knife.h"
+#include <cmath>
 
-void Knife::attack(Positionable &, const Position &, const Coordinate &) {
+#include "DirectProjectile.h"
+#include "Randomizator.h"
 
+void Knife::attack(Positionable &positionable, const Position &actualPosition, const double &angle) {
+    Coordinate direction(std::cos(angle), -std::sin(angle));
+    Randomizator randomizer;
+    double damage = randomizer.getRandom(this->knifeMinDamage, this->knifeMaxDamage);
+    this->projectiles.emplace_back(std::make_shared<DirectProjectile>(positionable, actualPosition, direction, knifeRange, 1, knifeSpeed, damage));
 }
 
-void Knife::recharge(uint16_t &) {}
-
 WeaponInfoDTO Knife::getInfo() {
-    return {1, WeaponType::KNIFE};
+    std::vector<ProjectileDTO> stabbingsInfo = this->getProjectilesInfo();
+    return { WeaponType::KNIFE, stabbingsInfo};
 }
