@@ -37,4 +37,6 @@ public:
 
   void sendSnapshot(const Snapshot &snapshot);
   void sendPreSnapshot(const PreSnapshot &preSnapshot);
+  void stopService();
+  void sendGamesList(const std::vector<std::string> & gamesList) const;
 };

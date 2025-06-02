@@ -5,10 +5,12 @@
 #include "OrderType.h"
 #include <cstdint>
 #include <map>
+#include <string>
 
 class GameLobbyOrder final : public Order {
   OrderType orderType;
   size_t playerId;
+  std::string playerName;
   uint8_t teamId;
   uint8_t skinId;
 
@@ -18,7 +20,7 @@ class GameLobbyOrder final : public Order {
 
 public:
   GameLobbyOrder(const uint8_t &code, const size_t &playerId);
-  GameLobbyOrder(const uint8_t &code, const size_t &playerId,
+  GameLobbyOrder(const uint8_t &code, const size_t &playerId, const std::string& playerName,
                  const uint8_t &teamId, const uint8_t &skinId);
 
   GameLobbyOrder(GameLobbyOrder &&other) noexcept;
@@ -29,6 +31,7 @@ public:
 
   [[nodiscard]] const OrderType &getOrderType() const override;
   [[nodiscard]] const size_t &getPlayerId() const;
+  [[nodiscard]] const std::string &getPlayerName() const;
   [[nodiscard]] const Team &getTeamId() const;
   [[nodiscard]] const Skin &getSkinId() const;
 };

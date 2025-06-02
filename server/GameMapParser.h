@@ -30,6 +30,8 @@ class GameMapParser {
     [[nodiscard]] std::vector<Coordinate> getCountersSpawnPoints() const;
     [[nodiscard]] std::vector<Coordinate> getTerroristsSpawnPoints() const;
     [[nodiscard]] std::vector<Coordinate> getBombPlantPoints() const;
+
+    uint8_t getMaxPlayersPerTeam() const;
 };
 
 

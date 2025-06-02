@@ -1,26 +1,8 @@
 #pragma once
 
 #include <cstdint>
-
-enum Team : uint8_t {
-    TERRORISTS = 0x00,
-    COUNTER_TERRORISTS = 0x01
-};
-
-enum Skin : uint8_t {
-    //TT
-    PHOENIX = 0x00,
-    L337_KREW = 0x01,
-    ARCTIC_AVENGER = 0x02,
-    GUERRILLA = 0x03,
-
-
-    //CT
-    SEAL_FORCE = 0x10,
-    GERMAN_GSG9 = 0x11,
-    UK_SAS = 0x12,
-    FRENCH_GIGN = 0x13
-};
+#include "Skin.h"
+#include "Team.h"
 
 
 namespace TeamConstants {

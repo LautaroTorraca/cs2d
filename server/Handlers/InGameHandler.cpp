@@ -1,5 +1,6 @@
 #include "InGameHandler.h"
 
+#include <cstring>
 #include <stdexcept>
 
 #include "Constants/OpCodesConstans.h"
@@ -26,11 +27,12 @@ Request InGameHandler::handle(const uint8_t opcode) const {
 }
 
 Request InGameHandler::moveRequest() const {
-    const uint8_t direction = reader.u8tReader();
+    const uint16_t direction = reader.u16tReader();
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_PLAYER_MOVEMENT));
-    message.emplace(directionKey, std::vector<char>(SINGLE_VALUE, direction));
-
+    std::vector<char> serializedDirection(sizeof(uint16_t));
+    std::memcpy(serializedDirection.data(), &direction, sizeof(uint16_t));
+    message.emplace(directionKey, serializedDirection);
     return Request(userId, message);
 }
 

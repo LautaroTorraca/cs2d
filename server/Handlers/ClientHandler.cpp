@@ -1,5 +1,7 @@
 #include "ClientHandler.h"
 
+#include <sstream>
+
 #include "OpCodesConstans.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId, Queue<std::shared_ptr<Request>>& requestQueue)
@@ -35,22 +37,23 @@ void ClientHandler::registerOpcodes() {
 
 
 void ClientHandler::run() {
-    try {
-        while (true) {
-            uint8_t opCode;
-            userSocket.recvall(&opCode, sizeof(opCode));
 
-            if (!opcodeDispatcher.contains(opCode)) {
-                throw std::runtime_error("OpCode no soportado: " + std::to_string(opCode));
+        while (this->should_keep_running()) {
+            try {
+                uint8_t opCode;
+                userSocket.recvall(&opCode, sizeof(opCode));
+
+                if (!opcodeDispatcher.contains(opCode)) {
+                    throw std::runtime_error("OpCode no soportado: " + std::to_string(opCode));
+                }
+
+                Request request = opcodeDispatcher.at(opCode)();
+
+                requestsQueue.push(std::make_shared<Request>(std::move(request)));
+            } catch (...) {
+                this->stop();
             }
-
-            Request request = opcodeDispatcher.at(opCode)();
-
-            requestsQueue.push(std::make_shared<Request>(std::move(request)));
         }
-    } catch (...) {
-        // TODO
-    }
 }
 
 
@@ -63,6 +66,21 @@ void ClientHandler::sendPreSnapshot(const PreSnapshot & preSnapshot) {
     this->userSocket.sendall(&preSnapshot, sizeof(preSnapshot));
 }
 
-ClientHandler::~ClientHandler() {
+void ClientHandler::stopService() {
     this->userSocket.close();
+}
+
+void ClientHandler::sendGamesList(const std::vector<std::string> &gamesList) const {
+    std::stringstream gamesListStream;
+    for (const auto &game : gamesList) {
+        gamesListStream << game << "\n";
+    }
+    std::string gamesListString = gamesListStream.str();
+    uint16_t size = gamesListString.size();
+    this->userSocket.sendall(&size, sizeof(size));
+    this->userSocket.sendall(gamesList.data(), gamesList.size());
+}
+
+ClientHandler::~ClientHandler() {
+    this->stopService();
 }

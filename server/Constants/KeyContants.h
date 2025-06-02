@@ -16,5 +16,6 @@ constexpr std::string weaponKey = "weapon";
 constexpr std::string weaponToSwitchKey = "weaponToSwitch";
 constexpr std::string slotKey = "slot";
 
+constexpr std::string playerNameKey = "playerName";
 constexpr std::string skinKey = "skin";
 constexpr std::string teamKey = "team";

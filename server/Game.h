@@ -21,6 +21,7 @@
 #include "Finalizable.h"
 #include "GameInfoDTO.h"
 #include "GameStatus.h"
+#include "Orders/InGameOrder.h"
 
 #define BUY_TIME_DURATION_KEY "buyTimeDuration"
 #define MONEY_PER_WIN_ROUND_KEY "moneyPerWinRound"
@@ -50,6 +51,7 @@ public:
     void setWeapon(const size_t& id, const uint8_t& index);
     [[nodiscard]] std::map<Coordinate, Tile> getMap() const;
     void buy(const size_t& id, const ProductType& product);
+    void buy(const size_t& id, const ProductType& product, uint16_t amount);
     void takeDrop(const size_t& id);
     void attack(const size_t& id);
     void advance(const double &actualTime) override;

@@ -7,11 +7,12 @@
 #include <cstdint>
 
 enum ProductType : std::uint8_t {
-    AK_47_WEAPON = 1,
-    M3_WEAPON = 2,
-    AWP_WEAPON = 3,
-    PRIMARY_AMMO = 4,
-    SECONDARY_AMMO = 5
+    AK_47_WEAPON = 0X01,
+    M3_WEAPON = 0X02,
+    AWP_WEAPON = 0X03,
+    PRIMARY_AMMO = 0X04,
+    SECONDARY_AMMO = 0X05,
+    NONE = 0xFF
 };
 
 #endif //PRODUCTIDS_H

@@ -99,3 +99,7 @@ std::vector<Coordinate> GameMapParser::getTerroristsSpawnPoints() const {
 std::vector<Coordinate> GameMapParser::getBombPlantPoints() const {
     return this->getPoints(this->bombPlantPoints);
 }
+
+uint8_t GameMapParser::getMaxPlayersPerTeam() const {
+    return this->getCountersSpawnPoints().size();
+}

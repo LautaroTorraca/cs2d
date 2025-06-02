@@ -13,7 +13,8 @@ Protocol::Protocol(const std::string &port)
       acceptorThread([this]() { this->handleNewConnection(); }),
       lobbyProtocol(this->connectedUsers),
       gameLobbyProtocol(this->connectedUsers),
-      inGameProtocol(this->connectedUsers) {
+      inGameProtocol(this->connectedUsers),
+      handledUsers(0) {
   setupLobbyHandlers();
   setupGameLobbyHandlers();
   setupInGameHandlers();
@@ -105,7 +106,7 @@ void Protocol::handleNewConnection() {
   while (true) {
     try {
       Socket peer = this->acceptorSocket.accept();
-      size_t userId = this->connectedUsers.size();
+      size_t userId = handledUsers++;
 
       this->connectedUsers.emplace(userId,
                                    std::make_unique<Socket>(std::move(peer)));
@@ -133,20 +134,16 @@ std::unique_ptr<Order> Protocol::getNextOrder() {
   }
 }
 
-ServerLobbyOrder Protocol::sendGamesList(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
+void Protocol::sendGamesList(GamesListDTO &gamesList) {
+  this->clientsHandlers.at(gamesList.id)->sendGamesList(gamesList.games);
 }
 
-ServerLobbyOrder Protocol::join(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
-}
 
-ServerLobbyOrder Protocol::create(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
-}
-
-ServerLobbyOrder Protocol::disconnect(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
+void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
+  std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
+  client->stopService();
+  client->join();
+  this->clientsHandlers.erase(disconnectionInfo.clientId);
 }
 
 GameLobbyOrder Protocol::ready(const Request &request) {
@@ -155,46 +152,6 @@ GameLobbyOrder Protocol::ready(const Request &request) {
 
 GameLobbyOrder Protocol::exitLobby(const Request &request) {
   return gameLobbyProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::movement(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::shoot(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::pickUpItem(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::dropItem(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::buyAmmo(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::buyWeapon(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::switchWeapon(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::plantBomb(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::defuseBomb(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder Protocol::exit(const Request &request) {
-  return inGameProtocol.handleRequest(request);
 }
 
 // TODO ARREGLAR EN COMO *** VAMOS A MANDAR LA SNAPSHOT

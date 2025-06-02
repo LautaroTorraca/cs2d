@@ -7,11 +7,11 @@
 #include "TeamConstants.h"
 
 GameLobbyOrder::GameLobbyOrder(const uint8_t &code, const size_t &playerId)
-    : GameLobbyOrder(code, playerId, DEFAULT_TEAM_ID, DEFAULT_SKIN_ID) {}
+    : GameLobbyOrder(code, playerId, DEFAULT_GAME_NAME, DEFAULT_TEAM_ID, DEFAULT_SKIN_ID) {}
 
-GameLobbyOrder::GameLobbyOrder(const uint8_t &code, const size_t &playerId,
+GameLobbyOrder::GameLobbyOrder(const uint8_t &code, const size_t &playerId, const std::string& playerName,
                                const uint8_t &teamId, const uint8_t &skinId)
-    : playerId(playerId), teamId(teamId), skinId(skinId) {
+    : playerId(playerId), playerName(playerName), teamId(teamId), skinId(skinId) {
   orderTranslator = {{ProtocolConstants::READY, GAME_LOBBY_READY},
                      {ProtocolConstants::EXIT_LOBBY, GAME_LOBBY_EXIT}};
 
@@ -67,6 +67,10 @@ const OrderType &GameLobbyOrder::getOrderType() const {
 }
 
 const size_t &GameLobbyOrder::getPlayerId() const { return this->playerId; }
+
+const std::string & GameLobbyOrder::getPlayerName() const {
+  return this->playerName;
+}
 
 const Team &GameLobbyOrder::getTeamId() const {
   return this->teamTranslator.at(this->teamId);

@@ -75,6 +75,14 @@ void Game::buy(const size_t &id, const ProductType &product) {
 
 }
 
+void Game::buy(const size_t &id, const ProductType &product, const uint16_t amount) {
+    if (this->status != BUY_TIME) return;
+    if ( this->players.contains(id) ) {
+        Buyer& buyer = *this->players.at(id);
+        this->shop.buy(buyer, product, amount);
+    }
+}
+
 void Game::takeDrop(const size_t &id) {
     if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     if ( !this->players.contains(id) ) return;

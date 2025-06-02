@@ -1,5 +1,7 @@
 #include "InGameProtocol.h"
 
+#include <cstring>
+
 #include "Constants/ProtocolContants.h"
 #include "KeyContants.h"
 
@@ -52,7 +54,8 @@ InGameOrder InGameProtocol::movementHandler(const Request &request) {
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
 
-  const uint16_t direction = message.at(directionKey).front();
+  uint16_t direction;
+  std::memcpy(&direction, message.at(directionKey).data(), sizeof(uint16_t));
 
   return InGameOrder(ProtocolConstants::PLAYER_MOVEMENT, clientId, direction);
 }

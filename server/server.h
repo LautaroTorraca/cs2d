@@ -13,10 +13,9 @@
 
 class Server {
   Protocol protocol;
-
-  ServerLobby serverLobby;
-  ServerGameLobby gameLobbyServer;
   ServerInGame inGameServer;
+  ServerGameLobby gameLobbyServer;
+  ServerLobby serverLobby;
 
   std::map<OrderType, std::function<void(std::unique_ptr<Order> &)>>
       orderTranslator;

@@ -1,5 +1,7 @@
 #include "InGameOrder.h"
 #include <stdexcept>
+
+#include "MovementConstants.h"
 #include "ProtocolDefaults.h"
 #include "ProtocolContants.h"
 
@@ -30,6 +32,29 @@ InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint
         {ProtocolConstants::DEFUSE_BOMB, IN_GAME_DEFUSE_BOMB},
         {ProtocolConstants::EXIT_GAME, IN_GAME_EXIT}
     };
+
+    toProduct = {
+        {AK_47_WEAPON, AK_47_WEAPON},
+        {M3_WEAPON, M3_WEAPON},
+        { AWP_WEAPON, AWP_WEAPON },
+        {PRIMARY_AMMO, PRIMARY_AMMO},
+        {SECONDARY_AMMO, SECONDARY_AMMO}
+    };
+
+    if (!this->toProduct.contains(weaponInformation)) {
+        toProduct.emplace(weaponInformation, ProductType::NONE);
+    }
+
+    movementTranslator = {
+        {UP_MOVEMENT, Movement::UP},
+        {RIGHT_MOVEMENT, Movement::RIGHT},
+        {DOWN_MOVEMENT, Movement::DOWN},
+        {LEFT_MOVEMENT, Movement::LEFT}
+    };
+
+    if (!movementTranslator.contains(direction)) {
+        movementTranslator.emplace(direction, Movement::STAND);
+    }
 
     orderType = DO_NOTHING;
     if (orderTranslator.contains(code)) {
@@ -78,8 +103,9 @@ const size_t& InGameOrder::getPlayerId() const {
     return this->playerId;
 }
 
-const uint16_t& InGameOrder::getDirection() const {
-    return this->direction;
+const Movement& InGameOrder::getDirection() const {
+
+    return this->movementTranslator.at(this->direction);
 }
 
 const uint16_t& InGameOrder::getAmmoAmount() const {
@@ -88,5 +114,9 @@ const uint16_t& InGameOrder::getAmmoAmount() const {
 
 const uint8_t& InGameOrder::getWeaponInformation() const {
     return this->weaponInformation;
+}
+
+const ProductType & InGameOrder::getProduct() const {
+    return this->toProduct.at(this->weaponInformation);
 }
 

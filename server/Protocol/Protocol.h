@@ -20,8 +20,8 @@
 #include "../Interfaces/ServerLobbyProtocolInterface.h"
 
 class Protocol : public ServerLobbyProtocolInterface,
-                 GameLobbyProtocolInterface,
-                 InGameProtocolInterface {
+                 public GameLobbyProtocolInterface,
+                 public InGameProtocolInterface {
 protected:
   Socket acceptorSocket;
   std::thread acceptorThread;
@@ -29,6 +29,7 @@ protected:
   ServerLobbyProtocol lobbyProtocol;
   GameLobbyProtocol gameLobbyProtocol;
   InGameProtocol inGameProtocol;
+  size_t handledUsers;
 
   std::map<size_t, std::unique_ptr<Socket>> connectedUsers;
   std::map<size_t, std::unique_ptr<ClientHandler>> clientsHandlers;
@@ -48,25 +49,12 @@ public:
 
   std::unique_ptr<Order> getNextOrder();
 
-  ServerLobbyOrder sendGamesList(const Request &request) override;
-  ServerLobbyOrder join(const Request &request) override;
-  ServerLobbyOrder create(const Request &request) override;
-  ServerLobbyOrder disconnect(const Request &request) override;
+  void sendGamesList(GamesListDTO &gamesList) override;
+
+  void disconnect(const DisconnectionDTO &disconnectionInfo) override;
 
   GameLobbyOrder ready(const Request &request) override;
   GameLobbyOrder exitLobby(const Request &request) override;
-
-  InGameOrder movement(const Request &request) override;
-  InGameOrder shoot(const Request &request) override;
-  InGameOrder pickUpItem(const Request &request) override;
-  InGameOrder dropItem(const Request &request) override;
-  InGameOrder buyAmmo(const Request &request) override;
-  InGameOrder buyWeapon(const Request &request) override;
-  InGameOrder switchWeapon(const Request &request) override;
-  InGameOrder plantBomb(const Request &request) override;
-  InGameOrder defuseBomb(const Request &request) override;
-  InGameOrder exit(const Request &request) override;
-
   void sendSnapshot(const Snapshot &snapshot, const size_t &userId);
   void sendPreSnapshot(const PreSnapshot &preSnapshot, const size_t &userId);
 
