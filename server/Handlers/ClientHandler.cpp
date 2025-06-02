@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include "GameInfoDTO.h"
 #include "OpCodesConstans.h"
 #include "Sender.h"
 
@@ -59,8 +60,20 @@ void ClientHandler::run() {
 }
 
 
-void ClientHandler::sendSnapshot(const Snapshot& snapshot) {
-    this->userSocket.sendall(&snapshot, sizeof(snapshot));
+void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
+    for (auto& playerInfo : gameInfo.getPlayersInfo()) {
+        this->sender.send(playerInfo);
+    }
+    uint8_t status = gameInfo.getStatus();
+    this->sender.send(gameInfo.getCurrentRound());
+    this->sender.send(gameInfo.getCountersWinsRounds());
+    this->sender.send(gameInfo.getTerroristsWinsRounds());
+    this->sender.send(gameInfo.getPlantedBombPosition());
+    this->sender.send(status);
+    for ( auto& drop : gameInfo.getDropsInfo() ) {
+        this->sender.send(drop);
+
+    }
 
 }
 

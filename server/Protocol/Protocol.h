@@ -52,8 +52,14 @@ public:
   void sendLobbyConnectionStatus(const LobbyConnectionDTO & lobbyConnection) override;
 
   void disconnect(const DisconnectionDTO &disconnectionInfo) override;
+
+  std::vector<size_t> getIds(const GameLobbyDTO &gameLobbyInfo);
+
   void sendLobby(const GameLobbyDTO &gameLobbyInfo) override;
-  void sendSnapshot(const Snapshot &snapshot, const size_t &userId);
+
+  std::vector<size_t> getSnapshotIds(const std::vector<PlayerInfoDTO> &playerInfos);
+
+  void sendSnapshot(const GameInfoDTO & gameInfo);
   void sendPreSnapshot(const PreSnapshot &preSnapshot) override;
 
   void end();

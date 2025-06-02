@@ -10,6 +10,7 @@
 #include <functional>
 #include <unordered_map>
 
+#include "GameInfoDTO.h"
 #include "GameLobbyDTO.h"
 #include "Constants/SnapshotConstants.h"
 #include "GameLobbyHandler.h"
@@ -39,7 +40,7 @@ public:
 
   ~ClientHandler() override;
 
-  void sendSnapshot(const Snapshot &snapshot);
+  void sendSnapshot(const GameInfoDTO &gameInfo);
   void sendPreSnapshot(const PreSnapshot &preSnapshot);
   void stopService();
   void sendGamesList(const std::vector<std::string> & gamesList) const;

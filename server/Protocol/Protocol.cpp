@@ -149,7 +149,7 @@ void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
   this->clientsHandlers.erase(disconnectionInfo.clientId);
 }
 
-std::vector<size_t> getIds(const GameLobbyDTO& gameLobbyInfo) {
+std::vector<size_t> Protocol::getIds(const GameLobbyDTO& gameLobbyInfo) {
   std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
   std::vector<size_t> ids;
   for ( auto& playerChoices : playersChoices ) {
@@ -162,6 +162,22 @@ void Protocol::sendLobby(const GameLobbyDTO &gameLobbyInfo) {
   std::vector<size_t> ids = getIds(gameLobbyInfo);
   for (auto& id : ids) {
     this->clientsHandlers.at(id)->sendGameLobby(gameLobbyInfo);
+  }
+
+}
+
+std::vector<size_t> Protocol::getSnapshotIds(const std::vector<PlayerInfoDTO>& playerInfos) {
+  std::vector<size_t> snapshotIds;
+  for (auto& playerInfo : playerInfos) {
+    snapshotIds.emplace_back(playerInfo.getId());
+  }
+  return snapshotIds;
+}
+
+void Protocol::sendSnapshot(const GameInfoDTO &gameInfo) {
+  std::vector<size_t> playersIds = this->getSnapshotIds(gameInfo.getPlayersInfo());
+  for (auto& playerId : playersIds) {
+    this->clientsHandlers.at(playerId)->sendSnapshot(gameInfo);
   }
 
 }
