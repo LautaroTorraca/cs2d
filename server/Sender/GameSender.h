@@ -4,10 +4,20 @@
 
 #ifndef GAMESENDER_H
 #define GAMESENDER_H
+#include "thread.h"
+#include "server/Game.h"
+#include "server/Interfaces/InGameProtocolInterface.h"
 
 
+class GameSender : public Thread {
+    Game& game;
+    InGameProtocolInterface& protocol;
+public:
+    GameSender(Game& game, InGameProtocolInterface& protocol) : game(game), protocol(protocol) {}
 
-class GameSender {
+    void sendPreSnapshot();
+
+    void run() override;
 
 };
 
