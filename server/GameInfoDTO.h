@@ -24,7 +24,7 @@ public:
         std::vector<DropDTO>& dropsInfo, const CoordinateDTO& plantedBombPosition) :
                         status(status), currentRound(currentRound),
                         countersWinsRounds(countersWinsRounds),
-                        terroristsWinsRounds(terroristsWinsRounds) ,
+                        terroristsWinsRounds(terroristsWinsRounds),
                         playersInfo(std::move(playersInfo)),
                         dropsInfo(std::move(dropsInfo)),
                         plantedBombPosition(plantedBombPosition) {}

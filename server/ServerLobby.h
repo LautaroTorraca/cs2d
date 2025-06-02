@@ -23,7 +23,6 @@ public:
 
     void handle(const std::unique_ptr<Order>& order) const;
     void createGame(const ServerLobbyOrder& order);
-    void listGames(const ServerLobbyOrder& order) const;
-    void joinGame(const ServerLobbyOrder& order) const;
+    void joinGame(const ServerLobbyOrder& order);
     void leaveGame(const ServerLobbyOrder& order) const;
 };

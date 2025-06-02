@@ -8,7 +8,7 @@ std::map<Coordinate, Path> GameParser::getMapPath() const {
     return this->gameMapParser.getMapPath();
 }
 
-std::map<Coordinate, Tile> GameParser::getMap() const {
+std::vector<std::vector<uint8_t>> GameParser::getMap() const {
     return this->gameMapParser.getMap();
 }
 

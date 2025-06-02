@@ -26,12 +26,11 @@ class GameMapParser {
     explicit GameMapParser(const std::string& mapFilePath);
     GameMapParser(GameMapParser&& other) noexcept;
     [[nodiscard]] std::map<Coordinate, Path> getMapPath() const;
-    [[nodiscard]] std::map<Coordinate, Tile> getMap() const;
+    [[nodiscard]] std::vector<std::vector<uint8_t>> getMap() const;
     [[nodiscard]] std::vector<Coordinate> getCountersSpawnPoints() const;
     [[nodiscard]] std::vector<Coordinate> getTerroristsSpawnPoints() const;
     [[nodiscard]] std::vector<Coordinate> getBombPlantPoints() const;
-
-    uint8_t getMaxPlayersPerTeam() const;
+    [[nodiscard]] uint8_t getMaxPlayersPerTeam() const;
 };
 
 

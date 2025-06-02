@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 
+#include "GameLobbyProtocolInterface.h"
 #include "ServerInGame.h"
 #include "ServerLobbyOrder.h"
 #include "Lobby/GameLobby.h"
@@ -14,11 +15,12 @@ class ServerGameLobby {
     std::map<std::string, GameLobby> gameLobbies;
     std::map<size_t, std::string> playersToLobby;
     ServerInGame& serverInGame;
+    GameLobbyProtocolInterface& protocol;
     void setupTranslators();
 
 public:
 
-    ServerGameLobby(ServerInGame& serverInGame);
+    ServerGameLobby(ServerInGame& serverInGame, GameLobbyProtocolInterface& protocol);
 
     void ready(const GameLobbyOrder & order);
 
@@ -27,4 +29,8 @@ public:
     void add(const std::string& gameName, GameLobby& gameLobby);
 
     void join(const std::string & gameName, const size_t & playerId);
+
+    void exit(const GameLobbyOrder & order) const;
+
+    std::vector<std::string> listLobbies();
 };

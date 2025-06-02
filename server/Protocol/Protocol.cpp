@@ -138,6 +138,9 @@ void Protocol::sendGamesList(GamesListDTO &gamesList) {
   this->clientsHandlers.at(gamesList.id)->sendGamesList(gamesList.games);
 }
 
+void Protocol::sendLobbyConnectionStatus(const LobbyConnectionDTO &lobbyConnection) {
+  this->clientsHandlers.at(lobbyConnection.id)->sendLobbyConnectonStatus(lobbyConnection);
+}
 
 void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
   std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
@@ -146,12 +149,21 @@ void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
   this->clientsHandlers.erase(disconnectionInfo.clientId);
 }
 
-GameLobbyOrder Protocol::ready(const Request &request) {
-  return gameLobbyProtocol.handleRequest(request);
+std::vector<size_t> getIds(const GameLobbyDTO& gameLobbyInfo) {
+  std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
+  std::vector<size_t> ids;
+  for ( auto& playerChoices : playersChoices ) {
+    ids.emplace_back(playerChoices.id);
+  }
+  return ids;
 }
 
-GameLobbyOrder Protocol::exitLobby(const Request &request) {
-  return gameLobbyProtocol.handleRequest(request);
+void Protocol::sendLobby(const GameLobbyDTO &gameLobbyInfo) {
+  std::vector<size_t> ids = getIds(gameLobbyInfo);
+  for (auto& id : ids) {
+    this->clientsHandlers.at(id)->sendGameLobby(gameLobbyInfo);
+  }
+
 }
 
 // TODO ARREGLAR EN COMO *** VAMOS A MANDAR LA SNAPSHOT
@@ -159,9 +171,8 @@ void Protocol::sendSnapshot(const Snapshot &snapshot, const size_t &userId) {
   this->clientsHandlers.at(userId)->sendSnapshot(snapshot);
 }
 
-void Protocol::sendPreSnapshot(const PreSnapshot &preSnapshot,
-                               const size_t &userId) {
-  this->clientsHandlers.at(userId)->sendPreSnapshot(preSnapshot);
+void Protocol::sendPreSnapshot(const PreSnapshot &preSnapshot) {
+  this->clientsHandlers.at(preSnapshot.clientId)->sendPreSnapshot(preSnapshot);
 }
 
 void Protocol::end() {

@@ -3,13 +3,15 @@
 #include <sstream>
 
 #include "OpCodesConstans.h"
+#include "Sender.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId, Queue<std::shared_ptr<Request>>& requestQueue)
     :   userSocket(socket), id(clientId),
         requestsQueue(requestQueue),
         lobbyHandler(userSocket, clientId),
         gameLobbyHandler(userSocket, clientId),
-        inGameHandler(userSocket, clientId) {
+        inGameHandler(userSocket, clientId),
+        sender(this->userSocket){
 
     registerOpcodes();
 }
@@ -57,13 +59,14 @@ void ClientHandler::run() {
 }
 
 
-void ClientHandler::sendSnapshot(const Snapshot & snapshot) {
+void ClientHandler::sendSnapshot(const Snapshot& snapshot) {
     this->userSocket.sendall(&snapshot, sizeof(snapshot));
 
 }
 
-void ClientHandler::sendPreSnapshot(const PreSnapshot & preSnapshot) {
-    this->userSocket.sendall(&preSnapshot, sizeof(preSnapshot));
+void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
+    this->sender.send(preSnapshot.clientId);
+    this->sender.send(preSnapshot.map);
 }
 
 void ClientHandler::stopService() {
@@ -79,6 +82,27 @@ void ClientHandler::sendGamesList(const std::vector<std::string> &gamesList) con
     uint16_t size = gamesListString.size();
     this->userSocket.sendall(&size, sizeof(size));
     this->userSocket.sendall(gamesList.data(), gamesList.size());
+}
+
+void ClientHandler::sendGameLobby(const GameLobbyDTO &gameLobbyInfo) {
+    std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
+    for (const auto &playerChoice : playersChoices) {
+        uint8_t skin = playerChoice.skin;
+        uint8_t team = playerChoice.team;
+        uint8_t status = gameLobbyInfo.status;
+        this->sender.send(gameLobbyInfo.gameName);
+        this->sender.send(gameLobbyInfo.rounds);
+        this->sender.send(playerChoice.id);
+        this->sender.send(playerChoice.playerName);
+        this->sender.send(skin);
+        this->sender.send(team);
+        this->sender.send(status);
+    }
+}
+
+void ClientHandler::sendLobbyConnectonStatus(const LobbyConnectionDTO &lobbyConnection) {
+    uint8_t lobbyConnectionStatus = lobbyConnection.status;
+    this->sender.send(lobbyConnectionStatus);
 }
 
 ClientHandler::~ClientHandler() {

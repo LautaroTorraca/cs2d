@@ -10,9 +10,12 @@
 #include <functional>
 #include <unordered_map>
 
+#include "GameLobbyDTO.h"
 #include "Constants/SnapshotConstants.h"
 #include "GameLobbyHandler.h"
 #include "InGameHandler.h"
+#include "LobbyConnectionDTO.h"
+#include "Sender.h"
 
 class ClientHandler final : public Thread {
   Socket &userSocket;
@@ -22,6 +25,7 @@ class ClientHandler final : public Thread {
   LobbyHandler lobbyHandler;
   GameLobbyHandler gameLobbyHandler;
   InGameHandler inGameHandler;
+  Sender sender;
 
   std::unordered_map<uint8_t, std::function<Request()>> opcodeDispatcher;
 
@@ -39,4 +43,7 @@ public:
   void sendPreSnapshot(const PreSnapshot &preSnapshot);
   void stopService();
   void sendGamesList(const std::vector<std::string> & gamesList) const;
+  void sendGameLobby(const GameLobbyDTO & gameLobbyInfo);
+
+  void sendLobbyConnectonStatus(const LobbyConnectionDTO & lobbyConnection);
 };

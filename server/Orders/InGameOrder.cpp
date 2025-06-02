@@ -104,7 +104,6 @@ const size_t& InGameOrder::getPlayerId() const {
 }
 
 const Movement& InGameOrder::getDirection() const {
-
     return this->movementTranslator.at(this->direction);
 }
 
@@ -119,4 +118,3 @@ const uint8_t& InGameOrder::getWeaponInformation() const {
 const ProductType & InGameOrder::getProduct() const {
     return this->toProduct.at(this->weaponInformation);
 }
-

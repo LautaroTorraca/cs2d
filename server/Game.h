@@ -49,7 +49,7 @@ public:
     void move(const size_t& id, const Coordinate& displacement);
     void changeAngle(const size_t& id, const Coordinate& coordinate);
     void setWeapon(const size_t& id, const uint8_t& index);
-    [[nodiscard]] std::map<Coordinate, Tile> getMap() const;
+    [[nodiscard]] std::vector<std::vector<uint8_t>> getMap() const;
     void buy(const size_t& id, const ProductType& product);
     void buy(const size_t& id, const ProductType& product, uint16_t amount);
     void takeDrop(const size_t& id);

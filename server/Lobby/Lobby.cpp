@@ -19,20 +19,14 @@ GameLobby Lobby::createGameLobby(const size_t &id, const std::string &gameName, 
         throw std::invalid_argument("Game already exists");
     }
     this->gamesLobbies[gameName].push_back(id);
+    GameMapParser parser(this->mapsPaths.at(map));
+    this->maxPlayers.emplace(gameName, 2*parser.getMaxPlayersPerTeam());
     return GameLobby(this->mapsPaths.at(map), gameName, rounds);
 }
 
-std::vector<std::string> Lobby::listGames() const {
-    std::vector<std::string> games;
-    for (const auto &gameName: this->gamesLobbies | std::views::keys) {
-        games.emplace_back(gameName);
-    }
-    return games;
-}
-
-void Lobby::joinGame(size_t &id, std::string &gameName) {
-    if (!this->gamesLobbies.contains(gameName)) {
-        throw std::invalid_argument("Game not exists");
+void Lobby::joinGame(const size_t &id, const std::string &gameName) {
+    if (!this->gamesLobbies.contains(gameName) || this->maxPlayers.at(gameName) == this->gamesLobbies.size()) {
+        throw std::invalid_argument("You could not connect to the gameLobby");
     }
     this->gamesLobbies.at(gameName).push_back(id);
 }

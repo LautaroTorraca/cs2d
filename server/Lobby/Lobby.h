@@ -13,11 +13,11 @@
 class Lobby {
     std::map<std::string, std::vector<size_t>> gamesLobbies;
     std::map<MapType, std::string> mapsPaths;
+    std::map<std::string, uint8_t> maxPlayers;
     public:
     Lobby();
     GameLobby createGameLobby(const size_t &id, const std::string &gameName, const MapType& map, const uint8_t& rounds);
-    [[nodiscard]] std::vector<std::string> listGames() const;
-    void joinGame(size_t& id, std::string& gameName);
+    void joinGame(const size_t& id, const std::string& gameName);
     ~Lobby() = default;
 
 };

@@ -8,6 +8,7 @@
 #include "GameLobbyDTO.h"
 #include "InGameProtocolInterface.h"
 #include "PlayerChoicesDTO.h"
+#include "Movement.h"
 #include "Orders/InGameOrder.h"
 
 class ServerInGame {

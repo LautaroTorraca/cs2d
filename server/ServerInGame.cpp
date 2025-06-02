@@ -52,6 +52,8 @@ void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInf
     this->games.at(gameName).addPlayer(playerChoices.id, playerChoices.playerName, playerChoices.team, playerChoices.skin);
     this->playerToGame.emplace(playerChoices.id, gameName);
   }
+  this->games.at(gameName).spawnBomb();
+
 }
 
 void ServerInGame::move(const InGameOrder &order) {

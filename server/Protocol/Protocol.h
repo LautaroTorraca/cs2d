@@ -37,7 +37,6 @@ protected:
       requestMapper;
   Queue<std::shared_ptr<Request>> requestsQueue;
 
-  // std::map<std::string, size_t> games; TODO revisar
   void setupLobbyHandlers();
   void setupGameLobbyHandlers();
   void setupInGameHandlers();
@@ -50,13 +49,12 @@ public:
   std::unique_ptr<Order> getNextOrder();
 
   void sendGamesList(GamesListDTO &gamesList) override;
+  void sendLobbyConnectionStatus(const LobbyConnectionDTO & lobbyConnection) override;
 
   void disconnect(const DisconnectionDTO &disconnectionInfo) override;
-
-  GameLobbyOrder ready(const Request &request) override;
-  GameLobbyOrder exitLobby(const Request &request) override;
+  void sendLobby(const GameLobbyDTO &gameLobbyInfo) override;
   void sendSnapshot(const Snapshot &snapshot, const size_t &userId);
-  void sendPreSnapshot(const PreSnapshot &preSnapshot, const size_t &userId);
+  void sendPreSnapshot(const PreSnapshot &preSnapshot) override;
 
   void end();
 

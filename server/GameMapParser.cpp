@@ -64,19 +64,9 @@ std::map<Coordinate, Path> GameMapParser::getMapPath() const {
     return mapPath;
 }
 
-std::map<Coordinate, Tile> GameMapParser::getMap() const {
-
-    std::map<Coordinate, Tile> mapPath;
-
-    for (size_t i = 0; i < gameMap.size(); i++) {
-        for (size_t j = 0; j < gameMap[i].size(); j++) {
-            uint8_t tile = gameMap[i][j];
-            TileType type = this->typeInfo.at(tile);
-            mapPath.emplace(std::move(Coordinate(j, i)), this->tileTranslator.at(type)(tile));
-        }
-    }
-
-    return mapPath;
+std::vector<std::vector<uint8_t>> GameMapParser::getMap() const {
+    std::vector<std::vector<uint8_t>> map = this->gameMap;
+    return map;
 }
 
 std::vector<Coordinate> GameMapParser::getPoints(std::vector<std::map<std::string, double>> source) const {

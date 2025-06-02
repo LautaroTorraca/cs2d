@@ -1,6 +1,11 @@
 #include "server.h"
 
-Server::Server(const char *port) : protocol(port), inGameServer(protocol), gameLobbyServer(inGameServer), serverLobby(protocol, this->gameLobbyServer) {
+Server::Server(const char *port) :
+              protocol(port),
+              inGameServer(protocol),
+              gameLobbyServer(inGameServer, protocol),
+              serverLobby(protocol, this->gameLobbyServer) {
+
   setupLobbyOrders();
   setupGameLobbyOrders();
   setupInGameOrders();

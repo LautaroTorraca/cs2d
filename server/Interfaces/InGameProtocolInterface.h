@@ -7,4 +7,6 @@ class InGameProtocolInterface : public Disconnectable {
 
 public:
   virtual ~InGameProtocolInterface() = default;
+
+  virtual void sendPreSnapshot(const PreSnapshot & preSnapshot) = 0;
 };

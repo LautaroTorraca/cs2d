@@ -1,12 +1,11 @@
 #pragma once
-#include "../Orders/GameLobbyOrder.h"
-#include "../Requests/Request.h"
+#include "Disconnectable.h"
+#include "GameLobbyDTO.h"
 
-class GameLobbyProtocolInterface {
+class GameLobbyProtocolInterface : public Disconnectable {
 
 public:
-  virtual GameLobbyOrder ready(const Request &request) = 0;
-  virtual GameLobbyOrder exitLobby(const Request &request) = 0;
+  virtual void sendLobby(const GameLobbyDTO& gameLobbyInfo) = 0;
 
   virtual ~GameLobbyProtocolInterface() = default;
 };

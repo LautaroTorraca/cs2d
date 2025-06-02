@@ -36,7 +36,8 @@ ServerLobbyOrder ServerLobbyProtocol::sendGamesListHandler(const Request& reques
     const std::string list = listCreator.str();
 
     if (connectedUsers.contains(clientId)) {
-        Sender::send(*this->connectedUsers[clientId], list);
+        Sender sender(*this->connectedUsers.at(clientId));
+        sender.send(list);
     }
 
     return ServerLobbyOrder(ProtocolConstants::GAME_LIST_REQUEST, clientId);

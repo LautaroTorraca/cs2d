@@ -62,7 +62,7 @@ void Game::setWeapon(const size_t &id, const uint8_t &index) {
     this->players.at(id)->setWeapon(index);
 }
 
-std::map<Coordinate, Tile> Game::getMap() const {
+std::vector<std::vector<uint8_t>> Game::getMap() const {
     return this->gameParser.getMap();
 }
 

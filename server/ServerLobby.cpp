@@ -1,5 +1,7 @@
 #include "ServerLobby.h"
 
+#include "ConnectionStatus.h"
+#include "LobbyConnectionDTO.h"
 #include "ServerGameLobby.h"
 
 ServerLobby::ServerLobby(ServerLobbyProtocolInterface& protocol, ServerGameLobby& serverGameLobby) :
@@ -27,19 +29,28 @@ void ServerLobby::handle(const std::unique_ptr<Order> &order) const {
 }
 
 void ServerLobby::createGame(const ServerLobbyOrder &order) {
-  GameLobby gameLobby = this->lobby.createGameLobby(order.getClientId(), order.getGameName(), order.getMapType(), order.getRoundCount());
-  this->gameLobbyserver.add(order.getGameName(), gameLobby);
-  this->joinGame(order);
+  try {
+    GameLobby gameLobby = this->lobby.createGameLobby(order.getClientId(), order.getGameName(), order.getMapType(), order.getRoundCount());
+    this->gameLobbyserver.add(order.getGameName(), gameLobby);
+    this->joinGame(order);
+    LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::SUCCESS);
+    protocol.sendLobbyConnectionStatus(lobbyConnection);
+  }catch (std::runtime_error &e) {
+    LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::FAILED);
+    protocol.sendLobbyConnectionStatus(lobbyConnection);
+  }
 }
 
-void ServerLobby::listGames(const ServerLobbyOrder& order) const {
-  std::vector<std::string> games = this->lobby.listGames();
-  GamesListDTO gamesList(order.getClientId(), games);
-  protocol.sendGamesList(gamesList);
-}
-
-void ServerLobby::joinGame(const ServerLobbyOrder &order) const {
-  this->gameLobbyserver.join(order.getGameName(), order.getClientId());
+void ServerLobby::joinGame(const ServerLobbyOrder &order) {
+  try {
+    this->lobby.joinGame(order.getClientId(), order.getGameName());
+    this->gameLobbyserver.join(order.getGameName(), order.getClientId());
+    LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::SUCCESS);
+    protocol.sendLobbyConnectionStatus(lobbyConnection);
+  } catch (std::runtime_error &e) {
+    LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::FAILED);
+    protocol.sendLobbyConnectionStatus(lobbyConnection);
+  }
 }
 
 void ServerLobby::leaveGame(const ServerLobbyOrder &order) const {
