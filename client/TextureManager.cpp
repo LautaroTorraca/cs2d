@@ -3,6 +3,7 @@
 #include "SDL2pp/Texture.hh"
 // #include "client/playerDataConstants.h"
 // #include "client/playerDataConstants.h"
+#include "Constants/ClientConstants.h"
 #include "gameConstants.h"
 #include "weaponConstants.h"
 // #include <algorithm>
@@ -12,11 +13,20 @@
 
 TextureManager::TextureManager(Renderer &renderer) : renderer(renderer) {
 
-  // terrain
-  // texturesTiles.emplace(
-  //     GameConstants::TERRAIN,
-  //     Texture(renderer, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-  // "client/assets/terrain/terrain.png"));
+  // UI
+  texturesUI.emplace(Ui_type::NumsUI,
+                     Texture(renderer,
+                             "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                             "client/assets/ui/hud_nums.png"));
+  texturesUI.emplace(Ui_type::SymbUI,
+                     Texture(renderer,
+                             "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                             "client/assets/ui/hud_symbols.png"));
+  texturesUI.emplace(Ui_type::CursorUI,
+                     Texture(renderer,
+                             "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                             "client/assets/ui/pointer.png"));
+
   // weapons
   texturesWeapons.emplace(
       WeaponConstants::AWP,
@@ -97,6 +107,8 @@ Texture &TextureManager::getDroppedWeapon(WeaponConstants::WeaponId id) {
 Texture &TextureManager::getWeapon(WeaponConstants::WeaponId id) {
   return texturesWeapons.at(id);
 }
+
+Texture &TextureManager::getUi(Ui_type id) { return texturesUI.at(id); }
 
 Texture TextureManager::removeBackground(std::string filename) {
 

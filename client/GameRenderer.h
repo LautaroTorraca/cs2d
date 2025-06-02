@@ -15,24 +15,6 @@ using namespace DTO;
 // constexpr int RES_WIDTH = 640;
 // constexpr int RES_HEIGTH = 400;
 
-constexpr int RES_WIDTH = 1280;
-constexpr int RES_HEIGTH = 720;
-
-constexpr int LOGICAL_WIDTH = 27;
-constexpr int LOGICAL_HEIGHT = 15;
-
-constexpr int MAP_WIDTH = 100;
-constexpr int MAP_HEIGHT = 60;
-
-constexpr int TILE_SRC_SIZE = 32;
-constexpr int TILE_WIDTH = RES_WIDTH / LOGICAL_WIDTH;
-constexpr int TILE_HEIGHT = RES_HEIGTH / LOGICAL_HEIGHT;
-
-constexpr int PLAYER_HEIGTH = RES_WIDTH / LOGICAL_WIDTH;
-constexpr int PLAYER_WIDTH = RES_HEIGTH / LOGICAL_HEIGHT;
-
-constexpr double WPN_SZ_MULT = 1.3;
-
 class GameRenderer {
 
 private:
@@ -43,6 +25,7 @@ private:
   size_t clientID;
 
   void renderMap(std::vector<std::vector<int>> tileMap, Coords offset);
+  void renderUI(Stats stat, Inventory inv, Coords mouseCoords);
   void renderPlayers(std::vector<PlayerData> players, Coords offset,
                      size_t clientId);
   void renderPlayer(Texture &sprite, PlayerData player, int variation,
@@ -54,7 +37,8 @@ private:
   void renderTile(Texture &mapTile, int tile, int pos, Coords offset);
 
   void renderFloorWeapon(Texture &sprite, DroppedWeaponDTO wpn, Coords offset);
-  void renderPlayersAsCubes(std::vector<PlayerData> players);
+
+  void renderPointer(Coords mouseCoords);
 
 public:
   GameRenderer(std::vector<std::vector<int>> tileMap, size_t clientId);

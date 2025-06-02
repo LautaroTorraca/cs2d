@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(POLICY CMP0135)
   cmake_policy(SET CMP0135 NEW)
@@ -96,28 +97,13 @@ endif()
 
 if(TALLER_SERVER)
 
-  project(
-    fkYAML
-    VERSION 0.4.2
-    LANGUAGES CXX)
-  FetchContent_Declare(
-    fkYAML
-    GIT_REPOSITORY https://github.com/fktn-k/fkYAML.git
-    GIT_TAG v0.4.2)
-  # HACK: arreglar esa cosa dudosa de lio
-  #
-
-  # ) FetchContent_Declare( yaml-cpp GIT_REPOSITORY
-  # https://github.com/jbeder/yaml-cpp.git GIT_TAG yaml-cpp-0.6.3 # ✅ esta es la
-  # tag válida para esa versión ) FetchContent_MakeAvailable(yaml-cpp)
-  FetchContent_MakeAvailable(fkYAML)
-
+  find_package(fkYAML REQUIRED)
   add_executable(taller_server)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
   # add_subdirectory(libs/fkYAML)
   set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
-  target_link_libraries(taller_server taller_common fkYAML)
+  target_link_libraries(taller_server taller_common fkYAML::fkYAML)
 
 endif()
 

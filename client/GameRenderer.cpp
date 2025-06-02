@@ -1,27 +1,30 @@
 #include "GameRenderer.h"
 // #include "SDL_blendmode.h"
 // #include "SDL_timer.h"
-#include "SDL2pp/Optional.hh"
-#include "gameConstants.h"
+// #include "SDL2pp/Optional.hh"
+// #include "gameConstants.h"
 // #include "weaponConstants.h"
-#include <SDL2pp/SDL2pp.hh>
-
-#include <SDL2pp/Point.hh>
-#include <SDL2pp/Rect.hh>
-#include <SDL2pp/Renderer.hh>
-#include <SDL2pp/SDL.hh>
-#include <SDL2pp/Surface.hh>
-#include <SDL2pp/Texture.hh>
-#include <SDL2pp/Window.hh>
+#include "Constants/ClientConstants.h"
+#include "Constants/PlayerDataConstants.h"
+#include "SDL2pp/Texture.hh"
+#include "TextureManager.h"
+// #include "server/Game.h"
+// #include <SDL2pp/Point.hh>
+// #include <SDL2pp/Rect.hh>
+// #include <SDL2pp/Renderer.hh>
+// #include <SDL2pp/SDL.hh>
+// #include <SDL2pp/SDL2pp.hh>
+// #include <SDL2pp/Surface.hh>
+// #include <SDL2pp/Texture.hh>
+// #include <SDL2pp/Window.hh>
 // #include <cstddef>
-#include <cstddef>
-#include <cstdlib>
+// #include <cstddef>
+// #include <cstdlib>
 // #include <iostream>
-#include <linux/kd.h>
 // #include <memory>
-#include <stddef.h>
-#include <string>
-#include <vector>
+// #include <stddef.h>
+// #include <string>
+// #include <vector>
 // #include <vector>
 
 GameRenderer::GameRenderer(std::vector<std::vector<int>> tileMap,
@@ -34,7 +37,6 @@ GameRenderer::GameRenderer(std::vector<std::vector<int>> tileMap,
 void GameRenderer::renderScreen(Snapshot gameSnapshot) {
   renderer.Clear();
 
-  // std::unique_ptr<PlayerData> currentPlayer;
   Coords offsetCoords;
   for (PlayerData player : gameSnapshot.game.players) {
     if (player.id == clientID) {
@@ -43,21 +45,15 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot) {
     }
   }
 
-  // size_t targetId = gameSnapshot.clientId;
-  // auto it = std::find_if(
-  //     gameSnapshot.playerList.begin(), gameSnapshot.playerList.end(),
-  //     [targetId](const PlayerData &p) { return p.id == targetId; });
-  // if (it == gameSnapshot.playerList.end())
-  //   throw -1;
   offsetCoords.x -= RES_WIDTH / 2;
   offsetCoords.y -= RES_HEIGTH / 2;
 
   renderMap(tileMap, offsetCoords);
   renderFloorItems(gameSnapshot.game.map.droppedWeapons, offsetCoords);
   renderPlayers(gameSnapshot.game.players, offsetCoords, clientID);
-  // renderPlayersAsCubes(gameSnapshot.players);
+  renderUI()
 
-  renderer.Present();
+      renderer.Present();
 }
 
 void GameRenderer::renderMap(std::vector<std::vector<int>> tileMap,
@@ -96,21 +92,6 @@ void GameRenderer::renderPlayers(std::vector<PlayerData> players, Coords offset,
       renderCurrentPlayer(skin, player, numero, offset);
     else
       renderPlayer(skin, player, numero, offset);
-  }
-}
-
-void GameRenderer::renderPlayersAsCubes(std::vector<PlayerData> players) {
-  for (PlayerData player : players) {
-
-    Rect playerCube(player.coords.x, player.coords.y, PLAYER_WIDTH,
-                    PLAYER_HEIGTH);
-
-    if (player.team == GameConstants::Team::TERRORISTS) {
-      renderer.SetDrawColor(196, 162, 64, 255);
-    } else {
-      renderer.SetDrawColor(43, 38, 122, 255);
-    }
-    renderer.FillRect(playerCube);
   }
 }
 
@@ -181,4 +162,19 @@ void GameRenderer::renderFloorWeapon(Texture &sprite, DroppedWeaponDTO wpn,
                 wpn.angle);
 }
 
+void GameRenderer::renderUI(Stats stat, Inventory inv, Coords mouseCoords) {
+
+  renderPointer(mouseCoords);
+}
+
+void GameRenderer::renderPointer(Coords mouseCoords) {
+
+  Texture &sprite = textureManager.getUi(Ui_type::CursorUI);
+
+  renderer.Copy(
+      sprite, Rect(mouseCoords.x, mouseCoords.y, TILE_SRC_SIZE, TILE_SRC_SIZE),
+      Rect(player.coords.x - offset.x, player.coords.y - offset.y, PLAYER_WIDTH,
+           PLAYER_HEIGTH),
+      player.angle);
+}
 //

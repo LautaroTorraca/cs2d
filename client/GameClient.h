@@ -1,10 +1,19 @@
 #pragma once
+#include "InputHandler.h"
 
-#include "client/GameRenderer.h"
+#include "Protocol_testing.h"
+
+#include <string>
+
+constexpr std::string PORT = "8080";
+constexpr std::string HOSTNAME = "127.0.0.1";
+// #include "client/GameRenderer.h"
+
 class GameClient {
-
   bool running;
-  GameRenderer gameRenderer;
+  ProtocolTesting protocol;
+  InputHandler inputHandler;
+  // GameRenderer gameRenderer;
 
 public:
   GameClient();

@@ -4,16 +4,19 @@
 // #include "playerDataConstants.h"
 // #include "weaponConstants.h"
 
-// #include <SDL2/SDL.h>
-// #include <SDL2pp/SDL2pp.hh>
+#include "Protocol_testing.h"
+#include "SDL_events.h"
+#include <SDL2pp/SDL2pp.hh>
 //
 // using namespace SDL2pp;
 // using namespace DTO;
 
 class InputHandler {
-
 private:
+  ProtocolTesting &protocol;
+
 public:
-  InputHandler();
+  InputHandler(ProtocolTesting &protocol);
   void processCommand();
+  bool processEvent(SDL_Event event);
 };

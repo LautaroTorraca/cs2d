@@ -19,9 +19,9 @@
 #include "../Interfaces/InGameProtocolInterface.h"
 #include "../Interfaces/ServerLobbyProtocolInterface.h"
 
-class Protocol : public ServerLobbyProtocolInterface,
-                 public GameLobbyProtocolInterface,
-                 public InGameProtocolInterface {
+class ProtocolTesting : public ServerLobbyProtocolInterface,
+                        GameLobbyProtocolInterface,
+                        InGameProtocolInterface {
 protected:
   Socket acceptorSocket;
   std::thread acceptorThread;
@@ -44,7 +44,7 @@ protected:
   void handleNewConnection();
 
 public:
-  explicit Protocol(const std::string &port);
+  explicit ProtocolTesting(const std::string &port);
 
   std::unique_ptr<Order> getNextOrder();
 
@@ -64,7 +64,7 @@ public:
 
   void end();
 
-  ~Protocol() override;
+  ~ProtocolTesting() override;
 };
 
 #endif // PROTOCOL_H

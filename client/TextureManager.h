@@ -1,4 +1,5 @@
 #pragma once
+#include "Constants/ClientConstants.h"
 #include "SDL2pp/Texture.hh"
 // #include "client/playerDataConstants.h"
 #include "gameConstants.h"
@@ -18,6 +19,7 @@ private:
   Renderer &renderer;
   std::unordered_map<GameConstants::Skins, Texture> texturesSkins;
   std::unordered_map<int, Texture> texturesTiles;
+  std::unordered_map<int, Texture> texturesUI;
   std::unordered_map<int, Texture> texturesWeapons;
 
   Texture removeBackground(std::string filename);
@@ -28,4 +30,5 @@ public:
   Texture &getTileMap(GameConstants::MapType id);
   Texture &getDroppedWeapon(WeaponConstants::WeaponId id);
   Texture &getWeapon(WeaponConstants::WeaponId id);
+  Texture &getUi(Ui_type id);
 };

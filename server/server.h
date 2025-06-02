@@ -12,8 +12,9 @@
 #include "ServerLobby.h"
 
 class Server {
-  Protocol protocol;
-  ServerInGame inGameServer;
+  ProtocolTesting protocol;
+
+  ServerLobby serverLobby;
   ServerGameLobby gameLobbyServer;
   ServerLobby serverLobby;
 
