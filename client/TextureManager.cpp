@@ -11,6 +11,9 @@
 
 // #include "Surface.h"
 
+#include "server/Skin.h"
+#include "server/Team.h"
+
 TextureManager::TextureManager(Renderer &renderer) : renderer(renderer) {
 
   // UI
@@ -29,61 +32,61 @@ TextureManager::TextureManager(Renderer &renderer) : renderer(renderer) {
 
   // weapons
   texturesWeapons.emplace(
-      WeaponConstants::AWP,
+      WeaponType::AWP,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/weapons/awp.png"));
   texturesWeapons.emplace(
-      WeaponConstants::M3,
+      WeaponType::M3,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/weapons/m3.png"));
   texturesWeapons.emplace(
-      WeaponConstants::GLOCK,
+      WeaponType::GLOCK,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/weapons/glock.png"));
   texturesWeapons.emplace(
-      WeaponConstants::KNIFE,
+      WeaponType::KNIFE,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/weapons/knife.png"));
   texturesWeapons.emplace(
-      WeaponConstants::BOMB,
+      WeaponType::BOMB,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/weapons/bomb.png"));
   texturesWeapons.emplace(
-      WeaponConstants::AK47,
+      WeaponType::AK47,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/weapons/ak47.png"));
 
   // skins
   texturesSkins.emplace(
-      GameConstants::SEAL_FORCE,
+      Skin::SEAL_FORCE,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/CT/ct-2.png"));
   texturesSkins.emplace(
-      GameConstants::FRENCH_GIGN,
+      Skin::FRENCH_GIGN,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/CT/ct-3.png"));
   texturesSkins.emplace(
-      GameConstants::UK_SAS,
+      Skin::UK_SAS,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/CT/ct-1.png"));
   texturesSkins.emplace(
-      GameConstants::GERMAN_GSG9,
+      Skin::GERMAN_GSG9,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/CT/ct-4.png"));
   texturesSkins.emplace(
-      GameConstants::L337_KREW,
+      Skin::L337_KREW,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/TT/tt-2.png"));
   texturesSkins.emplace(
-      GameConstants::ARCTIC_AVENGER,
+      Skin::ARCTIC_AVENGER,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/TT/tt-3.png"));
   texturesSkins.emplace(
-      GameConstants::PHOENIX,
+      Skin::PHOENIX,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/TT/tt-1.png"));
   texturesSkins.emplace(
-      GameConstants::GUERRILLA,
+      Skin::GUERRILLA,
       removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
                        "client/assets/skins/TT/tt-4.png"));
   // maps
@@ -93,18 +96,18 @@ TextureManager::TextureManager(Renderer &renderer) : renderer(renderer) {
                         "client/assets/tilemaps/dust.png"));
 }
 
-Texture &TextureManager::getSkin(GameConstants::Skins id) {
+Texture &TextureManager::getSkin(Skin id) {
   return texturesSkins.at(id);
 }
 Texture &TextureManager::getTileMap(GameConstants::MapType id) {
   return texturesTiles.at(id);
 }
 
-Texture &TextureManager::getDroppedWeapon(WeaponConstants::WeaponId id) {
+Texture &TextureManager::getDroppedWeapon(WeaponType id) {
   return texturesWeapons.at(id);
 }
 
-Texture &TextureManager::getWeapon(WeaponConstants::WeaponId id) {
+Texture &TextureManager::getWeapon(WeaponType id) {
   return texturesWeapons.at(id);
 }
 

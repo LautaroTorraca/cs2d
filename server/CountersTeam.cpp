@@ -37,3 +37,9 @@ void CountersTeam::giveMoney(const uint16_t &money) {
         counter->give(money);
     }
 }
+
+void CountersTeam::kickOut(const size_t& id) {
+    if (this->counters.contains(id)) {
+        this->counters.erase(id);
+    }
+}

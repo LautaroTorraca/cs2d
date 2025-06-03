@@ -3,8 +3,7 @@
 #include <sstream>
 
 #include "GameInfoDTO.h"
-#include "OpCodesConstans.h"
-#include "Sender.h"
+#include "Constants/OpCodesConstans.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId, Queue<std::shared_ptr<Request>>& requestQueue)
     :   userSocket(socket), id(clientId),
@@ -28,8 +27,8 @@ void ClientHandler::registerOpcodes() {
 
     opcodeDispatcher[OPCODE_PLAYER_MOVEMENT] = [&]() { return inGameHandler.handle(OPCODE_PLAYER_MOVEMENT); };
     opcodeDispatcher[OPCODE_SHOOT] = [&]() { return inGameHandler.handle(OPCODE_SHOOT); };
-    opcodeDispatcher[OPCODE_BUY_AMMO] = [&]() { return inGameHandler.handle(OPCODE_BUY_AMMO); };
-    opcodeDispatcher[OPCODE_BUY_WEAPON] = [&]() { return inGameHandler.handle(OPCODE_BUY_WEAPON); };
+    opcodeDispatcher[OPCODE_BUY] = [&]() { return inGameHandler.handle(OPCODE_BUY); };
+    opcodeDispatcher[OPCODE_CHANGE_ANGLE] = [&]() { return inGameHandler.handle(OPCODE_CHANGE_ANGLE); };
     opcodeDispatcher[OPCODE_PICK_UP_ITEM] = [&]() { return inGameHandler.handle(OPCODE_PICK_UP_ITEM); };
     opcodeDispatcher[OPCODE_DROP_ITEM] = [&]() { return inGameHandler.handle(OPCODE_DROP_ITEM); };
     opcodeDispatcher[OPCODE_SWITCH_WEAPON] = [&]() { return inGameHandler.handle(OPCODE_SWITCH_WEAPON); };
@@ -62,8 +61,10 @@ void ClientHandler::run() {
 
 void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
     for (auto& playerInfo : gameInfo.getPlayersInfo()) {
+        this->sender.send(NEW);
         this->sender.send(playerInfo);
     }
+    this->sender.send(STOP);
     uint8_t status = gameInfo.getStatus();
     this->sender.send(gameInfo.getCurrentRound());
     this->sender.send(gameInfo.getCountersWinsRounds());
@@ -71,9 +72,10 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
     this->sender.send(gameInfo.getPlantedBombPosition());
     this->sender.send(status);
     for ( auto& drop : gameInfo.getDropsInfo() ) {
+        this->sender.send(NEW);
         this->sender.send(drop);
-
     }
+    this->sender.send(STOP);
 
 }
 

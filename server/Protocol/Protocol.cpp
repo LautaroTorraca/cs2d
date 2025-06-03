@@ -1,5 +1,5 @@
 #include "Protocol.h"
-#include "../common/liberror.h"
+#include "common/liberror.h"
 #include <sys/socket.h>
 
 #include "Constants/KeyContants.h"
@@ -69,15 +69,15 @@ void Protocol::setupInGameHandlers() {
     return std::make_unique<InGameOrder>(inGameProtocol.handleRequest(request));
   };
 
-  requestMapper[SHOOT] = [this](const Request &request) {
+  requestMapper[ATTACK] = [this](const Request &request) {
     return std::make_unique<InGameOrder>(inGameProtocol.handleRequest(request));
   };
 
-  requestMapper[BUY_AMMO] = [this](const Request &request) {
+  requestMapper[BUY] = [this](const Request &request) {
     return std::make_unique<InGameOrder>(inGameProtocol.handleRequest(request));
   };
 
-  requestMapper[BUY_WEAPON] = [this](const Request &request) {
+  requestMapper[CHANGE_ANGLE] = [this](const Request &request) {
     return std::make_unique<InGameOrder>(inGameProtocol.handleRequest(request));
   };
 

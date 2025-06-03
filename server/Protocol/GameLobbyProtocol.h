@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Requests/Request.h"
+#include "Requests/Request.h"
 #include "Orders/GameLobbyOrder.h"
 #include "Handlers/GameLobbyHandler.h"
 #include <map>

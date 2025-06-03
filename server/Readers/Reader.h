@@ -5,6 +5,9 @@
 #include <cstdint>
 #include <string>
 
+#include "common/Constants/SnapshotConstants.h"
+#include "client/DropInformation.h"
+#include "client/PlayerInformation.h"
 #include "common/socket.h"
 
 
@@ -23,7 +26,23 @@ public:
 
     [[nodiscard]] std::string stringReader() const;
 
+    [[nodiscard]] double doubleRead() const;
 
+    size_t readSizeT() const;
+
+    int readInt() const;
+
+    CoordinateInformation readCoordinateInformation() const;
+
+    ProjectileInformation readProjectile() const;
+
+    WeaponInformation readWeapon() const;
+
+    PlayerInformation readPlayer() const;
+
+    DropInformation readDrop() const;
+
+    Snapshot readSnapShot() const;
 };
 
 

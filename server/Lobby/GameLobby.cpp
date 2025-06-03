@@ -44,3 +44,12 @@ GameLobbyDTO GameLobby::getInfo() const {
     }
     return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath};
 }
+
+void GameLobby::kick(const size_t &id) {
+    if (!this->joinedPlayers.contains(id)) return;
+    this->joinedPlayers.erase(id);
+    this->playersChoices.erase(id);
+    if (this->playersChoices.size() == this->joinedPlayers.size()) {
+        this->status = READY_STATUS;
+    }
+}

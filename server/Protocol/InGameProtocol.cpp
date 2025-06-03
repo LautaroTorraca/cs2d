@@ -3,7 +3,7 @@
 #include <cstring>
 
 #include "Constants/ProtocolContants.h"
-#include "KeyContants.h"
+#include "Constants/KeyContants.h"
 
 InGameProtocol::InGameProtocol(
     std::map<size_t, std::unique_ptr<Socket>> &connectedUsers)
@@ -13,7 +13,7 @@ InGameProtocol::InGameProtocol(
   requestHandlers[PLAYER_MOVEMENT] = [this](const Request &request) {
     return movementHandler(request);
   };
-  requestHandlers[SHOOT] = [this](const Request &request) {
+  requestHandlers[ATTACK] = [this](const Request &request) {
     return shootHandler(request);
   };
   requestHandlers[PICK_UP_ITEM] = [this](const Request &request) {
@@ -22,11 +22,11 @@ InGameProtocol::InGameProtocol(
   requestHandlers[DROP_ITEM] = [this](const Request &request) {
     return dropItemHandler(request);
   };
-  requestHandlers[BUY_AMMO] = [this](const Request &request) {
-    return buyAmmoHandler(request);
+  requestHandlers[BUY] = [this](const Request &request) {
+    return buyHandler(request);
   };
-  requestHandlers[BUY_WEAPON] = [this](const Request &request) {
-    return buyWeaponHandler(request);
+  requestHandlers[CHANGE_ANGLE] = [this](const Request &request) {
+    return changeAngleHandler(request);
   };
   requestHandlers[SWITCH_WEAPON] = [this](const Request &request) {
     return switchWeaponHandler(request);
@@ -66,7 +66,7 @@ InGameOrder InGameProtocol::shootHandler(const Request &request) {
 
   const uint8_t direction = message.at(directionKey).front();
 
-  return InGameOrder(ProtocolConstants::SHOOT, clientId, direction);
+  return InGameOrder(ProtocolConstants::ATTACK, clientId, direction);
 }
 
 InGameOrder InGameProtocol::pickUpItemHandler(const Request &request) {
@@ -93,24 +93,28 @@ InGameOrder InGameProtocol::switchWeaponHandler(const Request &request) {
                      slot); // weapon, direction, ammout dummys
 }
 
-InGameOrder InGameProtocol::buyWeaponHandler(const Request &request) {
+InGameOrder InGameProtocol::changeAngleHandler(const Request &request) {
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
 
-  const uint8_t weapon = message.at(weaponKey).front();
+  double x;
+  double y;
+  std::vector<char> serializedX = message.at(xPosKey);
+  std::vector<char> serializedY = message.at(yPosKey);
+  std::memcpy(&x, serializedX.data(), sizeof(double));
+  std::memcpy(&y, serializedY.data(), sizeof(double));
 
-  return InGameOrder(ProtocolConstants::BUY_WEAPON, clientId,
-                     weapon); // slot, direction, ammout dummys
+  return InGameOrder(ProtocolConstants::CHANGE_ANGLE, clientId, std::pair<double, double>(x, y)); // slot, direction, ammout dummys
 }
 
-InGameOrder InGameProtocol::buyAmmoHandler(const Request &request) {
+InGameOrder InGameProtocol::buyHandler(const Request &request) {
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
 
-  const uint8_t ammoAmount = message.at(ammoAmountKey).front();
+  const uint8_t amount = message.at(ammoAmountKey).front();
   const uint8_t weapon = message.at(weaponKey).front();
 
-  return InGameOrder(ProtocolConstants::BUY_AMMO, clientId, ammoAmount, weapon);
+  return InGameOrder(ProtocolConstants::BUY, clientId, amount, weapon);
 }
 
 InGameOrder InGameProtocol::plantBombHandler(const Request &request) {

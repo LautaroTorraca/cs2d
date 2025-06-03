@@ -21,26 +21,26 @@ private:
   Window window;
   Renderer renderer;
   TextureManager textureManager;
-  std::vector<std::vector<int>> tileMap;
+  std::vector<std::vector<uint8_t>> tileMap;
   size_t clientID;
 
-  void renderMap(std::vector<std::vector<int>> tileMap, Coords offset);
-  void renderUI(Stats stat, Inventory inv, Coords mouseCoords);
-  void renderPlayers(std::vector<PlayerData> players, Coords offset,
+  void renderMap(std::vector<std::vector<uint8_t>> tileMap, CoordinateInformation offset);
+  //void renderUI(Stats stat, Inventory inv, Coords mouseCoords);
+  void renderPlayers(std::vector<PlayerInformation> players, CoordinateInformation offset,
                      size_t clientId);
-  void renderPlayer(Texture &sprite, PlayerData player, int variation,
-                    Coords offset);
-  void renderCurrentPlayer(Texture &sprite, PlayerData player, int variation,
-                           Coords offset);
-  void renderFloorItems(std::vector<DroppedWeaponDTO> weaponList,
-                        Coords offset);
-  void renderTile(Texture &mapTile, int tile, int pos, Coords offset);
+  void renderPlayer(Texture &sprite, PlayerInformation player, int variation,
+                    CoordinateInformation offset);
+  void renderCurrentPlayer(Texture &sprite, PlayerInformation player, int variation,
+                           CoordinateInformation offset);
+  void renderFloorItems(std::vector<DropInformation> weaponList,
+                        CoordinateInformation offset);
+  void renderTile(Texture &mapTile, int tile, int pos, CoordinateInformation offset);
 
-  void renderFloorWeapon(Texture &sprite, DroppedWeaponDTO wpn, Coords offset);
+  void renderFloorWeapon(Texture &sprite, DropInformation wpn, CoordinateInformation offset);
 
-  void renderPointer(Coords mouseCoords);
+  //void renderPointer(Coords mouseCoords);
 
 public:
-  GameRenderer(std::vector<std::vector<int>> tileMap, size_t clientId);
+  GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);
   void renderScreen(Snapshot gameSnapshot);
 };

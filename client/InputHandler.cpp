@@ -1,10 +1,8 @@
 #include "InputHandler.h"
 #include "Constants/ClientConstants.h"
 #include "MoveConstants.h"
-// #include "Protocol.h"
-#include "Protocol_testing.h"
 
-InputHandler::InputHandler(ProtocolTesting &protocol) : protocol(protocol) {}
+InputHandler::InputHandler(Protocol &protocol) : protocol(protocol) {}
 
 bool InputHandler::processEvent(SDL_Event event) {
   if (event.type == SDL_QUIT) {
@@ -34,8 +32,8 @@ bool InputHandler::processEvent(SDL_Event event) {
     double angleInRads = atan2(dy, dx);
     double angleInDegree = angleInRads * 180.0 / M_PI;
     angleInDegree += 90;
-
-    protocol.angle(angleInDegree);
+    PositionDTO position(dx, dy);
+    protocol.changeAngle(position);
   }
   return true;
 }

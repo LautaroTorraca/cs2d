@@ -26,6 +26,8 @@ class TerroristsTeam : public Advancer {
     void advance(const double &actualTime) override;
 
     void giveMoney(const uint16_t& money);
+
+    void kickOut(const size_t& id);
 };
 
 

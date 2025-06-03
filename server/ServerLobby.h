@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "ServerGameLobby.h"
-#include "ServerLobbyProtocolInterface.h"
+#include "Interfaces/ServerLobbyProtocolInterface.h"
 #include "Lobby/Lobby.h"
 #include "Orders/ServerLobbyOrder.h"
 
@@ -25,6 +25,5 @@ public:
     void createGame(const ServerLobbyOrder& order);
     void joinGame(const ServerLobbyOrder& order);
     void leaveGame(const ServerLobbyOrder& order) const;
-
-    void listGames(const ServerLobbyOrder & order);
+    void listGames(const ServerLobbyOrder & order) const;
 };

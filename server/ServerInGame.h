@@ -5,10 +5,10 @@
 #include <memory>
 
 #include "Game.h"
-#include "GameLobbyDTO.h"
-#include "InGameProtocolInterface.h"
-#include "PlayerChoicesDTO.h"
-#include "Movement.h"
+#include "DTO/GameLobbyDTO.h"
+#include "Interfaces/InGameProtocolInterface.h"
+#include "DTO/PlayerChoicesDTO.h"
+#include "Constants/Movement.h"
 #include "Orders/InGameOrder.h"
 
 class ServerInGame {
@@ -21,8 +21,8 @@ class ServerInGame {
     void move(const InGameOrder &order);
     void attack(const InGameOrder & order);
     void pickUp(const InGameOrder & order);
-    void buyAmmo(const InGameOrder & order);
-    void buyWeapon(const InGameOrder & order);
+    void buy(const InGameOrder & order);
+    void changeAngle(const InGameOrder & order);
     void changeWeapon(const InGameOrder & order);
     void plantBomb(const InGameOrder & order);
     void defuseBomb(const InGameOrder & order);
@@ -32,4 +32,5 @@ public:
     explicit ServerInGame(InGameProtocolInterface& protocol);
     void handle(const std::unique_ptr<Order>& order) const;
     void addNewGame(std::string& gameName, const GameLobbyDTO& gameInfo);
+    void leaveGameLobby(const size_t& id);
 };

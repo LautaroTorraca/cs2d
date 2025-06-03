@@ -61,15 +61,15 @@ void Server::setupInGameOrders() {
         inGameServer.handle(order);
       };
 
-  orderTranslator[IN_GAME_BUY_AMMO] =
+  orderTranslator[IN_GAME_BUY] =
       [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
       };
 
-  orderTranslator[IN_GAME_BUY_WEAPON] =
+  /*orderTranslator[IN_GAME_BUY_WEAPON] =
       [this](const std::unique_ptr<Order> &order) {
         inGameServer.handle(order);
-      };
+      };*/
 
   orderTranslator[IN_GAME_SWITCH_WEAPON] =
       [this](const std::unique_ptr<Order> &order) {

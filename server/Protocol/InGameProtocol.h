@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Requests/Request.h"
+#include "Requests/Request.h"
 #include "Orders/InGameOrder.h"
 #include "Handlers/InGameHandler.h"
 #include <map>
@@ -17,8 +17,8 @@ class InGameProtocol {
     InGameOrder shootHandler(const Request& request);
     InGameOrder pickUpItemHandler(const Request& request);
     InGameOrder dropItemHandler(const Request& request);
-    InGameOrder buyAmmoHandler(const Request& request);
-    InGameOrder buyWeaponHandler(const Request& request);
+    InGameOrder buyHandler(const Request& request);
+    InGameOrder changeAngleHandler(const Request& request);
     InGameOrder switchWeaponHandler(const Request& request);
     InGameOrder plantBombHandler(const Request& request);
     InGameOrder defuseBombHandler(const Request& request);

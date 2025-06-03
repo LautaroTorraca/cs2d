@@ -9,8 +9,8 @@
 InGameHandler::InGameHandler(Socket& user, const size_t &userId) : userSocket(user), userId(userId), reader(user) {
     requestMapper[OPCODE_PLAYER_MOVEMENT] = [&]() { return moveRequest(); };
     requestMapper[OPCODE_SHOOT] = [&]() { return shootRequest(); };
-    requestMapper[OPCODE_BUY_AMMO] = [&]() { return buyAmmoRequest(); };
-    requestMapper[OPCODE_BUY_WEAPON] = [&]() { return buyWeaponsRequest(); };
+    requestMapper[OPCODE_BUY] = [&]() { return buyRequest(); };
+    //requestMapper[OPCODE_BUY_WEAPON] = [&]() { return buyWeaponsRequest(); };
     requestMapper[OPCODE_PICK_UP_ITEM] = [&]() { return pickUpItemRequest(); };
     requestMapper[OPCODE_DROP_ITEM] = [&]() { return dropItemRequest(); };
     requestMapper[OPCODE_SWITCH_WEAPON] = [&]() { return switchWeaponsRequest(); };
@@ -61,22 +61,29 @@ Request InGameHandler::dropItemRequest() const {
     return Request(userId, message);
 }
 
-Request InGameHandler::buyAmmoRequest() const {
-    const uint8_t amount = reader.u8tReader();
+Request InGameHandler::buyRequest() const {
     const uint8_t weapon = reader.u8tReader();
+    const uint8_t amount = reader.u8tReader();
     std::map<std::string, std::vector<char>> message;
-    message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_BUY_AMMO));
-    message.emplace(ammoAmountKey, std::vector<char>(SINGLE_VALUE, amount));
+    message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_BUY));
     message.emplace(weaponKey, std::vector<char>(SINGLE_VALUE, weapon));
+    message.emplace(ammoAmountKey, std::vector<char>(SINGLE_VALUE, amount));
 
     return Request(userId, message);
 }
 
-Request InGameHandler::buyWeaponsRequest() const {
-    const uint8_t weapon = reader.u8tReader();
+
+Request InGameHandler::changeAngleRequest() const {
+    const double x = reader.doubleRead();
+    const double y = reader.doubleRead();
     std::map<std::string, std::vector<char>> message;
-    message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_BUY_WEAPON));
-    message.emplace(weaponKey, std::vector<char>(SINGLE_VALUE, weapon));
+    message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_CHANGE_ANGLE));
+    std::vector<char> xValue(sizeof(double));
+    std::memcpy(xValue.data(), &x, sizeof(double));
+    message.emplace(xPosKey, xValue);
+    std::vector<char> yValue(sizeof(double));
+    std::memcpy(yValue.data(), &y, sizeof(double));
+    message.emplace(yPosKey, xValue);
 
     return Request(userId, message);
 }

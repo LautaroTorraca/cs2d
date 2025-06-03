@@ -11,12 +11,12 @@
 #include <unordered_map>
 
 #include "GameInfoDTO.h"
-#include "GameLobbyDTO.h"
+#include "../DTO/GameLobbyDTO.h"
 #include "Constants/SnapshotConstants.h"
 #include "GameLobbyHandler.h"
 #include "InGameHandler.h"
-#include "LobbyConnectionDTO.h"
-#include "Sender.h"
+#include "DTO/LobbyConnectionDTO.h"
+#include "Sender/Sender.h"
 
 class ClientHandler final : public Thread {
   Socket &userSocket;

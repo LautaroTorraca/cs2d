@@ -4,7 +4,7 @@
 
 #include "GameSender.h"
 
-#include "SnapshotConstants.h"
+#include "common/Constants/SnapshotConstants.h"
 
 #define TIME_ADVANCE_IN_SECONDS 0.01
 

@@ -130,6 +130,15 @@ void Game::nextRound(const double& actualTime) {
     this->currentRound++;
 }
 
+void Game::kick(const size_t& id) {
+    this->counters.kickOut(id);
+    this->terrorists.kickOut(id);
+    if (this->players.contains(id)) {
+        this->gameMap.remove(this->players.at(id));
+        this->players.erase(id);
+    }
+}
+
 void Game::terroristsWins() {
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
     this->status = TERRORISTS_WIN;

@@ -12,16 +12,14 @@ enum Opcode : uint8_t {
   DISCONNECT = 0x0F,
 
   // Preparación del Juego (0x10 -> 0x1F)
-  SELECT_TEAM = 0x10,
-  SELECT_SKIN = 0x11,
   READY = 0x12,
   EXIT_LOBBY = 0x1F,
 
   // Durante el Juego (0x20 -> 0x2F)
   PLAYER_MOVEMENT = 0x20,
-  SHOOT = 0x22,
-  BUY_AMMO = 0x23,
-  BUY_WEAPON = 0x24,
+  ATTACK = 0x22,
+  BUY = 0x23,
+  CHANGE_ANGLE = 0x24,
   PICK_UP_ITEM = 0x25,
   DROP_ITEM = 0x26,
   SWITCH_WEAPON = 0x27,

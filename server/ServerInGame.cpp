@@ -8,9 +8,9 @@ ServerInGame::ServerInGame(InGameProtocolInterface& protocol) : protocol(protoco
 void ServerInGame::setupTranslators() {
 
   this->movements.emplace(Movement::UP, Coordinate(0, -4));
+  this->movements.emplace(Movement::RIGHT, Coordinate(4, 0));
   this->movements.emplace(Movement::DOWN, Coordinate(0, 4));
   this->movements.emplace(Movement::LEFT, Coordinate(-4, 0));
-  this->movements.emplace(Movement::RIGHT, Coordinate(4, 0));
   this->movements.emplace(Movement::STAND, Coordinate(0, 0));
 
   translator[IN_GAME_MOVE] = [&](const InGameOrder & order) { this->move(order); };
@@ -21,9 +21,9 @@ void ServerInGame::setupTranslators() {
 
   translator[IN_GAME_DROP_ITEM] = [](const InGameOrder &) {  return; };
 
-  translator[IN_GAME_BUY_AMMO] = [&](const InGameOrder &order) { this->buyAmmo(order); };
+  translator[IN_GAME_BUY] = [&](const InGameOrder &order) { this->buy(order); };
 
-  translator[IN_GAME_BUY_WEAPON] = [&](const InGameOrder &order) { this->buyWeapon(order); };
+  translator[IN_GAME_CHANGE_ANGLE] = [&](const InGameOrder &order) { this->changeAngle(order); };
 
   translator[IN_GAME_SWITCH_WEAPON] = [&](const InGameOrder &order) { this->changeWeapon(order); };
 
@@ -59,6 +59,13 @@ void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInf
 
 }
 
+void ServerInGame::leaveGameLobby(const size_t &id) {
+  if (!this->playerToGame.contains(id)) return;
+  std::string gameName = this->playerToGame.at(id);
+  Game& game = this->games.at(gameName);
+  game.kick(id);
+}
+
 void ServerInGame::move(const InGameOrder &order) {
   std::string gameName = this->playerToGame.at(order.getPlayerId());
   Game& game = this->games.at(gameName);
@@ -78,16 +85,16 @@ void ServerInGame::pickUp(const InGameOrder &order) {
   game.takeDrop(order.getPlayerId());
 }
 
-void ServerInGame::buyAmmo(const InGameOrder &order) {
+void ServerInGame::buy(const InGameOrder &order) {
   std::string gameName = this->playerToGame.at(order.getPlayerId());
   Game& game = this->games.at(gameName);
-  game.buy(order.getPlayerId(), order.getProduct(), order.getAmmoAmount());
+  game.buy(order.getPlayerId(), order.getProduct(), order.getAmount());
 }
 
-void ServerInGame::buyWeapon(const InGameOrder &order) {
+void ServerInGame::changeAngle(const InGameOrder &order) {
   std::string gameName = this->playerToGame.at(order.getPlayerId());
   Game& game = this->games.at(gameName);
-  game.buy(order.getPlayerId(), order.getProduct());
+  game.changeAngle(order.getPlayerId(), Coordinate(order.getPosition().first, order.getPosition().second));
 }
 
 void ServerInGame::changeWeapon(const InGameOrder &order) {
@@ -97,7 +104,10 @@ void ServerInGame::changeWeapon(const InGameOrder &order) {
 }
 
 void ServerInGame::plantBomb(const InGameOrder &order) {
-  this->attack(order);
+  std::string gameName = this->playerToGame.at(order.getPlayerId());
+  Game& game = this->games.at(gameName);
+  game.setWeapon(order.getPlayerId(), 3);
+  game.attack(order.getPlayerId());
 }
 
 void ServerInGame::defuseBomb(const InGameOrder &order) {

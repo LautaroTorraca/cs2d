@@ -4,7 +4,7 @@
 
 #include "Constants/ProtocolContants.h"
 #include "Constants/ProtocolDefaults.h"
-#include "TeamConstants.h"
+#include "Constants/TeamConstants.h"
 
 GameLobbyOrder::GameLobbyOrder(const uint8_t &code, const size_t &playerId)
     : GameLobbyOrder(code, playerId, DEFAULT_GAME_NAME, DEFAULT_TEAM_ID, DEFAULT_SKIN_ID) {}

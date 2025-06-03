@@ -1,7 +1,7 @@
 #pragma once
 #include "InputHandler.h"
 
-#include "Protocol_testing.h"
+#include "Protocol.h"
 
 #include <string>
 
@@ -11,7 +11,7 @@ constexpr std::string HOSTNAME = "127.0.0.1";
 
 class GameClient {
   bool running;
-  ProtocolTesting protocol;
+  Protocol protocol;
   InputHandler inputHandler;
   // GameRenderer gameRenderer;
 

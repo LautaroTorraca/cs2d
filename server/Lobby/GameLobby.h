@@ -28,6 +28,7 @@ class GameLobby {
     void join(const size_t& playerId);
     void select(const size_t &playerId, const std::string &name, const Team &team, const Skin &skin);
     GameLobbyDTO getInfo() const;
+    void kick(const size_t& id);
 };
 
 

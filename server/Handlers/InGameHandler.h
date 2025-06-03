@@ -18,8 +18,8 @@ class InGameHandler {
     Request shootRequest() const;
     Request pickUpItemRequest() const;
     Request dropItemRequest() const;
-    Request buyAmmoRequest() const;
-    Request buyWeaponsRequest() const;
+    Request buyRequest() const;
+    Request changeAngleRequest() const;
     Request switchWeaponsRequest() const;
     Request plantBombRequest() const;
     Request defuseBombRequest() const;

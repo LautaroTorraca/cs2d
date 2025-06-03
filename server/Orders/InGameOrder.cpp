@@ -1,32 +1,33 @@
 #include "InGameOrder.h"
 #include <stdexcept>
 
-#include "MovementConstants.h"
-#include "ProtocolDefaults.h"
-#include "ProtocolContants.h"
+#include "Constants/MovementConstants.h"
+#include "Constants/ProtocolDefaults.h"
+#include "Constants/ProtocolContants.h"
 
-InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId)
-    : InGameOrder(code, playerId, DEFAULT_DIRECTION ,DEFAULT_AMMO, DEFAULT_WEAPON_INFORMATION) {}
+InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId) : InGameOrder(code, playerId, DEFAULT_DIRECTION ,DEFAULT_AMMO, DEFAULT_WEAPON_INFORMATION, {0, 0}) {}
+
+InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const std::pair<double, double>& position) : InGameOrder(code, playerId, DEFAULT_DIRECTION ,DEFAULT_AMMO, DEFAULT_WEAPON_INFORMATION, position) {}
 
 InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId ,const uint16_t& direction)
-    : InGameOrder(code, playerId, direction ,DEFAULT_AMMO, DEFAULT_WEAPON_INFORMATION) {}
+    : InGameOrder(code, playerId, direction ,DEFAULT_AMMO, DEFAULT_WEAPON_INFORMATION, {0, 0}) {}
 
 InGameOrder::InGameOrder(const uint8_t &code, const size_t &playerId, const uint8_t &weaponInformation)
-    : InGameOrder(code, playerId, DEFAULT_DIRECTION ,DEFAULT_AMMO, weaponInformation) {}
+    : InGameOrder(code, playerId, DEFAULT_DIRECTION ,DEFAULT_AMMO, weaponInformation, {0, 0}) {}
 
 InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& ammoAmount, const uint8_t& weaponInformation)
-    : InGameOrder(code, playerId, DEFAULT_DIRECTION ,ammoAmount, weaponInformation) {}
+    : InGameOrder(code, playerId, DEFAULT_DIRECTION ,ammoAmount, weaponInformation, {0, 0}) {}
 
 
-InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& direction, const uint16_t& ammoAmount, const uint8_t& weaponInformation)
-    : playerId(playerId), direction(direction), ammoAmount(ammoAmount),  weaponInformation(weaponInformation) {
+InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& direction, const uint16_t& ammoAmount, const uint8_t& weaponInformation, const std::pair<double, double>& position)
+    : playerId(playerId), direction(direction), ammoAmount(ammoAmount),  weaponInformation(weaponInformation), position(position) {
     orderTranslator = {
         {ProtocolConstants::PLAYER_MOVEMENT, IN_GAME_MOVE},
-        {ProtocolConstants::SHOOT, IN_GAME_SHOOT},
+        {ProtocolConstants::ATTACK, IN_GAME_SHOOT},
         {ProtocolConstants::PICK_UP_ITEM, IN_GAME_PICK_UP_ITEM},
         {ProtocolConstants::DROP_ITEM, IN_GAME_DROP_ITEM},
-        {ProtocolConstants::BUY_AMMO, IN_GAME_BUY_AMMO},
-        {ProtocolConstants::BUY_WEAPON, IN_GAME_BUY_WEAPON},
+        {ProtocolConstants::BUY, IN_GAME_BUY},
+        //{ProtocolConstants::BUY_WEAPON, IN_GAME_BUY_WEAPON},
         {ProtocolConstants::SWITCH_WEAPON, IN_GAME_SWITCH_WEAPON},
         {ProtocolConstants::PLANT_BOMB, IN_GAME_PLANT_BOMB},
         {ProtocolConstants::DEFUSE_BOMB, IN_GAME_DEFUSE_BOMB},
@@ -107,7 +108,7 @@ const Movement& InGameOrder::getDirection() const {
     return this->movementTranslator.at(this->direction);
 }
 
-const uint16_t& InGameOrder::getAmmoAmount() const {
+const uint16_t& InGameOrder::getAmount() const {
     return this->ammoAmount;
 }
 
@@ -117,4 +118,8 @@ const uint8_t& InGameOrder::getWeaponInformation() const {
 
 const ProductType & InGameOrder::getProduct() const {
     return this->toProduct.at(this->weaponInformation);
+}
+
+const std::pair<double, double> & InGameOrder::getPosition() const {
+    return this->position;
 }

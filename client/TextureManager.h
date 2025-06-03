@@ -2,7 +2,8 @@
 #include "Constants/ClientConstants.h"
 #include "SDL2pp/Texture.hh"
 // #include "client/playerDataConstants.h"
-#include "gameConstants.h"
+#include "server/Skin.h"
+#include "server/WeaponConstants.h"
 #include "weaponConstants.h"
 // #include "playerDataConstants.h"
 #include <SDL2/SDL.h>
@@ -17,18 +18,18 @@ using namespace SDL2pp;
 class TextureManager {
 private:
   Renderer &renderer;
-  std::unordered_map<GameConstants::Skins, Texture> texturesSkins;
+  std::unordered_map<Skin, Texture> texturesSkins;
   std::unordered_map<int, Texture> texturesTiles;
   std::unordered_map<int, Texture> texturesUI;
-  std::unordered_map<int, Texture> texturesWeapons;
+  std::unordered_map<WeaponType, Texture> texturesWeapons;
 
   Texture removeBackground(std::string filename);
 
 public:
   TextureManager(Renderer &renderer);
-  Texture &getSkin(GameConstants::Skins id);
+  Texture &getSkin(Skin id);
   Texture &getTileMap(GameConstants::MapType id);
-  Texture &getDroppedWeapon(WeaponConstants::WeaponId id);
-  Texture &getWeapon(WeaponConstants::WeaponId id);
+  Texture &getDroppedWeapon(WeaponType id);
+  Texture &getWeapon(WeaponType id);
   Texture &getUi(Ui_type id);
 };

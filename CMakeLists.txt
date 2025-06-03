@@ -90,7 +90,17 @@ endif()
 # ---------------
 if(TALLER_CLIENT)
   add_subdirectory(client)
-  add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+  add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS}
+          client/LobbyDTO.h
+          client/GamesList.h
+          client/BuyOrder.h
+          client/WeaponChanger.h
+          client/PositionDTO.h
+          client/PlayerInformation.h
+          client/CoordinateInformation.h
+          client/WeaponInformation.h
+          client/ProjectileInformation.h
+          client/DropInformation.h)
   target_include_directories(taller_client PRIVATE client)
   target_link_libraries(taller_client taller_common SDL2pp::SDL2pp)
 endif()

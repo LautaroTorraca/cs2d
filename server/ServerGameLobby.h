@@ -4,9 +4,9 @@
 #include <functional>
 #include <memory>
 
-#include "GameLobbyProtocolInterface.h"
+#include "Interfaces/GameLobbyProtocolInterface.h"
 #include "ServerInGame.h"
-#include "ServerLobbyOrder.h"
+#include "Orders/ServerLobbyOrder.h"
 #include "Lobby/GameLobby.h"
 #include "Orders/GameLobbyOrder.h"
 
@@ -30,7 +30,7 @@ public:
 
     void join(const std::string & gameName, const size_t & playerId);
 
-    void exit(const GameLobbyOrder & order) const;
+    void exit(const GameLobbyOrder & order);
 
     std::vector<std::string> listLobbies();
 };

@@ -1,6 +1,6 @@
 #include "GameClient.h"
 #include "InputHandler.h"
-#include "Protocol_testing.h"
+#include "Protocol.h"
 #include "client/GameRenderer.h"
 
 using namespace SDL2pp;
@@ -11,7 +11,7 @@ GameClient::GameClient()
 
 void GameClient::run() {
   PreSnapshot preSnapshot = protocol.receivePreSnapshot();
-  GameRenderer renderer(preSnapshot.tileMap, preSnapshot.clientId);
+  GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
 
   bool running = true;
   const int FPS = 60;

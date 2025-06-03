@@ -41,3 +41,9 @@ void TerroristsTeam::giveMoney(const uint16_t &money) {
         counter->give(money);
     }
 }
+
+void TerroristsTeam::kickOut(const size_t &id) {
+    if (this->terrorists.contains(id)) {
+        this->terrorists.erase(id);
+    }
+}

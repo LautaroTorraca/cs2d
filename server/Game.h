@@ -65,6 +65,7 @@ public:
     [[nodiscard]] std::vector<DropDTO> getDrops() const;
     GameInfoDTO getInfo();
     void nextRound(const double& actualTime);
+    void kick(const size_t& id);
 };
 
 

@@ -6,15 +6,15 @@
 #include <bits/stdint-uintn.h>
 #include "common/socket.h"
 #include <vector>
-#include "PlayerInfoDTO.h"
-#include "DropDTO.h"
+#include "server/PlayerInfoDTO.h"
+#include "server/DropDTO.h"
 
 class Sender {
   Socket& socket;
 public:
   explicit Sender(Socket& socket) : socket(socket) {}
 
-  void send(std::string data);
+  void send(const std::string &data);
 
   void send(const uint8_t &data);
 

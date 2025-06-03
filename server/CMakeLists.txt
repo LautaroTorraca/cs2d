@@ -1,27 +1,14 @@
-# # server/CMakeLists.txt
-#
-# set(SERVER_SOURCES Protocol/ServerLobbyProtocol.cpp Readers/Reader.cpp
-# Requests/Request.cpp Sender/Sender.cpp ServerGameLobby.cpp ServerInGame.cpp
-# ServerLobby.cpp main.cpp server.cpp )
-#
-# target_sources(taller_server PRIVATE ${SERVER_SOURCES})
-#
-# target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-# ${CMAKE_CURRENT_SOURCE_DIR}/Protocol ${CMAKE_CURRENT_SOURCE_DIR}/Readers
-# ${CMAKE_CURRENT_SOURCE_DIR}/Requests ${CMAKE_CURRENT_SOURCE_DIR}/Sender )
+# server/CMakeLists.txt
 
 # Glob all .cpp files en las subcarpetas relevantes
-
 file(
-        GLOB
+        GLOB_RECURSE
         COMMON_SOURCES
         ${CMAKE_SOURCE_DIR}/common/*.cpp
-        ${CMAKE_SOURCE_DIR}/common/Protocol/*.cpp
-        ${CMAKE_SOURCE_DIR}/common/Interfaces/*.cpp
         ${CMAKE_SOURCE_DIR}/common/Constants/*.cpp)
 
 file(
-        GLOB
+        GLOB_RECURSE
         SERVER_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Protocol/*.cpp
@@ -35,41 +22,50 @@ file(
         ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/*.cpp)
 
 file(
-        GLOB
+        GLOB_RECURSE
         SERVER_HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Protocol/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Readers/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Requests/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Sender/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Orders/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Handlers/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Constants/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Lobby/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/*.h)
+        "${CMAKE_SOURCE_DIR}/common/*.h"
+        "${CMAKE_SOURCE_DIR}/common/Constants/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Protocol/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Readers/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Requests/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Sender/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Orders/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Handlers/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Constants/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Lobby/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/DTO/*.h")
 
 # Agregar las fuentes al target existente
 target_sources(taller_server PRIVATE ${SERVER_SOURCES})
 target_sources(taller_server PRIVATE ${COMMON_SOURCES})
+target_sources(taller_server PRIVATE ${SERVER_HEADERS})
 
-# Asegurar que los headers sean visibles
-target_include_directories(
-        taller_server
-        PRIVATE ${CMAKE_SOURCE_DIR}/common
-        ${CMAKE_SOURCE_DIR}/common/Protocol
-        ${CMAKE_SOURCE_DIR}/common/Interfaces
-        ${CMAKE_SOURCE_DIR}/common/Constants)
+# IMPORTANTE: Configurar los directorios de inclusión
+# Definir lista de subdirectorios
+set(SERVER_INCLUDE_DIRS
+        Constants DTO Handlers Interfaces Lobby Orders
+        Protocol Readers Requests Sender)
 
-target_include_directories(
-        taller_server
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/Protocol
-        ${CMAKE_CURRENT_SOURCE_DIR}/Readers
-        ${CMAKE_CURRENT_SOURCE_DIR}/Requests
-        ${CMAKE_CURRENT_SOURCE_DIR}/Sender
-        ${CMAKE_CURRENT_SOURCE_DIR}/Orders
-        ${CMAKE_CURRENT_SOURCE_DIR}/Handlers
-        ${CMAKE_CURRENT_SOURCE_DIR}/Constants
-        ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces
-        ${CMAKE_CURRENT_SOURCE_DIR}/Lobby
-        ${CMAKE_CURRENT_SOURCE_DIR}/DTO)
+# Agregar directorio base
+target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Agregar cada subdirectorio
+foreach(subdir ${SERVER_INCLUDE_DIRS})
+    target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${subdir})
+endforeach()
+
+# Agregar directorios de common si es necesario
+target_include_directories(taller_server PRIVATE
+        ${CMAKE_SOURCE_DIR}/common
+        ${CMAKE_SOURCE_DIR}/common/Constants
+)
+
+set(SERVER_SOURCES
+        ${SERVER_SOURCES}
+        PARENT_SCOPE)
+set(SERVER_HEADERS
+        ${SERVER_HEADERS}
+        PARENT_SCOPE)

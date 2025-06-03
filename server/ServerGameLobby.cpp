@@ -2,7 +2,7 @@
 
 #include <ranges>
 
-#include "GameLobbyProtocolInterface.h"
+#include "Interfaces/GameLobbyProtocolInterface.h"
 
 ServerGameLobby::ServerGameLobby(ServerInGame& serverInGame, GameLobbyProtocolInterface& protocol) : serverInGame(serverInGame), protocol(protocol) { setupTranslators(); }
 
@@ -35,8 +35,15 @@ void ServerGameLobby::join(const std::string &gameName, const size_t &playerId) 
   this->gameLobbies.at(gameName).join(playerId);
 }
 
-void ServerGameLobby::exit(const GameLobbyOrder &order) const {
+void ServerGameLobby::exit(const GameLobbyOrder &order) {
+  std::string gameName = this->playersToLobby.at(order.getPlayerId());
+  GameLobby& gameLobby = this->gameLobbies.at(gameName);
+  gameLobby.kick(order.getPlayerId());
   this->protocol.disconnect({ order.getPlayerId() });
+  GameLobbyDTO gameLobbyInfo = gameLobby.getInfo();
+  if (gameLobbyInfo.status == READY_STATUS) {
+    this->serverInGame.addNewGame(gameName, gameLobbyInfo);
+  }
 }
 
 std::vector<std::string> ServerGameLobby::listLobbies() {

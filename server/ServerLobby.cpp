@@ -1,7 +1,7 @@
 #include "ServerLobby.h"
 
-#include "ConnectionStatus.h"
-#include "LobbyConnectionDTO.h"
+#include "Constants/ConnectionStatus.h"
+#include "DTO/LobbyConnectionDTO.h"
 #include "ServerGameLobby.h"
 
 ServerLobby::ServerLobby(ServerLobbyProtocolInterface& protocol, ServerGameLobby& serverGameLobby) :
@@ -58,7 +58,7 @@ void ServerLobby::leaveGame(const ServerLobbyOrder &order) const {
   this->protocol.disconnect(disconnectionInfo);
 }
 
-void ServerLobby::listGames(const ServerLobbyOrder &order) {
+void ServerLobby::listGames(const ServerLobbyOrder &order) const {
   size_t id = order.getClientId();
   std::vector<std::string> gamesList = this->gameLobbyserver.listLobbies();
   GamesListDTO gamesListDTO(id, gamesList);

@@ -4,7 +4,11 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include "client/DropInformation.h"
+#include "client/PlayerInformation.h"
+#define NEW 0X6E
 
 Reader::Reader(Socket &socket) : socket(socket) {}
 
@@ -42,4 +46,91 @@ std::string Reader::stringReader() const {
 
   std::string str(buffer.begin(), buffer.end());
   return str;
+}
+
+double Reader::doubleRead() const {
+  int result;
+  int bytesRead = socket.recvall(&result, sizeof(result));
+  this->bytesChecker(bytesRead);
+  result = ntohl(result);
+  return result;
+}
+
+size_t Reader::readSizeT() const {
+  uint32_t result;
+  int bytesRead = socket.recvall(&result, sizeof(result));
+  this->bytesChecker(bytesRead);
+  result = ntohl(result);
+  return result;
+}
+
+int Reader::readInt() const {
+  int result;
+  int bytesRead = this->socket.recvall(&result, sizeof(result));
+  this->bytesChecker(bytesRead);
+  result = ntohl(result);
+  return result;
+}
+
+CoordinateInformation Reader::readCoordinateInformation() const {
+  double x = this->doubleRead();
+  double y = this->doubleRead();
+  return CoordinateInformation(x, y);
+}
+
+ProjectileInformation Reader::readProjectile() const {
+  CoordinateInformation position = this->readCoordinateInformation();
+  return ProjectileInformation(position);
+}
+
+WeaponInformation Reader::readWeapon() const {
+  WeaponType type = static_cast<WeaponType>(this->u8tReader());
+  uint16_t ammoAmount = this->u16tReader();
+  std::vector<ProjectileInformation> projectiles;
+  while (this->u8tReader() == NEW) {
+    projectiles.push_back(this->readProjectile());
+  }
+  return WeaponInformation(type, ammoAmount, projectiles);
+}
+
+PlayerInformation Reader::readPlayer() const {
+  size_t id = this->readSizeT();
+  std::string playerName = this->stringReader();
+  int angle = this->readInt();
+  CoordinateInformation position = this->readCoordinateInformation();
+  uint8_t health = this->u8tReader();
+  uint16_t money = this->u16tReader();
+  uint8_t kills = this->u8tReader();
+  Skin skin = static_cast<Skin>(this->u8tReader());
+  std::vector<WeaponInformation> weapons;
+  while (this->u8tReader() == NEW) {
+    weapons.push_back(this->readWeapon());
+  }
+  WeaponInformation actualWeapon = this->readWeapon();
+  return PlayerInformation(id, playerName, skin, position, angle, money, health, weapons, actualWeapon, kills);
+}
+
+DropInformation Reader::readDrop() const {
+  WeaponInformation weapon = this->readWeapon();
+  CoordinateInformation position = this->readCoordinateInformation();
+  return DropInformation(weapon, position);
+}
+
+Snapshot Reader::readSnapShot() const {
+  std::vector<PlayerInformation> playersInfo;
+  while (this->u8tReader() == NEW) {
+    PlayerInformation playerInfo = this->readPlayer();
+    playersInfo.push_back(playerInfo);
+  }
+  uint8_t currentRound = this->u8tReader();
+  uint8_t countersWinsRounds = this->u8tReader();
+  uint8_t terroristsWinsRounds = this->u8tReader();
+  CoordinateInformation bombPosition = this->readCoordinateInformation();
+  GameStatus status = static_cast<GameStatus>(this->u8tReader());
+  std::vector<DropInformation> drops;
+  while (this->u8tReader() == NEW) {
+    DropInformation dropInfo = this->readDrop();
+    drops.push_back(dropInfo);
+  }
+  return Snapshot(status, currentRound, countersWinsRounds, terroristsWinsRounds, playersInfo, drops, bombPosition);
 }

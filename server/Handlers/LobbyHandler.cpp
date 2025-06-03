@@ -52,7 +52,6 @@ Request LobbyHandler::joinRequest() const {
 Request LobbyHandler::listGamesRequest() {
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_LIST_GAMES));
-
     return Request(userId, message);
 }
 
