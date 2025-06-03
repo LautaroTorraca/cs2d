@@ -1,13 +1,16 @@
 # common/CMakeLists.txt
 
 # Busca todos los archivos .cpp (recursivamente si querés)
-file(GLOB_RECURSE COMMON_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+file(GLOB_RECURSE
+        COMMON_SOURCES CONFIGURE_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Constants/*.cpp
 )
 
 # Busca todos los headers para incluirlos (opcional, solo para que IDEs los vean)
 file(GLOB_RECURSE COMMON_HEADERS CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+        ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Constants/*.h
 )
 
 # Agrega las fuentes a la librería 'taller_common' definida en root CMakeLists
@@ -18,5 +21,6 @@ target_sources(taller_common
 )
 
 # Incluye la carpeta actual para headers
-target_include_directories(taller_common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(taller_common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/Constants)
 
