@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <netinet/in.h>
 
 Reader::Reader(Socket &socket) : socket(socket) {}
 
@@ -18,6 +19,14 @@ uint8_t Reader::u8tReader() const {
   uint8_t result;
   int bytesRead = socket.recvall(&result, sizeof(result));
   this->bytesChecker(bytesRead);
+  return result;
+}
+
+uint16_t Reader::u16tReader() const {
+  uint16_t result;
+  int bytesRead = socket.recvall(&result, sizeof(result));
+  this->bytesChecker(bytesRead);
+  result = ntohs(result);
   return result;
 }
 

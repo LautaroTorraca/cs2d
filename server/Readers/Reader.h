@@ -19,6 +19,8 @@ public:
 
     [[nodiscard]] uint8_t u8tReader() const;
 
+    uint16_t u16tReader() const;
+
     [[nodiscard]] std::string stringReader() const;
 
 
