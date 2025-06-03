@@ -1,35 +1,19 @@
 #include "ServerInGame.h"
-#include "Coordinate.h"
-#include "GameParser.h"
-#include "OpCodesConstans.h"
 
-ServerInGame::ServerInGame()
-    : gameParser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
-                 "../gameConstants/WeaponsConfig.yaml"),
-      game(gameParser, 10) {
-  setupTranslators();
-}
+#define SHOP_PATH "../gameConstants/shop.yaml"
+#define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
+
+ServerInGame::ServerInGame(InGameProtocolInterface& protocol) : protocol(protocol) { setupTranslators(); }
 
 void ServerInGame::setupTranslators() {
-  translator[IN_GAME_MOVE] = [this](const InGameOrder &order) {
-    Coordinate coordinate;
-    switch (order.getDirection()) {
-    case moveDown:
-      coordinate.update(Coordinate(0, 1));
-      break;
-    case moveLeft:
-      coordinate.update(Coordinate(-1, 0));
-      break;
-    case moveRight:
-      coordinate.update(Coordinate(1, 0));
-      break;
-    case moveUp:
-      coordinate.update(Coordinate(0, -1));
-      break;
-    }
 
-    game.move(order.getPlayerId(), coordinate);
-  };
+  this->movements.emplace(Movement::UP, Coordinate(0, -4));
+  this->movements.emplace(Movement::DOWN, Coordinate(0, 4));
+  this->movements.emplace(Movement::LEFT, Coordinate(-4, 0));
+  this->movements.emplace(Movement::RIGHT, Coordinate(4, 0));
+  this->movements.emplace(Movement::STAND, Coordinate(0, 0));
+
+  translator[IN_GAME_MOVE] = [&](const InGameOrder & order) { this->move(order); };
 
   translator[IN_GAME_SHOOT] = [&](const InGameOrder &order) { this->attack(order); };
 

@@ -1,3 +1,15 @@
+# # server/CMakeLists.txt
+#
+# set(SERVER_SOURCES Protocol/ServerLobbyProtocol.cpp Readers/Reader.cpp
+# Requests/Request.cpp Sender/Sender.cpp ServerGameLobby.cpp ServerInGame.cpp
+# ServerLobby.cpp main.cpp server.cpp )
+#
+# target_sources(taller_server PRIVATE ${SERVER_SOURCES})
+#
+# target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+# ${CMAKE_CURRENT_SOURCE_DIR}/Protocol ${CMAKE_CURRENT_SOURCE_DIR}/Readers
+# ${CMAKE_CURRENT_SOURCE_DIR}/Requests ${CMAKE_CURRENT_SOURCE_DIR}/Sender )
+
 # Glob all .cpp files en las subcarpetas relevantes
 
 file(

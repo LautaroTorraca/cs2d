@@ -8,7 +8,7 @@
 #include "Handlers/ClientHandler.h"
 #include "ServerLobbyProtocol.h"
 
-ProtocolTesting::ProtocolTesting(const std::string &port)
+Protocol::Protocol(const std::string &port)
     : acceptorSocket(port.c_str()),
       acceptorThread([this]() { this->handleNewConnection(); }),
       lobbyProtocol(this->connectedUsers),
@@ -20,7 +20,7 @@ ProtocolTesting::ProtocolTesting(const std::string &port)
   setupInGameHandlers();
 }
 
-void ProtocolTesting::setupLobbyHandlers() {
+void Protocol::setupLobbyHandlers() {
   using namespace ProtocolConstants;
 
   requestMapper[GAME_LIST_REQUEST] = [this](const Request &request) {
@@ -44,7 +44,7 @@ void ProtocolTesting::setupLobbyHandlers() {
   };
 }
 
-void ProtocolTesting::setupGameLobbyHandlers() {
+void Protocol::setupGameLobbyHandlers() {
   using namespace ProtocolConstants;
 
   requestMapper[READY] = [this](const Request &request) {
@@ -58,7 +58,7 @@ void ProtocolTesting::setupGameLobbyHandlers() {
   };
 }
 
-void ProtocolTesting::setupInGameHandlers() {
+void Protocol::setupInGameHandlers() {
   using namespace ProtocolConstants;
 
   requestMapper[PLAYER_MOVEMENT] = [this](const Request &request) {
@@ -102,7 +102,7 @@ void ProtocolTesting::setupInGameHandlers() {
   };
 }
 
-void ProtocolTesting::handleNewConnection() {
+void Protocol::handleNewConnection() {
   while (true) {
     try {
       Socket peer = this->acceptorSocket.accept();
@@ -124,7 +124,7 @@ void ProtocolTesting::handleNewConnection() {
   }
 }
 
-std::unique_ptr<Order> ProtocolTesting::getNextOrder() {
+std::unique_ptr<Order> Protocol::getNextOrder() {
   try {
     const Request request = std::move(*this->requestsQueue.pop());
     const uint8_t code = request.getRequest().at(opCodeKey).front();
@@ -134,87 +134,59 @@ std::unique_ptr<Order> ProtocolTesting::getNextOrder() {
   }
 }
 
-ServerLobbyOrder ProtocolTesting::sendGamesList(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
+void Protocol::sendGamesList(GamesListDTO &gamesList) {
+  this->clientsHandlers.at(gamesList.id)->sendGamesList(gamesList.games);
 }
 
-ServerLobbyOrder ProtocolTesting::join(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
+void Protocol::sendLobbyConnectionStatus(const LobbyConnectionDTO &lobbyConnection) {
+  this->clientsHandlers.at(lobbyConnection.id)->sendLobbyConnectonStatus(lobbyConnection);
 }
 
-ServerLobbyOrder ProtocolTesting::create(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
+void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
+  std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
+  client->stopService();
+  client->join();
+  this->clientsHandlers.erase(disconnectionInfo.clientId);
 }
 
-ServerLobbyOrder ProtocolTesting::disconnect(const Request &request) {
-  return lobbyProtocol.handleRequest(request);
+std::vector<size_t> Protocol::getIds(const GameLobbyDTO& gameLobbyInfo) {
+  std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
+  std::vector<size_t> ids;
+  for ( auto& playerChoices : playersChoices ) {
+    ids.emplace_back(playerChoices.id);
+  }
+  return ids;
 }
 
-GameLobbyOrder ProtocolTesting::ready(const Request &request) {
-  return gameLobbyProtocol.handleRequest(request);
+void Protocol::sendLobby(const GameLobbyDTO &gameLobbyInfo) {
+  std::vector<size_t> ids = getIds(gameLobbyInfo);
+  for (auto& id : ids) {
+    this->clientsHandlers.at(id)->sendGameLobby(gameLobbyInfo);
+  }
+
 }
 
-GameLobbyOrder ProtocolTesting::exitLobby(const Request &request) {
-  return gameLobbyProtocol.handleRequest(request);
+std::vector<size_t> Protocol::getSnapshotIds(const std::vector<PlayerInfoDTO>& playerInfos) {
+  std::vector<size_t> snapshotIds;
+  for (auto& playerInfo : playerInfos) {
+    snapshotIds.emplace_back(playerInfo.getId());
+  }
+  return snapshotIds;
 }
 
-InGameOrder ProtocolTesting::movement(const Request &request) {
-  return inGameProtocol.handleRequest(request);
+void Protocol::sendSnapshot(const GameInfoDTO &gameInfo) {
+  std::vector<size_t> playersIds = this->getSnapshotIds(gameInfo.getPlayersInfo());
+  for (auto& playerId : playersIds) {
+    this->clientsHandlers.at(playerId)->sendSnapshot(gameInfo);
+  }
+
 }
 
-InGameOrder ProtocolTesting::shoot(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::pickUpItem(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::dropItem(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::buyAmmo(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::buyWeapon(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::switchWeapon(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::plantBomb(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::defuseBomb(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-InGameOrder ProtocolTesting::exit(const Request &request) {
-  return inGameProtocol.handleRequest(request);
-}
-
-<<<<<<< HEAD
-// TODO ARREGLAR EN COMO *** VAMOS A MANDAR LA SNAPSHOT
-void ProtocolTesting::sendSnapshot(const Snapshot &snapshot,
-                                   const size_t &userId) {
-  this->clientsHandlers.at(userId)->sendSnapshot(snapshot);
-}
-
-void ProtocolTesting::sendPreSnapshot(const PreSnapshot &preSnapshot,
-                                      const size_t &userId) {
-  this->clientsHandlers.at(userId)->sendPreSnapshot(preSnapshot);
-=======
 void Protocol::sendPreSnapshot(const PreSnapshot &preSnapshot) {
   this->clientsHandlers.at(preSnapshot.clientId)->sendPreSnapshot(preSnapshot);
->>>>>>> 80705a0 (Agregando CMakeList del server configurado y solucionando errores de compilacion del server)
 }
 
-void ProtocolTesting::end() {
+void Protocol::end() {
   try {
     this->acceptorSocket.shutdown(SHUT_RDWR);
     this->acceptorThread.join();
@@ -229,4 +201,4 @@ void ProtocolTesting::end() {
   }
 }
 
-ProtocolTesting::~ProtocolTesting() { this->end(); }
+Protocol::~Protocol() { this->end(); }
