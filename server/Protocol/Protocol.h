@@ -43,6 +43,9 @@ protected:
 
   void handleNewConnection();
 
+    std::vector<size_t> getSnapshotIds(const std::vector<PlayerInfoDTO> &playerInfos);
+    std::vector<size_t> getIds(const GameLobbyDTO &gameLobbyInfo);
+
 public:
   explicit ProtocolTesting(const std::string &port);
 
@@ -53,13 +56,9 @@ public:
 
   void disconnect(const DisconnectionDTO &disconnectionInfo) override;
 
-  std::vector<size_t> getIds(const GameLobbyDTO &gameLobbyInfo);
-
   void sendLobby(const GameLobbyDTO &gameLobbyInfo) override;
 
-  std::vector<size_t> getSnapshotIds(const std::vector<PlayerInfoDTO> &playerInfos);
-
-  void sendSnapshot(const GameInfoDTO & gameInfo);
+  void sendSnapshot(const GameInfoDTO & gameInfo) override;
   void sendPreSnapshot(const PreSnapshot &preSnapshot) override;
 
   void end();

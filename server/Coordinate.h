@@ -13,8 +13,8 @@ class Coordinate {
     double x;
     double y;
 public:
-    Coordinate(Coordinate&) = delete;
-    Coordinate& operator=(const Coordinate&) = delete;
+    //Coordinate(Coordinate&) = delete;
+    //Coordinate& operator=(const Coordinate&) = delete;
     void update(const Coordinate & coordinate);
     [[nodiscard]] Coordinate getDisplace(const Coordinate & otherCoordinate) const;
     bool operator==(const Coordinate & other) const;

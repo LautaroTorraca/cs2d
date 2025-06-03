@@ -17,7 +17,13 @@ class ServerInGame {
   void setupTranslators();
 
 public:
+<<<<<<< HEAD
   ServerInGame();
 
   void handle(const std::unique_ptr<Order> &order) const;
+=======
+    explicit ServerInGame(InGameProtocolInterface& protocol);
+    void handle(const std::unique_ptr<Order>& order) const;
+    void addNewGame(std::string& gameName, const GameLobbyDTO& gameInfo);
+>>>>>>> 80705a0 (Agregando CMakeList del server configurado y solucionando errores de compilacion del server)
 };

@@ -25,4 +25,6 @@ public:
     void createGame(const ServerLobbyOrder& order);
     void joinGame(const ServerLobbyOrder& order);
     void leaveGame(const ServerLobbyOrder& order) const;
+
+    void listGames(const ServerLobbyOrder & order);
 };

@@ -10,7 +10,7 @@
 #define PLAYER_SKIN_INDEX 2
 
 GameLobby::GameLobby(GameLobby &&other) noexcept :
-parser(other.parser), mapType(other.mapType), gameName(other.gameName),
+parser(std::move(other.parser)), gameName(other.gameName),
 playersChoices(other.playersChoices), rounds(other.rounds), joinedPlayers(other.joinedPlayers) {
     if (this != &other) {
         other.gameName = "";

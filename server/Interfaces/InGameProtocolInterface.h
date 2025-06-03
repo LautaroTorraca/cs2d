@@ -1,8 +1,7 @@
 #pragma once
 #include "Disconnectable.h"
 #include "GameInfoDTO.h"
-#include "../Orders/InGameOrder.h"
-#include "../Requests/Request.h"
+#include "common/Constants/SnapshotConstants.h"
 
 class InGameProtocolInterface : public Disconnectable {
 

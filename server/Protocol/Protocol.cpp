@@ -198,6 +198,7 @@ InGameOrder ProtocolTesting::exit(const Request &request) {
   return inGameProtocol.handleRequest(request);
 }
 
+<<<<<<< HEAD
 // TODO ARREGLAR EN COMO *** VAMOS A MANDAR LA SNAPSHOT
 void ProtocolTesting::sendSnapshot(const Snapshot &snapshot,
                                    const size_t &userId) {
@@ -207,6 +208,10 @@ void ProtocolTesting::sendSnapshot(const Snapshot &snapshot,
 void ProtocolTesting::sendPreSnapshot(const PreSnapshot &preSnapshot,
                                       const size_t &userId) {
   this->clientsHandlers.at(userId)->sendPreSnapshot(preSnapshot);
+=======
+void Protocol::sendPreSnapshot(const PreSnapshot &preSnapshot) {
+  this->clientsHandlers.at(preSnapshot.clientId)->sendPreSnapshot(preSnapshot);
+>>>>>>> 80705a0 (Agregando CMakeList del server configurado y solucionando errores de compilacion del server)
 }
 
 void ProtocolTesting::end() {

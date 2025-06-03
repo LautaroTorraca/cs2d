@@ -4,9 +4,10 @@
 
 #include <string>
 #include <bits/stdint-uintn.h>
-
-#include "ClientHandler.h"
 #include "common/socket.h"
+#include <vector>
+#include "PlayerInfoDTO.h"
+#include "DropDTO.h"
 
 class Sender {
   Socket& socket;

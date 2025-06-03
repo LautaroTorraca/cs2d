@@ -63,7 +63,10 @@ void ServerInGame::handle(const std::unique_ptr<Order> &order) const {
 
 void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInfo) {
   GameParser parser(gameInfo.mapPath, SHOP_PATH, WEAPONS_INFO_PATH);
-  this->games.emplace(gameName, Game(parser, gameInfo.rounds));
+  Game game(parser, gameInfo.rounds);
+  this->games.emplace(  std::piecewise_construct,
+  std::forward_as_tuple(gameName),
+  std::forward_as_tuple(parser, gameInfo.rounds));
   for (auto &playerChoices : gameInfo.playersChoices) {
     this->games.at(gameName).addPlayer(playerChoices.id, playerChoices.playerName, playerChoices.team, playerChoices.skin);
     this->playerToGame.emplace(playerChoices.id, gameName);

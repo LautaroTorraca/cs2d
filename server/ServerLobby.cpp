@@ -57,3 +57,10 @@ void ServerLobby::leaveGame(const ServerLobbyOrder &order) const {
   DisconnectionDTO disconnectionInfo(order.getClientId());
   this->protocol.disconnect(disconnectionInfo);
 }
+
+void ServerLobby::listGames(const ServerLobbyOrder &order) {
+  size_t id = order.getClientId();
+  std::vector<std::string> gamesList = this->gameLobbyserver.listLobbies();
+  GamesListDTO gamesListDTO(id, gamesList);
+  this->protocol.sendGamesList(gamesListDTO);
+}

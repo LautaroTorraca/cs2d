@@ -21,7 +21,8 @@ class GameLobby {
     GameLobbyStatus status;
     public:
     GameLobby(const std::string& mapPath, const std::string& gameName, const uint8_t& rounds) :
-    mapPath(mapPath), parser(mapPath), gameName(gameName),
+    parser(mapPath),
+    mapPath(mapPath), gameName(gameName),
     rounds(rounds), status(SELECTING_STATUS) {}
     GameLobby(GameLobby&& other) noexcept;
     void join(const size_t& playerId);

@@ -10,7 +10,7 @@
 struct GamesListDTO {
     const size_t id;
     const std::vector<std::string> games;
-    explicit GamesListDTO(const size_t& id, std::vector<std::string>& games) : id(id), games(std::move(games)) {};
+    GamesListDTO(const size_t& id, std::vector<std::string>& games) : id(id), games(std::move(games)) {};
 
 };
 
