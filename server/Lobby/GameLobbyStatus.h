@@ -8,7 +8,8 @@
 
 enum GameLobbyStatus : uint8_t {
     SELECTING_STATUS = 0,
-    READY_STATUS = 1
+    READY_STATUS = 1,
+    INVALID_STATUS = 2
 };
 
 #endif //GAMELOBBYSTATUS_H

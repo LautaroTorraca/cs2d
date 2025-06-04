@@ -51,8 +51,10 @@ void ServerGameLobby::exit(const GameLobbyOrder &order) {
 
 std::vector<std::string> ServerGameLobby::listLobbies() {
   std::vector<std::string> gameLobbies;
-  for ( auto& gamaName : this->gameLobbies | std::ranges::views::keys ) {
-    gameLobbies.emplace_back(gamaName);
+  for ( auto& [gameName,gameLobby] : this->gameLobbies) {
+    if (gameLobby.getInfo().status != READY_STATUS) {
+      gameLobbies.emplace_back(gameName);
+    }
   }
   return gameLobbies;
 }

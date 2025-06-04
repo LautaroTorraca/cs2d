@@ -21,6 +21,9 @@ class GameLobby {
     uint8_t rounds;
     std::map<size_t, bool> joinedPlayers;
     GameLobbyStatus status;
+    std::array<std::vector<size_t>, 2> teams;
+
+    [[nodiscard]] bool canStart() const;
     public:
     GameLobby(const std::string& mapPath, const MapType mapType, const std::string& gameName, const uint8_t& rounds) :
     parser(mapPath),
@@ -31,7 +34,7 @@ class GameLobby {
     GameLobby(GameLobby&& other) noexcept;
     void join(const size_t& playerId);
     void select(const size_t &playerId, const std::string &name, const Team &team, const Skin &skin);
-    GameLobbyDTO getInfo() const;
+    [[nodiscard]] GameLobbyDTO getInfo() const;
     void kick(const size_t& id);
 };
 

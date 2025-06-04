@@ -14,6 +14,7 @@ enum OrderType {
     GAME_LOBBY_SELECT_TEAM = 101,
     GAME_LOBBY_SELECT_SKIN = 102,
     GAME_LOBBY_READY = 103,
+    GAME_LOBBY_RETURN = 104,
     GAME_LOBBY_EXIT = 200,
 
     // Valores de In Game (201-300)
