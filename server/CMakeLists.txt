@@ -19,7 +19,8 @@ file(
         ${CMAKE_CURRENT_SOURCE_DIR}/Handlers/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Constants/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Lobby/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/*.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Monitor/*.cpp)
 
 file(
         GLOB_RECURSE
@@ -36,7 +37,8 @@ file(
         "${CMAKE_CURRENT_SOURCE_DIR}/Constants/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/Lobby/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/DTO/*.h")
+        "${CMAKE_CURRENT_SOURCE_DIR}/DTO/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Monitor/*.h")
 
 # Agregar las fuentes al target existente
 target_sources(taller_server PRIVATE ${SERVER_SOURCES})
@@ -47,7 +49,7 @@ target_sources(taller_server PRIVATE ${SERVER_HEADERS})
 # Definir lista de subdirectorios
 set(SERVER_INCLUDE_DIRS
         Constants DTO Handlers Interfaces Lobby Orders
-        Protocol Readers Requests Sender)
+        Protocol Readers Requests Sender Monitor)
 
 # Agregar directorio base
 target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

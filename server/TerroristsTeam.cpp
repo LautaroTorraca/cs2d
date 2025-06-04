@@ -47,3 +47,8 @@ void TerroristsTeam::kickOut(const size_t &id) {
         this->terrorists.erase(id);
     }
 }
+
+void TerroristsTeam::clear() {
+    this->terrorists.clear();
+    this->cemetery.clear();
+}

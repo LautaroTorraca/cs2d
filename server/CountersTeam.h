@@ -23,9 +23,9 @@ public:
 
     void giveMoney(const uint16_t &money);
 
-    void end();
-
     void kickOut(const size_t& id);
+
+    void clear();
 };
 
 #endif //COUNTERTEAM_H

@@ -143,6 +143,7 @@ void Protocol::sendLobbyConnectionStatus(const LobbyConnectionDTO &lobbyConnecti
 }
 
 void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
+  if (!this->clientsHandlers.contains(disconnectionInfo.clientId)) return;
   std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
   client->stopService();
   client->join();

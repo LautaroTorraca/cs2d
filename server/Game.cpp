@@ -52,7 +52,7 @@ void Game::move(const size_t& id, const Coordinate& displacement) {
 
 void Game::changeAngle(const size_t &id, const Coordinate &coordinate) {
     if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
-    if ( !this->players.contains(id) ) return; //TODO: Ver si conviente que estas cosas tiren una ecepcion en su lugar
+    if ( !this->players.contains(id) ) return; //TODO: Ver si conviente que estas cosas tiren una excepcion en su lugar
     this->players.at(id)->changeAngle(coordinate);
 }
 
@@ -75,7 +75,7 @@ void Game::buy(const size_t &id, const ProductType &product) {
 
 }
 
-void Game::buy(const size_t &id, const ProductType &product, const uint16_t amount) {
+void Game::buy(const size_t &id, const ProductType &product, const uint16_t& amount) {
     if (this->status != BUY_TIME) return;
     if ( this->players.contains(id) ) {
         Buyer& buyer = *this->players.at(id);
@@ -126,6 +126,17 @@ void Game::nextRound(const double& actualTime) {
     this->terrorists.reset(this->gameMap);
     this->bombPlanted = false;
     this->timeUntilStart = actualTime + this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY);
+    this->status = BUY_TIME;
+    this->currentRound++;
+}
+
+void Game::restart() {
+    this->gameMap.reset(this->gameParser);
+    this->terrorists.clear();
+    this->counters.clear();
+    this->players.clear();
+    this->bombPlanted = false;
+    this->timeUntilStart =  this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY);
     this->status = BUY_TIME;
     this->currentRound++;
 }

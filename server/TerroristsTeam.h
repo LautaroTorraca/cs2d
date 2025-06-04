@@ -28,6 +28,8 @@ class TerroristsTeam : public Advancer {
     void giveMoney(const uint16_t& money);
 
     void kickOut(const size_t& id);
+
+    void clear();
 };
 
 

@@ -51,7 +51,7 @@ public:
     void setWeapon(const size_t& id, const uint8_t& index);
     [[nodiscard]] std::vector<std::vector<uint8_t>> getMap() const;
     void buy(const size_t& id, const ProductType& product);
-    void buy(const size_t& id, const ProductType& product, uint16_t amount);
+    void buy(const size_t& id, const ProductType& product, const uint16_t& amount);
     void takeDrop(const size_t& id);
     void attack(const size_t& id);
     void advance(const double &actualTime) override;
@@ -65,6 +65,7 @@ public:
     [[nodiscard]] std::vector<DropDTO> getDrops() const;
     GameInfoDTO getInfo();
     void nextRound(const double& actualTime);
+    void restart();
     void kick(const size_t& id);
 };
 

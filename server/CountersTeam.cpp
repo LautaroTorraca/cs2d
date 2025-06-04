@@ -43,3 +43,8 @@ void CountersTeam::kickOut(const size_t& id) {
         this->counters.erase(id);
     }
 }
+
+void CountersTeam::clear() {
+    this->counters.clear();
+    this->cemetery.clear();
+}

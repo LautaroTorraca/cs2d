@@ -1,5 +1,7 @@
 #include "ServerInGame.h"
 
+#include "Monitor/GameMonitor.h"
+
 #define SHOP_PATH "../gameConstants/shop.yaml"
 #define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 
@@ -47,75 +49,74 @@ void ServerInGame::handle(const std::unique_ptr<Order> &order) const {
 
 void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInfo) {
   GameParser parser(gameInfo.mapPath, SHOP_PATH, WEAPONS_INFO_PATH);
-  Game game(parser, gameInfo.rounds);
-  this->games.emplace(  std::piecewise_construct,
-  std::forward_as_tuple(gameName),
-  std::forward_as_tuple(parser, gameInfo.rounds));
+  this->games.emplace(gameName, std::make_shared<GameMonitor>(parser, gameInfo.rounds, this->protocol));
   for (auto &playerChoices : gameInfo.playersChoices) {
-    this->games.at(gameName).addPlayer(playerChoices.id, playerChoices.playerName, playerChoices.team, playerChoices.skin);
+    this->games.at(gameName)->addPlayer(playerChoices.id, playerChoices.playerName, playerChoices.team, playerChoices.skin);
     this->playerToGame.emplace(playerChoices.id, gameName);
   }
-  this->games.at(gameName).spawnBomb();
-
+  this->games.at(gameName)->spawnBomb();
+  this->games.at(gameName)->run();
 }
 
 void ServerInGame::leaveGameLobby(const size_t &id) {
   if (!this->playerToGame.contains(id)) return;
   std::string gameName = this->playerToGame.at(id);
-  Game& game = this->games.at(gameName);
-  game.kick(id);
+  this->games.at(gameName)->kick(id);
 }
 
 void ServerInGame::move(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
   Coordinate& displacement = this->movements.at(order.getDirection());
-  game.move(order.getPlayerId(), displacement);
+  this->games.at(gameName)->move(order.getPlayerId(), displacement);
 }
 
 void ServerInGame::attack(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
-  game.attack(order.getPlayerId());
+  this->games.at(gameName)->attack(order.getPlayerId());
 }
 
 void ServerInGame::pickUp(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
-  game.takeDrop(order.getPlayerId());
+  this->games.at(gameName)->takeDrop(order.getPlayerId());
 }
 
 void ServerInGame::buy(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
-  game.buy(order.getPlayerId(), order.getProduct(), order.getAmount());
+  this->games.at(gameName)->buy(order.getPlayerId(), order.getProduct(), order.getAmount());
 }
 
 void ServerInGame::changeAngle(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
-  game.changeAngle(order.getPlayerId(), Coordinate(order.getPosition().first, order.getPosition().second));
+  this->games.at(gameName)->changeAngle(order.getPlayerId(), Coordinate(order.getPosition().first, order.getPosition().second));
 }
 
 void ServerInGame::changeWeapon(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
-  game.setWeapon(order.getPlayerId(), order.getWeaponInformation());
+  this->games.at(gameName)->setWeapon(order.getPlayerId(), order.getWeaponInformation());
 }
 
 void ServerInGame::plantBomb(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
-  game.setWeapon(order.getPlayerId(), 3);
-  game.attack(order.getPlayerId());
+  std::shared_ptr<GameMonitor>& game = this->games.at(gameName);
+  game->setWeapon(order.getPlayerId(), 3);
+  game->attack(order.getPlayerId());
 }
 
 void ServerInGame::defuseBomb(const InGameOrder &order) {
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  Game& game = this->games.at(gameName);
-  game.deactivateBomb(order.getPlayerId());
+  this->games.at(gameName)->deactivateBomb(order.getPlayerId());
 }
 
 void ServerInGame::exit(const InGameOrder &order) {
+  std::string gameName = this->playerToGame.at(order.getPlayerId());
+  this->games.at(gameName)->kick(order.getPlayerId());
   this->protocol.disconnect({order.getPlayerId()});
 }

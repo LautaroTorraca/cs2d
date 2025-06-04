@@ -10,10 +10,11 @@
 #include "DTO/PlayerChoicesDTO.h"
 #include "Constants/Movement.h"
 #include "Orders/InGameOrder.h"
+#include "Monitor/GameMonitor.h"
 
 class ServerInGame {
     std::map<OrderType, std::function<void(InGameOrder&)>> translator;
-    std::map<std::string, Game> games;
+    std::map<std::string, std::shared_ptr<GameMonitor>> games;
     std::map<size_t, std::string> playerToGame;
     std::map<Movement, Coordinate> movements;
     InGameProtocolInterface& protocol;
