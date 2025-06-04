@@ -11,8 +11,6 @@
 #include "Path.h"
 #include "Coordinate.h"
 #include "TileType.h"
-#include "cmake-build-debug/_deps/fkyaml-src/include/fkYAML/fkyaml_fwd.hpp"
-
 class GameMapParser {
     std::vector<std::vector<uint8_t>> gameMap;
     std::vector<std::map<std::string, double>> terroristsSpawns;

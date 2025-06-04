@@ -10,7 +10,6 @@
 #include "client/PlayerInformation.h"
 #include "common/socket.h"
 
-
 class Reader {
     Socket& socket;
 

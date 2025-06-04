@@ -2,10 +2,12 @@
 // Created by lionel on 01/06/25.
 //
 
-#ifndef LOBBYDTO_H
-#define LOBBYDTO_H
+#pragma once
+#include "server/Constants/MapTypeConstants.h"
 #include "PlayerChoicesDTO.h"
 #include "server/Lobby/GameLobbyStatus.h"
+
+#define BLANK ""
 
 struct GameLobbyDTO {
     const GameLobbyStatus status;
@@ -13,9 +15,11 @@ struct GameLobbyDTO {
     const std::string gameName;
     const uint8_t rounds;
     const std::string mapPath;
-    explicit GameLobbyDTO(const GameLobbyStatus& status, std::vector<PlayerChoicesDTO>& playersChoices,
-        const std::string& gameName, const uint8_t& rounds, const std::string& mapPath) :
-    status(status), playersChoices(std::move(playersChoices)), gameName(gameName), rounds(rounds), mapPath(mapPath) {}
+    const MapType mapType;
+    GameLobbyDTO(const GameLobbyStatus& status, std::vector<PlayerChoicesDTO>& playersChoices,
+        const std::string& gameName, const uint8_t& rounds, const std::string& mapPath, const MapType& mapType) :
+    status(status), playersChoices(std::move(playersChoices)), gameName(gameName), rounds(rounds), mapPath(mapPath), mapType(mapType) {}
+    GameLobbyDTO(const GameLobbyStatus& status, std::vector<PlayerChoicesDTO>& playersChoices,
+        const std::string& gameName, const uint8_t& rounds, const MapType& mapType) :
+    GameLobbyDTO(status, playersChoices, gameName, rounds, BLANK,mapType) {}
 };
-
-#endif //LOBBYDTO_H

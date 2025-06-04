@@ -5,7 +5,6 @@
 #ifndef LOBBYDTO_H
 #define LOBBYDTO_H
 #include <string>
-
 #include "server/Constants/MapTypeConstants.h"
 
 struct  LobbyDTO {

@@ -32,7 +32,10 @@ void ServerGameLobby::add(const std::string &gameName, GameLobby &gameLobby) {
 void ServerGameLobby::join(const std::string &gameName, const size_t &playerId) {
   if (this->playersToLobby.contains(playerId) || !this->gameLobbies.contains(gameName)) return;
   this->playersToLobby.emplace(playerId, gameName);
-  this->gameLobbies.at(gameName).join(playerId);
+  GameLobby& gameLobby = this->gameLobbies.at(gameName);
+  gameLobby.join(playerId);
+  GameLobbyDTO gameLobbyInfo = gameLobby.getInfo();
+  this->protocol.sendLobby(gameLobbyInfo);
 }
 
 void ServerGameLobby::exit(const GameLobbyOrder &order) {

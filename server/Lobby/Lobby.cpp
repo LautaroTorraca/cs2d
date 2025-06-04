@@ -21,7 +21,7 @@ GameLobby Lobby::createGameLobby(const size_t &id, const std::string &gameName, 
     this->gamesLobbies[gameName].push_back(id);
     GameMapParser parser(this->mapsPaths.at(map));
     this->maxPlayers.emplace(gameName, 2*parser.getMaxPlayersPerTeam());
-    return GameLobby(this->mapsPaths.at(map), gameName, rounds);
+    return GameLobby(this->mapsPaths.at(map), map, gameName, rounds);
 }
 
 void Lobby::joinGame(const size_t &id, const std::string &gameName) {

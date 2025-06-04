@@ -8,6 +8,7 @@
 
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
+
 #define NEW 0X6E
 
 Reader::Reader(Socket &socket) : socket(socket) {}

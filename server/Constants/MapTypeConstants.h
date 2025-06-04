@@ -8,8 +8,6 @@ enum class MapType : uint8_t {
     DUMMY = 0x03
 };
 
-#pragma once
-
 namespace MapConstants {
     constexpr uint8_t DUST    = static_cast<uint8_t>(MapType::DUST);
     constexpr uint8_t AZTEC_VILLAGE   = static_cast<uint8_t>(MapType::AZTEC_VILLAGE);

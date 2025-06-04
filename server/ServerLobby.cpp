@@ -46,10 +46,10 @@ void ServerLobby::joinGame(const ServerLobbyOrder &order) {
     this->lobby.joinGame(order.getClientId(), order.getGameName());
     this->gameLobbyserver.join(order.getGameName(), order.getClientId());
     LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::SUCCESS);
-    protocol.sendLobbyConnectionStatus(lobbyConnection);
+    this->protocol.sendLobbyConnectionStatus(lobbyConnection);
   } catch (std::runtime_error &e) {
     LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::FAILED);
-    protocol.sendLobbyConnectionStatus(lobbyConnection);
+    this->protocol.sendLobbyConnectionStatus(lobbyConnection);
   }
 }
 

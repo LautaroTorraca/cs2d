@@ -1,10 +1,7 @@
 #include "Protocol.h"
 #include "server/Constants/ProtocolContants.h"
-#include <string>
-#include <sstream>
 
-#include "PlayerInformation.h"
-#include "common/Constants/SnapshotConstants.h"
+#define NEW 0X6E
 
 Protocol::Protocol(const std::string &hostName, const std::string &port)
     : clientSocket(hostName.c_str(), port.c_str()), sender(clientSocket), reader(clientSocket) {}
@@ -17,6 +14,12 @@ void Protocol::createLobby(const LobbyDTO &lobbyInfo) {
   this->sender.send(lobbyInfo.playersCount);
   this->sender.send(mapType);
   this->sender.send(lobbyInfo.rounds);
+}
+
+LobbyConnectionDTO Protocol::getLobbyConnection() const {
+  size_t id = this->reader.readSizeT();
+  ConnectionStatus status = static_cast<ConnectionStatus>(this->reader.u8tReader());
+  return LobbyConnectionDTO(id, status);
 }
 
 GamesList Protocol::getGamesList() {
@@ -53,6 +56,18 @@ void Protocol::ready(const PlayerChoicesDTO &playerChoices) {
   this->sender.send(playerChoices.playerName);
   this->sender.send(team);
   this->sender.send(skin);
+}
+
+GameLobbyDTO Protocol::getGameLobby() const {
+  GameLobbyStatus status = static_cast<GameLobbyStatus>(this->reader.u8tReader());
+  std::vector<PlayerChoicesDTO> choices;
+  while (this->reader.u8tReader() == NEW) {
+    choices.push_back(this->readPlayerChoices());
+  }
+  std::string gamaName = this->reader.stringReader();
+  uint8_t rounds = this->reader.u8tReader();
+  MapType mapType = static_cast<MapType>(this->reader.u8tReader());
+  return GameLobbyDTO(status, choices, gamaName, rounds, mapType);
 }
 
 void Protocol::leaveGameLobby() {
@@ -112,6 +127,14 @@ void Protocol::defuseBomb() {
 void Protocol::exit() {
   const uint8_t opCode = ProtocolConstants::EXIT_GAME;
   this->sender.send(opCode);
+}
+
+PlayerChoicesDTO Protocol::readPlayerChoices() const {
+    size_t id = this->reader.readSizeT();
+    std::string playerName = this->reader.stringReader();
+    Team team = static_cast<Team>(this->reader.u8tReader());
+    Skin skin = static_cast<Skin>(this->reader.u8tReader());
+    return PlayerChoicesDTO(id, playerName, team, skin);
 }
 
 Snapshot Protocol::receiveSnapshot() const {

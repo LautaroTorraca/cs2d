@@ -42,7 +42,7 @@ GameLobbyDTO GameLobby::getInfo() const {
                 std::get<Skin>(playerChoices.at(PLAYER_SKIN_INDEX)));
         }
     }
-    return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath};
+    return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath, this->mapType};
 }
 
 void GameLobby::kick(const size_t &id) {

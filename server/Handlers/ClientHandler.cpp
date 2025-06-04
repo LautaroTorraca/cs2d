@@ -101,22 +101,28 @@ void ClientHandler::sendGamesList(const std::vector<std::string> &gamesList) con
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO &gameLobbyInfo) {
     std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
+    uint8_t status = gameLobbyInfo.status;
+    uint8_t mapType = static_cast<uint8_t>(gameLobbyInfo.mapType);
+    this->sender.send(status);
     for (const auto &playerChoice : playersChoices) {
         uint8_t skin = playerChoice.skin;
         uint8_t team = playerChoice.team;
-        uint8_t status = gameLobbyInfo.status;
-        this->sender.send(gameLobbyInfo.gameName);
-        this->sender.send(gameLobbyInfo.rounds);
+        this->sender.send(NEW);
         this->sender.send(playerChoice.id);
         this->sender.send(playerChoice.playerName);
-        this->sender.send(skin);
         this->sender.send(team);
-        this->sender.send(status);
+        this->sender.send(skin);
     }
+    this->sender.send(STOP);
+    this->sender.send(gameLobbyInfo.gameName);
+    this->sender.send(gameLobbyInfo.rounds);
+    this->sender.send(mapType);
+
 }
 
 void ClientHandler::sendLobbyConnectonStatus(const LobbyConnectionDTO &lobbyConnection) {
     uint8_t lobbyConnectionStatus = lobbyConnection.status;
+    this->sender.send(this->id);
     this->sender.send(lobbyConnectionStatus);
 }
 

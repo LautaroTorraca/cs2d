@@ -7,6 +7,7 @@
 #include <variant>
 
 #include "GameLobbyStatus.h"
+#include "server/Constants/MapTypeConstants.h"
 #include "server/GameMapParser.h"
 #include "server/Team.h"
 #include "server/DTO/GameLobbyDTO.h"
@@ -14,15 +15,18 @@
 class GameLobby {
     GameMapParser parser;
     std::string mapPath;
+    MapType mapType;
     std::string gameName;
     std::map<size_t, std::vector<std::variant<std::string, Team, Skin>>> playersChoices;
     uint8_t rounds;
     std::map<size_t, bool> joinedPlayers;
     GameLobbyStatus status;
     public:
-    GameLobby(const std::string& mapPath, const std::string& gameName, const uint8_t& rounds) :
+    GameLobby(const std::string& mapPath, const MapType mapType, const std::string& gameName, const uint8_t& rounds) :
     parser(mapPath),
-    mapPath(mapPath), gameName(gameName),
+    mapPath(mapPath),
+    mapType(mapType),
+    gameName(gameName),
     rounds(rounds), status(SELECTING_STATUS) {}
     GameLobby(GameLobby&& other) noexcept;
     void join(const size_t& playerId);

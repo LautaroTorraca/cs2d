@@ -25,7 +25,7 @@ class Server {
   void setupInGameOrders();
 
 public:
-  explicit Server(const char *port);
+  explicit Server(const std::string& port);
   void run();
 
   // TODO ARREGLAR

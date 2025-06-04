@@ -1,9 +1,7 @@
 #pragma once
-#include "PlayerDataConstants.h"
 #include <vector>
 
 #include "server/GameStatus.h"
-#include "client/CoordinateInformation.h"
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
 
