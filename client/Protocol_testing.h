@@ -10,8 +10,8 @@
 // #include "server/Readers/Reader.h"
 // #include "server/Sender/Sender.h"
 
-#include "MoveConstants.h"
-#include "PositionDTO.h"
+// #include "MoveConstants.h"
+// #include "PositionDTO.h"
 #include "Protocol.h"
 // #include "Protocol.h"
 // #include "WeaponChanger.h"
@@ -34,11 +34,11 @@ class ProtocolTesting: public Protocol {
 
 public:
     ProtocolTesting(const std::string& hostName, const std::string& port);
-    void move(const Direction& direction) override;
-    void changeAngle(const PositionDTO& positionInfo) override;
-    void attack() override;
-    void emptyBullets() override;
-    Snapshot receiveSnapshot() const override;
-    PreSnapshot receivePreSnapshot() const override;
+    // void move(const Direction& direction) override;
+    // void changeAngle(const PositionDTO& positionInfo) override;
+    // void attack() override;
+    // void emptyBullets() override;
+    // Snapshot receiveSnapshot() const override;
+    // PreSnapshot receivePreSnapshot() const override;
     ~ProtocolTesting() {};
 };

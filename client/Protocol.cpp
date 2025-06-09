@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "server/Constants/OpCodesConstans.h"
+// #include "server/Constants/OpCodesConstans.h"
 #include "server/Constants/ProtocolContants.h"
 
 #define NEW 0X6E
@@ -22,9 +22,9 @@ void Protocol::createLobby(const LobbyDTO& lobbyInfo) {
 }
 
 LobbyConnectionDTO Protocol::getLobbyConnection() const {
-  size_t id = this->reader.readSizeT();
-  ConnectionStatus status = static_cast<ConnectionStatus>(this->reader.u8tReader());
-  return LobbyConnectionDTO(id, status);
+    size_t id = this->reader.readSizeT();
+    ConnectionStatus status = static_cast<ConnectionStatus>(this->reader.u8tReader());
+    return LobbyConnectionDTO(id, status);
 }
 
 GamesList Protocol::getGamesList() {
@@ -64,15 +64,15 @@ void Protocol::ready(const PlayerChoicesDTO& playerChoices) {
 }
 
 GameLobbyDTO Protocol::getGameLobby() const {
-  GameLobbyStatus status = static_cast<GameLobbyStatus>(this->reader.u8tReader());
-  std::vector<PlayerChoicesDTO> choices;
-  while (this->reader.u8tReader() == NEW) {
-    choices.push_back(this->readPlayerChoices());
-  }
-  std::string gamaName = this->reader.stringReader();
-  uint8_t rounds = this->reader.u8tReader();
-  MapType mapType = static_cast<MapType>(this->reader.u8tReader());
-  return GameLobbyDTO(status, choices, gamaName, rounds, mapType);
+    GameLobbyStatus status = static_cast<GameLobbyStatus>(this->reader.u8tReader());
+    std::vector<PlayerChoicesDTO> choices;
+    while (this->reader.u8tReader() == NEW) {
+        choices.push_back(this->readPlayerChoices());
+    }
+    std::string gamaName = this->reader.stringReader();
+    uint8_t rounds = this->reader.u8tReader();
+    MapType mapType = static_cast<MapType>(this->reader.u8tReader());
+    return GameLobbyDTO(status, choices, gamaName, rounds, mapType);
 }
 
 void Protocol::leaveGameLobby() {
@@ -163,5 +163,3 @@ PreSnapshot Protocol::receivePreSnapshot() const {
 
     return {id, map};
 }
-
-void Protocol::emptyBullets() { std::cout << "xd\n"; }

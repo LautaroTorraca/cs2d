@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "server.h"
 
 #define PORT 1
@@ -7,7 +8,7 @@
 #define FAIL -1
 #define SUCCESS 0
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     try {
         if (argc != RIGHT_ARGUMENTS_AMOUNT) {
             std::cerr << BAD_ARGUMENTS_AMOUNT << std::endl;
