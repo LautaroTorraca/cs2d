@@ -1,2 +1,50 @@
+# Qt Creator / CLion / JetBrains
+.idea/
+*.user
+*.pro.user*
+*.qbs.user*
+*.autosave
+
+# CMake build folders
 build/
-tags.*
+build-*/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# Qt generated files
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# Binaries
+*.exe
+*.out
+*.app
+*.dSYM/
+*.dll
+*.so
+*.a
+*.o
+*.obj
+
+# Logs and debug
+*.log
+*.core
+core.*
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# General OS files
+.DS_Store
+Thumbs.db
+
+# Backup / temp files
+*~
+*.swp
+*.tmp
