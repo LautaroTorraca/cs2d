@@ -2,9 +2,8 @@
 file(GLOB_RECURSE CLIENT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 file(GLOB_RECURSE CLIENT_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-        "${CMAKE_SOURCE_DIR}/server/GameStatus.h"
-        "${CMAKE_SOURCE_DIR}/server/Readers/*.h")
-
+     "${CMAKE_SOURCE_DIR}/server/GameStatus.h"
+     "${CMAKE_SOURCE_DIR}/server/Readers/*.h")
 set(CLIENT_SOURCES
     ${CLIENT_SOURCES}
     PARENT_SCOPE)

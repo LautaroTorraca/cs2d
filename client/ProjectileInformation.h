@@ -8,7 +8,8 @@
 
 struct ProjectileInformation {
     CoordinateInformation projectilePosition;
-    explicit ProjectileInformation(const CoordinateInformation& projectilePosition) : projectilePosition(projectilePosition) {}
+    explicit ProjectileInformation(const CoordinateInformation& projectilePosition):
+            projectilePosition(projectilePosition) {}
 };
 
-#endif //PROJECTILEINFORMATION_H
+#endif  // PROJECTILEINFORMATION_H

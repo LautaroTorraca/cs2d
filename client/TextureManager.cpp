@@ -1,125 +1,126 @@
 #include "TextureManager.h"
+
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
 // #include "client/playerDataConstants.h"
 // #include "client/playerDataConstants.h"
 #include "Constants/ClientConstants.h"
-#include "gameConstants.h"
-#include "weaponConstants.h"
+
+// #include "gameConstants.h"
+// #include "weaponConstants.h"
 // #include <algorithm>
 #include <string>
 
 // #include "Surface.h"
 
+#include "server/Constants/MapTypeConstants.h"
 #include "server/Skin.h"
-#include "server/Team.h"
+// #include "server/Team.h"
 
-TextureManager::TextureManager(Renderer &renderer) : renderer(renderer) {
+TextureManager::TextureManager(Renderer& renderer): renderer(renderer) {
 
-  // UI
-  texturesUI.emplace(Ui_type::NumsUI,
-                     Texture(renderer,
-                             "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                             "client/assets/ui/hud_nums.png"));
-  texturesUI.emplace(Ui_type::SymbUI,
-                     Texture(renderer,
-                             "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                             "client/assets/ui/hud_symbols.png"));
-  texturesUI.emplace(Ui_type::CursorUI,
-                     Texture(renderer,
-                             "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                             "client/assets/ui/pointer.png"));
+    // UI
+    texturesUI.emplace(UiType::NumsUI,
+                       removeBackground(black, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                               "client/assets/ui/hud_nums.png"));
+    texturesUI.emplace(UiType::SymbUI,
+                       removeBackground(black, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                               "client/assets/ui/hud_symbols.png"));
+    texturesUI.emplace(UiType::CursorUI,
+                       removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                                 "client/assets/ui/pointer.png"));
 
-  // weapons
-  texturesWeapons.emplace(
-      WeaponType::AWP,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/weapons/awp.png"));
-  texturesWeapons.emplace(
-      WeaponType::M3,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/weapons/m3.png"));
-  texturesWeapons.emplace(
-      WeaponType::GLOCK,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/weapons/glock.png"));
-  texturesWeapons.emplace(
-      WeaponType::KNIFE,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/weapons/knife.png"));
-  texturesWeapons.emplace(
-      WeaponType::BOMB,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/weapons/bomb.png"));
-  texturesWeapons.emplace(
-      WeaponType::AK47,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/weapons/ak47.png"));
+    // weapons
+    texturesWeapons.emplace(
+            WeaponType::AWP,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/weapons/awp.png"));
+    texturesWeapons.emplace(
+            WeaponType::M3,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/weapons/m3.png"));
+    texturesWeapons.emplace(
+            WeaponType::GLOCK,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/weapons/glock.png"));
+    texturesWeapons.emplace(
+            WeaponType::KNIFE,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/weapons/knife.png"));
+    texturesWeapons.emplace(
+            WeaponType::BOMB,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/weapons/bomb.png"));
+    texturesWeapons.emplace(
+            WeaponType::AK47,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/weapons/ak47.png"));
 
-  // skins
-  texturesSkins.emplace(
-      Skin::SEAL_FORCE,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/CT/ct-2.png"));
-  texturesSkins.emplace(
-      Skin::FRENCH_GIGN,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/CT/ct-3.png"));
-  texturesSkins.emplace(
-      Skin::UK_SAS,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/CT/ct-1.png"));
-  texturesSkins.emplace(
-      Skin::GERMAN_GSG9,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/CT/ct-4.png"));
-  texturesSkins.emplace(
-      Skin::L337_KREW,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/TT/tt-2.png"));
-  texturesSkins.emplace(
-      Skin::ARCTIC_AVENGER,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/TT/tt-3.png"));
-  texturesSkins.emplace(
-      Skin::PHOENIX,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/TT/tt-1.png"));
-  texturesSkins.emplace(
-      Skin::GUERRILLA,
-      removeBackground("/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                       "client/assets/skins/TT/tt-4.png"));
-  // maps
-  texturesTiles.emplace(
-      GameConstants::DUST,
-      Texture(renderer, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
-                        "client/assets/tilemaps/dust.png"));
+    // skins
+    texturesSkins.emplace(
+            Skin::SEAL_FORCE,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/CT/ct-2.png"));
+    texturesSkins.emplace(
+            Skin::FRENCH_GIGN,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/CT/ct-3.png"));
+    texturesSkins.emplace(
+            Skin::UK_SAS,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/CT/ct-1.png"));
+    texturesSkins.emplace(
+            Skin::GERMAN_GSG9,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/CT/ct-4.png"));
+    texturesSkins.emplace(
+            Skin::L337_KREW,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/TT/tt-2.png"));
+    texturesSkins.emplace(
+            Skin::ARCTIC_AVENGER,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/TT/tt-3.png"));
+    texturesSkins.emplace(
+            Skin::PHOENIX,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/TT/tt-1.png"));
+    texturesSkins.emplace(
+            Skin::GUERRILLA,
+            removeBackground(magenta, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                      "client/assets/skins/TT/tt-4.png"));
+    // maps
+    texturesTiles.emplace(MapType::DUST,
+                          Texture(renderer, "/home/toto/facultad/taller/tp-grupal-taller-CS2D/"
+                                            "client/assets/tilemaps/dust.png"));
 }
 
-Texture &TextureManager::getSkin(Skin id) {
-  return texturesSkins.at(id);
-}
-Texture &TextureManager::getTileMap(GameConstants::MapType id) {
-  return texturesTiles.at(id);
-}
+Texture& TextureManager::getSkin(Skin id) { return texturesSkins.at(id); }
+Texture& TextureManager::getTileMap(MapType id) { return texturesTiles.at(id); }
 
-Texture &TextureManager::getDroppedWeapon(WeaponType id) {
-  return texturesWeapons.at(id);
-}
+Texture& TextureManager::getDroppedWeapon(WeaponType id) { return texturesWeapons.at(id); }
 
-Texture &TextureManager::getWeapon(WeaponType id) {
-  return texturesWeapons.at(id);
-}
+Texture& TextureManager::getWeapon(WeaponType id) { return texturesWeapons.at(id); }
 
-Texture &TextureManager::getUi(Ui_type id) { return texturesUI.at(id); }
+Texture& TextureManager::getUi(UiType id) { return texturesUI.at(id); }
 
-Texture TextureManager::removeBackground(std::string filename) {
+Texture TextureManager::removeBackground(ColorKey colorKey, std::string filename) {
 
-  Surface sf(filename);
+    Surface sf(filename);
 
-  sf.SetColorKey(true, SDL_MapRGB(sf.Get()->format, 0xFF, 0x00, 0xFF));
+    switch (colorKey) {
 
-  Texture tx(renderer, sf);
+        case magenta:
+            sf.SetColorKey(true, SDL_MapRGB(sf.Get()->format, 0xFF, 0x00, 0xFF));
+            break;
+        case black:
+            sf.SetColorKey(true, SDL_MapRGB(sf.Get()->format, 0x00, 0x00, 0x00));
+            break;
+        case none:
+            break;
+    }
 
-  return tx;
+    Texture tx(renderer, sf);
+
+    return tx;
 }

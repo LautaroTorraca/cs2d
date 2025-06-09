@@ -5,6 +5,8 @@
 #include "GameLobby.h"
 
 #include <ranges>
+
+#include "Constants/MapTypeConstants.h"
 #define PLAYER_NAME_INDEX 0
 #define PLAYER_TEAM_INDEX 1
 #define PLAYER_SKIN_INDEX 2
@@ -27,8 +29,9 @@ playersChoices(std::move(other.playersChoices)), rounds(other.rounds), joinedPla
     }
 }
 
-void GameLobby::join(const size_t &playerId) {
-    if (this->joinedPlayers.size() >= this->parser.getMaxPlayersPerTeam()*2) return;
+void GameLobby::join(const size_t& playerId) {
+    if (this->joinedPlayers.size() >= this->parser.getMaxPlayersPerTeam() * 2)
+        return;
     this->joinedPlayers.emplace(playerId, true);
 }
 
@@ -56,8 +59,9 @@ GameLobbyDTO GameLobby::getInfo() const {
     return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath, this->mapType};
 }
 
-void GameLobby::kick(const size_t &id) {
-    if (!this->joinedPlayers.contains(id)) return;
+void GameLobby::kick(const size_t& id) {
+    if (!this->joinedPlayers.contains(id))
+        return;
     this->joinedPlayers.erase(id);
     this->playersChoices.erase(id);
     if (this->canStart()) {

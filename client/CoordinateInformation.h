@@ -8,6 +8,6 @@ struct CoordinateInformation {
     double x;
     double y;
     CoordinateInformation() = default;
-    CoordinateInformation(const double& x, const double& y) : x(x), y(y) {}
+    CoordinateInformation(const double& x, const double& y): x(x), y(y) {}
 };
-#endif //COORDINATEINFORMATION_H
+#endif  // COORDINATEINFORMATION_H

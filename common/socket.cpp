@@ -4,9 +4,11 @@
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
+#include <iostream>
 #include <stdexcept>
 
 #include <arpa/inet.h>
+#include <linux/soundcard.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -21,7 +23,10 @@
 #define STREAM_BOTH_OPEN 0x00
 
 Socket::Socket(const char* hostname, const char* servname) {
+
+    std::cout << "pre resolver: " << hostname << " " << servname << "\n";
     Resolver resolver(hostname, servname, false);
+    std::cout << "post resolver: " << hostname << " " << servname << "\n";
 
     int s = -1;
     int fd = -1;

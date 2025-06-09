@@ -8,8 +8,8 @@
 #include <map>
 #include <string>
 
-#include "Path.h"
 #include "Coordinate.h"
+#include "Path.h"
 #include "TileType.h"
 class GameMapParser {
     std::vector<std::vector<uint8_t>> gameMap;
@@ -19,8 +19,10 @@ class GameMapParser {
     std::map<uint8_t, TileType> typeInfo;
     std::map<TileType, std::function<Tile(uint8_t&)>> tileTranslator;
 
-    [[nodiscard]] std::vector<Coordinate> getPoints(std::vector<std::map<std::string, double>> source) const;
-    public:
+    [[nodiscard]] std::vector<Coordinate> getPoints(
+            std::vector<std::map<std::string, double>> source) const;
+
+public:
     explicit GameMapParser(const std::string& mapFilePath);
     GameMapParser(GameMapParser&& other) noexcept;
     [[nodiscard]] std::map<Coordinate, Path> getMapPath() const;
@@ -32,5 +34,4 @@ class GameMapParser {
 };
 
 
-
-#endif //GAMEMAPPARSER_H
+#endif  // GAMEMAPPARSER_H

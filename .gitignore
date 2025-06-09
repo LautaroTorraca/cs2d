@@ -14,9 +14,20 @@ cmake_install.cmake
 lib
 compile_commands.json
 Makefile
+Dockerfile
 
 taller_client
 taller_server
 taller_editor
 taller_tests
 client/assets/weapons/old
+.vscode/launch.json
+.vscode/tasks.json
+.idea/editor.xml
+.idea/vcs.xml
+.idea/editor.xml
+.idea/vcs.xml
+.idea/editor.xml
+.idea/vcs.xml
+.idea/editor.xml
+.idea/vcs.xml

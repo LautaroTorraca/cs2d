@@ -1,6 +1,13 @@
 #pragma once
-#include <iostream>
 #include <string>
+
+#include "common/Constants/SnapshotConstants.h"
+#include "common/socket.h"
+#include "server/DTO/GameLobbyDTO.h"
+#include "server/DTO/LobbyConnectionDTO.h"
+#include "server/DTO/PlayerChoicesDTO.h"
+#include "server/Readers/Reader.h"
+#include "server/Sender/Sender.h"
 
 #include "BuyOrder.h"
 #include "GamesList.h"
@@ -19,9 +26,9 @@
 
 
 class Protocol {
-  Socket clientSocket;
-  Sender sender;
-  Reader reader;
+    Socket clientSocket;
+    Sender sender;
+    Reader reader;
 
 public:
   Protocol(const std::string &hostName, const std::string &port);

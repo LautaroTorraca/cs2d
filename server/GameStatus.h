@@ -14,4 +14,4 @@ enum GameStatus : uint8_t {
     COUNTERS_WIN = 4
 };
 
-#endif //GAMESTATUS_H
+#endif  // GAMESTATUS_H

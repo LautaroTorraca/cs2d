@@ -1,11 +1,8 @@
 # server/CMakeLists.txt
 
 # Glob all .cpp files en las subcarpetas relevantes
-file(
-        GLOB_RECURSE
-        COMMON_SOURCES
-        ${CMAKE_SOURCE_DIR}/common/*.cpp
-        ${CMAKE_SOURCE_DIR}/common/Constants/*.cpp)
+file(GLOB_RECURSE COMMON_SOURCES ${CMAKE_SOURCE_DIR}/common/*.cpp
+     ${CMAKE_SOURCE_DIR}/common/Constants/*.cpp)
 
 file(
         GLOB_RECURSE
@@ -45,8 +42,8 @@ target_sources(taller_server PRIVATE ${SERVER_SOURCES})
 target_sources(taller_server PRIVATE ${COMMON_SOURCES})
 target_sources(taller_server PRIVATE ${SERVER_HEADERS})
 
-# IMPORTANTE: Configurar los directorios de inclusión
-# Definir lista de subdirectorios
+# IMPORTANTE: Configurar los directorios de inclusión Definir lista de
+# subdirectorios
 set(SERVER_INCLUDE_DIRS
         Constants DTO Handlers Interfaces Lobby Orders
         Protocol Readers Requests Sender Monitor)
@@ -56,18 +53,18 @@ target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Agregar cada subdirectorio
 foreach(subdir ${SERVER_INCLUDE_DIRS})
-    target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${subdir})
+  target_include_directories(taller_server
+                             PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${subdir})
 endforeach()
 
 # Agregar directorios de common si es necesario
-target_include_directories(taller_server PRIVATE
-        ${CMAKE_SOURCE_DIR}/common
-        ${CMAKE_SOURCE_DIR}/common/Constants
-)
+target_include_directories(
+  taller_server PRIVATE ${CMAKE_SOURCE_DIR}/common
+                        ${CMAKE_SOURCE_DIR}/common/Constants)
 
 set(SERVER_SOURCES
-        ${SERVER_SOURCES}
-        PARENT_SCOPE)
+    ${SERVER_SOURCES}
+    PARENT_SCOPE)
 set(SERVER_HEADERS
-        ${SERVER_HEADERS}
-        PARENT_SCOPE)
+    ${SERVER_HEADERS}
+    PARENT_SCOPE)

@@ -1,9 +1,11 @@
 
 #include "Reader.h"
 
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
 #include <arpa/inet.h>
 
 #include "client/DropInformation.h"
@@ -11,127 +13,131 @@
 
 #define NEW 0X6E
 
-Reader::Reader(Socket &socket) : socket(socket) {}
+Reader::Reader(Socket& socket): socket(socket) {}
 
-void Reader::bytesChecker(const int &bytesRead) const {
-  if (bytesRead == 0) {
-    throw std::runtime_error(
-        "Connection closed"); // TODO HACERLO mas FANCY (socket cerrado)
-  }
+void Reader::bytesChecker(const int& bytesRead) const {
+    if (bytesRead == 0) {
+        throw std::runtime_error("Connection closed");  // TODO HACERLO mas FANCY (socket cerrado)
+    }
 }
 
 uint8_t Reader::u8tReader() const {
-  uint8_t result;
-  int bytesRead = socket.recvall(&result, sizeof(result));
-  this->bytesChecker(bytesRead);
-  return result;
+    uint8_t result;
+    int bytesRead = socket.recvall(&result, sizeof(result));
+    this->bytesChecker(bytesRead);
+    return result;
 }
 
 uint16_t Reader::u16tReader() const {
-  uint16_t result;
-  int bytesRead = socket.recvall(&result, sizeof(result));
-  this->bytesChecker(bytesRead);
-  result = ntohs(result);
-  return result;
+    uint16_t result;
+    int bytesRead = socket.recvall(&result, sizeof(result));
+    this->bytesChecker(bytesRead);
+    result = ntohs(result);
+    return result;
 }
 
 std::string Reader::stringReader() const {
-  uint8_t nameLength = 0;
 
-  int bytesRead = socket.recvall(&nameLength, sizeof(nameLength));
-  this->bytesChecker(bytesRead);
+    uint16_t nameLength = 0;
 
-  std::vector<char> buffer(nameLength);
-  bytesRead = socket.recvall(buffer.data(), nameLength);
-  this->bytesChecker(bytesRead);
+    int bytesRead = socket.recvall(&nameLength, sizeof(nameLength));
+    std::cout << "adentro de string reader:\n" << std::to_string(nameLength) << "\n";
+    this->bytesChecker(bytesRead);
+    nameLength = ntohs(nameLength);
+    std::cout << std::to_string(nameLength) << "\n";
+    std::vector<char> buffer(nameLength);
+    bytesRead = socket.recvall(buffer.data(), nameLength);
+    this->bytesChecker(bytesRead);
 
-  std::string str(buffer.begin(), buffer.end());
-  return str;
+    std::string str(buffer.begin(), buffer.end());
+    return str;
 }
 
 double Reader::doubleRead() const {
-  int result;
-  int bytesRead = socket.recvall(&result, sizeof(result));
-  this->bytesChecker(bytesRead);
-  result = ntohl(result);
-  return result;
+    int result;
+    int bytesRead = socket.recvall(&result, sizeof(result));
+    this->bytesChecker(bytesRead);
+    result = ntohl(result);
+    return result;
 }
 
 size_t Reader::readSizeT() const {
-  uint32_t result;
-  int bytesRead = socket.recvall(&result, sizeof(result));
-  this->bytesChecker(bytesRead);
-  result = ntohl(result);
-  return result;
+    uint32_t result;
+    int bytesRead = socket.recvall(&result, sizeof(result));
+    this->bytesChecker(bytesRead);
+    result = ntohl(result);
+    return result;
 }
 
 int Reader::readInt() const {
-  int result;
-  int bytesRead = this->socket.recvall(&result, sizeof(result));
-  this->bytesChecker(bytesRead);
-  result = ntohl(result);
-  return result;
+    int result;
+    int bytesRead = this->socket.recvall(&result, sizeof(result));
+    this->bytesChecker(bytesRead);
+    result = ntohl(result);
+    return result;
 }
 
 CoordinateInformation Reader::readCoordinateInformation() const {
-  double x = this->doubleRead();
-  double y = this->doubleRead();
-  return CoordinateInformation(x, y);
+    double x = this->doubleRead();
+    double y = this->doubleRead();
+    return CoordinateInformation(x, y);
 }
 
 ProjectileInformation Reader::readProjectile() const {
-  CoordinateInformation position = this->readCoordinateInformation();
-  return ProjectileInformation(position);
+    CoordinateInformation position = this->readCoordinateInformation();
+    return ProjectileInformation(position);
 }
 
 WeaponInformation Reader::readWeapon() const {
-  WeaponType type = static_cast<WeaponType>(this->u8tReader());
-  uint16_t ammoAmount = this->u16tReader();
-  std::vector<ProjectileInformation> projectiles;
-  while (this->u8tReader() == NEW) {
-    projectiles.push_back(this->readProjectile());
-  }
-  return WeaponInformation(type, ammoAmount, projectiles);
+    WeaponType type = static_cast<WeaponType>(this->u8tReader());
+    uint16_t ammoAmount = this->u16tReader();
+    std::vector<ProjectileInformation> projectiles;
+    while (this->u8tReader() == NEW) {
+        projectiles.push_back(this->readProjectile());
+    }
+    return WeaponInformation(type, ammoAmount, projectiles);
 }
 
 PlayerInformation Reader::readPlayer() const {
-  size_t id = this->readSizeT();
-  std::string playerName = this->stringReader();
-  int angle = this->readInt();
-  CoordinateInformation position = this->readCoordinateInformation();
-  uint8_t health = this->u8tReader();
-  uint16_t money = this->u16tReader();
-  uint8_t kills = this->u8tReader();
-  Skin skin = static_cast<Skin>(this->u8tReader());
-  std::vector<WeaponInformation> weapons;
-  while (this->u8tReader() == NEW) {
-    weapons.push_back(this->readWeapon());
-  }
-  WeaponInformation actualWeapon = this->readWeapon();
-  return PlayerInformation(id, playerName, skin, position, angle, money, health, weapons, actualWeapon, kills);
+    size_t id = this->readSizeT();
+    std::string playerName = this->stringReader();
+    int angle = this->readInt();
+    CoordinateInformation position = this->readCoordinateInformation();
+    uint8_t health = this->u8tReader();
+    uint16_t money = this->u16tReader();
+    uint8_t kills = this->u8tReader();
+    Skin skin = static_cast<Skin>(this->u8tReader());
+    std::vector<WeaponInformation> weapons;
+    while (this->u8tReader() == NEW) {
+        weapons.push_back(this->readWeapon());
+    }
+    WeaponInformation actualWeapon = this->readWeapon();
+    return PlayerInformation(id, playerName, skin, position, angle, money, health, weapons,
+                             actualWeapon, kills);
 }
 
 DropInformation Reader::readDrop() const {
-  WeaponInformation weapon = this->readWeapon();
-  CoordinateInformation position = this->readCoordinateInformation();
-  return DropInformation(weapon, position);
+    WeaponInformation weapon = this->readWeapon();
+    CoordinateInformation position = this->readCoordinateInformation();
+    return DropInformation(weapon, position);
 }
 
 Snapshot Reader::readSnapShot() const {
-  std::vector<PlayerInformation> playersInfo;
-  while (this->u8tReader() == NEW) {
-    PlayerInformation playerInfo = this->readPlayer();
-    playersInfo.push_back(playerInfo);
-  }
-  uint8_t currentRound = this->u8tReader();
-  uint8_t countersWinsRounds = this->u8tReader();
-  uint8_t terroristsWinsRounds = this->u8tReader();
-  CoordinateInformation bombPosition = this->readCoordinateInformation();
-  GameStatus status = static_cast<GameStatus>(this->u8tReader());
-  std::vector<DropInformation> drops;
-  while (this->u8tReader() == NEW) {
-    DropInformation dropInfo = this->readDrop();
-    drops.push_back(dropInfo);
-  }
-  return Snapshot(status, currentRound, countersWinsRounds, terroristsWinsRounds, playersInfo, drops, bombPosition);
+    std::vector<PlayerInformation> playersInfo;
+    while (this->u8tReader() == NEW) {
+        PlayerInformation playerInfo = this->readPlayer();
+        playersInfo.push_back(playerInfo);
+    }
+    uint8_t currentRound = this->u8tReader();
+    uint8_t countersWinsRounds = this->u8tReader();
+    uint8_t terroristsWinsRounds = this->u8tReader();
+    CoordinateInformation bombPosition = this->readCoordinateInformation();
+    GameStatus status = static_cast<GameStatus>(this->u8tReader());
+    std::vector<DropInformation> drops;
+    while (this->u8tReader() == NEW) {
+        DropInformation dropInfo = this->readDrop();
+        drops.push_back(dropInfo);
+    }
+    return Snapshot(status, currentRound, countersWinsRounds, terroristsWinsRounds, playersInfo,
+                    drops, bombPosition);
 }

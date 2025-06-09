@@ -10,12 +10,19 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
 endif()
 
 set(CMAKE_CXX_EXTENSIONS ON)
+
 # set(YAML_CPP_BUILD_TESTS OFF CACHE INTERNAL "Disable yaml-cpp tests")
 project(
   taller_tp
   VERSION 1.0
   HOMEPAGE_URL "https://github.com/URL-HERE"
   LANGUAGES CXX)
+
+# Qt
+#
+set(CMAKE_AUTOMOC ON)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+# set(CMAKE_AUTOMOC ON) set(CMAKE_AUTORCC ON) set(CMAKE_AUTOUIC ON)
 
 option(TALLER_TESTS "Enable / disable tests." ON)
 option(TALLER_CLIENT "Enable / disable client program." ON)
@@ -90,19 +97,13 @@ endif()
 # ---------------
 if(TALLER_CLIENT)
   add_subdirectory(client)
-  add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS}
-          client/LobbyDTO.h
-          client/GamesList.h
-          client/BuyOrder.h
-          client/WeaponChanger.h
-          client/PositionDTO.h
-          client/PlayerInformation.h
-          client/CoordinateInformation.h
-          client/WeaponInformation.h
-          client/ProjectileInformation.h
-          client/DropInformation.h)
+  add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+  # client/LobbyDTO.h client/GamesList.h client/BuyOrder.h
+  # client/WeaponChanger.h client/PositionDTO.h client/PlayerInformation.h
+  # client/CoordinateInformation.h client/WeaponInformation.h
+  # client/ProjectileInformation.h client/DropInformation.h client/MainWindow.h)
   target_include_directories(taller_client PRIVATE client)
-  target_link_libraries(taller_client taller_common SDL2pp::SDL2pp)
+  target_link_libraries(taller_client taller_common SDL2pp::SDL2pp Qt6::Widgets)
 endif()
 
 if(TALLER_SERVER)
