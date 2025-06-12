@@ -8,7 +8,7 @@ class QPushButton;
 class QVBoxLayout;
 
 class TeamSelectionDialog : public QDialog {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit TeamSelectionDialog(QWidget *parent = nullptr);
@@ -19,7 +19,7 @@ private slots:
     void selectTT();
 
 private:
-    QString selectedTeam;
+    QString selectedTeam; // TODO: Cambiar a uint8_t y usar TeamConstants en el futuro
 };
 
 #endif // TEAM_SELECTION_DIALOG_H

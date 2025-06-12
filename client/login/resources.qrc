@@ -1,0 +1,17 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/login">
+        <file alias="image_background.png">login/assets/image_background.png</file>
+    </qresource>
+
+    <qresource prefix="/skins">
+        <file alias="phoenix.png">login/assets/skins/Phoenix.png</file>
+        <file alias="l337.png">login/assets/skins/L337 Krew.png</file>
+        <file alias="arctic.png">login/assets/skins/Artic Avenger.png</file>
+        <file alias="guerrilla.png">login/assets/skins/Guerrilla.png</file>
+        <file alias="sealforce.png">login/assets/skins/SealForce.png</file>
+        <file alias="gsg9.png">login/assets/skins/German GSG-9.png</file>
+        <file alias="sas.png">login/assets/skins/UK SAS.png</file>
+        <file alias="gign.png">login/assets/skins/French GIGN.png</file>
+    </qresource>
+</RCC>

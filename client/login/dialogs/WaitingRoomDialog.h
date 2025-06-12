@@ -5,7 +5,7 @@
 #include <QString>
 #include <vector>
 
-#include "GameDTO.h"
+#include "login/mocks/GameDTO.h"
 
 class QLabel;
 class QVBoxLayout;

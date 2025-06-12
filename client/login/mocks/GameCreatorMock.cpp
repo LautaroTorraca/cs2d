@@ -1,5 +1,5 @@
 #include "GameCreatorMock.h"
-#include "CreateGameDialog.h"
+#include "../dialogs/CreateGameDialog.h"
 
 GameDTO GameCreatorMock::openCreateGameDialog(QWidget *parent) {
     CreateGameDialog dialog(parent);

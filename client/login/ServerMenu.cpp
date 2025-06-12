@@ -1,18 +1,17 @@
 #include "ServerMenu.h"
-#include "GameCreatorMock.h"
-#include "GameListerMock.h"
-#include "CreateGameDialog.h"
-#include "TeamSelectionDialog.h"
-#include "SkinSelectionDialog.h"
-#include "WaitingRoomDialog.h"
-#include "GameDTO.h"
+
+#include "buttons/CreateGameButton.h"
+#include "buttons/JoinGameButton.h"
+#include "buttons/ListGamesButton.h"
+#include "buttons/ExitGameButton.h"
 
 #include <QVBoxLayout>
-#include <QLabel>
 #include <QLineEdit>
-#include <QPushButton>
-#include <QMessageBox>
+#include <QPalette>
 #include <QPixmap>
+#include <QBrush>
+#include <QCoreApplication>
+#include <QWidget>
 
 ServerMenu::ServerMenu(QWidget *parent) : QWidget(parent) {
     setupUI();
@@ -22,94 +21,88 @@ void ServerMenu::setupUI() {
     setWindowTitle("CS2D - Server Menu");
     resize(800, 600);
 
-    QPixmap bg("cs2d_menu.png");
-    backgroundLabel = std::make_unique<QLabel>(this);
-    if (bg.isNull()) {
-        backgroundLabel->setText("Background image not found");
-    } else {
-        backgroundLabel->setPixmap(bg.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-    }
-    backgroundLabel->setScaledContents(true);
-    backgroundLabel->setGeometry(0, 0, width(), height());
+    // Load background TODO arreglar porque siempre entra en el fallbackPath
+    QPalette palette;
+    QPixmap backgroundPixmap(":/login/assets/image_background.png");
 
+    if (backgroundPixmap.isNull()) {
+        QString appDir = QCoreApplication::applicationDirPath();
+        QStringList fallbackPaths = {
+                appDir + "/../client/login/assets/image_background.png",
+                "client/login/assets/image_background.png",
+                "login/assets/image_background.png"
+        };
+
+        for (const auto& path : fallbackPaths) {
+            backgroundPixmap = QPixmap(path);
+            if (!backgroundPixmap.isNull()) break;
+        }
+    }
+
+    if (!backgroundPixmap.isNull()) {
+        backgroundPixmap = backgroundPixmap.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        palette.setBrush(QPalette::Window, QBrush(backgroundPixmap));
+        setPalette(palette);
+        setAutoFillBackground(true);
+    } else {
+        palette.setColor(QPalette::Window, QColor(20, 25, 35));
+        setPalette(palette);
+        setAutoFillBackground(true);
+    }
+
+    // Overlay for UI
     overlayWidget = std::make_unique<QWidget>(this);
     overlayWidget->setGeometry(0, 0, width(), height());
     overlayWidget->setAttribute(Qt::WA_TranslucentBackground);
 
+    // Layout
     buttonLayout = std::make_unique<QVBoxLayout>(overlayWidget.get());
-    buttonLayout->setAlignment(Qt::AlignCenter);
-    buttonLayout->setSpacing(15);
-    buttonLayout->setContentsMargins(300, 150, 300, 100);
+    buttonLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    buttonLayout->setSpacing(20);
+    buttonLayout->setContentsMargins(60, 150, 0, 0);
 
+    // Username input
     usernameInput = std::make_unique<QLineEdit>();
     usernameInput->setPlaceholderText("Enter your name");
+    usernameInput->setFixedWidth(220);
+    usernameInput->setStyleSheet(R"(
+        QLineEdit {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+        QLineEdit:focus {
+            border: 2px solid rgba(100, 150, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        QLineEdit::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    )");
     buttonLayout->addWidget(usernameInput.get());
 
-    createGameBtn = std::make_unique<QPushButton>("Create Game");
-    joinGameBtn = std::make_unique<QPushButton>("Join Game");
-    listGamesBtn = std::make_unique<QPushButton>("List Games");
-    exitBtn = std::make_unique<QPushButton>("Exit");
+    // Buttons
+    buttonLayout->addWidget(new CreateGameButton(this, usernameInput.get()));
+    buttonLayout->addWidget(new JoinGameButton(this, usernameInput.get()));
+    buttonLayout->addWidget(new ListGamesButton(this));
+    buttonLayout->addWidget(new ExitGameButton(this));
+}
 
-    QList<QPushButton *> buttons = {
-        createGameBtn.get(), joinGameBtn.get(), listGamesBtn.get(), exitBtn.get()
-    };
-
-    for (QPushButton *btn : buttons) {
-        btn->setStyleSheet(
-            "QPushButton { background-color: rgba(0,0,0,0.6); color: white; font-size: 18px; padding: 10px; border-radius: 10px; }"
-            "QPushButton:hover { background-color: rgba(255,255,255,0.2); }"
-        );
-        buttonLayout->addWidget(btn);
+void ServerMenu::resizeEvent(QResizeEvent* event) {
+    QWidget::resizeEvent(event);
+    if (overlayWidget) {
+        overlayWidget->setGeometry(0, 0, width(), height());
     }
 
-    connect(createGameBtn.get(), &QPushButton::clicked, this, &ServerMenu::handleCreateGame);
-    connect(joinGameBtn.get(), &QPushButton::clicked, this, &ServerMenu::handleJoinGame);
-    connect(listGamesBtn.get(), &QPushButton::clicked, this, &ServerMenu::handleListGames);
-    connect(exitBtn.get(), &QPushButton::clicked, this, &ServerMenu::handleExitGame);
-}
-
-void ServerMenu::handleCreateGame() {
-    QString name = usernameInput->text();
-    if (name.isEmpty()) {
-        QMessageBox::warning(this, "Input Error", "Please enter your name.");
-        return;
+    QPalette palette;
+    QPixmap backgroundPixmap(":/login/assets/image_background.png");
+    if (!backgroundPixmap.isNull()) {
+        backgroundPixmap = backgroundPixmap.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        palette.setBrush(QPalette::Window, QBrush(backgroundPixmap));
+        setPalette(palette);
     }
-
-    //TODO Llamar al gameCreator real no mock
-    GameCreatorMock gameCreator;
-    GameDTO dto = gameCreator.openCreateGameDialog(this);  //aca
-
-    // Hace team selection -> skin -> waiting room
-    TeamSelectionDialog teamDialog(this);
-    if (teamDialog.exec() != QDialog::Accepted) return;
-
-    QString selectedTeam = teamDialog.getSelectedTeam();
-
-    SkinSelectionDialog skinDialog(selectedTeam, this);
-    if (skinDialog.exec() != QDialog::Accepted) return;
-
-    QString selectedSkin = skinDialog.getSelectedSkin();
-
-    WaitingRoomDialog waitingRoom(dto, name, selectedTeam, selectedSkin, this);
-    waitingRoom.exec();
-}
-
-void ServerMenu::handleJoinGame() {
-    QString name = usernameInput->text();
-    if (name.isEmpty()) {
-        QMessageBox::warning(this, "Input Error", "Please enter your name.");
-        return;
-    }
-
-    QMessageBox::information(this, "Join Game", "");
-}
-
-void ServerMenu::handleListGames() {
-    //TODO reemplazar con el que sabe la lista de jugadores
-    GameListerMock lister;
-    lister.showAvailableGames(this);
-}
-
-void ServerMenu::handleExitGame() {
-    close();
 }

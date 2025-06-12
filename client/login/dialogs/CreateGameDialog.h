@@ -2,14 +2,14 @@
 #define CREATE_GAME_DIALOG_H
 
 #include <QDialog>
-#include "GameDTO.h"
+#include "login/mocks/GameDTO.h"
 
 class QSpinBox;
 class QPushButton;
 class QVBoxLayout;
 
 class CreateGameDialog : public QDialog {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit CreateGameDialog(QWidget *parent = nullptr);
