@@ -41,7 +41,7 @@ bool GameLobby::canStart() const {
 
 void GameLobby::select(const size_t &playerId, const std::string &name, const Team &team, const Skin &skin) {
     if (!this->joinedPlayers.contains(playerId)) return;
-    if (this->teams.at(team).size() == this->parser.getMaxPlayersPerTeam()) return;
+    if (this->teams[team].size() == this->parser.getMaxPlayersPerTeam()) return;
     this->playersChoices[playerId] = {name, team, skin};
     this->teams.at(team).push_back(playerId);
     if (this->canStart()) {

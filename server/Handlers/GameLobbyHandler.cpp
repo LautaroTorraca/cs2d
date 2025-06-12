@@ -26,8 +26,12 @@ Request GameLobbyHandler::readyRequest() const {
     uint8_t skin = this->reader.u8tReader();
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_READY));
     message.emplace(playerNameKey, std::vector<char>(playerName.begin(), playerName.end()));
-    message.emplace(teamKey, std::vector<char>(team));
-    message.emplace(skinKey, std::vector<char>(skin));
+    std::vector<char> teamData;
+    teamData.emplace_back(team);
+    message.emplace(teamKey, teamData);
+    std::vector<char> skinData;
+    skinData.emplace_back(skin);
+    message.emplace(skinKey, skinData);
     return Request(userId, message);
 }
 

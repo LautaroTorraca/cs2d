@@ -35,6 +35,11 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
         index++;
     }
 
+    for (PlayerInformation player: gameSnapshot.playersInfo) {
+        std::cout << "player : " << player.name << " esta en (" << player.position.x << ", " << player.position.y << "), angle:" << player.angle << std::endl;
+    }
+
+
     Coords offsetCoords;
 
     offsetCoords.x = gameSnapshot.playersInfo.at(index).position.x;

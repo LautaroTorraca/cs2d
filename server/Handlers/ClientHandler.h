@@ -19,7 +19,7 @@
 #include "Sender/Sender.h"
 
 class ClientHandler final : public Thread {
-  Socket &userSocket;
+  Socket userSocket;
   size_t id;
   Queue<std::shared_ptr<Request>> &requestsQueue;
 
@@ -33,7 +33,7 @@ class ClientHandler final : public Thread {
   void registerOpcodes();
 
 public:
-  ClientHandler(Socket &socket, const size_t &clientId,
+  ClientHandler(Socket& socket, const size_t &clientId,
                 Queue<std::shared_ptr<Request>> &requestQueue);
 
   void run() override;
@@ -43,7 +43,7 @@ public:
   void sendSnapshot(const GameInfoDTO &gameInfo);
   void sendPreSnapshot(const PreSnapshot &preSnapshot);
   void stopService();
-  void sendGamesList(const std::vector<std::string> & gamesList) const;
+  void sendGamesList(const std::vector<std::string> & gamesList);
   void sendGameLobby(const GameLobbyDTO & gameLobbyInfo);
 
   void sendLobbyConnectonStatus(const LobbyConnectionDTO & lobbyConnection);

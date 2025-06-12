@@ -55,7 +55,7 @@ void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInf
     this->playerToGame.emplace(playerChoices.id, gameName);
   }
   this->games.at(gameName)->spawnBomb();
-  this->games.at(gameName)->run();
+  this->games.at(gameName)->start();
 }
 
 void ServerInGame::leaveGameLobby(const size_t &id) {
@@ -65,8 +65,11 @@ void ServerInGame::leaveGameLobby(const size_t &id) {
 }
 
 void ServerInGame::move(const InGameOrder &order) {
+    std::cout << "move ini" << std::endl;
   if (!this->playerToGame.contains(order.getPlayerId())) return;
+    std::cout << "move next" << std::endl;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
+    std::cout << "move gameName" << std::endl;
   Coordinate& displacement = this->movements.at(order.getDirection());
   this->games.at(gameName)->move(order.getPlayerId(), displacement);
 }

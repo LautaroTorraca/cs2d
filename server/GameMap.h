@@ -35,7 +35,7 @@ class GameMap : public Positionable, public DropPlacer, public Spawner, public A
 
 public:
     explicit GameMap(const GameParser& parser) :
-    pathTiles(std::move(parser.getMapPath())) ,
+    pathTiles(std::move(parser.getMapPath())),
     countersSpawnPoints(std::move(parser.getCountersSpawnPoints())),
     terroristsSpawnPoints(std::move(parser.getTerroristsSpawnPoints())),
     bombPlantPoints(std::move(parser.getBombPlantPoints())) {}

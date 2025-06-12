@@ -46,32 +46,43 @@ void GameClient::run(int argc, char* argv[]) {
                 protocol.createLobby(lobby);
                 std::cout << "aca llego=?\n\n";
                 LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                //
-                // if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                //     std::cout << "se creo el lobby correctamente\n";
-                // } else {
-                //     std::cout << "fallo xd\n";
-                // }
-                // PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS,
-                // Skin::GERMAN_GSG9); protocol.ready(playerChoices);
-                //
-                // GameLobbyDTO gameLobby = protocol.getGameLobby();
+                std::cout << "lobbyStatus, id: " << lobbyStatus.id
+                          << ", status: " << (int)lobbyStatus.status << std::endl;
+                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
+                    std::cout << "se creo el lobby correctamente\n";
+                } else {
+                    std::cout << "fallo xd\n";
+                }
+                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::GERMAN_GSG9);
+                protocol.ready(playerChoices);
+                GameLobbyDTO gameLobby = protocol.getGameLobby();
+                while (gameLobby.status != READY_STATUS) {
+                    std::cout << "todavia no se creo el game correctamente\n";
+                    gameLobby = protocol.getGameLobby();
+                }
+                std::cout << "Se creo el game correctamente\n";
                 break;
             }
             case ConnectionChoice::Join: {
 
                 std::cout << "unirse\n";
-                // LobbyDTO lobby("partida1");
-                // protocol.joinLobby(lobby);
-                // LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                // if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                //     std::cout << "se creo el lobby correctamente\n";
-                // } else {
-                //     std::cout << "fallo xd\n";
-                // }
-                // PlayerChoicesDTO playerChoices(4321, "pablo", Team::COUNTER_TERRORISTS,
-                //                                Skin::UK_SAS);
-                // protocol.ready(playerChoices);
+                LobbyDTO lobby("hola");
+                protocol.joinLobby(lobby);
+                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
+                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
+                    std::cout << "se creo el lobby correctamente\n";
+                } else {
+                    std::cout << "fallo xd\n";
+                }
+                PlayerChoicesDTO playerChoices(4321, "pablo", Team::COUNTER_TERRORISTS,
+                                               Skin::UK_SAS);
+                protocol.ready(playerChoices);
+                GameLobbyDTO gameLobby = protocol.getGameLobby();
+                while (gameLobby.status != READY_STATUS) {
+                    std::cout << "todavia no se creo el game correctamente\n";
+                    GameLobbyDTO gameLobby = protocol.getGameLobby();
+                }
+                std::cout << "Se creo el game correctamente\n";
                 break;
             }
         }
@@ -100,29 +111,32 @@ void GameClient::run(int argc, char* argv[]) {
     //   }
     //   ////
     // TODO: menu QT
+
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
 
     bool running = true;
-    const int FPS = 60;
+    const int FPS = 1000;
     const int frameDelay = 1000 / FPS;
-    int32_t frameStart = SDL_GetTicks();
+    uint32_t frameStart = SDL_GetTicks();
     int frameTime;
     SDL sdl(SDL_INIT_VIDEO);
 
     while (running) {
         // gameSnapshot = protocol.receiveSnapshot();
         SDL_Event event;
-        while (SDL_PollEvent(&event)) {
+        if (SDL_PollEvent(&event)) {
             running = inputHandler.processEvent(event);
-            frameTime = SDL_GetTicks() - frameStart;
-
-            if (frameDelay <= frameTime) {
-                // FIX: cambiar harcodeada de mapa.
-                renderer.renderScreen(protocol.receiveSnapshot(), MapType::DUST,
-                                      inputHandler.getMouseCoords());
-                frameStart = SDL_GetTicks();
-            }
         }
+        frameTime = SDL_GetTicks() - frameStart;
+
+        if (frameDelay <= frameTime) {
+            // FIX: cambiar harcodeada de mapa.
+            std::cout << "GameClient::run, sigo adentro." << std::endl;
+            renderer.renderScreen(protocol.receiveSnapshot(), MapType::DUST,
+                                  inputHandler.getMouseCoords());
+            frameStart = SDL_GetTicks();
+        }
+
     }
 }

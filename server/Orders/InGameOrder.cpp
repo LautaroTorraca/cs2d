@@ -27,7 +27,7 @@ InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint
         {ProtocolConstants::PICK_UP_ITEM, IN_GAME_PICK_UP_ITEM},
         {ProtocolConstants::DROP_ITEM, IN_GAME_DROP_ITEM},
         {ProtocolConstants::BUY, IN_GAME_BUY},
-        //{ProtocolConstants::BUY_WEAPON, IN_GAME_BUY_WEAPON},
+        {ProtocolConstants::CHANGE_ANGLE, IN_GAME_CHANGE_ANGLE},
         {ProtocolConstants::SWITCH_WEAPON, IN_GAME_SWITCH_WEAPON},
         {ProtocolConstants::PLANT_BOMB, IN_GAME_PLANT_BOMB},
         {ProtocolConstants::DEFUSE_BOMB, IN_GAME_DEFUSE_BOMB},
@@ -69,13 +69,17 @@ InGameOrder::InGameOrder(InGameOrder&& other) noexcept
       direction(other.direction),
       ammoAmount(other.ammoAmount),
       weaponInformation(other.weaponInformation),
-      orderTranslator(std::move(other.orderTranslator))
+      orderTranslator(std::move(other.orderTranslator)),
+    movementTranslator(std::move(other.movementTranslator)),
+    position(std::move(other.position))
 {
     other.orderType = DO_NOTHING;
     other.playerId = DEFAULT_PLAYER_ID;
     other.direction = DEFAULT_DIRECTION;
     other.ammoAmount = DEFAULT_AMMO;
     other.weaponInformation = DEFAULT_WEAPON_INFORMATION;
+    other.movementTranslator = std::map<uint16_t, Movement>();
+    other.position = std::pair<double, double>();
 }
 
 InGameOrder& InGameOrder::operator=(InGameOrder&& other) noexcept {
@@ -86,12 +90,16 @@ InGameOrder& InGameOrder::operator=(InGameOrder&& other) noexcept {
         ammoAmount = other.ammoAmount;
         weaponInformation = other.weaponInformation;
         orderTranslator = std::move(other.orderTranslator);
+        movementTranslator = std::move(other.movementTranslator);
+        position = std::move(other.position);
 
         other.orderType = DO_NOTHING;
         other.playerId = DEFAULT_PLAYER_ID;
         other.direction = DEFAULT_DIRECTION;
         other.ammoAmount = DEFAULT_AMMO;
         other.weaponInformation = DEFAULT_WEAPON_INFORMATION;
+        other.movementTranslator = std::map<uint16_t, Movement>();
+        other.position = std::pair<double, double>();
     }
     return *this;
 }

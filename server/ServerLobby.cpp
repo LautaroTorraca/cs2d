@@ -20,7 +20,7 @@ void ServerLobby::setupTranslators() {
 void ServerLobby::handle(const std::unique_ptr<Order> &order) const {
   ServerLobbyOrder &lobbyOrder = dynamic_cast<ServerLobbyOrder &>(*order);
   const OrderType type = lobbyOrder.getOrderType();
-
+    std::cout << "ServerLobby::handle()" << std::endl;
   if (!translator.contains(type)) {
     throw -1; // TODO FIX
   }
@@ -30,12 +30,17 @@ void ServerLobby::handle(const std::unique_ptr<Order> &order) const {
 
 void ServerLobby::createGame(const ServerLobbyOrder &order) {
   try {
-    GameLobby gameLobby = this->lobby.createGameLobby(order.getClientId(), order.getGameName(), order.getMapType(), order.getRoundCount());
-    this->gameLobbyserver.add(order.getGameName(), gameLobby);
-    this->joinGame(order);
+      std::cout << "ServerLobby::createGame() inicio" << std::endl;
+    GameLobby gameLobby = this->lobby.createGameLobby(order.getClientId(), order.getGameName(),
+                                                        order.getMapType(), order.getRoundCount());
+      std::cout << "ServerLobby::createGame() final" << std::endl;
+      this->gameLobbyserver.add(order.getGameName(), gameLobby);
+      this->lobby.joinGame(order.getClientId(), order.getGameName());
+      this->gameLobbyserver.join(order.getGameName(), order.getClientId());
     LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::SUCCESS);
     protocol.sendLobbyConnectionStatus(lobbyConnection);
   }catch (std::runtime_error &e) {
+      std::cout << "ServerLobby::createGame() catch" << std::endl;
     LobbyConnectionDTO lobbyConnection(order.getClientId(), ConnectionStatus::FAILED);
     protocol.sendLobbyConnectionStatus(lobbyConnection);
   }

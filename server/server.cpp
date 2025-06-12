@@ -60,10 +60,10 @@ void Server::setupInGameOrders() {
         inGameServer.handle(order);
     };
 
-    /*orderTranslator[IN_GAME_BUY_WEAPON] =
+    orderTranslator[IN_GAME_CHANGE_ANGLE] =
         [this](const std::unique_ptr<Order> &order) {
           inGameServer.handle(order);
-        };*/
+        };
 
     orderTranslator[IN_GAME_SWITCH_WEAPON] = [this](const std::unique_ptr<Order>& order) {
         inGameServer.handle(order);
@@ -86,7 +86,10 @@ void Server::run() {
     while (true) {
         try {
             std::unique_ptr<Order> order = protocol.getNextOrder();
+
             OrderType type = order->getOrderType();
+            //std::cout << "Server::run, atendiendo order:" << (int)type << std::endl;
+
 
             if (!orderTranslator.contains(type)) {
                 // TODO FIX
@@ -94,8 +97,9 @@ void Server::run() {
             }
 
             orderTranslator.at(type)(order);
-        } catch (...) {
+        } catch (std::exception& e) {
             // TODO FIX
+            std::cout << "Main server error: " << e.what() << std::endl;
             break;
         }
     }

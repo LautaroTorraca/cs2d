@@ -33,7 +33,9 @@ void Sender::send(const PlayerInfoDTO& playerInfo) {
     uint8_t skin = playerInfo.getSkin();
     this->send(playerInfo.getId());
     this->send(playerInfo.getName());
-    this->send(playerInfo.getAngle());
+    double angle = playerInfo.getAngle()*1000;
+    std::cout << "Sender::send(PlayerInfoDTO). Angle: " << angle << std::endl;
+    this->send(angle);
     this->send(playerInfo.getCoordinate());
     this->send(playerInfo.getHealth());
     this->send(playerInfo.getMoney());
@@ -86,11 +88,10 @@ void Sender::send(const DropDTO& drop) {
 void Sender::send(const std::string& data) {
 
     uint16_t dataLength = data.size();
-    std::cout << "data size adentor de send: " << std::to_string(dataLength) << "\n";
     dataLength = htons(dataLength);
     int sendBytes = socket.sendall(&dataLength, sizeof(dataLength));
     this->bytesChecker(sendBytes);
-    sendBytes = socket.sendall(&data, data.size());
+    sendBytes = socket.sendall(data.data(), data.size());
     this->bytesChecker(sendBytes);
 }
 

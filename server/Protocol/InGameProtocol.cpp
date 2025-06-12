@@ -1,13 +1,12 @@
 #include "InGameProtocol.h"
 
 #include <cstring>
+#include <iostream>
 
-#include "Constants/ProtocolContants.h"
 #include "Constants/KeyContants.h"
+#include "Constants/ProtocolContants.h"
 
-InGameProtocol::InGameProtocol(
-    std::map<size_t, std::unique_ptr<Socket>> &connectedUsers)
-    : connectedUsers(connectedUsers) {
+InGameProtocol::InGameProtocol(){
   using namespace ProtocolConstants;
 
   requestHandlers[PLAYER_MOVEMENT] = [this](const Request &request) {
@@ -44,7 +43,6 @@ InGameProtocol::InGameProtocol(
 
 InGameOrder InGameProtocol::handleRequest(const Request &request) {
   const uint8_t opCode = request.getRequest().at(opCodeKey).front();
-
   if (!requestHandlers.contains(opCode)) {
     throw -1; // TODO FIX
   }
@@ -56,7 +54,7 @@ InGameOrder InGameProtocol::movementHandler(const Request &request) {
 
   uint16_t direction;
   std::memcpy(&direction, message.at(directionKey).data(), sizeof(uint16_t));
-
+    std::cout << "InGameProtocol::movementHandler, id: " << clientId << "direction: " << direction << std::endl;
   return InGameOrder(ProtocolConstants::PLAYER_MOVEMENT, clientId, direction);
 }
 
@@ -64,9 +62,7 @@ InGameOrder InGameProtocol::shootHandler(const Request &request) {
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
 
-  const uint8_t direction = message.at(directionKey).front();
-
-  return InGameOrder(ProtocolConstants::ATTACK, clientId, direction);
+  return InGameOrder(ProtocolConstants::ATTACK, clientId);
 }
 
 InGameOrder InGameProtocol::pickUpItemHandler(const Request &request) {
@@ -94,9 +90,9 @@ InGameOrder InGameProtocol::switchWeaponHandler(const Request &request) {
 }
 
 InGameOrder InGameProtocol::changeAngleHandler(const Request &request) {
+    //std::cout << "InGameProtocol::changeAngleHandler, entre cambio angulo." << std::endl;
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
-
   double x;
   double y;
   std::vector<char> serializedX = message.at(xPosKey);
@@ -137,10 +133,4 @@ InGameOrder InGameProtocol::exitHandler(const Request &request) {
   return InGameOrder(ProtocolConstants::EXIT_GAME, clientId);
 }
 
-// NO LA USAMOS NUNCA, REVISAR CUANDO ME LOS TENGO QUE GUARDAR
-void InGameProtocol::registerClient(size_t clientId,
-                                    std::unique_ptr<InGameHandler> handler) {
-  usersInGame.emplace(clientId, std::move(handler));
-}
-
-void InGameProtocol::end() { usersInGame.clear(); }
+void InGameProtocol::end() {}

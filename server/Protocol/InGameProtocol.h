@@ -2,15 +2,12 @@
 
 #include "Requests/Request.h"
 #include "Orders/InGameOrder.h"
-#include "Handlers/InGameHandler.h"
 #include <map>
 #include <memory>
 #include <functional>
 
 
 class InGameProtocol {
-    std::map<size_t, std::unique_ptr<Socket>>& connectedUsers;
-    std::map<size_t, std::unique_ptr<InGameHandler>> usersInGame;
     std::map<uint8_t, std::function<InGameOrder(const Request&)>> requestHandlers;
 
     InGameOrder movementHandler(const Request& request);
@@ -25,7 +22,7 @@ class InGameProtocol {
     InGameOrder exitHandler(const Request& request);
 
 public:
-    explicit InGameProtocol(std::map<size_t, std::unique_ptr<Socket>>& connectedUsers);
+    explicit InGameProtocol();
 
     InGameProtocol(const InGameProtocol&) = delete;
     InGameProtocol& operator=(const InGameProtocol&) = delete;
@@ -33,7 +30,5 @@ public:
     InGameProtocol& operator=(InGameProtocol&&) = delete;
 
     InGameOrder handleRequest(const Request& request);
-
-    void registerClient(size_t clientId, std::unique_ptr<InGameHandler> handler);
     void end();
 };

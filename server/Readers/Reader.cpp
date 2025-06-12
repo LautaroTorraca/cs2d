@@ -10,6 +10,7 @@
 
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
+#include <cmath>
 
 #define NEW 0X6E
 
@@ -41,16 +42,25 @@ std::string Reader::stringReader() const {
     uint16_t nameLength = 0;
 
     int bytesRead = socket.recvall(&nameLength, sizeof(nameLength));
-    std::cout << "adentro de string reader:\n" << std::to_string(nameLength) << "\n";
     this->bytesChecker(bytesRead);
     nameLength = ntohs(nameLength);
-    std::cout << std::to_string(nameLength) << "\n";
     std::vector<char> buffer(nameLength);
     bytesRead = socket.recvall(buffer.data(), nameLength);
     this->bytesChecker(bytesRead);
-
     std::string str(buffer.begin(), buffer.end());
     return str;
+}
+
+std::vector<char> Reader::bytesReader() const {
+
+    uint16_t nameLength = 0;
+    int bytesRead = socket.recvall(&nameLength, sizeof(nameLength));
+    this->bytesChecker(bytesRead);
+    nameLength = ntohs(nameLength);
+    std::vector<char> buffer(nameLength);
+    bytesRead = socket.recvall(buffer.data(), nameLength);
+    this->bytesChecker(bytesRead);
+    return buffer;
 }
 
 double Reader::doubleRead() const {
@@ -101,17 +111,19 @@ WeaponInformation Reader::readWeapon() const {
 PlayerInformation Reader::readPlayer() const {
     size_t id = this->readSizeT();
     std::string playerName = this->stringReader();
-    int angle = this->readInt();
+    double angle = this->readInt()/1000;
+    std::cout << "Player name: " << playerName << " angle: " << angle << std::endl;
+    angle = angle*180/M_PI;
     CoordinateInformation position = this->readCoordinateInformation();
     uint8_t health = this->u8tReader();
     uint16_t money = this->u16tReader();
     uint8_t kills = this->u8tReader();
     Skin skin = static_cast<Skin>(this->u8tReader());
+    WeaponInformation actualWeapon = this->readWeapon();
     std::vector<WeaponInformation> weapons;
     while (this->u8tReader() == NEW) {
         weapons.push_back(this->readWeapon());
     }
-    WeaponInformation actualWeapon = this->readWeapon();
     return PlayerInformation(id, playerName, skin, position, angle, money, health, weapons,
                              actualWeapon, kills);
 }
