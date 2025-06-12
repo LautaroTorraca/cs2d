@@ -7,12 +7,13 @@
 #include "Drop.h"
 
 
-class DeactivatedDrop: public Drop {
+class DeactivatedDrop : public Drop {
 public:
-    void giveTo(Inventory&) override {}
+    void giveTo(Inventory &) override {}
     DropDTO getInfo() override;
     ~DeactivatedDrop() override = default;
 };
 
 
-#endif  // DEACTIVATEDDROP_H
+
+#endif //DEACTIVATEDDROP_H

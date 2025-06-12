@@ -1,14 +1,12 @@
 #include "GameLobbyHandler.h"
 
 #include <map>
-#include <stdexcept>
 #include <vector>
-
-#include "Constants/KeyContants.h"
+#include <stdexcept>
 #include "Constants/OpCodesConstans.h"
+#include "Constants/KeyContants.h"
 
-GameLobbyHandler::GameLobbyHandler(Socket& user, const size_t& userId):
-        userSocket(user), userId(userId), reader(user) {
+GameLobbyHandler::GameLobbyHandler(Socket& user, const size_t &userId) : userSocket(user), userId(userId), reader(user) {
     requestMapper[OPCODE_READY] = [&]() { return readyRequest(); };
     requestMapper[OPCODE_EXIT_LOBBY] = [&]() { return exitGameLobbyRequest(); };
 }

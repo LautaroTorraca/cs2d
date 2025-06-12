@@ -8,25 +8,24 @@
 
 #define TIME_ADVANCE_IN_SECONDS 0.01
 
-void GameMonitor::addPlayer(const size_t& id, const std::string& name, const Team& team,
-                            const Skin& skin) {
+void GameMonitor::addPlayer(const size_t &id, const std::string &name, const Team &team, const Skin &skin) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.addPlayer(id, name, team, skin);
 }
 
-void GameMonitor::move(const size_t& id, const Coordinate& displacement) {
+void GameMonitor::move(const size_t &id, const Coordinate &displacement) {
     std::lock_guard<std::mutex> lock(this->mutex);
     std::cout << "GameMonitor::move, Entre move" << std::endl;
     this->game.move(id, displacement);
 }
 
-void GameMonitor::changeAngle(const size_t& id, const Coordinate& coordinate) {
+void GameMonitor::changeAngle(const size_t &id, const Coordinate &coordinate) {
     std::lock_guard<std::mutex> lock(this->mutex);
     std::cout << "GameMonitor::changeAngle, Entre changeAngle, id:" << id << " dir:("<< coordinate.getInfo().getX() << ", " << coordinate.getInfo().getY() << ") " << std::endl;
     this->game.changeAngle(id, coordinate);
 }
 
-void GameMonitor::setWeapon(const size_t& id, const uint8_t& index) {
+void GameMonitor::setWeapon(const size_t &id, const uint8_t &index) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.setWeapon(id, index);
 }
@@ -36,22 +35,22 @@ std::vector<std::vector<uint8_t>> GameMonitor::getMap() {
     return this->game.getMap();
 }
 
-void GameMonitor::buy(const size_t& id, const ProductType& product) {
+void GameMonitor::buy(const size_t &id, const ProductType &product) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.buy(id, product);
 }
 
-void GameMonitor::buy(const size_t& id, const ProductType& product, uint16_t amount) {
+void GameMonitor::buy(const size_t &id, const ProductType &product, uint16_t amount) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.buy(id, product, amount);
 }
 
-void GameMonitor::takeDrop(const size_t& id) {
+void GameMonitor::takeDrop(const size_t &id) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.takeDrop(id);
 }
 
-void GameMonitor::attack(const size_t& id) {
+void GameMonitor::attack(const size_t &id) {
     std::lock_guard<std::mutex> lock(this->mutex);
     std::cout << "GameMonitor::attack, estoy atacando, id: "<< (int) id << std::endl;
     this->game.attack(id);
@@ -62,7 +61,7 @@ void GameMonitor::spawnBomb() {
     this->game.spawnBomb();
 }
 
-void GameMonitor::deactivateBomb(const size_t& id) {
+void GameMonitor::deactivateBomb(const size_t &id) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.deactivateBomb(id);
 }
@@ -72,7 +71,7 @@ GameInfoDTO GameMonitor::getInfo() {
     return this->game.getInfo();
 }
 
-void GameMonitor::kick(const size_t& id) {
+void GameMonitor::kick(const size_t &id) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.kick(id);
 }

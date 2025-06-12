@@ -10,23 +10,22 @@
 #include "Finalizable.h"
 #include "Spawner.h"
 
-class CountersTeam: public Advancer {
+class CountersTeam : public Advancer {
     Finalizable& finalizable;
     std::map<size_t, std::shared_ptr<CounterPlayer>> counters;
     std::map<size_t, Player&> cemetery;
-
 public:
-    explicit CountersTeam(Finalizable& finalizable): finalizable(finalizable) {}
+    explicit CountersTeam(Finalizable& finalizable) : finalizable(finalizable) {}
     void add(const size_t& id, std::shared_ptr<CounterPlayer>& counterPlayer);
-    void deactivate(size_t id, Positionable& positionable) const;
-    void reset(Spawner& spawner);
-    void advance(const double& actualTime) override;
+    void deactivate(size_t id, Positionable &positionable) const;
+    void reset(Spawner & spawner);
+    void advance(const double &actualTime) override;
 
-    void giveMoney(const uint16_t& money);
+    void giveMoney(const uint16_t &money);
 
     void kickOut(const size_t& id);
 
     void clear();
 };
 
-#endif  // COUNTERTEAM_H
+#endif //COUNTERTEAM_H

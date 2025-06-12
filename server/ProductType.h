@@ -15,4 +15,4 @@ enum ProductType : std::uint8_t {
     NONE = 0xFF
 };
 
-#endif  // PRODUCTIDS_H
+#endif //PRODUCTIDS_H

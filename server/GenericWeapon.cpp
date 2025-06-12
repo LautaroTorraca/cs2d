@@ -4,4 +4,6 @@
 
 #include "GenericWeapon.h"
 
-void GenericWeapon::set(std::shared_ptr<Owner>& owner) { this->owner = owner; }
+void GenericWeapon::set(std::shared_ptr<Owner> &owner) {
+    this->owner = owner;
+}

@@ -7,10 +7,11 @@
 #include "Tile.h"
 
 
-class Wall: public Tile {
+class Wall : public Tile {
 public:
-    explicit Wall(const uint8_t& code): Tile(code) {}
+    explicit Wall(const uint8_t& code) : Tile(code) {}
+
 };
 
 
-#endif  // WALL_H
+#endif //WALL_H

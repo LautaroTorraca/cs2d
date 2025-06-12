@@ -1,13 +1,12 @@
 #pragma once
 
-#include <functional>
+#include "Requests/Request.h"
+#include "Orders/ServerLobbyOrder.h"
+#include "Handlers/LobbyHandler.h"
 #include <map>
 #include <memory>
 #include <string>
-
-#include "Handlers/LobbyHandler.h"
-#include "Orders/ServerLobbyOrder.h"
-#include "Requests/Request.h"
+#include <functional>
 
 class ServerLobbyProtocol {
     std::map<uint8_t, std::function<ServerLobbyOrder(const Request&)>> requestHandlers;

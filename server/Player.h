@@ -13,8 +13,8 @@
 #include "Entity.h"
 #include "PlayerInfoDTO.h"
 #include "PlayerInventory.h"
-#include "Skin.h"
 #include "Wallet.h"
+#include "Skin.h"
 
 #define INITIAL_LIFE_KEY "initialLife"
 #define INITIAL_MONEY_KEY "initialMoney"
@@ -22,7 +22,7 @@
 #define INITIAL_SELECTED_WEAPON_INDEX 0
 
 
-class Player: public Entity, public Damageable, public Buyer, public Advancer, public Owner {
+class Player : public Entity, public Damageable, public Buyer, public Advancer, public Owner {
     size_t id;
     std::string name;
     Skin skin;
@@ -37,48 +37,47 @@ class Player: public Entity, public Damageable, public Buyer, public Advancer, p
 protected:
     Position position;
     PlayerInventory inventory;
-
 public:
-    Player(const size_t& id, const std::string& name, const Skin& skin,
-           const GameParser& gameParser, DropPlacer& weaponPlacer);
+
+    Player(const size_t& id, const std::string& name, const Skin& skin, const GameParser& gameParser, DropPlacer& weaponPlacer);
 
     ~Player() override = default;
 
     void collision() override;
 
-    void collision(Entity& other) override;
+    void collision(Entity &other) override;
 
-    void collision(Damager& other) override;
+    void collision(Damager &other) override;
 
-    void collision(Damageable& other) override;
+    void collision(Damageable &other) override;
 
-    Position displaced(const Coordinate& coordinate) override;
+    Position displaced(const Coordinate & coordinate) override;
 
-    void allocate(const Position& position) override;
+    void allocate(const Position &position) override;
 
-    void changeAngle(const Coordinate& coordinate);
+    void changeAngle(const Coordinate &coordinate);
 
     void die();
 
-    void receive(Damager& damager) override;
+    void receive(Damager &damager) override;
 
-    void buy(Product& product) override;
+    void buy(Product &product) override;
 
     virtual void setWeapon(const uint8_t& index);
 
     void pushBack() override;
 
-    virtual void attack(Positionable& positionable);
+    virtual void attack(Positionable & positionable);
 
     void takeDrop(DropPlacer& weaponPlacer);
 
-    void advance(const double& actualTime) override;
+    void advance(const double &actualTime) override;
 
     virtual void reset();
 
-    void signDeath(std::map<size_t, Player&>& cemetery);
+    void signDeath(std::map<size_t, Player &> &cemetery);
 
-    void removeFrom(Positionable& positionable);
+    void removeFrom(Positionable &positionable);
 
     void release(const uint8_t& index) override;
 
@@ -92,4 +91,5 @@ public:
 };
 
 
-#endif  // PLAYER_H
+
+#endif //PLAYER_H

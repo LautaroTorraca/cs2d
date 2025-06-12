@@ -3,7 +3,7 @@
 #include <thread>
 
 #include "InputHandler.h"
-// #include "Protocol.h"
+#include "Protocol.h"
 #include "Protocol_testing.h"
 // #include "Protocol_testing.h"
 
@@ -13,7 +13,7 @@ constexpr std::string HOSTNAME = "127.0.0.1";
 
 class GameClient {
     bool running;
-    ProtocolTesting protocol;
+    Protocol protocol;
     InputHandler inputHandler;
     // GameRenderer gameRenderer;
 

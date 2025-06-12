@@ -6,26 +6,24 @@
 #define TERRORISTSTEAM_H
 #include <map>
 #include <memory>
-
-#include "Bomb.h"
+#include "TerroristPlayer.h"
 #include "Finalizable.h"
 #include "Spawner.h"
-#include "TerroristPlayer.h"
+#include "Bomb.h"
 
 
-class TerroristsTeam: public Advancer {
+class TerroristsTeam : public Advancer {
     std::map<size_t, std::shared_ptr<TerroristPlayer>> terrorists;
     Finalizable& finalizable;
     std::map<size_t, Player&> cemetery;
-
-public:
-    explicit TerroristsTeam(Finalizable& finalizable): finalizable(finalizable) {}
+    public:
+    explicit TerroristsTeam(Finalizable& finalizable) : finalizable(finalizable) {}
     void add(const size_t& id, std::shared_ptr<TerroristPlayer>& terroristPlayer);
-    void spawnBomb(std::shared_ptr<Weapon>& bomb);
+    void spawnBomb(std::shared_ptr<Weapon> &bomb);
 
-    void reset(Spawner& spawner);
+    void reset(Spawner & spawner);
 
-    void advance(const double& actualTime) override;
+    void advance(const double &actualTime) override;
 
     void giveMoney(const uint16_t& money);
 
@@ -35,4 +33,5 @@ public:
 };
 
 
-#endif  // TERRORISTSTEAM_H
+
+#endif //TERRORISTSTEAM_H

@@ -1,7 +1,7 @@
 #include "Request.h"
 
-Request::Request(const size_t& id, std::map<std::string, std::vector<char>>& metaData):
-        id(id), metaData(std::move(metaData)) {}
+Request::Request(const size_t& id, std::map<std::string, std::vector<char>>& metaData)
+    : id(id), metaData(std::move(metaData)) {}
 
 Request::Request(Request&& other) noexcept: id(other.id), metaData(std::move(other.metaData)) {
     if (this == &other) {

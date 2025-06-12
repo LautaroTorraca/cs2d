@@ -7,7 +7,7 @@
 
 #include "Damager.h"
 
-class Damageable {
+class Damageable{
 public:
     virtual ~Damageable() = default;
 
@@ -15,4 +15,4 @@ public:
     virtual void pushBack() = 0;
 };
 
-#endif  // RECEIVER_H
+#endif //RECEIVER_H

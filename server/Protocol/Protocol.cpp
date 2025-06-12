@@ -135,13 +135,12 @@ void Protocol::sendLobbyConnectionStatus(const LobbyConnectionDTO& lobbyConnecti
     this->clientsHandlers.at(lobbyConnection.id)->sendLobbyConnectonStatus(lobbyConnection);
 }
 
-void Protocol::disconnect(const DisconnectionDTO& disconnectionInfo) {
-    if (!this->clientsHandlers.contains(disconnectionInfo.clientId))
-        return;
-    std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
-    client->stopService();
-    client->join();
-    this->clientsHandlers.erase(disconnectionInfo.clientId);
+void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
+  if (!this->clientsHandlers.contains(disconnectionInfo.clientId)) return;
+  std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
+  client->stopService();
+  client->join();
+  this->clientsHandlers.erase(disconnectionInfo.clientId);
 }
 
 std::vector<size_t> Protocol::getIds(const GameLobbyDTO& gameLobbyInfo) {

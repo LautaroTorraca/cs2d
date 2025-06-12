@@ -7,15 +7,12 @@
 #include "Projectile.h"
 
 
-class DirectProjectile: public Projectile {
+class DirectProjectile : public Projectile {
 protected:
     double getDamage() override;
-
 public:
-    DirectProjectile(Positionable& positionable, const Position& source,
-                     const Coordinate& direction, const double& range, const double& precision,
-                     const double& speed, const double& damage):
-            Projectile(positionable, source, direction, range, precision, speed, damage) {}
+    DirectProjectile(Positionable& positionable, const Position& source, const Coordinate& direction, const double& range, const double& precision, const double& speed, const double& damage) :
+    Projectile(positionable, source, direction, range, precision, speed, damage) {}
 };
 
-#endif  // AWPPROJECTILE_H
+#endif //AWPPROJECTILE_H

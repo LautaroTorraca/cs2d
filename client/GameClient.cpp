@@ -16,7 +16,7 @@
 // #include "server/Team.h"
 
 #include "InputHandler.h"
-// #include "MainWindow.h"
+#include "MainWindow.h"
 // #include "Protocol.h"
 #include "SDL_timer.h"
 
@@ -137,6 +137,5 @@ void GameClient::run(int argc, char* argv[]) {
                                   inputHandler.getMouseCoords());
             frameStart = SDL_GetTicks();
         }
-
     }
 }

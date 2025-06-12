@@ -4,11 +4,10 @@
 
 #include "TerroristsTeam.h"
 
+#include "Randomizator.h"
 #include <ranges>
 
-#include "Randomizator.h"
-
-void TerroristsTeam::add(const size_t& id, std::shared_ptr<TerroristPlayer>& terroristPlayer) {
+void TerroristsTeam::add(const size_t &id, std::shared_ptr<TerroristPlayer> &terroristPlayer) {
     this->terrorists.emplace(id, terroristPlayer);
 }
 
@@ -16,21 +15,20 @@ void TerroristsTeam::spawnBomb(std::shared_ptr<Weapon>& bomb) {
     Randomizator randomizer;
     int selectedIndex = randomizer.getRandom(this->terrorists.size() - 1);
     auto selectedPlayer = std::next(this->terrorists.begin(), selectedIndex)->second;
-    selectedPlayer->addBomb(bomb);
+    selectedPlayer->addBomb( bomb);
 }
 
-void TerroristsTeam::reset(Spawner& spawner) {
-    this->cemetery.clear();  // TODO: Subir este codigo repetido aca y en CountersTeam a una nueva
-                             // clase padre, llamada Team.
-    for (auto& terrorist: this->terrorists | std::views::values) {
+void TerroristsTeam::reset(Spawner & spawner) {
+    this->cemetery.clear();//TODO: Subir este codigo repetido aca y en CountersTeam a una nueva clase padre, llamada Team.
+    for (auto &terrorist: this->terrorists | std::views::values) {
         terrorist->reset();
         std::shared_ptr<Entity> entity = terrorist;
         spawner.spawnTerrorist(entity);
     }
 }
 
-void TerroristsTeam::advance(const double&) {
-    for (auto& counter: this->terrorists | std::views::values) {
+void TerroristsTeam::advance(const double &) {
+    for (auto &counter: this->terrorists | std::views::values) {
         counter->signDeath(this->cemetery);
     }
     if (this->cemetery.size() == this->terrorists.size()) {
@@ -38,13 +36,13 @@ void TerroristsTeam::advance(const double&) {
     }
 }
 
-void TerroristsTeam::giveMoney(const uint16_t& money) {
-    for (auto& counter: this->terrorists | std::views::values) {
+void TerroristsTeam::giveMoney(const uint16_t &money) {
+    for ( auto &counter: this->terrorists | std::views::values) {
         counter->give(money);
     }
 }
 
-void TerroristsTeam::kickOut(const size_t& id) {
+void TerroristsTeam::kickOut(const size_t &id) {
     if (this->terrorists.contains(id)) {
         this->terrorists.erase(id);
     }

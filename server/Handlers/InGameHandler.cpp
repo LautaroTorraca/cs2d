@@ -9,8 +9,7 @@
 #include "Constants/KeyContants.h"
 #include "Constants/OpCodesConstans.h"
 
-InGameHandler::InGameHandler(Socket& user, const size_t& userId):
-        userSocket(user), userId(userId), reader(user) {
+InGameHandler::InGameHandler(Socket& user, const size_t &userId) : userSocket(user), userId(userId), reader(user) {
     requestMapper[OPCODE_PLAYER_MOVEMENT] = [&]() { return moveRequest(); };
     requestMapper[OPCODE_SHOOT] = [&]() { return shootRequest(); };
     requestMapper[OPCODE_BUY] = [&]() { return buyRequest(); };

@@ -7,24 +7,23 @@
 #include "DistanceWeapon.h"
 
 
-class Knife: public DistanceWeapon {
+class Knife : public DistanceWeapon {
     double knifeMinDamage;
     double knifeMaxDamage;
     double knifeSpeed;
     double knifeRange;
 
 public:
-    Knife(const double& knifeMinDamage, const double& knifeMaxDamage, const double& knifeSpeed,
-          const double& knifeRange):
-            knifeMinDamage(knifeMinDamage),
-            knifeMaxDamage(knifeMaxDamage),
-            knifeSpeed(knifeSpeed),
-            knifeRange(knifeRange) {}
 
-    void attack(Positionable& mover, const Position& actualPosition,
-                const double& destination) override;
+    Knife(const double& knifeMinDamage, const double& knifeMaxDamage, const double& knifeSpeed, const double& knifeRange) :
+        knifeMinDamage(knifeMinDamage),
+        knifeMaxDamage(knifeMaxDamage),
+        knifeSpeed(knifeSpeed),
+        knifeRange(knifeRange){}
 
-    void recharge(uint16_t&) override {}
+    void attack(Positionable &mover, const Position &actualPosition, const double &destination) override;
+
+    void recharge(uint16_t &) override {}
 
     WeaponInfoDTO getInfo() override;
 
@@ -32,4 +31,5 @@ public:
 };
 
 
-#endif  // KNIFE_H
+
+#endif //KNIFE_H

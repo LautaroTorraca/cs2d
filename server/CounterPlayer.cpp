@@ -4,6 +4,6 @@
 
 #include "CounterPlayer.h"
 
-void CounterPlayer::deactivate(Positionable& positionable) {
+void CounterPlayer::deactivate(Positionable &positionable) {
     positionable.deactivate(this->position);
 }

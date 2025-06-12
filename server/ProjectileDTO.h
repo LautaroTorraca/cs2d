@@ -9,11 +9,12 @@
 
 class ProjectileDTO {
     CoordinateDTO coordinateDTO;
-
-public:
-    explicit ProjectileDTO(const CoordinateDTO& coordinateDTO): coordinateDTO(coordinateDTO) {}
+    public:
+    explicit ProjectileDTO(const CoordinateDTO& coordinateDTO) : coordinateDTO(coordinateDTO) {}
     [[nodiscard]] const CoordinateDTO& getCoordinateDTO() const;
+
 };
 
 
-#endif  // PROJECTILEDTO_H
+
+#endif //PROJECTILEDTO_H

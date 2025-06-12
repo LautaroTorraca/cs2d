@@ -27,4 +27,4 @@ struct PlayerChoicesDTO {
     }
 };
 
-#endif  // PLAYERCHOICESDTO_H
+#endif //PLAYERCHOICESDTO_H

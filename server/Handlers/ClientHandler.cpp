@@ -122,7 +122,7 @@ void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
     uint8_t status = gameLobbyInfo.status;
     uint8_t mapType = static_cast<uint8_t>(gameLobbyInfo.mapType);
     this->sender.send(status);
-    for (const auto& playerChoice: playersChoices) {
+    for (const auto &playerChoice : playersChoices) {
         uint8_t skin = playerChoice.skin;
         uint8_t team = playerChoice.team;
         this->sender.send(NEW);
@@ -135,6 +135,7 @@ void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
     this->sender.send(gameLobbyInfo.gameName);
     this->sender.send(gameLobbyInfo.rounds);
     this->sender.send(mapType);
+
 }
 
 void ClientHandler::sendLobbyConnectonStatus(const LobbyConnectionDTO& lobbyConnection) {

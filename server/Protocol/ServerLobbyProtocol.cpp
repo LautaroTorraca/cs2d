@@ -1,9 +1,8 @@
 #include "ServerLobbyProtocol.h"
-
+#include "Constants/ProtocolContants.h"
+#include "Constants/KeyContants.h"
 #include <sstream>
 
-#include "Constants/KeyContants.h"
-#include "Constants/ProtocolContants.h"
 #include "Sender/Sender.h"
 
 
@@ -19,7 +18,7 @@ ServerLobbyOrder ServerLobbyProtocol::handleRequest(const Request& request) {
     const uint8_t opCode = request.getRequest().at(opCodeKey).front();
 
     if (!requestHandlers.contains(opCode)) {
-        throw -1;  // TODO FIX
+        throw -1; //TODO FIX
     }
     return requestHandlers[opCode](request);
 }
@@ -62,3 +61,4 @@ ServerLobbyOrder ServerLobbyProtocol::disconnectHandler(const Request& request) 
 void ServerLobbyProtocol::end() {
     // TODO Finalizar cada LobbyHandler
 }
+

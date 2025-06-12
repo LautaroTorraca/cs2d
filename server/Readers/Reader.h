@@ -5,9 +5,9 @@
 #include <cstdint>
 #include <string>
 
+#include "common/Constants/SnapshotConstants.h"
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
-#include "common/Constants/SnapshotConstants.h"
 #include "common/socket.h"
 
 class Reader {
@@ -46,4 +46,5 @@ public:
 };
 
 
-#endif  // READER_H
+
+#endif //READER_H

@@ -13,7 +13,7 @@ public:
     const size_t id;
     const ConnectionStatus status;
     explicit LobbyConnectionDTO(const size_t& id, const ConnectionStatus& status):
-            id(id), status(status){};
+            id(id), status(status) {};
 };
 
 #endif  // SUCCESSLOBBYCONNECTIONDTO_H

@@ -4,10 +4,7 @@
 #include "Orders/InGameOrder.h"
 #include <map>
 #include <memory>
-
-#include "Handlers/InGameHandler.h"
-#include "Orders/InGameOrder.h"
-#include "Requests/Request.h"
+#include <functional>
 
 
 class InGameProtocol {

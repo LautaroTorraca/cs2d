@@ -27,9 +27,8 @@ GameLobby Lobby::createGameLobby(const size_t &id, const std::string &gameName, 
     return GameLobby(this->mapsPaths.at(map), map, gameName, rounds);
 }
 
-void Lobby::joinGame(const size_t& id, const std::string& gameName) {
-    if (!this->gamesLobbies.contains(gameName) ||
-        this->maxPlayers.at(gameName) == this->gamesLobbies.size()) {
+void Lobby::joinGame(const size_t &id, const std::string &gameName) {
+    if (!this->gamesLobbies.contains(gameName) || this->maxPlayers.at(gameName) == this->gamesLobbies.size()) {
         throw std::invalid_argument("You could not connect to the gameLobby");
     }
     this->gamesLobbies.at(gameName).push_back(id);

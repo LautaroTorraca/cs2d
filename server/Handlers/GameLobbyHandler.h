@@ -2,9 +2,9 @@
 #include <functional>
 #include <unordered_map>
 
-#include "Readers/Reader.h"
 #include "Requests/Request.h"
 #include "common/socket.h"
+#include "Readers/Reader.h"
 
 class GameLobbyHandler {
 
@@ -18,8 +18,9 @@ class GameLobbyHandler {
     Request exitGameLobbyRequest() const;
 
 public:
-    explicit GameLobbyHandler(Socket& user, const size_t& userId);
+    explicit GameLobbyHandler(Socket& user, const size_t &userId);
     Request handle(uint8_t opcode) const;
 
     ~GameLobbyHandler();
+
 };

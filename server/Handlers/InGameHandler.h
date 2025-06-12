@@ -1,9 +1,8 @@
 #pragma once
-#include <functional>
 #include <unordered_map>
-
-#include "../Requests/Request.h"
+#include <functional>
 #include "../common/socket.h"
+#include "../Requests/Request.h"
 #include "Readers/Reader.h"
 
 
@@ -27,9 +26,15 @@ class InGameHandler {
     Request exitGameRequest() const;
 
 
+
+
 public:
-    explicit InGameHandler(Socket& user, const size_t& userId);
+    explicit InGameHandler(Socket& user, const size_t &userId);
     Request handle(uint8_t opcode) const;
 
     ~InGameHandler();
+
 };
+
+
+

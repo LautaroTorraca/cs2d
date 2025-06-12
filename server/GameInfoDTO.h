@@ -17,19 +17,17 @@ class GameInfoDTO {
     std::vector<PlayerInfoDTO> playersInfo;
     std::vector<DropDTO> dropsInfo;
     CoordinateDTO plantedBombPosition;
-
 public:
     explicit GameInfoDTO(const GameStatus& status, const uint8_t& currentRound,
-                         const uint8_t& countersWinsRounds, const uint8_t& terroristsWinsRounds,
-                         std::vector<PlayerInfoDTO>& playersInfo, std::vector<DropDTO>& dropsInfo,
-                         const CoordinateDTO& plantedBombPosition):
-            status(status),
-            currentRound(currentRound),
-            countersWinsRounds(countersWinsRounds),
-            terroristsWinsRounds(terroristsWinsRounds),
-            playersInfo(std::move(playersInfo)),
-            dropsInfo(std::move(dropsInfo)),
-            plantedBombPosition(plantedBombPosition) {}
+        const uint8_t& countersWinsRounds, const uint8_t& terroristsWinsRounds,
+        std::vector<PlayerInfoDTO>& playersInfo,
+        std::vector<DropDTO>& dropsInfo, const CoordinateDTO& plantedBombPosition) :
+                        status(status), currentRound(currentRound),
+                        countersWinsRounds(countersWinsRounds),
+                        terroristsWinsRounds(terroristsWinsRounds),
+                        playersInfo(std::move(playersInfo)),
+                        dropsInfo(std::move(dropsInfo)),
+                        plantedBombPosition(plantedBombPosition) {}
     [[nodiscard]] const GameStatus& getStatus() const;
     [[nodiscard]] const uint8_t& getCurrentRound() const;
     [[nodiscard]] const uint8_t& getCountersWinsRounds() const;
@@ -40,4 +38,5 @@ public:
 };
 
 
-#endif  // GAMEINFODTO_H
+
+#endif //GAMEINFODTO_H

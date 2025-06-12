@@ -5,6 +5,12 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-enum Movement { UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, STAND = 4 };
+enum Movement {
+    UP = 0,
+    RIGHT = 1,
+    DOWN = 2,
+    LEFT = 3,
+    STAND = 4
+};
 
-#endif  // MOVEMENT_H
+#endif //MOVEMENT_H

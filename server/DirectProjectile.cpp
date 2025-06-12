@@ -4,4 +4,6 @@
 
 #include "DirectProjectile.h"
 
-double DirectProjectile::getDamage() { return this->damagePoints; }
+double DirectProjectile::getDamage() {
+    return this->damagePoints;
+}

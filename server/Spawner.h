@@ -16,4 +16,4 @@ public:
     virtual void spawnTerrorist(std::shared_ptr<Entity>& entity) = 0;
 };
 
-#endif  // SPAWNER_H
+#endif //SPAWNER_H

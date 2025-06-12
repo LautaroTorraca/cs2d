@@ -9,25 +9,24 @@
 #include <memory>
 #include <variant>
 
-#include "Orders/InGameOrder.h"
-
 #include "CountersTeam.h"
+#include "GameMap.h"
+#include "Player.h"
+#include "Team.h"
+#include "TerroristsTeam.h"
+#include "GameParser.h"
+#include "PlayerInfoDTO.h"
+#include "Shop.h"
 #include "DropDTO.h"
 #include "Finalizable.h"
 #include "GameInfoDTO.h"
-#include "GameMap.h"
-#include "GameParser.h"
 #include "GameStatus.h"
-#include "Player.h"
-#include "PlayerInfoDTO.h"
-#include "Shop.h"
-#include "Team.h"
-#include "TerroristsTeam.h"
+#include "Orders/InGameOrder.h"
 
 #define BUY_TIME_DURATION_KEY "buyTimeDuration"
 #define MONEY_PER_WIN_ROUND_KEY "moneyPerWinRound"
 
-class Game: public Advancer, public Finalizable {
+class Game : public Advancer, public Finalizable {
     std::map<size_t, std::shared_ptr<Player>> players;
     TerroristsTeam terrorists;
     CountersTeam counters;
@@ -42,13 +41,11 @@ class Game: public Advancer, public Finalizable {
     GameStatus status;
     double timeUntilStart;
     std::map<Team, std::function<void(const size_t&, const std::string&, const Skin&)>> teamAdder;
-    void addCounter(const size_t& id, const std::string& name, const Skin& skin);
-    void addTerrorist(const size_t& id, const std::string& name, const Skin& skin);
-
+    void addCounter(const size_t &id, const std::string &name, const Skin &skin);
+    void addTerrorist(const size_t &id, const std::string &name, const Skin &skin);
 public:
     Game(GameParser& parser, const uint8_t& rounds);
-    void addPlayer(const size_t& id, const std::string& name, const Team& team,
-                   const Skin& skin) const;
+    void addPlayer(const size_t &id, const std::string &name, const Team &team, const Skin &skin) const;
     void move(const size_t& id, const Coordinate& displacement);
     void changeAngle(const size_t& id, const Coordinate& coordinate);
     void setWeapon(const size_t& id, const uint8_t& index);
@@ -57,7 +54,7 @@ public:
     void buy(const size_t& id, const ProductType& product, const uint16_t& amount);
     void takeDrop(const size_t& id);
     void attack(const size_t& id);
-    void advance(const double& actualTime) override;
+    void advance(const double &actualTime) override;
     void spawnBomb();
     void deactivateBomb(const size_t& id);
     void terroristsWins() override;
@@ -73,4 +70,5 @@ public:
 };
 
 
-#endif  // GAME_H
+
+#endif //GAME_H

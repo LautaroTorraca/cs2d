@@ -24,4 +24,4 @@ public:
     virtual double getWeaponInfo(const WeaponType& type, const std::string& info) const = 0;
 };
 
-#endif  // WEAPONINFORMER_H
+#endif //WEAPONINFORMER_H

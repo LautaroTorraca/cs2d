@@ -14,22 +14,14 @@
 #define TEAM_TERRORIST 0
 #define TEAM_COUNTER 1
 
-GameLobby::GameLobby(GameLobby&& other) noexcept:
-        parser(std::move(other.parser)),
-        mapPath(std::move(other.mapPath)),
-        mapType(other.mapType),
-        gameName(std::move(other.gameName)),
-        playersChoices(std::move(other.playersChoices)),
-        rounds(other.rounds),
-        joinedPlayers(std::move(other.joinedPlayers)),
-        status(other.status),
-        teams(std::move(other.teams)) {
+GameLobby::GameLobby(GameLobby &&other) noexcept :
+parser(std::move(other.parser)), mapPath(std::move(other.mapPath)), mapType(other.mapType), gameName(std::move(other.gameName)),
+playersChoices(std::move(other.playersChoices)), rounds(other.rounds), joinedPlayers(std::move(other.joinedPlayers)), status(other.status), teams(std::move(other.teams)) {
     if (this != &other) {
         other.gameName = "";
         other.mapPath = "";
         other.mapType = MapType::DUMMY;
-        other.playersChoices =
-                std::map<size_t, std::vector<std::variant<std::string, Team, Skin>>>();
+        other.playersChoices = std::map<size_t, std::vector<std::variant<std::string, Team, Skin>>>();
         other.rounds = 0;
         other.joinedPlayers = std::map<size_t, bool>();
         other.status = INVALID_STATUS;
@@ -44,8 +36,7 @@ void GameLobby::join(const size_t& playerId) {
 }
 
 bool GameLobby::canStart() const {
-    return !this->teams.at(TERRORISTS).empty() && !this->teams.at(COUNTER_TERRORISTS).empty() &&
-           this->playersChoices.size() == this->joinedPlayers.size();
+    return !this->teams.at(TERRORISTS).empty() && !this->teams.at(COUNTER_TERRORISTS).empty() && this->playersChoices.size() == this->joinedPlayers.size();
 }
 
 void GameLobby::select(const size_t &playerId, const std::string &name, const Team &team, const Skin &skin) {
@@ -60,13 +51,12 @@ void GameLobby::select(const size_t &playerId, const std::string &name, const Te
 
 GameLobbyDTO GameLobby::getInfo() const {
     std::vector<PlayerChoicesDTO> playersChoices;
-    for (const auto& [id, playerChoices]: this->playersChoices) {
-        playersChoices.emplace_back(id, std::get<std::string>(playerChoices.at(PLAYER_NAME_INDEX)),
-                                    std::get<Team>(playerChoices.at(PLAYER_TEAM_INDEX)),
-                                    std::get<Skin>(playerChoices.at(PLAYER_SKIN_INDEX)));
+    for (const auto &[id,playerChoices] : this->playersChoices) {
+        playersChoices.emplace_back(id,std::get<std::string>(playerChoices.at(PLAYER_NAME_INDEX)),
+            std::get<Team>(playerChoices.at(PLAYER_TEAM_INDEX)),
+            std::get<Skin>(playerChoices.at(PLAYER_SKIN_INDEX)));
     }
-    return GameLobbyDTO{this->status, playersChoices, this->gameName,
-                        this->rounds, this->mapPath,  this->mapType};
+    return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath, this->mapType};
 }
 
 void GameLobby::kick(const size_t& id) {

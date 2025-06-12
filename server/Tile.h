@@ -8,9 +8,8 @@
 
 class Tile {
     uint8_t code;
-
-public:
-    Tile(uint8_t code): code(code) {}
-    const uint8_t& getCode() const { return this->code; }
+    public:
+    Tile(uint8_t code) : code(code) {}
+    const uint8_t& getCode() const{return this->code;}
 };
-#endif  // TILE_H
+#endif //TILE_H

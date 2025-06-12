@@ -6,12 +6,11 @@
 #define GAMELOBBY_H
 #include <variant>
 
+#include "GameLobbyStatus.h"
 #include "server/Constants/MapTypeConstants.h"
-#include "server/DTO/GameLobbyDTO.h"
 #include "server/GameMapParser.h"
 #include "server/Team.h"
-
-#include "GameLobbyStatus.h"
+#include "server/DTO/GameLobbyDTO.h"
 
 class GameLobby {
     GameMapParser parser;
@@ -25,23 +24,20 @@ class GameLobby {
     std::array<std::vector<size_t>, 2> teams;
 
     [[nodiscard]] bool canStart() const;
-
-public:
-    GameLobby(const std::string& mapPath, const MapType mapType, const std::string& gameName,
-              const uint8_t& rounds):
-            parser(mapPath),
-            mapPath(mapPath),
-            mapType(mapType),
-            gameName(gameName),
-            rounds(rounds),
-            status(SELECTING_STATUS) {}
+    public:
+    GameLobby(const std::string& mapPath, const MapType mapType, const std::string& gameName, const uint8_t& rounds) :
+    parser(mapPath),
+    mapPath(mapPath),
+    mapType(mapType),
+    gameName(gameName),
+    rounds(rounds), status(SELECTING_STATUS) {}
     GameLobby(GameLobby&& other) noexcept;
     void join(const size_t& playerId);
-    void select(const size_t& playerId, const std::string& name, const Team& team,
-                const Skin& skin);
+    void select(const size_t &playerId, const std::string &name, const Team &team, const Skin &skin);
     [[nodiscard]] GameLobbyDTO getInfo() const;
     void kick(const size_t& id);
 };
 
 
-#endif  // GAMELOBBY_H
+
+#endif //GAMELOBBY_H

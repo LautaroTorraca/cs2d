@@ -6,6 +6,6 @@
 
 #include "PrimaryAmmo.h"
 
-std::unique_ptr<Product> PrimaryAmmoFactory::getProduct(const uint16_t& amount) {
+std::unique_ptr<Product> PrimaryAmmoFactory::getProduct(const uint16_t &amount) {
     return std::make_unique<PrimaryAmmo>(this->cost, amount);
 }

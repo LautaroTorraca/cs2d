@@ -5,8 +5,7 @@
 #include "RechargeableWeapon.h"
 
 bool RechargeableWeapon::checkedAttack() const {
-    if (this->weaponCadence == 0 || this->actualTime - this->lastShotTime < 1 / this->weaponCadence)
-        return false;
+    if (this->weaponCadence == 0 || this->actualTime - this->lastShotTime < 1/this->weaponCadence) return false;
     if (this->ammo == 0) {
         this->owner->noMoreAmmo();
         return false;
@@ -14,17 +13,17 @@ bool RechargeableWeapon::checkedAttack() const {
     return true;
 }
 
-RechargeableWeapon::RechargeableWeapon(RechargeableWeapon&& other) noexcept:
-        DistanceWeapon(std::move(other)),
-        ammo(other.ammo),
-        weaponDamagePerBullet(other.weaponDamagePerBullet),
-        weaponPrecision(other.weaponPrecision),
-        weaponRange(other.weaponRange),
-        weaponCadence(other.weaponCadence),
-        weaponSpeed(other.weaponSpeed),
-        weaponBulletsPerShot(other.weaponBulletsPerShot),
-        lastShotTime(other.lastShotTime) {
-    if (this != &other) {
+RechargeableWeapon::RechargeableWeapon(RechargeableWeapon &&other) noexcept :
+DistanceWeapon(std::move(other)),
+ammo(other.ammo),
+weaponDamagePerBullet(other.weaponDamagePerBullet),
+weaponPrecision(other.weaponPrecision),
+weaponRange(other.weaponRange),
+weaponCadence(other.weaponCadence),
+weaponSpeed(other.weaponSpeed),
+weaponBulletsPerShot(other.weaponBulletsPerShot),
+lastShotTime(other.lastShotTime) {
+    if ( this != &other ) {
         other.ammo = 0;
         other.weaponDamagePerBullet = 0;
         other.weaponPrecision = 0;
@@ -36,4 +35,6 @@ RechargeableWeapon::RechargeableWeapon(RechargeableWeapon&& other) noexcept:
     }
 }
 
-void RechargeableWeapon::recharge(uint16_t& amount) { this->ammo += amount; }
+void RechargeableWeapon::recharge(uint16_t &amount) {
+    this->ammo += amount;
+}

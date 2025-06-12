@@ -6,9 +6,9 @@
 #define ADVANCER_H
 
 class Advancer {
-public:
+    public:
     virtual ~Advancer() = default;
-    virtual void advance(const double& actualTime) = 0;
+    virtual void advance(const double &actualTime) = 0;
 };
 
-#endif  // ADVANCER_H
+#endif //ADVANCER_H

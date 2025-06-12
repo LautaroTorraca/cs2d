@@ -4,31 +4,30 @@
 
 #ifndef COORDINATES_H
 #define COORDINATES_H
-#include <cstdint>
 #include <vector>
+#include <cstdint>
 
 #include "CoordinateDTO.h"
 
 class Coordinate {
     double x;
     double y;
-
 public:
-    // Coordinate(Coordinate&) = delete;
-    // Coordinate& operator=(const Coordinate&) = delete;
-    void update(const Coordinate& coordinate);
-    [[nodiscard]] Coordinate getDisplace(const Coordinate& otherCoordinate) const;
-    bool operator==(const Coordinate& other) const;
+    //Coordinate(Coordinate&) = delete;
+    //Coordinate& operator=(const Coordinate&) = delete;
+    void update(const Coordinate & coordinate);
+    [[nodiscard]] Coordinate getDisplace(const Coordinate & otherCoordinate) const;
+    bool operator==(const Coordinate & other) const;
     Coordinate operator*(const double& scalar) const;
-    Coordinate getDirectionTo(const Coordinate& coordinate);
-    double distanceTo(const Coordinate& coordinate) const;
+    Coordinate getDirectionTo(const Coordinate & coordinate);
+    double distanceTo(const Coordinate & coordinate) const;
     [[nodiscard]] Coordinate rotatedIn(double deviationAngle) const;
     [[nodiscard]] uint32_t addingX(const uint32_t& x) const;
     [[nodiscard]] uint32_t addingY(const uint32_t& y) const;
     Coordinate getCenter(uint16_t width, uint16_t height) const;
-    double getAngleTo(const Coordinate& coordinate);
-    Coordinate(Coordinate&& other) noexcept;
-    Coordinate& operator=(Coordinate&& other) noexcept;
+    double getAngleTo(const Coordinate & coordinate);
+    Coordinate(Coordinate&& other) noexcept ;
+    Coordinate& operator=(Coordinate&& other) noexcept ;
     Coordinate(const double& x, const double& y): x(x), y(y) {}
     Coordinate(): x(0), y(0) {}
     Coordinate& operator+=(Coordinate& coordinate);
@@ -45,4 +44,5 @@ public:
 };
 
 
-#endif  // COORDINATES_H
+
+#endif //COORDINATES_H

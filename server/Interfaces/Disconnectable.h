@@ -7,9 +7,9 @@
 #include "server/DTO/DisconnectionDTO.h"
 
 class Disconnectable {
-public:
+    public:
     virtual ~Disconnectable() = default;
-    virtual void disconnect(const DisconnectionDTO& disconnectionInfo) = 0;
+    virtual void disconnect(const DisconnectionDTO &disconnectionInfo) = 0;
 };
 
-#endif  // DISCONNECTABLE_H
+#endif //DISCONNECTABLE_H

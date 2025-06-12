@@ -7,9 +7,9 @@
 #include <cstdint>
 
 class Damager {
-public:
+    public:
     virtual ~Damager() = default;
     virtual void damage(uint8_t& healthPoints) = 0;
 };
 
-#endif  // DAMAGER_H
+#endif //DAMAGER_H

@@ -24,8 +24,8 @@ class Server {
     void setupInGameOrders();
 
 public:
-    explicit Server(const std::string& port);
-    void run();
+  explicit Server(const std::string& port);
+  void run();
 
     // TODO ARREGLAR
     // void shutdown() const;

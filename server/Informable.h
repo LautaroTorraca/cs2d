@@ -5,7 +5,7 @@
 #ifndef INFORMABLE_H
 #define INFORMABLE_H
 
-template <typename T>
+template<typename T>
 class Informable {
 public:
     virtual ~Informable() = default;
@@ -13,4 +13,4 @@ public:
     virtual T getInfo() = 0;
 };
 
-#endif  // INFORMABLE_H
+#endif //INFORMABLE_H

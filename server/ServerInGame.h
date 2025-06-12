@@ -1,17 +1,16 @@
 #pragma once
 
-#include <functional>
 #include <map>
+#include <functional>
 #include <memory>
 
-#include "Constants/Movement.h"
-#include "DTO/GameLobbyDTO.h"
-#include "DTO/PlayerChoicesDTO.h"
-#include "Interfaces/InGameProtocolInterface.h"
-#include "Monitor/GameMonitor.h"
-#include "Orders/InGameOrder.h"
-
 #include "Game.h"
+#include "DTO/GameLobbyDTO.h"
+#include "Interfaces/InGameProtocolInterface.h"
+#include "DTO/PlayerChoicesDTO.h"
+#include "Constants/Movement.h"
+#include "Orders/InGameOrder.h"
+#include "Monitor/GameMonitor.h"
 
 class ServerInGame {
     std::map<OrderType, std::function<void(InGameOrder&)>> translator;
@@ -20,15 +19,15 @@ class ServerInGame {
     std::map<Movement, Coordinate> movements;
     InGameProtocolInterface& protocol;
     void setupTranslators();
-    void move(const InGameOrder& order);
-    void attack(const InGameOrder& order);
-    void pickUp(const InGameOrder& order);
-    void buy(const InGameOrder& order);
-    void changeAngle(const InGameOrder& order);
-    void changeWeapon(const InGameOrder& order);
-    void plantBomb(const InGameOrder& order);
-    void defuseBomb(const InGameOrder& order);
-    void exit(const InGameOrder& order);
+    void move(const InGameOrder &order);
+    void attack(const InGameOrder & order);
+    void pickUp(const InGameOrder & order);
+    void buy(const InGameOrder & order);
+    void changeAngle(const InGameOrder & order);
+    void changeWeapon(const InGameOrder & order);
+    void plantBomb(const InGameOrder & order);
+    void defuseBomb(const InGameOrder & order);
+    void exit(const InGameOrder & order);
 
 public:
     explicit ServerInGame(InGameProtocolInterface& protocol);
