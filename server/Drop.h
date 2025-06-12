@@ -13,4 +13,4 @@ public:
     virtual DropDTO getInfo() = 0;
     virtual ~Drop() = default;
 };
-#endif //DROP_H
+#endif  // DROP_H

@@ -7,14 +7,13 @@
 #include "Backer.h"
 
 
-class ActivatedBacker : public Backer {
-Position oldPosition;
+class ActivatedBacker: public Backer {
+    Position oldPosition;
+
 public:
     ActivatedBacker(Position& position);
-    void pushBack(Position &positionToUpdate) override;
-
+    void pushBack(Position& positionToUpdate) override;
 };
 
 
-
-#endif //ACTIVATEDBACKER_H
+#endif  // ACTIVATEDBACKER_H

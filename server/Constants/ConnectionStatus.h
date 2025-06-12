@@ -6,9 +6,6 @@
 #define CONNECTIONSTATUS_H
 #include <cstdint>
 
-enum ConnectionStatus : uint8_t {
-    SUCCESS = 0,
-    FAILED = 1
-};
+enum ConnectionStatus : uint8_t { SUCCESS = 0, FAILED = 1 };
 
-#endif //CONNECTIONSTATUS_H
+#endif  // CONNECTIONSTATUS_H

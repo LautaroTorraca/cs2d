@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Requests/Request.h"
-#include "Orders/GameLobbyOrder.h"
-#include "Handlers/GameLobbyHandler.h"
+#include <functional>
 #include <map>
 #include <memory>
-#include <functional>
+
+#include "Handlers/GameLobbyHandler.h"
+#include "Orders/GameLobbyOrder.h"
+#include "Requests/Request.h"
 
 class GameLobbyProtocol {
     std::map<size_t, std::unique_ptr<Socket>>& connectedUsers;

@@ -6,11 +6,9 @@
 
 #include "DeactivatedDrop.h"
 
-void DropBox::giveTo(Inventory &inventory) {
+void DropBox::giveTo(Inventory& inventory) {
     this->actualDrop->giveTo(inventory);
     this->actualDrop = std::make_shared<DeactivatedDrop>();
 }
 
-DropDTO DropBox::getInfo() {
-    return this->actualDrop->getInfo();
-}
+DropDTO DropBox::getInfo() { return this->actualDrop->getInfo(); }

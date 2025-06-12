@@ -12,7 +12,7 @@
 #include "Weapon.h"
 
 
-class Bomb : public GenericWeapon, public Addable, public Explosive {
+class Bomb: public GenericWeapon, public Addable, public Explosive {
     Finalizable& finalizable;
     double activationDuration;
     double deactivationDuration;
@@ -22,25 +22,26 @@ class Bomb : public GenericWeapon, public Addable, public Explosive {
     double actualTime;
 
 public:
-    explicit Bomb(Finalizable& finalizable, const double& activationDuration, const double& deactivationDuration) :
-    finalizable(finalizable),
-    activationDuration(activationDuration),
-    deactivationDuration(deactivationDuration),
-    activationStartTime(0),
-    deactivationStartTime(0),
-    lastDeactivationTime(0),
-    actualTime(0) {}
+    explicit Bomb(Finalizable& finalizable, const double& activationDuration,
+                  const double& deactivationDuration):
+            finalizable(finalizable),
+            activationDuration(activationDuration),
+            deactivationDuration(deactivationDuration),
+            activationStartTime(0),
+            deactivationStartTime(0),
+            lastDeactivationTime(0),
+            actualTime(0) {}
     ~Bomb() override = default;
     Bomb(Bomb&& other) noexcept;
-    void attack(Positionable &positionable, const Position &actualPosition, const double &destination) override;
-    void recharge(uint16_t &) override {}
-    void addTo(Inventory &inventory) override;
-    void advance(const double &actualTime) override;
+    void attack(Positionable& positionable, const Position& actualPosition,
+                const double& destination) override;
+    void recharge(uint16_t&) override {}
+    void addTo(Inventory& inventory) override;
+    void advance(const double& actualTime) override;
     void deactivate() override;
     void activate() override;
     WeaponInfoDTO getInfo() override;
 };
 
 
-
-#endif //BOMB_H
+#endif  // BOMB_H

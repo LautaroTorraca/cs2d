@@ -7,14 +7,14 @@
 #include "Factory.h"
 
 
-class PrimaryAmmoFactory : public Factory{
+class PrimaryAmmoFactory: public Factory {
     uint16_t cost;
+
 public:
-    explicit PrimaryAmmoFactory(const uint16_t& cost) : cost(cost){}
-    std::unique_ptr<Product> getProduct(const uint16_t &amount) override;
+    explicit PrimaryAmmoFactory(const uint16_t& cost): cost(cost) {}
+    std::unique_ptr<Product> getProduct(const uint16_t& amount) override;
     ~PrimaryAmmoFactory() override = default;
 };
 
 
-
-#endif //PRIMARYAMMOFACTORY_H
+#endif  // PRIMARYAMMOFACTORY_H

@@ -12,4 +12,4 @@ public:
     virtual void pushBack(Position& positionToUpdate) = 0;
 };
 
-#endif //BACKER_H
+#endif  // BACKER_H

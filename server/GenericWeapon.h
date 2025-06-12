@@ -7,13 +7,13 @@
 #include "Weapon.h"
 
 
-class GenericWeapon : public Weapon {
+class GenericWeapon: public Weapon {
 protected:
     std::shared_ptr<Owner> owner;
+
 public:
-void set(std::shared_ptr<Owner> &owner) override;
+    void set(std::shared_ptr<Owner>& owner) override;
 };
 
 
-
-#endif //GENERICWEAPON_H
+#endif  // GENERICWEAPON_H

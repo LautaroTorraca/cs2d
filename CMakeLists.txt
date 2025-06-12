@@ -16,7 +16,7 @@ project(
   taller_tp
   VERSION 1.0
   HOMEPAGE_URL "https://github.com/URL-HERE"
-  LANGUAGES CXX)
+  LANGUAGES C CXX)
 
 # Qt
 #
@@ -97,13 +97,15 @@ endif()
 # ---------------
 if(TALLER_CLIENT)
   add_subdirectory(client)
+  add_subdirectory(libs/SDL2_gfx)
   add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
   # client/LobbyDTO.h client/GamesList.h client/BuyOrder.h
   # client/WeaponChanger.h client/PositionDTO.h client/PlayerInformation.h
   # client/CoordinateInformation.h client/WeaponInformation.h
   # client/ProjectileInformation.h client/DropInformation.h client/MainWindow.h)
   target_include_directories(taller_client PRIVATE client)
-  target_link_libraries(taller_client taller_common SDL2pp::SDL2pp Qt6::Widgets)
+  target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_gfx
+                        Qt6::Widgets)
 endif()
 
 if(TALLER_SERVER)

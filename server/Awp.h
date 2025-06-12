@@ -7,34 +7,27 @@
 #include "PrimaryWeapon.h"
 
 
-class Awp : public PrimaryWeapon {
+class Awp: public PrimaryWeapon {
 protected:
     WeaponType getType() override;
+
 public:
+    Awp(Awp&& other) noexcept;
 
-    Awp(Awp &&other) noexcept;
+    explicit Awp(const uint16_t& cost, const double& weaponDamagePerBullet,
+                 const double& weaponPrecision, const double& weaponRange,
+                 const double& weaponCadence, const double& weaponSpeed,
+                 const int& weaponBulletsPerShot):
+            PrimaryWeapon(cost, weaponDamagePerBullet, weaponPrecision, weaponRange, weaponCadence,
+                          weaponSpeed, weaponBulletsPerShot) {}
 
-    explicit Awp(const uint16_t& cost,
-        const double& weaponDamagePerBullet,
-        const double& weaponPrecision,
-        const double& weaponRange,
-        const double& weaponCadence,
-        const double& weaponSpeed,
-        const int& weaponBulletsPerShot) : PrimaryWeapon(cost,
-            weaponDamagePerBullet,
-            weaponPrecision,
-            weaponRange,
-            weaponCadence,
-            weaponSpeed,
-            weaponBulletsPerShot) {}
+    void attack(Positionable& positionable, const Position& actualPosition,
+                const double& destination) override;
 
-    void attack(Positionable &positionable, const Position &actualPosition, const double &destination) override;
+    void addTo(Inventory& inventory) override;
 
-    void addTo(Inventory &inventory) override;
-
- ~Awp() override = default;
+    ~Awp() override = default;
 };
 
 
-
-#endif //AWP_H
+#endif  // AWP_H

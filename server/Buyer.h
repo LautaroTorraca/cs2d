@@ -8,13 +8,11 @@
 
 
 class Buyer {
-    public:
+public:
     virtual ~Buyer() = default;
 
     virtual void buy(Product& product) = 0;
-
 };
 
 
-
-#endif //BUYER_H
+#endif  // BUYER_H

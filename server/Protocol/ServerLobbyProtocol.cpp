@@ -1,25 +1,33 @@
 #include "ServerLobbyProtocol.h"
-#include "Constants/ProtocolContants.h"
-#include "Constants/KeyContants.h"
+
 #include <sstream>
 
+#include "Constants/KeyContants.h"
+#include "Constants/ProtocolContants.h"
 #include "Sender/Sender.h"
 
 
-ServerLobbyProtocol::ServerLobbyProtocol(std::map<size_t, std::unique_ptr<Socket>>& connectedUsers)
-    : connectedUsers(connectedUsers)
-{
-    requestHandlers[ProtocolConstants::GAME_LIST_REQUEST] = [this](const Request& request) { return sendGamesListHandler(request); };
-    requestHandlers[ProtocolConstants::JOIN_GAME]         = [this](const Request& request) { return joinHandler(request); };
-    requestHandlers[ProtocolConstants::CREATE_GAME]       = [this](const Request& request) { return createHandler(request); };
-    requestHandlers[ProtocolConstants::DISCONNECT]        = [this](const Request& request) { return disconnectHandler(request); };
+ServerLobbyProtocol::ServerLobbyProtocol(std::map<size_t, std::unique_ptr<Socket>>& connectedUsers):
+        connectedUsers(connectedUsers) {
+    requestHandlers[ProtocolConstants::GAME_LIST_REQUEST] = [this](const Request& request) {
+        return sendGamesListHandler(request);
+    };
+    requestHandlers[ProtocolConstants::JOIN_GAME] = [this](const Request& request) {
+        return joinHandler(request);
+    };
+    requestHandlers[ProtocolConstants::CREATE_GAME] = [this](const Request& request) {
+        return createHandler(request);
+    };
+    requestHandlers[ProtocolConstants::DISCONNECT] = [this](const Request& request) {
+        return disconnectHandler(request);
+    };
 }
 
 ServerLobbyOrder ServerLobbyProtocol::handleRequest(const Request& request) {
     const uint8_t opCode = request.getRequest().at(opCodeKey).front();
 
     if (!requestHandlers.contains(opCode)) {
-        throw -1; //TODO FIX
+        throw -1;  // TODO FIX
     }
     return requestHandlers[opCode](request);
 }
@@ -29,7 +37,7 @@ ServerLobbyOrder ServerLobbyProtocol::sendGamesListHandler(const Request& reques
 
     std::stringstream listCreator;
 
-    for (const auto& game : games) {
+    for (const auto& game: games) {
         listCreator << game.first << std::endl;
     }
 
@@ -63,7 +71,8 @@ ServerLobbyOrder ServerLobbyProtocol::createHandler(const Request& request) {
 
     games.emplace(gameName, request.getId());
 
-    return ServerLobbyOrder(ProtocolConstants::CREATE_GAME, clientId, gameName, gameMap, playerCount, roundCount);
+    return ServerLobbyOrder(ProtocolConstants::CREATE_GAME, clientId, gameName, gameMap,
+                            playerCount, roundCount);
 }
 
 ServerLobbyOrder ServerLobbyProtocol::disconnectHandler(const Request& request) {
@@ -79,4 +88,3 @@ void ServerLobbyProtocol::end() {
     // TODO Finalizar cada LobbyHandler
     games.clear();
 }
-

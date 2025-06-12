@@ -8,12 +8,10 @@
 #include "Backer.h"
 #include "Position.h"
 
-class DeactivatedBacker : public Backer {
-    public:
+class DeactivatedBacker: public Backer {
+public:
     void pushBack(Position&) override {}
-
 };
 
 
-
-#endif //DEACTIVATEDBACKER_H
+#endif  // DEACTIVATEDBACKER_H

@@ -36,17 +36,19 @@ public:
     GameLobbyDTO getGameLobby() const;
     void leaveGameLobby();
 
-    void move(const Direction& direction);
-    void attack();
+    virtual void move(const Direction& direction);
+    virtual void attack();
     void pickUp();
     void buy(const BuyOrder& buyOrder);
-    void changeAngle(const PositionDTO& positionInfo);
+    virtual void changeAngle(const PositionDTO& positionInfo);
     void changeWeapon(const WeaponChanger& weaponChanger);
     void plantBomb();
     void defuseBomb();
     void exit();
     PlayerChoicesDTO readPlayerChoices() const;
-    Snapshot receiveSnapshot() const;
-    PreSnapshot receivePreSnapshot() const;
+    virtual Snapshot receiveSnapshot() const;
+    virtual PreSnapshot receivePreSnapshot() const;
+
+    virtual void emptyBullets();
     virtual ~Protocol() = default;
 };

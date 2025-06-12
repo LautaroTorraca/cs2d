@@ -4,9 +4,7 @@
 
 #include "ActivedDrop.h"
 
-void ActivedDrop::giveTo(Inventory &inventory) {
-    inventory.add(this->index, this->droppedWeapon);
-}
+void ActivedDrop::giveTo(Inventory& inventory) { inventory.add(this->index, this->droppedWeapon); }
 
 DropDTO ActivedDrop::getInfo() {
     WeaponInfoDTO weaponInfo = this->droppedWeapon->getInfo();

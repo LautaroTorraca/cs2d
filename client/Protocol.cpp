@@ -163,3 +163,5 @@ PreSnapshot Protocol::receivePreSnapshot() const {
 
     return {id, map};
 }
+
+void Protocol::emptyBullets() { std::cout << "xd\n"; }

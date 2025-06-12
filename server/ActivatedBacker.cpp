@@ -4,10 +4,10 @@
 
 #include "ActivatedBacker.h"
 
-ActivatedBacker::ActivatedBacker(Position &position) {
+ActivatedBacker::ActivatedBacker(Position& position) {
     this->oldPosition.updateLocationTo(position);
 }
 
-void ActivatedBacker::pushBack(Position &positionToUpdate) {
+void ActivatedBacker::pushBack(Position& positionToUpdate) {
     positionToUpdate.updateLocationTo(oldPosition);
 }

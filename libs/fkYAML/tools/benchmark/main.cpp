@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -16,7 +16,6 @@
 #include <string>
 
 #include <benchmark/benchmark.h>
-
 #include <fkYAML/node.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -24,15 +23,15 @@
 #include <libfyaml.h>
 #endif
 
+#include <c4/yml/parse.hpp>
 #include <ryml.hpp>
 #include <ryml_std.hpp>
-#include <c4/yml/parse.hpp>
 
-static std::string test_src {};
+static std::string test_src{};
 
 void prepare_test_source(char* filename) {
     FILE* fp = std::fopen(filename, "rb");
-    char tmp_buf[256] {};
+    char tmp_buf[256]{};
     std::size_t buf_size = sizeof(tmp_buf) / sizeof(char);
     std::size_t read_size = 0;
     while ((read_size = std::fread(&tmp_buf[0], sizeof(char), buf_size, fp)) > 0) {
@@ -58,7 +57,7 @@ int main(int argc, char** argv) {
 
 // fkYAML
 void bm_fkyaml_parse(benchmark::State& st) {
-    for (auto _ : st) {
+    for (auto _: st) {
         fkyaml::node n = fkyaml::node::deserialize(test_src);
     }
 
@@ -68,7 +67,7 @@ void bm_fkyaml_parse(benchmark::State& st) {
 
 // yaml-cpp
 void bm_yamlcpp_parse(benchmark::State& st) {
-    for (auto _ : st) {
+    for (auto _: st) {
         YAML::Node n = YAML::Load(test_src);
     }
 
@@ -82,7 +81,7 @@ void bm_libfyaml_parse(benchmark::State& st) {
     const char* p_test_src = test_src.c_str();
     std::size_t test_src_size = std::distance(test_src.begin(), test_src.end());
 
-    for (auto _ : st) {
+    for (auto _: st) {
         fy_document* p_fyd = fy_document_build_from_string(nullptr, p_test_src, test_src_size);
         (void)p_fyd;
     }
@@ -97,7 +96,7 @@ void bm_rapidyaml_parse_inplace(benchmark::State& st) {
     std::string in_place_buff(test_src.size(), '\0');
     c4::substr c4_test_src = c4::to_substr(in_place_buff).trimr('\0');
 
-    for (auto _ : st) {
+    for (auto _: st) {
         // ryml::parse_in_place() modifies the contents of `in_place_buff` during parsing.
         // Without the following copy, the second (and subsequent) parsing would fail.
         assert(in_place_buff.size() == test_src.size());
@@ -114,7 +113,7 @@ void bm_rapidyaml_parse_inplace(benchmark::State& st) {
 void bm_rapidyaml_parse_arena(benchmark::State& st) {
     c4::csubstr src = c4::to_csubstr(test_src).trimr('\0');
 
-    for (auto _ : st) {
+    for (auto _: st) {
         ryml::Tree tree = ryml::parse_in_arena(src);
     }
 

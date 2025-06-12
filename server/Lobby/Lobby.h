@@ -7,21 +7,22 @@
 #include <map>
 #include <string>
 
-#include "GameLobby.h"
 #include "server/Constants/MapTypeConstants.h"
+
+#include "GameLobby.h"
 
 class Lobby {
     std::map<std::string, std::vector<size_t>> gamesLobbies;
     std::map<MapType, std::string> mapsPaths;
     std::map<std::string, uint8_t> maxPlayers;
-    public:
+
+public:
     Lobby();
-    GameLobby createGameLobby(const size_t &id, const std::string &gameName, const MapType& map, const uint8_t& rounds);
+    GameLobby createGameLobby(const size_t& id, const std::string& gameName, const MapType& map,
+                              const uint8_t& rounds);
     void joinGame(const size_t& id, const std::string& gameName);
     ~Lobby() = default;
-
 };
 
 
-
-#endif //LOBBY_H
+#endif  // LOBBY_H

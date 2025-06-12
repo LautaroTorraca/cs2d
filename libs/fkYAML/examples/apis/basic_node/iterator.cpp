@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -8,6 +8,7 @@
 
 #include <iomanip>
 #include <iostream>
+
 #include <fkYAML/node.hpp>
 
 int main() {
@@ -27,8 +28,7 @@ int main() {
     try {
         // key() cannot be called on an iterator pointing to a sequence element.
         std::cout << it.key() << std::endl;
-    }
-    catch (const fkyaml::exception& e) {
+    } catch (const fkyaml::exception& e) {
         std::cout << e.what() << std::endl;
     }
 

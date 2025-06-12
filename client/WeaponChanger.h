@@ -8,6 +8,6 @@
 
 struct WeaponChanger {
     const uint8_t weaponSelection;
-    WeaponChanger(const uint8_t selection) : weaponSelection(selection) {}
+    WeaponChanger(const uint8_t selection): weaponSelection(selection) {}
 };
-#endif //WEAPONCHANGER_H
+#endif  // WEAPONCHANGER_H

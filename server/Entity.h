@@ -9,11 +9,11 @@
 #include "Position.h"
 
 
-//TODO: Segregar esta intefaz
+// TODO: Segregar esta intefaz
 class Entity {
-    public:
+public:
     virtual ~Entity() = default;
-    virtual Position displaced(const Coordinate & coordinate) = 0;
+    virtual Position displaced(const Coordinate& coordinate) = 0;
     virtual void collision() = 0;
     virtual void collision(Entity& other) = 0;
     virtual void collision(Damager& damager) = 0;
@@ -21,4 +21,4 @@ class Entity {
     virtual void allocate(const Position& position) = 0;
 };
 
-#endif //ENTITY_H
+#endif  // ENTITY_H

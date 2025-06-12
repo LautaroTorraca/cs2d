@@ -9,7 +9,7 @@
 
 struct GamesList {
     std::vector<std::string> games;
-    GamesList(std::vector<std::string>& games) : games(games) {}
+    GamesList(std::vector<std::string>& games): games(games) {}
 };
 
-#endif //GAMESLIST_H
+#endif  // GAMESLIST_H

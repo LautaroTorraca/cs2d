@@ -9,8 +9,8 @@ enum class MapType : uint8_t {
 };
 
 namespace MapConstants {
-    constexpr uint8_t DUST    = static_cast<uint8_t>(MapType::DUST);
-    constexpr uint8_t AZTEC_VILLAGE   = static_cast<uint8_t>(MapType::AZTEC_VILLAGE);
-    constexpr uint8_t TRAINING_ZONE   = static_cast<uint8_t>(MapType::TRAINING_ZONE);
-    constexpr uint8_t DUMMY           = static_cast<uint8_t>(MapType::DUMMY);
-}
+constexpr uint8_t DUST = static_cast<uint8_t>(MapType::DUST);
+constexpr uint8_t AZTEC_VILLAGE = static_cast<uint8_t>(MapType::AZTEC_VILLAGE);
+constexpr uint8_t TRAINING_ZONE = static_cast<uint8_t>(MapType::TRAINING_ZONE);
+constexpr uint8_t DUMMY = static_cast<uint8_t>(MapType::DUMMY);
+}  // namespace MapConstants

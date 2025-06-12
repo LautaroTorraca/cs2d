@@ -1,7 +1,8 @@
 #pragma once
 
-#include "MapTypeConstants.h"
 #include <cstdint>
+
+#include "MapTypeConstants.h"
 
 constexpr uint8_t INVALID_OPCODE = 0x00;
 

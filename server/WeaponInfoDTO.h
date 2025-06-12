@@ -16,10 +16,17 @@ class WeaponInfoDTO {
     uint16_t ammoAmount;
     WeaponType weaponType;
     std::vector<ProjectileDTO> projectilesInfo;
+
 public:
-    WeaponInfoDTO(const uint16_t ammoAmount, const WeaponType weaponType, std::vector<ProjectileDTO>& projectilesInfo) : ammoAmount(ammoAmount), weaponType(weaponType), projectilesInfo(std::move(projectilesInfo)) {}
-    WeaponInfoDTO(const WeaponType weaponType, std::vector<ProjectileDTO>& projectilesInfo) : ammoAmount(0), weaponType(weaponType), projectilesInfo(std::move(projectilesInfo)) {}
-    WeaponInfoDTO(const uint16_t ammoAmount, const WeaponType weaponType) : ammoAmount(ammoAmount), weaponType(weaponType) {}
+    WeaponInfoDTO(const uint16_t ammoAmount, const WeaponType weaponType,
+                  std::vector<ProjectileDTO>& projectilesInfo):
+            ammoAmount(ammoAmount),
+            weaponType(weaponType),
+            projectilesInfo(std::move(projectilesInfo)) {}
+    WeaponInfoDTO(const WeaponType weaponType, std::vector<ProjectileDTO>& projectilesInfo):
+            ammoAmount(0), weaponType(weaponType), projectilesInfo(std::move(projectilesInfo)) {}
+    WeaponInfoDTO(const uint16_t ammoAmount, const WeaponType weaponType):
+            ammoAmount(ammoAmount), weaponType(weaponType) {}
     WeaponInfoDTO(WeaponInfoDTO&& other) noexcept;
     WeaponInfoDTO& operator=(WeaponInfoDTO&& other) noexcept;
     [[nodiscard]] const uint16_t& getAmmoAmount() const;
@@ -28,5 +35,4 @@ public:
 };
 
 
-
-#endif //WEAPONINFODTO_H
+#endif  // WEAPONINFODTO_H

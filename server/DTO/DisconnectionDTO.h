@@ -7,7 +7,7 @@
 
 struct DisconnectionDTO {
     const size_t clientId;
-    DisconnectionDTO(const size_t& clientId) : clientId(clientId) {}
+    DisconnectionDTO(const size_t& clientId): clientId(clientId) {}
 };
 
-#endif //DISCONNECTIONDTO_H
+#endif  // DISCONNECTIONDTO_H

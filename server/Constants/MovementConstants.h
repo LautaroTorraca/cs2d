@@ -11,4 +11,4 @@ constexpr uint16_t RIGHT_MOVEMENT = 1;
 constexpr uint16_t DOWN_MOVEMENT = 2;
 constexpr uint16_t LEFT_MOVEMENT = 3;
 
-#endif //MOVEMENTCONSTANTS_H
+#endif  // MOVEMENTCONSTANTS_H

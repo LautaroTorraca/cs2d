@@ -2,7 +2,8 @@
 #include <string>
 
 #include "InputHandler.h"
-#include "Protocol.h"
+// #include "Protocol.h"
+#include "Protocol_testing.h"
 // #include "Protocol_testing.h"
 
 constexpr std::string PORT = "8080";
@@ -11,7 +12,7 @@ constexpr std::string HOSTNAME = "127.0.0.1";
 
 class GameClient {
     bool running;
-    Protocol protocol;
+    ProtocolTesting protocol;
     InputHandler inputHandler;
     // GameRenderer gameRenderer;
 

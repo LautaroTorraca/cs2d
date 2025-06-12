@@ -13,10 +13,13 @@ class Position {
     Coordinate reference;
     uint16_t width;
     uint16_t height;
-    public:
+
+public:
     Position(): width(0), height(0) {}
-    Position(const uint32_t& x, const uint32_t& y, const uint16_t& width, const uint16_t& height) : reference(x, y), width(width), height(height) {}
-    Position(const Coordinate& reference, const uint16_t& width, const uint16_t& height) : width(width), height(height) {
+    Position(const uint32_t& x, const uint32_t& y, const uint16_t& width, const uint16_t& height):
+            reference(x, y), width(width), height(height) {}
+    Position(const Coordinate& reference, const uint16_t& width, const uint16_t& height):
+            width(width), height(height) {
         this->reference.update(reference);
     }
     Position(Position&& other) noexcept;
@@ -37,16 +40,14 @@ class Position {
         return result;
     }
     void updateLocationTo(const Position& position);
-    double getAngleTo(const Coordinate & coordinate) const;
-    void updateTo(const Position & position);
+    double getAngleTo(const Coordinate& coordinate) const;
+    void updateTo(const Position& position);
     Coordinate getCenter() const;
     bool operator<(const Position& other) const;
-    bool intersects(const Position & position) const;
+    bool intersects(const Position& position) const;
     bool contains(const Coordinate& coordinate) const;
     CoordinateDTO getPoint() const;
-
 };
 
 
-
-#endif //POSITION_H
+#endif  // POSITION_H

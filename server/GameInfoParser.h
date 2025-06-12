@@ -12,15 +12,14 @@ class GameInfoParser {
     std::map<std::string, double> gameInfo;
     std::map<std::string, double> playerInfo;
     std::map<std::string, double> gameMapInfo;
-    public:
+
+public:
     explicit GameInfoParser(const std::string& gameInfoFilePath);
     GameInfoParser(GameInfoParser&& other) noexcept;
     double getGameInfo(const std::string& key) const;
     double getPlayerInfo(const std::string& key) const;
     double getGameMapInfo(const std::string& key) const;
-
 };
 
 
-
-#endif //GAMEINFOPARSER_H
+#endif  // GAMEINFOPARSER_H

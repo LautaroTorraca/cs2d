@@ -14,4 +14,4 @@ enum ProductTypes : std::uint8_t {
     SECONDARY_AMMO = 5
 };
 
-#endif //PRODUCTIDS_H
+#endif  // PRODUCTIDS_H

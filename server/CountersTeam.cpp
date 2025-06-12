@@ -3,6 +3,7 @@
 //
 
 #include "CountersTeam.h"
+
 #include <ranges>
 
 void CountersTeam::add(const size_t& id, std::shared_ptr<CounterPlayer>& counterPlayer) {
@@ -10,21 +11,22 @@ void CountersTeam::add(const size_t& id, std::shared_ptr<CounterPlayer>& counter
 }
 
 void CountersTeam::deactivate(size_t id, Positionable& positionable) const {
-    if (!this->counters.contains(id)) return;
+    if (!this->counters.contains(id))
+        return;
     this->counters.at(id)->deactivate(positionable);
 }
 
-void CountersTeam::reset(Spawner &spawner) {
+void CountersTeam::reset(Spawner& spawner) {
     this->cemetery.clear();
-    for (auto &counter: this->counters | std::views::values) {
+    for (auto& counter: this->counters | std::views::values) {
         counter->reset();
         std::shared_ptr<Entity> entity = counter;
         spawner.spawnCounter(entity);
     }
 }
 
-void CountersTeam::advance(const double &) {
-    for (auto &counter: this->counters | std::views::values) {
+void CountersTeam::advance(const double&) {
+    for (auto& counter: this->counters | std::views::values) {
         counter->signDeath(this->cemetery);
     }
     if (this->cemetery.size() == this->counters.size()) {
@@ -32,8 +34,8 @@ void CountersTeam::advance(const double &) {
     }
 }
 
-void CountersTeam::giveMoney(const uint16_t &money) {
-    for ( auto &counter: this->counters | std::views::values) {
+void CountersTeam::giveMoney(const uint16_t& money) {
+    for (auto& counter: this->counters | std::views::values) {
         counter->give(money);
     }
 }

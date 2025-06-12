@@ -4,20 +4,23 @@
 
 #ifndef GAMEMONITOR_H
 #define GAMEMONITOR_H
-#include "thread.h"
 #include "server/Game.h"
 #include "server/Interfaces/InGameProtocolInterface.h"
 
+#include "thread.h"
 
-class GameMonitor : public Thread {
+
+class GameMonitor: public Thread {
     Game game;
     std::mutex mutex;
     uint8_t rounds;
     InGameProtocolInterface& protocol;
-public:
-    GameMonitor(GameParser& parser, const uint8_t& rounds, InGameProtocolInterface& protocol) : game(parser, rounds), rounds(rounds), protocol(protocol) {}
 
-    void addPlayer(const size_t &id, const std::string &name, const Team &team, const Skin &skin);
+public:
+    GameMonitor(GameParser& parser, const uint8_t& rounds, InGameProtocolInterface& protocol):
+            game(parser, rounds), rounds(rounds), protocol(protocol) {}
+
+    void addPlayer(const size_t& id, const std::string& name, const Team& team, const Skin& skin);
     void move(const size_t& id, const Coordinate& displacement);
     void changeAngle(const size_t& id, const Coordinate& coordinate);
     void setWeapon(const size_t& id, const uint8_t& index);
@@ -33,9 +36,7 @@ public:
 
     void sendPreSnapshot();
     void run() override;
-
 };
 
 
-
-#endif //GAMEMONITOR_H
+#endif  // GAMEMONITOR_H

@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+
 #include <fkYAML/node.hpp>
 
 int main() {
@@ -28,7 +29,8 @@ null: one
 false: 456
 TRUE: 1.414
 )";
-    std::vector<fkyaml::node> docs = fkyaml::node::deserialize_docs(std::begin(input), std::end(input));
+    std::vector<fkyaml::node> docs =
+            fkyaml::node::deserialize_docs(std::begin(input), std::end(input));
 
     // check the deserialization result.
     std::cout << docs[0]["foo"].get_value<bool>() << std::endl;

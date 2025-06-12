@@ -6,14 +6,12 @@
 #define RANDOMIZATOR_H
 
 
-
 class Randomizator {
 public:
     int getRandom(const int& min, const int& max);
 
-    int getRandom(const int &max);
+    int getRandom(const int& max);
 };
 
 
-
-#endif //RANDOMIZATOR_H
+#endif  // RANDOMIZATOR_H

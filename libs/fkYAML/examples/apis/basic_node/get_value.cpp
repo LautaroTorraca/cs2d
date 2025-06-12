@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -11,6 +11,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+
 #include <fkYAML/node.hpp>
 
 int main() {
@@ -21,7 +22,7 @@ int main() {
     // get the node values
     // to std::vector
     auto bool_vec = seq.get_value<std::vector<bool>>();
-    for (auto b : bool_vec) {
+    for (auto b: bool_vec) {
         std::cout << std::boolalpha << b << " ";
     }
     std::cout << "\n\n";
@@ -33,14 +34,14 @@ int main() {
 
     // create a mapping node.
     fkyaml::node map = {
-        {0, "foo"},
-        {1, "bar"},
-        {2, "baz"},
+            {0, "foo"},
+            {1, "bar"},
+            {2, "baz"},
     };
     // get the node values
     // to std::unordered_map
     auto umap = map.get_value<std::unordered_map<uint32_t, std::string>>();
-    for (auto& p : umap) {
+    for (auto& p: umap) {
         std::cout << p.first << " : " << p.second << std::endl;
     }
     std::cout << std::endl;
@@ -66,8 +67,7 @@ int main() {
     // specifying incompatible type throws an exception
     try {
         auto float_val = n2.get_value<float>();
-    }
-    catch (const fkyaml::exception& e) {
+    } catch (const fkyaml::exception& e) {
         std::cout << e.what() << std::endl;
     }
 

@@ -1,9 +1,10 @@
 #pragma once
-#include <unordered_map>
 #include <functional>
-#include "../common/socket.h"
-#include "../Requests/Request.h"
+#include <unordered_map>
+
 #include "../Readers/Reader.h"
+#include "../Requests/Request.h"
+#include "../common/socket.h"
 
 class LobbyHandler {
     Socket& userSocket;
@@ -18,7 +19,7 @@ class LobbyHandler {
     Request disconnectRequest();
 
 public:
-    explicit LobbyHandler(Socket& user, const size_t &userId);
+    explicit LobbyHandler(Socket& user, const size_t& userId);
     Request handle(uint8_t opcode) const;
 
     ~LobbyHandler();

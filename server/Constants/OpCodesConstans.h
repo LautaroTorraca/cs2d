@@ -7,7 +7,6 @@ constexpr uint8_t OPCODE_LIST_GAMES = 0x03;
 constexpr uint8_t OPCODE_DISCONNECT = 0x0F;
 
 
-
 constexpr uint8_t OPCODE_READY = 0x12;
 constexpr uint8_t OPCODE_EXIT_LOBBY = 0x1F;
 
@@ -24,7 +23,6 @@ constexpr uint8_t OPCODE_DEFUSE_BOMB = 0x29;
 constexpr uint8_t OPCODE_EXIT_GAME = 0x2F;
 
 
-
 constexpr uint8_t moveUp = 0x00;
 constexpr uint8_t moveRight = 0x01;
 constexpr uint8_t moveDown = 0x02;
@@ -32,6 +30,3 @@ constexpr uint8_t moveLeft = 0x03;
 
 constexpr uint8_t NEW = 0x6E;
 constexpr uint8_t STOP = 0x73;
-
-
-

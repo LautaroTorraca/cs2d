@@ -14,9 +14,9 @@ constexpr int RES_HEIGTH = 720;
 constexpr int LOGICAL_WIDTH = 27;
 constexpr int LOGICAL_HEIGHT = 15;
 
-constexpr int MAP_WIDTH = 100;
-constexpr int MAP_HEIGHT = 60;
-
+constexpr int MAP_WIDTH = 11;
+constexpr int MAP_HEIGHT = 6;
+// TODO: agregar movimiento relativo a los tiles
 constexpr int TILE_SRC_SIZE = 32;
 constexpr int TILE_WIDTH = RES_WIDTH / LOGICAL_WIDTH;
 constexpr int TILE_HEIGHT = RES_HEIGTH / LOGICAL_HEIGHT;
@@ -47,8 +47,6 @@ enum UiSymbol : int {
 
 enum UiType : uint8_t { NumsUI, SymbUI, CursorUI };
 
-// using namespace DTO;
-
 inline void fillDummies(Snapshot& gameSnapshot) {
 
     std::vector<PlayerInformation> playerList;
@@ -66,7 +64,7 @@ inline void fillDummies(Snapshot& gameSnapshot) {
     uint16_t p1_actualMoney = 500;
     uint8_t p1_actualHealthPoints = 100;
     std::vector<WeaponInformation> p1_weaponsInfo{};
-    WeaponInformation p1_actualWeapon(WeaponType::AK47, 50, {});
+    WeaponInformation p1_actualWeapon(WeaponType::AWP, 50, {});
     std::uint8_t p1_kills = 1;
     // p1_team = GameConstants::Team::COUNTER_TERRORISTS;
 

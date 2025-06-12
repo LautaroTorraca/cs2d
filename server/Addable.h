@@ -7,10 +7,9 @@
 #include "Inventory.h"
 
 class Addable {
-    public:
+public:
     virtual ~Addable() = default;
 
     virtual void addTo(Inventory& inventory) = 0;
-
 };
-#endif //ADDABLE_H
+#endif  // ADDABLE_H

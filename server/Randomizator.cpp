@@ -14,7 +14,4 @@ int Randomizator::getRandom(const int& min, const int& max) {
     return num;
 }
 
-int Randomizator::getRandom(const int& max) {
-    return this->getRandom(0, max);
-}
-
+int Randomizator::getRandom(const int& max) { return this->getRandom(0, max); }

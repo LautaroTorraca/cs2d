@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 
-#include "server/GameStatus.h"
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
 #include "server/GameStatus.h"

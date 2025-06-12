@@ -4,6 +4,4 @@
 
 #include "ProjectileDTO.h"
 
-const CoordinateDTO & ProjectileDTO::getCoordinateDTO() const {
-    return coordinateDTO;
-}
+const CoordinateDTO& ProjectileDTO::getCoordinateDTO() const { return coordinateDTO; }

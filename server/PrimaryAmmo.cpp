@@ -6,6 +6,4 @@
 
 #define PRIMARY_INDEX 2
 
-void PrimaryAmmo::addTo(Inventory &inventory) {
-    inventory.recharge(PRIMARY_INDEX, this->amount);
-}
+void PrimaryAmmo::addTo(Inventory& inventory) { inventory.recharge(PRIMARY_INDEX, this->amount); }

@@ -7,12 +7,10 @@
 #include "Tile.h"
 
 
-class Path : public Tile {
-    public:
-    explicit Path(const uint8_t& code) : Tile(code) {}
-
+class Path: public Tile {
+public:
+    explicit Path(const uint8_t& code): Tile(code) {}
 };
 
 
-
-#endif //PATH_H
+#endif  // PATH_H

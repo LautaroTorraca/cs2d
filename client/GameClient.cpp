@@ -10,14 +10,14 @@
 // #include "server/Constants/ConnectionStatus.h"
 #include "server/Constants/MapTypeConstants.h"
 // #include "server/DTO/GameLobbyDTO.h"
-#include "server/DTO/LobbyConnectionDTO.h"
+// #include "server/DTO/LobbyConnectionDTO.h"
 // #include "server/DTO/LobbyConnectionDTO.h"
 // #include "server/DTO/PlayerChoicesDTO.h"
 // #include "server/Team.h"
 
 #include "InputHandler.h"
-#include "MainWindow.h"
-#include "Protocol.h"
+// #include "MainWindow.h"
+// #include "Protocol.h"
 #include "SDL_timer.h"
 
 using std::stringstream;
@@ -29,77 +29,29 @@ GameClient::GameClient(char* port):
         running(true), protocol(HOSTNAME, port), inputHandler(protocol) {}
 
 void GameClient::run(int argc, char* argv[]) {
-
-    QApplication app(argc, argv);
-    MainWindow mainMenu;
-    if (mainMenu.exec() == QDialog::Accepted) {
-        ConnectionChoice choice = mainMenu.getChoice();
-
-        switch (choice) {
-            case ConnectionChoice::None: {
-                std::cout << "nada\n";
-                break;
-            }
-            case ConnectionChoice::Create: {
-                std::cout << "crear\n";
-                LobbyDTO lobby("hola", MapType::DUST, 2, 10);
-                protocol.createLobby(lobby);
-                std::cout << "aca llego=?\n\n";
-                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                //
-                // if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                //     std::cout << "se creo el lobby correctamente\n";
-                // } else {
-                //     std::cout << "fallo xd\n";
-                // }
-                // PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS,
-                // Skin::GERMAN_GSG9); protocol.ready(playerChoices);
-                //
-                // GameLobbyDTO gameLobby = protocol.getGameLobby();
-                break;
-            }
-            case ConnectionChoice::Join: {
-
-                std::cout << "unirse\n";
-                // LobbyDTO lobby("partida1");
-                // protocol.joinLobby(lobby);
-                // LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                // if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                //     std::cout << "se creo el lobby correctamente\n";
-                // } else {
-                //     std::cout << "fallo xd\n";
-                // }
-                // PlayerChoicesDTO playerChoices(4321, "pablo", Team::COUNTER_TERRORISTS,
-                //                                Skin::UK_SAS);
-                // protocol.ready(playerChoices);
-                break;
-            }
-        }
-    }
+    //
+    // QApplication app(argc, argv);
+    // MainWindow mainMenu;
+    // if (mainMenu.exec() == QDialog::Accepted) {
+    //     ConnectionChoice choice = mainMenu.getChoice();
+    //
+    //     switch (choice) {
+    //         case ConnectionChoice::None: {
+    //             std::cout << "nada\n";
+    //             break;
+    //         }
+    //         case ConnectionChoice::Create: {
+    //             std::cout << "crear\n";
+    //             break;
+    //         }
+    //         case ConnectionChoice::Join: {
+    //
+    //             std::cout << "unirse\n";
+    //             break;
+    //         }
+    //     }
+    // }
     std::cout << "hasta aca todo joya no?\n";
-    //   //////////
-    //
-    //   std::string line;
-    //   std::string command;
-    //   std::getline(std::cin, line);
-    //
-    //   stringstream ss(line);
-    //   ss >> command;
-    //   if (command == "crear") {
-    //       LobbyDTO lobby("partida1", MapType::DUST, 2, 10);
-    //       protocol.createLobby(lobby);
-    //       PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::GERMAN_GSG9);
-    //       SDL_Delay(10000);
-    //       protocol.ready(playerChoices);
-    //   } else {
-    //
-    //       LobbyDTO lobby("partida1");
-    //       protocol.joinLobby(lobby);
-    //       PlayerChoicesDTO playerChoices(1432, "blackri", Team::COUNTER_TERRORISTS,
-    //       Skin::UK_SAS); protocol.ready(playerChoices);
-    //   }
-    //   ////
-    // TODO: menu QT
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
 

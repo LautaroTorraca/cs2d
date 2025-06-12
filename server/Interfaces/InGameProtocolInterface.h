@@ -1,14 +1,15 @@
 #pragma once
-#include "Disconnectable.h"
-#include "GameInfoDTO.h"
 #include "common/Constants/SnapshotConstants.h"
 
-class InGameProtocolInterface : public Disconnectable {
+#include "Disconnectable.h"
+#include "GameInfoDTO.h"
+
+class InGameProtocolInterface: public Disconnectable {
 
 public:
-  virtual ~InGameProtocolInterface() = default;
+    virtual ~InGameProtocolInterface() = default;
 
-  virtual void sendPreSnapshot(const PreSnapshot & preSnapshot) = 0;
+    virtual void sendPreSnapshot(const PreSnapshot& preSnapshot) = 0;
 
-  virtual void sendSnapshot(const GameInfoDTO & gameInfo) = 0;
+    virtual void sendSnapshot(const GameInfoDTO& gameInfo) = 0;
 };

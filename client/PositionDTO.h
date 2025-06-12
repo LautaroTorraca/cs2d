@@ -7,7 +7,7 @@
 struct PositionDTO {
     const double x;
     const double y;
-    PositionDTO(const double& x, const double& y) : x(x), y(y) {}
+    PositionDTO(const double& x, const double& y): x(x), y(y) {}
 };
 
-#endif //POSITIONDTO_H
+#endif  // POSITIONDTO_H

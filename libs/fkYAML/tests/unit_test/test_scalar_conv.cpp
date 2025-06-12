@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -11,14 +11,14 @@
 #include <utility>
 
 #include <catch2/catch.hpp>
-
 #include <fkYAML/node.hpp>
 
 TEST_CASE("ScalarConv_aton") {
     std::nullptr_t null = nullptr;
 
     SECTION("valid string for the null value") {
-        auto input = GENERATE(std::string("null"), std::string("Null"), std::string("NULL"), std::string("~"));
+        auto input = GENERATE(std::string("null"), std::string("Null"), std::string("NULL"),
+                              std::string("~"));
         REQUIRE(fkyaml::detail::aton(input.begin(), input.end(), null) == true);
     }
 
@@ -73,32 +73,21 @@ TEST_CASE("ScalarConv_atoi") {
 
     SECTION("max digits but within bounds") {
         using test_data_t = std::pair<std::string, int32_t>;
-        auto test_data = GENERATE(
-            test_data_t(std::string("1147483647"), 1147483647), test_data_t(std::string("-1147483648"), -1147483648));
+        auto test_data = GENERATE(test_data_t(std::string("1147483647"), 1147483647),
+                                  test_data_t(std::string("-1147483648"), -1147483648));
 
-        REQUIRE(fkyaml::detail::atoi(test_data.first.begin(), test_data.first.end(), integer) == true);
+        REQUIRE(fkyaml::detail::atoi(test_data.first.begin(), test_data.first.end(), integer) ==
+                true);
         REQUIRE(integer == test_data.second);
     }
 
     SECTION("invalid values") {
-        auto input = GENERATE(
-            std::string("0123"),
-            std::string("+"),
-            std::string("21474836470"),
-            std::string("-"),
-            std::string("-21474836480"),
-            std::string("1/"),
-            std::string("1:"),
-            std::string("0o"),
-            std::string("0o/"),
-            std::string("0o8"),
-            std::string("0x"),
-            std::string("0x/"),
-            std::string("0x:"),
-            std::string("0x@"),
-            std::string("0xG"),
-            std::string("0x`"),
-            std::string("0xg"));
+        auto input = GENERATE(std::string("0123"), std::string("+"), std::string("21474836470"),
+                              std::string("-"), std::string("-21474836480"), std::string("1/"),
+                              std::string("1:"), std::string("0o"), std::string("0o/"),
+                              std::string("0o8"), std::string("0x"), std::string("0x/"),
+                              std::string("0x:"), std::string("0x@"), std::string("0xG"),
+                              std::string("0x`"), std::string("0xg"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -131,7 +120,8 @@ TEST_CASE("ScalarConv_atoi_int8_t") {
     }
 
     SECTION("invalid values") {
-        auto input = GENERATE(std::string("128"), std::string("-129"), std::string("0o400"), std::string("0x100"));
+        auto input = GENERATE(std::string("128"), std::string("-129"), std::string("0o400"),
+                              std::string("0x100"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -158,7 +148,8 @@ TEST_CASE("ScalarConv_atoi_uint8_t") {
     }
 
     SECTION("invalid values") {
-        auto input = GENERATE(std::string("256"), std::string("-1"), std::string("0o400"), std::string("0x100"));
+        auto input = GENERATE(std::string("256"), std::string("-1"), std::string("0o400"),
+                              std::string("0x100"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -185,14 +176,15 @@ TEST_CASE("ScalarConv_atoi_int16_t") {
     }
 
     SECTION("minimum values") {
-        auto input = GENERATE(std::string("-32768"), std::string("0o100000"), std::string("0x8000"));
+        auto input =
+                GENERATE(std::string("-32768"), std::string("0o100000"), std::string("0x8000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == true);
         REQUIRE(integer == -32768);
     }
 
     SECTION("invalid values") {
-        auto input =
-            GENERATE(std::string("32768"), std::string("-32769"), std::string("0o200000"), std::string("0x10000"));
+        auto input = GENERATE(std::string("32768"), std::string("-32769"), std::string("0o200000"),
+                              std::string("0x10000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -219,7 +211,8 @@ TEST_CASE("ScalarConv_atoi_uint16_t") {
     }
 
     SECTION("invalid values") {
-        auto input = GENERATE(std::string("65536"), std::string("-1"), std::string("0o200000"), std::string("0x10000"));
+        auto input = GENERATE(std::string("65536"), std::string("-1"), std::string("0o200000"),
+                              std::string("0x10000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -240,23 +233,22 @@ TEST_CASE("ScalarConv_atoi_int32_t") {
     }
 
     SECTION("max values") {
-        auto input = GENERATE(std::string("2147483647"), std::string("0o17777777777"), std::string("0x7FFFFFFF"));
+        auto input = GENERATE(std::string("2147483647"), std::string("0o17777777777"),
+                              std::string("0x7FFFFFFF"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == true);
         REQUIRE(integer == 2147483647);
     }
 
     SECTION("minimum values") {
-        auto input = GENERATE(std::string("-2147483648"), std::string("0o20000000000"), std::string("0x80000000"));
+        auto input = GENERATE(std::string("-2147483648"), std::string("0o20000000000"),
+                              std::string("0x80000000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == true);
         REQUIRE(integer == -2147483648);
     }
 
     SECTION("invalid values") {
-        auto input = GENERATE(
-            std::string("2147483648"),
-            std::string("-2147483649"),
-            std::string("0o40000000000"),
-            std::string("0x100000000"));
+        auto input = GENERATE(std::string("2147483648"), std::string("-2147483649"),
+                              std::string("0o40000000000"), std::string("0x100000000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -271,7 +263,8 @@ TEST_CASE("ScalarConv_atoi_uint32_t") {
     }
 
     SECTION("max values") {
-        auto input = GENERATE(std::string("4294967295"), std::string("0o37777777777"), std::string("0xFFFFFFFF"));
+        auto input = GENERATE(std::string("4294967295"), std::string("0o37777777777"),
+                              std::string("0xFFFFFFFF"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == true);
         REQUIRE(integer == 4294967295u);
     }
@@ -283,8 +276,8 @@ TEST_CASE("ScalarConv_atoi_uint32_t") {
     }
 
     SECTION("invalid values") {
-        auto input = GENERATE(
-            std::string("4294967296"), std::string("-1"), std::string("0o40000000000"), std::string("0x100000000"));
+        auto input = GENERATE(std::string("4294967296"), std::string("-1"),
+                              std::string("0o40000000000"), std::string("0x100000000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -305,29 +298,25 @@ TEST_CASE("ScalarConv_atoi_int64_t") {
     }
 
     SECTION("max values") {
-        auto input = GENERATE(
-            std::string("9223372036854775807"),
-            std::string("0o777777777777777777777"),
-            std::string("0x7FFFFFFFFFFFFFFF"));
+        auto input =
+                GENERATE(std::string("9223372036854775807"), std::string("0o777777777777777777777"),
+                         std::string("0x7FFFFFFFFFFFFFFF"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == true);
         REQUIRE(integer == 9223372036854775807);
     }
 
     SECTION("minimum values") {
-        auto input = GENERATE(
-            std::string("-9223372036854775808"),
-            std::string("0o1000000000000000000000"),
-            std::string("0x8000000000000000"));
+        auto input = GENERATE(std::string("-9223372036854775808"),
+                              std::string("0o1000000000000000000000"),
+                              std::string("0x8000000000000000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == true);
         REQUIRE(integer == std::numeric_limits<int64_t>::min());
     }
 
     SECTION("invalid values") {
         auto input = GENERATE(
-            std::string("9223372036854775808"),
-            std::string("-9223372036854775809"),
-            std::string("0o2000000000000000000000"),
-            std::string("0x10000000000000000"));
+                std::string("9223372036854775808"), std::string("-9223372036854775809"),
+                std::string("0o2000000000000000000000"), std::string("0x10000000000000000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -342,10 +331,9 @@ TEST_CASE("ScalarConv_atoi_uint64_t") {
     }
 
     SECTION("max values") {
-        auto input = GENERATE(
-            std::string("18446744073709551615"),
-            std::string("0o1777777777777777777777"),
-            std::string("0xFFFFFFFFFFFFFFFF"));
+        auto input = GENERATE(std::string("18446744073709551615"),
+                              std::string("0o1777777777777777777777"),
+                              std::string("0xFFFFFFFFFFFFFFFF"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == true);
         REQUIRE(integer == 18446744073709551615u);
     }
@@ -357,11 +345,9 @@ TEST_CASE("ScalarConv_atoi_uint64_t") {
     }
 
     SECTION("invalid values") {
-        auto input = GENERATE(
-            std::string("18446744073709551616"),
-            std::string("-1"),
-            std::string("0o2000000000000000000000"),
-            std::string("0x10000000000000000"));
+        auto input = GENERATE(std::string("18446744073709551616"), std::string("-1"),
+                              std::string("0o2000000000000000000000"),
+                              std::string("0x10000000000000000"));
         REQUIRE(fkyaml::detail::atoi(input.begin(), input.end(), integer) == false);
     }
 }
@@ -371,13 +357,8 @@ TEST_CASE("ScalarConv_atof_float") {
     using limits_type = std::numeric_limits<float>;
 
     SECTION("positive infinity") {
-        auto input = GENERATE(
-            std::string(".inf"),
-            std::string(".Inf"),
-            std::string(".INF"),
-            std::string("+.inf"),
-            std::string("+.Inf"),
-            std::string("+.INF"));
+        auto input = GENERATE(std::string(".inf"), std::string(".Inf"), std::string(".INF"),
+                              std::string("+.inf"), std::string("+.Inf"), std::string("+.INF"));
         REQUIRE(fkyaml::detail::atof(input.begin(), input.end(), fp) == true);
         REQUIRE(std::isinf(fp));
     }
@@ -420,13 +401,8 @@ TEST_CASE("ScalarConv_atof_double") {
     using limits_type = std::numeric_limits<double>;
 
     SECTION("positive infinity") {
-        auto input = GENERATE(
-            std::string(".inf"),
-            std::string(".Inf"),
-            std::string(".INF"),
-            std::string("+.inf"),
-            std::string("+.Inf"),
-            std::string("+.INF"));
+        auto input = GENERATE(std::string(".inf"), std::string(".Inf"), std::string(".INF"),
+                              std::string("+.inf"), std::string("+.Inf"), std::string("+.INF"));
         REQUIRE(fkyaml::detail::atof(input.begin(), input.end(), fp) == true);
         REQUIRE(std::isinf(fp));
     }

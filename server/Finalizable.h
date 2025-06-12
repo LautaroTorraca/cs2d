@@ -14,4 +14,4 @@ public:
     virtual void allTerroristsAreDead() = 0;
 };
 
-#endif //FINALIZABLE_H
+#endif  // FINALIZABLE_H

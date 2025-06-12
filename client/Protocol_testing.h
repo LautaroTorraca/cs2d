@@ -34,11 +34,11 @@ class ProtocolTesting: public Protocol {
 
 public:
     ProtocolTesting(const std::string& hostName, const std::string& port);
-    // void move(const Direction& direction) override;
-    // void changeAngle(const PositionDTO& positionInfo) override;
-    // void attack() override;
-    // void emptyBullets() override;
-    // Snapshot receiveSnapshot() const override;
-    // PreSnapshot receivePreSnapshot() const override;
-    ~ProtocolTesting() {};
+    void move(const Direction& direction) override;
+    void changeAngle(const PositionDTO& positionInfo) override;
+    void attack() override;
+    void emptyBullets() override;
+    Snapshot receiveSnapshot() const override;
+    PreSnapshot receivePreSnapshot() const override;
+    ~ProtocolTesting(){};
 };

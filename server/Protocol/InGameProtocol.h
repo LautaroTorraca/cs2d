@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Requests/Request.h"
-#include "Orders/InGameOrder.h"
-#include "Handlers/InGameHandler.h"
+#include <functional>
 #include <map>
 #include <memory>
-#include <functional>
+
+#include "Handlers/InGameHandler.h"
+#include "Orders/InGameOrder.h"
+#include "Requests/Request.h"
 
 
 class InGameProtocol {

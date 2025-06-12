@@ -7,14 +7,15 @@
 #include "Product.h"
 
 
-class PrimaryAmmo : public Product {
+class PrimaryAmmo: public Product {
     uint16_t amount;
-    public:
-    PrimaryAmmo(const uint16_t& cost, const uint16_t& amount) : Product(cost*amount), amount(amount) {}
-    void addTo(Inventory &inventory) override;
+
+public:
+    PrimaryAmmo(const uint16_t& cost, const uint16_t& amount):
+            Product(cost * amount), amount(amount) {}
+    void addTo(Inventory& inventory) override;
     ~PrimaryAmmo() override = default;
 };
 
 
-
-#endif //PRIMARYAMMO_H
+#endif  // PRIMARYAMMO_H

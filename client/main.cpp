@@ -21,6 +21,8 @@ int main(int argc, char* argv[]) {
     try {
         // QApplication app();  // 💥 SIEMPRE antes que cualquier QWidget
         //                      //
+
+
         GameClient game(argv[1]);
         game.run(argc, argv);
         return 0;

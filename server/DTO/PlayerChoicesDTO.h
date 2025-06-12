@@ -14,7 +14,9 @@ struct PlayerChoicesDTO {
     const std::string playerName;
     const Team team;
     const Skin skin;
-    PlayerChoicesDTO(const size_t& id,const std::string& playerName, const Team& team, const Skin& skin) : id(id), playerName(playerName), team(team), skin(skin) {}
+    PlayerChoicesDTO(const size_t& id, const std::string& playerName, const Team& team,
+                     const Skin& skin):
+            id(id), playerName(playerName), team(team), skin(skin) {}
 };
 
-#endif //PLAYERCHOICESDTO_H
+#endif  // PLAYERCHOICESDTO_H
