@@ -118,11 +118,17 @@ if(TALLER_CLIENT)
             client/login/SkinTraslator.h
             client/login/MessageBox.cpp
             client/login/MessageBox.h
-            client/login/mocks/CreateGameDTO.h
             client/login/dialogs/GameNameDialog.cpp
             client/login/dialogs/GameNameDialog.h
             client/login/dialogs/GameListDialog.cpp
-            client/login/dialogs/GameListDialog.h)
+            client/login/dialogs/GameListDialog.h
+            client/login/mocks/MapTypeMock.h
+            client/login/dialogs/MapSelectionDialog.cpp
+            client/login/dialogs/MapSelectionDialog.h
+            client/login/MapTraslator.cpp
+            client/login/MapTraslator.h
+            client/login/dialogs/ConfirmExitDialog.cpp
+            client/login/dialogs/ConfirmExitDialog.h)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/client/resources.qrc")
         message(STATUS "Found resources.qrc, adding to build")
         qt6_add_resources(CLIENT_RESOURCES client/resources.qrc)

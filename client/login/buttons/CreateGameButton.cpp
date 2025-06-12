@@ -1,14 +1,13 @@
 #include "CreateGameButton.h"
-#include "login/mocks/GameCreatorMock.h"
+#include "login/dialogs/MapSelectionDialog.h"
+#include "login/dialogs/CreateGameDialog.h"
 #include "login/dialogs/TeamSelectionDialog.h"
 #include "login/dialogs/SkinSelectionDialog.h"
 #include "login/dialogs/WaitingRoomDialog.h"
-#include "../SkinTraslator.h"
-#include "../MessageBox.h"
-#include "login/mocks/CreateGameDTO.h"
-#include "login/mocks/TeamConstantsMock.h"
 
-#include <QDebug>
+#include "../MessageBox.h"
+#include "../SkinTraslator.h"
+#include "login/mocks/TeamConstantsMock.h"
 
 CreateGameButton::CreateGameButton(QWidget* parent, QLineEdit* usernameInput)
         : GameMenuButton("➕  Create Game", parent), usernameInput(usernameInput) {
@@ -24,14 +23,29 @@ void CreateGameButton::handleClick() {
     }
 
     try {
-        GameCreatorMock gameCreator;
-        GameDTO dto = gameCreator.openCreateGameDialog(this->parentWidget());
+        //Seleccion de mapa
+        MapSelectionDialog mapDialog(this->parentWidget());
+        if (mapDialog.exec() != QDialog::Accepted) {
+            return;
+        }
+        MapType selectedMap = static_cast<MapType>(mapDialog.getSelectedMap());
 
+        //Configuración de partida
+        CreateGameDialog configDialog(this->parentWidget());
+        if (configDialog.exec() != QDialog::Accepted) {
+            return;
+        }
+
+        int maxPlayers = configDialog.getGameConfig().playerCount;
+        int rounds = configDialog.getGameConfig().rounds;
+
+        //Seleccion de equipo
         TeamSelectionDialog teamDialog(this->parentWidget());
-        if (teamDialog.exec() != QDialog::Accepted) return;
+        if (teamDialog.exec() != QDialog::Accepted) {
+            return;
+        }
 
         QString selectedTeam = teamDialog.getSelectedTeam();
-
         uint8_t teamId = 0;
         if (selectedTeam == "CT") {
             teamId = TeamConstants::COUNTER_TERRORISTS;
@@ -39,28 +53,24 @@ void CreateGameButton::handleClick() {
             teamId = TeamConstants::TERRORISTS;
         }
 
+        //Selección de skin
         SkinSelectionDialog skinDialog(teamId, this->parentWidget());
-        if (skinDialog.exec() != QDialog::Accepted) return;
-
+        if (skinDialog.exec() != QDialog::Accepted) {
+            return;
+        }
         uint8_t selectedSkinId = skinDialog.getSelectedSkin();
 
-        // TODO revisar CreateGameDTO
-        CreateGameDTO createDto;
-        createDto.playerName = name;
-        createDto.team = selectedTeam;
-        createDto.skinId = selectedSkinId;
-        createDto.playerCount = dto.playerCount;
-        createDto.maxPlayers = dto.maxPlayers;
-        createDto.rounds = dto.rounds;
+        // Crear el GameDTO
+        GameDTO gameDto(name, selectedMap, 1, maxPlayers, rounds);
 
-        // TODO: Enviar createDto al servidor
+        // TODO: enviar gameDto al servidor y crear partida
 
-        // Mostrar waiting room
+        //Mostrar sala de espera
         SkinMapper mapper;
         QString skinText = mapper.toString(mapper.toSkin(selectedSkinId));
-        WaitingRoomDialog waitingRoom(dto, name, selectedTeam, skinText, this->parentWidget());
-        waitingRoom.exec();
 
+        WaitingRoomDialog waitingRoom(gameDto, name, selectedTeam, skinText, this->parentWidget());
+        waitingRoom.exec();
 
     } catch (const std::exception& e) {
         MessageBox msg(this);

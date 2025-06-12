@@ -1,5 +1,5 @@
 #include "ExitGameButton.h"
-#include <QMessageBox>
+#include "../dialogs/ConfirmExitDialog.h"
 
 ExitGameButton::ExitGameButton(QWidget* parent)
         : GameMenuButton("✖ Exit", parent) {
@@ -7,14 +7,8 @@ ExitGameButton::ExitGameButton(QWidget* parent)
 }
 
 void ExitGameButton::handleClick() {
-    QMessageBox::StandardButton reply = QMessageBox::question(
-            this,
-            "Exit Game",
-            "Are you sure you want to exit?",
-            QMessageBox::Yes | QMessageBox::No
-    );
-
-    if (reply == QMessageBox::Yes) {
+    ConfirmExitDialog dialog(this);
+    if (dialog.exec() == QDialog::Accepted && dialog.userConfirmed()) {
         QWidget* top = this->window();
         if (top) top->close();
     }

@@ -1,7 +1,8 @@
 #include "ListGamesButton.h"
 #include "../MessageBox.h"
-#include "login/dialogs/GameListDialog.h"
-#include "login/mocks/GameListerMock.h"
+#include "../dialogs/GameListDialog.h"
+#include "../mocks/GameListerMock.h"
+#include "../MapTraslator.h"
 
 ListGamesButton::ListGamesButton(QWidget* parent)
         : GameMenuButton("☰ List Games", parent) {
@@ -21,13 +22,36 @@ void ListGamesButton::handleClick() {
 
     try {
         GameListerMock lister;
-        QStringList games = lister.listGameNames();
+        QList<GameDTO> games = lister.fakeGames();
 
-        GameListDialog dialog(games, parentWindow);
+        if (games.isEmpty()) {
+            MessageBox msg(this);
+            msg.showMessage("No Games Found",
+                            "There are no games available at the moment.",
+                            MessageType::Info);
+            return;
+        }
+
+        QStringList formattedGames;
+        MapMapper mapMapper;
+
+        for (const auto& game : games) {
+            QString line = QString("• %1 — %2/%3 players — %4 — %5 rounds")
+                    .arg(game.name)
+                    .arg(game.playerCount)
+                    .arg(game.maxPlayers)
+                    .arg(mapMapper.toString(game.mapType))
+                    .arg(game.rounds);
+            formattedGames << line;
+        }
+
+        GameListDialog dialog(formattedGames, parentWindow);
         if (dialog.exec() == QDialog::Accepted) {
             QString selected = dialog.getSelectedGame();
             MessageBox msg(this);
             msg.showMessage("Game Selected", QString("You selected <b>%1</b>.").arg(selected), MessageType::Success);
+
+            // TODO: conectar con flujo de join real
         }
 
     } catch (const std::exception& e) {

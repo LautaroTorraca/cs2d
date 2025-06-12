@@ -1,10 +1,8 @@
-#ifndef GAME_LIST_DIALOG_H
-#define GAME_LIST_DIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QStringList>
 
-class QVBoxLayout;
 class QListWidget;
 class QPushButton;
 
@@ -15,16 +13,12 @@ public:
     explicit GameListDialog(const QStringList& games, QWidget* parent = nullptr);
     QString getSelectedGame() const;
 
-private slots:
-    void handleJoin();
-
 private:
-    void setupUI(const QStringList& games);
-    void applyStyle();
-
     QListWidget* listWidget;
     QPushButton* joinButton;
     QString selectedGame;
-};
 
-#endif // GAME_LIST_DIALOG_H
+    void applyStyle();
+    void setupUI(const QStringList& games);
+    void handleJoin();
+};

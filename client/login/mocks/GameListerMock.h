@@ -10,6 +10,5 @@ public:
     void showAvailableGames(QWidget* parent);
     QStringList listGameNames() const;
 
-private:
     QList<GameDTO> fakeGames() const;
 };
