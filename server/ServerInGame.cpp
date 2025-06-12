@@ -51,17 +51,15 @@ void ServerInGame::handle(const std::unique_ptr<Order>& order) const {
     translator.at(type)(inGameOrder);
 }
 
-void ServerInGame::addNewGame(std::string& gameName, const GameLobbyDTO& gameInfo) {
-    GameParser parser(gameInfo.mapPath, SHOP_PATH, WEAPONS_INFO_PATH);
-    this->games.emplace(gameName,
-                        std::make_shared<GameMonitor>(parser, gameInfo.rounds, this->protocol));
-    for (auto& playerChoices: gameInfo.playersChoices) {
-        this->games.at(gameName)->addPlayer(playerChoices.id, playerChoices.playerName,
-                                            playerChoices.team, playerChoices.skin);
-        this->playerToGame.emplace(playerChoices.id, gameName);
-    }
-    this->games.at(gameName)->spawnBomb();
-    this->games.at(gameName)->run();
+void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInfo) {
+  GameParser parser(gameInfo.mapPath, SHOP_PATH, WEAPONS_INFO_PATH);
+  this->games.emplace(gameName, std::make_shared<GameMonitor>(parser, gameInfo.rounds, this->protocol));
+  for (auto &playerChoices : gameInfo.playersChoices) {
+    this->games.at(gameName)->addPlayer(playerChoices.id, playerChoices.playerName, playerChoices.team, playerChoices.skin);
+    this->playerToGame.emplace(playerChoices.id, gameName);
+  }
+  this->games.at(gameName)->spawnBomb();
+  this->games.at(gameName)->start();
 }
 
 void ServerInGame::leaveGameLobby(const size_t& id) {
@@ -71,12 +69,14 @@ void ServerInGame::leaveGameLobby(const size_t& id) {
     this->games.at(gameName)->kick(id);
 }
 
-void ServerInGame::move(const InGameOrder& order) {
-    if (!this->playerToGame.contains(order.getPlayerId()))
-        return;
-    std::string gameName = this->playerToGame.at(order.getPlayerId());
-    Coordinate& displacement = this->movements.at(order.getDirection());
-    this->games.at(gameName)->move(order.getPlayerId(), displacement);
+void ServerInGame::move(const InGameOrder &order) {
+    std::cout << "move ini" << std::endl;
+  if (!this->playerToGame.contains(order.getPlayerId())) return;
+    std::cout << "move next" << std::endl;
+  std::string gameName = this->playerToGame.at(order.getPlayerId());
+    std::cout << "move gameName" << std::endl;
+  Coordinate& displacement = this->movements.at(order.getDirection());
+  this->games.at(gameName)->move(order.getPlayerId(), displacement);
 }
 
 void ServerInGame::attack(const InGameOrder& order) {

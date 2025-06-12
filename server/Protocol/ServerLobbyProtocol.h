@@ -10,8 +10,6 @@
 #include "Requests/Request.h"
 
 class ServerLobbyProtocol {
-    std::map<size_t, std::unique_ptr<Socket>>& connectedUsers;
-    std::map<std::string, size_t> games;
     std::map<uint8_t, std::function<ServerLobbyOrder(const Request&)>> requestHandlers;
 
     ServerLobbyOrder sendGamesListHandler(const Request& request) const;
@@ -20,7 +18,7 @@ class ServerLobbyProtocol {
     ServerLobbyOrder disconnectHandler(const Request& request);
 
 public:
-    explicit ServerLobbyProtocol(std::map<size_t, std::unique_ptr<Socket>>& connectedUsers);
+    explicit ServerLobbyProtocol();
 
     ServerLobbyProtocol(const ServerLobbyProtocol&) = delete;
     ServerLobbyProtocol& operator=(const ServerLobbyProtocol&) = delete;

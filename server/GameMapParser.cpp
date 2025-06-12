@@ -100,5 +100,6 @@ std::vector<Coordinate> GameMapParser::getBombPlantPoints() const {
 }
 
 uint8_t GameMapParser::getMaxPlayersPerTeam() const {
-    return this->getCountersSpawnPoints().size();
+    size_t maxPlayersPerTeam = this->getCountersSpawnPoints().size();
+    return maxPlayersPerTeam;
 }

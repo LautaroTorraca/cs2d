@@ -12,10 +12,10 @@
 #include "DTO/LobbyConnectionDTO.h"
 #include "Sender/Sender.h"
 
-#include "GameInfoDTO.h"
-#include "GameLobbyHandler.h"
-#include "InGameHandler.h"
-#include "LobbyHandler.h"
+class ClientHandler final : public Thread {
+  Socket userSocket;
+  size_t id;
+  Queue<std::shared_ptr<Request>> &requestsQueue;
 
 class ClientHandler final: public Thread {
     Socket& userSocket;
@@ -32,18 +32,18 @@ class ClientHandler final: public Thread {
     void registerOpcodes();
 
 public:
-    ClientHandler(Socket& socket, const size_t& clientId,
-                  Queue<std::shared_ptr<Request>>& requestQueue);
+  ClientHandler(Socket& socket, const size_t &clientId,
+                Queue<std::shared_ptr<Request>> &requestQueue);
 
     void run() override;
 
     ~ClientHandler() override;
 
-    void sendSnapshot(const GameInfoDTO& gameInfo);
-    void sendPreSnapshot(const PreSnapshot& preSnapshot);
-    void stopService();
-    void sendGamesList(const std::vector<std::string>& gamesList) const;
-    void sendGameLobby(const GameLobbyDTO& gameLobbyInfo);
+  void sendSnapshot(const GameInfoDTO &gameInfo);
+  void sendPreSnapshot(const PreSnapshot &preSnapshot);
+  void stopService();
+  void sendGamesList(const std::vector<std::string> & gamesList);
+  void sendGameLobby(const GameLobbyDTO & gameLobbyInfo);
 
     void sendLobbyConnectonStatus(const LobbyConnectionDTO& lobbyConnection);
 };

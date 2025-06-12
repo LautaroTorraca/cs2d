@@ -9,7 +9,6 @@
 #include "Requests/Request.h"
 
 class GameLobbyProtocol {
-    std::map<size_t, std::unique_ptr<Socket>>& connectedUsers;
     std::map<size_t, std::unique_ptr<GameLobbyHandler>> lobbyUsers;
 
     std::map<uint8_t, std::function<GameLobbyOrder(const Request&)>> requestHandlers;
@@ -18,7 +17,7 @@ class GameLobbyProtocol {
     GameLobbyOrder exitLobbyHandler(const Request& request);
 
 public:
-    GameLobbyProtocol(std::map<size_t, std::unique_ptr<Socket>>& connectedUsers);
+    GameLobbyProtocol();
 
     GameLobbyProtocol(const GameLobbyProtocol&) = delete;
     GameLobbyProtocol& operator=(const GameLobbyProtocol&) = delete;

@@ -1,7 +1,12 @@
 #pragma once
 #include <cstdint>
 
-enum Direction : uint16_t { Up = 0x00, Right = 0x01, Down = 0x02, Left = 0x03 };
+enum Direction : uint16_t {
+    Up = 0,
+    Right = 1,
+    Down = 2,
+    Left = 3
+};
 
 struct DirectionDTO {
     Direction& direction;

@@ -5,16 +5,13 @@ enum OrderType {
     DO_NOTHING = -1,
 
     // Valores de Lobby (1-100)
-    LOBBY_LIST = 1,
-    LOBBY_CREATE = 2,
-    LOBBY_JOIN = 3,
-    LOBBY_DISCONNECT = 100,
+    LOBBY_CREATE = 1,
+    LOBBY_JOIN = 2,
+    LOBBY_LIST = 3,
+    LOBBY_DISCONNECT = 15,
 
     // Valores de Game Lobby (101-200)
-    GAME_LOBBY_SELECT_TEAM = 101,
-    GAME_LOBBY_SELECT_SKIN = 102,
-    GAME_LOBBY_READY = 103,
-    GAME_LOBBY_RETURN = 104,
+    GAME_LOBBY_READY = 100,
     GAME_LOBBY_EXIT = 200,
 
     // Valores de In Game (201-300)
@@ -27,5 +24,5 @@ enum OrderType {
     IN_GAME_SWITCH_WEAPON = 207,
     IN_GAME_PLANT_BOMB = 208,
     IN_GAME_DEFUSE_BOMB = 209,
-    IN_GAME_EXIT = 300
+    IN_GAME_EXIT = 255
 };

@@ -24,6 +24,7 @@ public:
     uint16_t u16tReader() const;
 
     [[nodiscard]] std::string stringReader() const;
+    std::vector<char> bytesReader() const;
 
     [[nodiscard]] double doubleRead() const;
 

@@ -82,7 +82,7 @@ void Protocol::leaveGameLobby() {
 
 void Protocol::move(const Direction& direction) {
     const uint8_t opCode = ProtocolConstants::PLAYER_MOVEMENT;
-    uint8_t directionMove = direction;
+    uint16_t directionMove = direction;
     this->sender.send(opCode);
     this->sender.send(directionMove);
 }
@@ -148,17 +148,18 @@ Snapshot Protocol::receiveSnapshot() const {
 }
 
 PreSnapshot Protocol::receivePreSnapshot() const {
-    uint8_t id = this->reader.u8tReader();
-    std::string gameName = this->reader.stringReader();
-    std::stringstream ss(gameName);
+    size_t id = this->reader.readSizeT();
+    std::vector<char> tiles = this->reader.bytesReader();
     std::string row;
     std::vector<std::vector<uint8_t>> map;
-    while (ss >> row) {
-        std::vector<uint8_t> rowData;
-        for (auto& tile: row) {
-            rowData.push_back(tile);
+    std::vector<uint8_t> rowData;
+    for (auto& tile: tiles) {
+        if (tile == '\n') {
+            map.push_back(rowData);
+            rowData = std::vector<uint8_t>();
+            continue;
         }
-        map.push_back(rowData);
+        rowData.push_back(tile);
     }
 
     return {id, map};

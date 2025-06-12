@@ -59,7 +59,9 @@ TextureManager::TextureManager(Renderer& renderer):
 }
 
 Texture& TextureManager::getSkin(Skin id) { return texturesSkins.at(id); }
-Texture& TextureManager::getTileMap(MapType id) { return texturesTiles.at(id); }
+Texture& TextureManager::getTileMap(MapType id) {
+    return texturesTiles.at(id);
+}
 
 Texture& TextureManager::getDroppedWeapon(WeaponType id) { return texturesWeapons.at(id); }
 

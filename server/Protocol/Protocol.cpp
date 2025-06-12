@@ -15,9 +15,6 @@
 Protocol::Protocol(const std::string& port):
         acceptorSocket(port.c_str()),
         acceptorThread([this]() { this->handleNewConnection(); }),
-        lobbyProtocol(this->connectedUsers),
-        gameLobbyProtocol(this->connectedUsers),
-        inGameProtocol(this->connectedUsers),
         handledUsers(0) {
     setupLobbyHandlers();
     setupGameLobbyHandlers();
@@ -105,17 +102,14 @@ void Protocol::handleNewConnection() {
         try {
             Socket peer = this->acceptorSocket.accept();
             size_t userId = handledUsers++;
-
-            this->connectedUsers.emplace(userId, std::make_unique<Socket>(std::move(peer)));
-
             this->clientsHandlers.emplace(
-                    userId, std::make_unique<ClientHandler>(*this->connectedUsers.at(userId),
+                    userId, std::make_unique<ClientHandler>(peer,
                                                             userId, this->requestsQueue));
 
             this->clientsHandlers.at(userId)->start();
-            std::cout << "creo todo bien (el socket)\n";
-        } catch (LibError&) {
-            std::cout << "ERROR GARRAFAL";
+            //std::cout << "creo todo bien (el socket)\n";
+        } catch (LibError& e) {
+            std::cerr << "Connection lost error: "<< e.what() << std::endl;
             break;
         }
     }
@@ -125,8 +119,10 @@ std::unique_ptr<Order> Protocol::getNextOrder() {
     try {
         const Request request = std::move(*this->requestsQueue.pop());
         const uint8_t code = request.getRequest().at(opCodeKey).front();
+        //std::cout << "Protocol::getNextOrder, code: " << (int)code << std::endl;
         return this->requestMapper.at(code)(request);
     } catch (ClosedQueue&) {
+        std::cerr << "Closed queue" << std::endl;
         throw -1;  // TODO: Manejar fin de protocolo
     }
 }

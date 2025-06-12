@@ -16,11 +16,13 @@ void GameMonitor::addPlayer(const size_t& id, const std::string& name, const Tea
 
 void GameMonitor::move(const size_t& id, const Coordinate& displacement) {
     std::lock_guard<std::mutex> lock(this->mutex);
+    std::cout << "GameMonitor::move, Entre move" << std::endl;
     this->game.move(id, displacement);
 }
 
 void GameMonitor::changeAngle(const size_t& id, const Coordinate& coordinate) {
     std::lock_guard<std::mutex> lock(this->mutex);
+    std::cout << "GameMonitor::changeAngle, Entre changeAngle, id:" << id << " dir:("<< coordinate.getInfo().getX() << ", " << coordinate.getInfo().getY() << ") " << std::endl;
     this->game.changeAngle(id, coordinate);
 }
 
@@ -51,6 +53,7 @@ void GameMonitor::takeDrop(const size_t& id) {
 
 void GameMonitor::attack(const size_t& id) {
     std::lock_guard<std::mutex> lock(this->mutex);
+    std::cout << "GameMonitor::attack, estoy atacando, id: "<< (int) id << std::endl;
     this->game.attack(id);
 }
 
@@ -76,9 +79,9 @@ void GameMonitor::kick(const size_t& id) {
 
 
 void GameMonitor::sendPreSnapshot() {
-    std::vector<std::vector<uint8_t>> map = game.getMap();
     GameInfoDTO gameInfo = game.getInfo();
-    for (auto& player: gameInfo.getPlayersInfo()) {
+    for ( auto& player : gameInfo.getPlayersInfo() ) {
+        std::vector<std::vector<uint8_t>> map = game.getMap();
         PreSnapshot preSnapshot(player.getId(), map);
         this->protocol.sendPreSnapshot(preSnapshot);
     }
@@ -87,12 +90,32 @@ void GameMonitor::sendPreSnapshot() {
 void GameMonitor::run() {
     this->sendPreSnapshot();
     double time = 0;
+    /*----------------------Para debbug------------------------*/
+    std::map<size_t, std::vector<double>> movements;
+    movements.emplace(0,std::vector<double>());
+    movements.emplace(1,std::vector<double>());
+    movements.at(0).push_back(304);
+    movements.at(0).push_back(48);
+    movements.at(1).push_back(272);
+    movements.at(1).push_back(112);
+    /*--------------------------------------------------------*/
     while (this->should_keep_running()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         std::lock_guard lock(this->mutex);
         game.advance(time);
         time += TIME_ADVANCE_IN_SECONDS;
         GameInfoDTO gameInfo = game.getInfo();
+        /*----------------------------------------------------Para debbug-----------------------------------------------------------------------------------------------*/
+        for (auto& player : gameInfo.getPlayersInfo() ) {
+            if (movements.at(player.getId()).at(0) != player.getCoordinate().getX() ||
+                movements.at(player.getId()).at(1) != player.getCoordinate().getY()) {
+                std::cout << "id: " <<player.getId() << ", name: " << player.getName() << "(" << player.getCoordinate().getX() << ", " << player.getCoordinate().getY() << "), angulo:" << player.getAngle() << std::endl;
+                movements.at(player.getId()).clear();
+                movements.at(player.getId()).push_back(player.getCoordinate().getX());
+                movements.at(player.getId()).push_back(player.getCoordinate().getY());
+                }
+        }
+        /*-------------------------------------------------------------------------------------------------------------------------------------------------------------*/
         if (gameInfo.getStatus() == TERRORISTS_WIN || gameInfo.getStatus() == COUNTERS_WIN) {
             time = 0;
             game.nextRound(time);

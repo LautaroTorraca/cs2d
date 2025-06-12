@@ -37,32 +37,40 @@ GameLobbyOrder::GameLobbyOrder(const uint8_t& code, const size_t& playerId,
     }
 }
 
-GameLobbyOrder::GameLobbyOrder(GameLobbyOrder&& other) noexcept:
-        orderType(other.orderType),
-        playerId(other.playerId),
-        teamId(other.teamId),
-        skinId(other.skinId),
-        orderTranslator(std::move(other.orderTranslator)) {
+GameLobbyOrder::GameLobbyOrder(GameLobbyOrder &&other) noexcept
+    : orderType(other.orderType), playerId(other.playerId), playerName(other.playerName),
+      teamId(other.teamId), skinId(other.skinId),
+      orderTranslator(std::move(other.orderTranslator)), teamTranslator(std::move(other.teamTranslator)), skinTranslator(std::move(other.skinTranslator)) {
+  other.orderType = DO_NOTHING;
+  other.playerId = DEFAULT_PLAYER_ID;
+    other.playerName = "";
+  other.teamId = DEFAULT_TEAM_ID;
+  other.skinId = DEFAULT_SKIN_ID;
+    other.orderTranslator = std::map<uint8_t, OrderType>();
+    other.skinTranslator = std::map<uint8_t, Skin>();
+    other.teamTranslator = std::map<uint8_t, Team>();
+}
+
+GameLobbyOrder &GameLobbyOrder::operator=(GameLobbyOrder &&other) noexcept {
+  if (this != &other) {
+    orderType = other.orderType;
+    playerId = other.playerId;
+      playerName = other.playerName;
+    teamId = other.teamId;
+    skinId = other.skinId;
+    orderTranslator = std::move(other.orderTranslator);
+      skinTranslator = std::move(other.skinTranslator);
+      teamTranslator = std::move(other.teamTranslator);
+
     other.orderType = DO_NOTHING;
     other.playerId = DEFAULT_PLAYER_ID;
     other.teamId = DEFAULT_TEAM_ID;
     other.skinId = DEFAULT_SKIN_ID;
-}
-
-GameLobbyOrder& GameLobbyOrder::operator=(GameLobbyOrder&& other) noexcept {
-    if (this != &other) {
-        orderType = other.orderType;
-        playerId = other.playerId;
-        teamId = other.teamId;
-        skinId = other.skinId;
-        orderTranslator = std::move(other.orderTranslator);
-
-        other.orderType = DO_NOTHING;
-        other.playerId = DEFAULT_PLAYER_ID;
-        other.teamId = DEFAULT_TEAM_ID;
-        other.skinId = DEFAULT_SKIN_ID;
-    }
-    return *this;
+      other.orderTranslator = std::map<uint8_t, OrderType>();
+      other.skinTranslator = std::map<uint8_t, Skin>();
+      other.teamTranslator = std::map<uint8_t, Team>();
+  }
+  return *this;
 }
 
 const OrderType& GameLobbyOrder::getOrderType() const {

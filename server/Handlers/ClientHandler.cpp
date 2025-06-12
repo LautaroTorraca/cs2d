@@ -10,7 +10,7 @@
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
                              Queue<std::shared_ptr<Request>>& requestQueue):
-        userSocket(socket),
+        userSocket(std::move(socket)),
         id(clientId),
         requestsQueue(requestQueue),
         lobbyHandler(userSocket, clientId),
@@ -29,7 +29,7 @@ void ClientHandler::registerOpcodes() {
     opcodeDispatcher[OPCODE_LIST_GAMES] = [&]() { return lobbyHandler.handle(OPCODE_LIST_GAMES); };
     opcodeDispatcher[OPCODE_DISCONNECT] = [&]() { return lobbyHandler.handle(OPCODE_DISCONNECT); };
 
-    opcodeDispatcher[OPCODE_READY] = [&]() { return gameLobbyHandler.handle(OPCODE_READY); };
+    opcodeDispatcher[OPCODE_READY] = [this]() { return this->gameLobbyHandler.handle(OPCODE_READY); };
     opcodeDispatcher[OPCODE_EXIT_LOBBY] = [&]() {
         return gameLobbyHandler.handle(OPCODE_EXIT_LOBBY);
     };
@@ -62,17 +62,18 @@ void ClientHandler::run() {
     while (this->should_keep_running()) {
         try {
             uint8_t opCode;
-            userSocket.recvall(&opCode, sizeof(opCode));
+            this->userSocket.recvall(&opCode, sizeof(opCode));
 
-            std::cout << "llego el opcode adentor de run: " << std::to_string(opCode) << std::endl;
-            if (!opcodeDispatcher.contains(opCode)) {
+            //std::cout << "ClientHandler::run, opecode: " << std::to_string(opCode) << std::endl;
+            if (!this->opcodeDispatcher.contains(opCode)) {
                 throw std::runtime_error("OpCode no soportado: " + std::to_string(opCode));
             }
 
-            Request request = opcodeDispatcher.at(opCode)();
+            Request request = this->opcodeDispatcher.at(opCode)();
 
-            requestsQueue.push(std::make_shared<Request>(std::move(request)));
-        } catch (...) {
+            this->requestsQueue.push(std::make_shared<Request>(std::move(request)));
+        } catch (std::exception& e) {
+            std::cout << "Client disconnected. error: " << e.what() << std::endl;
             this->stop();
         }
     }
@@ -105,7 +106,7 @@ void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
 
 void ClientHandler::stopService() { this->userSocket.close(); }
 
-void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) const {
+void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
     std::stringstream gamesListStream;
     for (const auto& game: gamesList) {
         gamesListStream << game << "\n";

@@ -35,14 +35,14 @@ class GameMap: public Positionable, public DropPlacer, public Spawner, public Ad
     std::vector<std::shared_ptr<Drop>> getActualDropsInArea(const Position& position);
 
 public:
-    explicit GameMap(const GameParser& parser):
-            pathTiles(std::move(parser.getMapPath())),
-            countersSpawnPoints(std::move(parser.getCountersSpawnPoints())),
-            terroristsSpawnPoints(std::move(parser.getTerroristsSpawnPoints())),
-            bombPlantPoints(std::move(parser.getBombPlantPoints())) {}
-    void move(std::shared_ptr<Entity>& entity, const Coordinate& displacement) override;
-    void giveDrops(Inventory& inventory, const Position& position) override;
-    void place(std::shared_ptr<Drop>& drop, Position& position) override;
+    explicit GameMap(const GameParser& parser) :
+    pathTiles(std::move(parser.getMapPath())),
+    countersSpawnPoints(std::move(parser.getCountersSpawnPoints())),
+    terroristsSpawnPoints(std::move(parser.getTerroristsSpawnPoints())),
+    bombPlantPoints(std::move(parser.getBombPlantPoints())) {}
+    void move(std::shared_ptr<Entity>& entity, const Coordinate &displacement) override;
+    void giveDrops(Inventory &inventory, const Position &position) override;
+    void place(std::shared_ptr<Drop> &drop, Position &position) override;
     void spawnCounter(std::shared_ptr<Entity>& entity) override;
     void spawnTerrorist(std::shared_ptr<Entity>& entity) override;
     void remove(const std::shared_ptr<Entity>& entity) override;

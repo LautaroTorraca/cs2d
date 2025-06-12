@@ -16,7 +16,7 @@ constexpr int LOGICAL_HEIGHT = 15;
 
 constexpr int MAP_WIDTH = 11;
 constexpr int MAP_HEIGHT = 6;
-// TODO: agregar movimiento relativo a los tiles
+
 constexpr int TILE_SRC_SIZE = 32;
 constexpr int TILE_WIDTH = RES_WIDTH / LOGICAL_WIDTH;
 constexpr int TILE_HEIGHT = RES_HEIGTH / LOGICAL_HEIGHT;

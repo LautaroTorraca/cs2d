@@ -7,20 +7,12 @@
 #include "Sender/Sender.h"
 
 
-ServerLobbyProtocol::ServerLobbyProtocol(std::map<size_t, std::unique_ptr<Socket>>& connectedUsers):
-        connectedUsers(connectedUsers) {
-    requestHandlers[ProtocolConstants::GAME_LIST_REQUEST] = [this](const Request& request) {
-        return sendGamesListHandler(request);
-    };
-    requestHandlers[ProtocolConstants::JOIN_GAME] = [this](const Request& request) {
-        return joinHandler(request);
-    };
-    requestHandlers[ProtocolConstants::CREATE_GAME] = [this](const Request& request) {
-        return createHandler(request);
-    };
-    requestHandlers[ProtocolConstants::DISCONNECT] = [this](const Request& request) {
-        return disconnectHandler(request);
-    };
+ServerLobbyProtocol::ServerLobbyProtocol()
+{
+    requestHandlers[ProtocolConstants::GAME_LIST_REQUEST] = [this](const Request& request) { return sendGamesListHandler(request); };
+    requestHandlers[ProtocolConstants::JOIN_GAME]         = [this](const Request& request) { return joinHandler(request); };
+    requestHandlers[ProtocolConstants::CREATE_GAME]       = [this](const Request& request) { return createHandler(request); };
+    requestHandlers[ProtocolConstants::DISCONNECT]        = [this](const Request& request) { return disconnectHandler(request); };
 }
 
 ServerLobbyOrder ServerLobbyProtocol::handleRequest(const Request& request) {
@@ -34,20 +26,6 @@ ServerLobbyOrder ServerLobbyProtocol::handleRequest(const Request& request) {
 
 ServerLobbyOrder ServerLobbyProtocol::sendGamesListHandler(const Request& request) const {
     const size_t clientId = request.getId();
-
-    std::stringstream listCreator;
-
-    for (const auto& game: games) {
-        listCreator << game.first << std::endl;
-    }
-
-    const std::string list = listCreator.str();
-
-    if (connectedUsers.contains(clientId)) {
-        Sender sender(*this->connectedUsers.at(clientId));
-        sender.send(list);
-    }
-
     return ServerLobbyOrder(ProtocolConstants::GAME_LIST_REQUEST, clientId);
 }
 
@@ -69,10 +47,7 @@ ServerLobbyOrder ServerLobbyProtocol::createHandler(const Request& request) {
     uint8_t playerCount = message.at(playerCountKey).front();
     uint8_t roundCount = message.at(roundCountKey).front();
 
-    games.emplace(gameName, request.getId());
-
-    return ServerLobbyOrder(ProtocolConstants::CREATE_GAME, clientId, gameName, gameMap,
-                            playerCount, roundCount);
+    return ServerLobbyOrder(ProtocolConstants::CREATE_GAME, clientId, gameName, gameMap, playerCount, roundCount);
 }
 
 ServerLobbyOrder ServerLobbyProtocol::disconnectHandler(const Request& request) {
@@ -86,5 +61,4 @@ ServerLobbyOrder ServerLobbyProtocol::disconnectHandler(const Request& request) 
 
 void ServerLobbyProtocol::end() {
     // TODO Finalizar cada LobbyHandler
-    games.clear();
 }

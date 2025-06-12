@@ -10,13 +10,21 @@
 #include "server/Team.h"
 
 struct PlayerChoicesDTO {
-    const size_t id;
-    const std::string playerName;
-    const Team team;
-    const Skin skin;
-    PlayerChoicesDTO(const size_t& id, const std::string& playerName, const Team& team,
-                     const Skin& skin):
-            id(id), playerName(playerName), team(team), skin(skin) {}
+    size_t id;
+    std::string playerName;
+    Team team;
+    Skin skin;
+    PlayerChoicesDTO(const size_t& id,const std::string& playerName, const Team& team, const Skin& skin) : id(id), playerName(playerName), team(team), skin(skin) {}
+    PlayerChoicesDTO& operator=(const PlayerChoicesDTO& other) {
+        if (this == &other) {
+            return *this;
+        }
+        id = other.id;
+        playerName = other.playerName;
+        team = other.team;
+        skin = other.skin;
+        return *this;
+    }
 };
 
 #endif  // PLAYERCHOICESDTO_H

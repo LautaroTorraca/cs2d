@@ -4,14 +4,9 @@
 #include "Constants/ProtocolContants.h"
 
 
-GameLobbyProtocol::GameLobbyProtocol(std::map<size_t, std::unique_ptr<Socket>>& connectedUsers):
-        connectedUsers(connectedUsers) {
-    requestHandlers[ProtocolConstants::READY] = [this](const Request& request) {
-        return readyHandler(request);
-    };
-    requestHandlers[ProtocolConstants::EXIT_LOBBY] = [this](const Request& request) {
-        return exitLobbyHandler(request);
-    };
+GameLobbyProtocol::GameLobbyProtocol() {
+    requestHandlers[ProtocolConstants::READY]       = [this](const Request& request) { return readyHandler(request); };
+    requestHandlers[ProtocolConstants::EXIT_LOBBY]  = [this](const Request& request) { return exitLobbyHandler(request); };
 }
 
 
