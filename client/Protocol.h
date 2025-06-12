@@ -40,7 +40,7 @@ public:
     void attack();
     void pickUp();
     void buy(const BuyOrder& buyOrder);
-    void changeAngle(const PositionDTO& positionInfo);
+    void changeAngle(const double& angle);
     void changeWeapon(const WeaponChanger& weaponChanger);
     void plantBomb();
     void defuseBomb();

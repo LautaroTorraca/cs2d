@@ -50,10 +50,10 @@ void Game::move(const size_t& id, const Coordinate& displacement) {
     this->gameMap.move(entity, displacement);
 }
 
-void Game::changeAngle(const size_t &id, const Coordinate &coordinate) {
+void Game::changeAngle(const size_t &id, const double& angle) {
     if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     if ( !this->players.contains(id) ) return; //TODO: Ver si conviente que estas cosas tiren una excepcion en su lugar
-    this->players.at(id)->changeAngle(coordinate);
+    this->players.at(id)->changeAngle(angle);
 }
 
 void Game::setWeapon(const size_t &id, const uint8_t &index) {

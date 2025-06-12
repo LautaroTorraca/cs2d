@@ -19,10 +19,10 @@ void GameMonitor::move(const size_t &id, const Coordinate &displacement) {
     this->game.move(id, displacement);
 }
 
-void GameMonitor::changeAngle(const size_t &id, const Coordinate &coordinate) {
+void GameMonitor::changeAngle(const size_t &id, const double& angle) {
     std::lock_guard<std::mutex> lock(this->mutex);
-    std::cout << "GameMonitor::changeAngle, Entre changeAngle, id:" << id << " dir:("<< coordinate.getInfo().getX() << ", " << coordinate.getInfo().getY() << ") " << std::endl;
-    this->game.changeAngle(id, coordinate);
+    std::cout << "GameMonitor::changeAngle, Entre changeAngle, id:" << id << " angle: " << angle << std::endl;
+    this->game.changeAngle(id, angle);
 }
 
 void GameMonitor::setWeapon(const size_t &id, const uint8_t &index) {

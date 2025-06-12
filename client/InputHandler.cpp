@@ -5,6 +5,8 @@
 // #include "server/DTO/GameLobbyDTO.h"
 // #include "server/DTO/LobbyConnectionDTO.h"
 
+#include "Constants/ClientConstants.h"
+
 #include "MoveConstants.h"
 #include "SDL_events.h"
 #include "SDL_mouse.h"
@@ -45,11 +47,12 @@ bool InputHandler::processEvent(SDL_Event event) {
 
     } else if (event.type == SDL_MOUSEMOTION) {
 
-        double dx = event.motion.x;
-        double dy = event.motion.y;
-        mouseCoords.x = dx;
-        mouseCoords.y = dy;
-        protocol.changeAngle({dx, dy});
+        double dx = event.motion.x - RES_WIDTH / 2;
+        double dy = event.motion.y - RES_HEIGTH / 2;
+        double angleInRads = atan2(dy, dx);
+        double angleInDegree = 180.0 * angleInRads / M_PI;
+        angleInDegree += 90;
+        protocol.changeAngle(angleInDegree);
     }
     return true;
 }

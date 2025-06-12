@@ -105,11 +105,10 @@ void Protocol::buy(const BuyOrder& buyOrder) {
     this->sender.send(buyOrder.amount);
 }
 
-void Protocol::changeAngle(const PositionDTO& positionInfo) {
+void Protocol::changeAngle(const double& angle) {
     const uint8_t opCode = ProtocolConstants::CHANGE_ANGLE;
     this->sender.send(opCode);
-    this->sender.send(positionInfo.x);
-    this->sender.send(positionInfo.y);
+    this->sender.send(angle);
 }
 
 void Protocol::changeWeapon(const WeaponChanger& weaponChanger) {

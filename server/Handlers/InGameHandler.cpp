@@ -80,17 +80,12 @@ Request InGameHandler::buyRequest() const {
 
 
 Request InGameHandler::changeAngleRequest() const {
-    const double x = reader.doubleRead();
-    const double y = reader.doubleRead();
+    const double angle = reader.doubleRead();
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_CHANGE_ANGLE));
-    std::vector<char> xValue(sizeof(double));
-    std::memcpy(xValue.data(), &x, sizeof(double));
-    message.emplace(xPosKey, xValue);
-    std::vector<char> yValue(sizeof(double));
-    std::memcpy(yValue.data(), &y, sizeof(double));
-    message.emplace(yPosKey, xValue);
-
+    std::vector<char> angleValue(sizeof(double));
+    std::memcpy(angleValue.data(), &angle, sizeof(double));
+    message.emplace(angleKey, angleValue);
     return Request(userId, message);
 }
 

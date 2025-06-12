@@ -120,7 +120,7 @@ namespace {
         game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
         game.advance(30);
         game.setWeapon(0, 0);
-        game.changeAngle(0, Coordinate(-1, 0));
+        game.changeAngle(0, 270);
         double actualTime;
         for ( actualTime = 0; actualTime < 2.5; actualTime+= 0.01) {
             game.advance(actualTime);
@@ -147,7 +147,7 @@ namespace {
         game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
         game.advance(30);
         game.setWeapon(0, 1);
-        game.changeAngle(0, Coordinate(-1, 0));
+        game.changeAngle(0, 270);
         double actualTime;
         for ( actualTime = 0; actualTime < 2.5; actualTime+= 0.01) {
             game.advance(actualTime);
@@ -174,7 +174,7 @@ namespace {
         game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
         game.buy(0, ProductType::AK_47_WEAPON);
         game.advance(30);
-        game.changeAngle(0, Coordinate(-1, 0));
+        game.changeAngle(0, 270);
         double actualTime;
         for ( actualTime = 0; actualTime < 2.5; actualTime+= 0.01) {
             game.advance(actualTime);
@@ -202,7 +202,7 @@ namespace {
         game.buy(0, ProductType::M3_WEAPON);
         double actualTime = 30;
         game.advance(actualTime);
-        game.changeAngle(0, Coordinate(-1, 0));
+        game.changeAngle(0, 270);
         for ( actualTime = 30; actualTime < 32.5; actualTime+= 0.01) {
             game.advance(actualTime);
         }
@@ -229,7 +229,7 @@ namespace {
         game.buy(0, ProductType::AWP_WEAPON);
         double actualTime = 30;
         game.advance(actualTime);
-        game.changeAngle(0, Coordinate(-1, 0));
+        game.changeAngle(0, 270);
         for ( actualTime = 30; actualTime < 32.5; actualTime+= 0.01) {
             game.advance(actualTime);
         }
@@ -270,7 +270,7 @@ namespace {
         game.buy(0, ProductType::AWP_WEAPON);
         double actualTime = 30;
         game.advance(actualTime);
-        game.changeAngle(0, Coordinate(-1, 0));
+        game.changeAngle(0, 270);
         for ( actualTime = 30; actualTime < 32.5; actualTime+= 0.01) {
             game.advance(actualTime);
         }

@@ -15,6 +15,7 @@ constexpr std::string ammoAmountKey = "ammoAmount";
 constexpr std::string weaponKey = "weapon";
 constexpr std::string xPosKey = "x";
 constexpr std::string yPosKey = "y";
+constexpr std::string angleKey = "angle";
 constexpr std::string weaponToSwitchKey = "weaponToSwitch";
 constexpr std::string slotKey = "slot";
 
