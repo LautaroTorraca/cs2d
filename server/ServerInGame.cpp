@@ -95,7 +95,7 @@ void ServerInGame::buy(const InGameOrder &order) {
 void ServerInGame::changeAngle(const InGameOrder &order) {
   if (!this->playerToGame.contains(order.getPlayerId())) return;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-  this->games.at(gameName)->changeAngle(order.getPlayerId(), Coordinate(order.getPosition().first, order.getPosition().second));
+  this->games.at(gameName)->changeAngle(order.getPlayerId(), order.getAngle());
 }
 
 void ServerInGame::changeWeapon(const InGameOrder &order) {

@@ -11,6 +11,7 @@
 #include "common/socket.h"
 #define NEW 0x6E
 #define STOP 0X73
+#define PRECISION 10000
 
 void Sender::bytesChecker(const int& sendBytes) {
     if (sendBytes == 0) {
@@ -33,8 +34,7 @@ void Sender::send(const PlayerInfoDTO& playerInfo) {
     uint8_t skin = playerInfo.getSkin();
     this->send(playerInfo.getId());
     this->send(playerInfo.getName());
-    double angle = playerInfo.getAngle()*1000;
-    std::cout << "Sender::send(PlayerInfoDTO). Angle: " << angle << std::endl;
+    double angle = playerInfo.getAngle();
     this->send(angle);
     this->send(playerInfo.getCoordinate());
     this->send(playerInfo.getHealth());
@@ -74,7 +74,7 @@ void Sender::send(const CoordinateDTO& coordinate) {
 }
 
 void Sender::send(const double& data) {
-    int sendableData = data;
+    int sendableData = data*PRECISION;
     sendableData = htonl(sendableData);
     int sendBytes = this->socket.sendall(&sendableData, sizeof(sendableData));
     this->bytesChecker(sendBytes);

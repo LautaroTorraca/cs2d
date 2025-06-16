@@ -121,165 +121,140 @@ TEST(DropTest, Check) {
     EXPECT_EQ(hasExpectedInfo, true);
 }
 
-TEST(AttackKnifeTest, Check) {
-    GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
-                      "../gameConstants/WeaponsConfig.yaml");
-    Game game(parser, 10);
-    game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
-    game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
-    game.advance(30);
-    game.setWeapon(0, 0);
-    game.changeAngle(0, Coordinate(-1, 0));
-    double actualTime;
-    for (actualTime = 0; actualTime < 2.5; actualTime += 0.01) {
-        game.advance(actualTime);
+    TEST(AttackKnifeTest, Check) {
+        GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml", "../gameConstants/WeaponsConfig.yaml");
+        Game game(parser, 10);
+        game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
+        game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
+        game.advance(30);
+        game.setWeapon(0, 0);
+        game.changeAngle(0, 270);
+        double actualTime;
+        for ( actualTime = 0; actualTime < 2.5; actualTime+= 0.01) {
+            game.advance(actualTime);
+        }
+        game.attack(0);
+        for (double i = actualTime; i < actualTime + 2.5; i+= 0.01) {
+            double rounded = std::round(i * 100) / 100;
+            game.advance(rounded);
+        }
+        std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
+        PlayerInfoDTO& carlosInfo = playersInfo.back();
+        //playersInfo.pop_back();
+        //PlayerInfoDTO& juanInfo = playersInfo.back();
+        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
+        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
+        bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
+        EXPECT_EQ(carlosHasLowerHealth, true);
     }
-    game.attack(0);
-    for (double i = actualTime; i < actualTime + 2.5; i += 0.01) {
-        double rounded = std::round(i * 100) / 100;
-        game.advance(rounded);
-    }
-    std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
-    PlayerInfoDTO& carlosInfo = playersInfo.back();
-    // playersInfo.pop_back();
-    // PlayerInfoDTO& juanInfo = playersInfo.back();
-    // std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de
-    // vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " <<
-    // carlosInfo.getCoordinate().getY()<< ")" << std::endl; std::cout << juanInfo.getName() << "
-    // tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" <<
-    // juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" <<
-    // std::endl;
-    bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
-    EXPECT_EQ(carlosHasLowerHealth, true);
-}
 
-TEST(AttackGlockTest, Check) {
-    GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
-                      "../gameConstants/WeaponsConfig.yaml");
-    Game game(parser, 10);
-    game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
-    game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
-    game.advance(30);
-    game.setWeapon(0, 1);
-    game.changeAngle(0, Coordinate(-1, 0));
-    double actualTime;
-    for (actualTime = 0; actualTime < 2.5; actualTime += 0.01) {
-        game.advance(actualTime);
+    TEST(AttackGlockTest, Check) {
+        GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml", "../gameConstants/WeaponsConfig.yaml");
+        Game game(parser, 10);
+        game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
+        game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
+        game.advance(30);
+        game.setWeapon(0, 1);
+        game.changeAngle(0, 270);
+        double actualTime;
+        for ( actualTime = 0; actualTime < 2.5; actualTime+= 0.01) {
+            game.advance(actualTime);
+        }
+        game.attack(0);
+        for (double i = actualTime; i < actualTime + 2.5; i+= 0.01) {
+            double rounded = std::round(i * 100) / 100;
+            game.advance(rounded);
+        }
+        std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
+        PlayerInfoDTO& carlosInfo = playersInfo.back();
+        //playersInfo.pop_back();
+        //PlayerInfoDTO& juanInfo = playersInfo.back();
+        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
+        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
+        bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
+        EXPECT_EQ(carlosHasLowerHealth, true);
     }
-    game.attack(0);
-    for (double i = actualTime; i < actualTime + 2.5; i += 0.01) {
-        double rounded = std::round(i * 100) / 100;
-        game.advance(rounded);
-    }
-    std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
-    PlayerInfoDTO& carlosInfo = playersInfo.back();
-    // playersInfo.pop_back();
-    // PlayerInfoDTO& juanInfo = playersInfo.back();
-    // std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de
-    // vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " <<
-    // carlosInfo.getCoordinate().getY()<< ")" << std::endl; std::cout << juanInfo.getName() << "
-    // tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" <<
-    // juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" <<
-    // std::endl;
-    bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
-    EXPECT_EQ(carlosHasLowerHealth, true);
-}
 
-TEST(AttackAkTest, Check) {
-    GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
-                      "../gameConstants/WeaponsConfig.yaml");
-    Game game(parser, 10);
-    game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
-    game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
-    game.buy(0, ProductType::AK_47_WEAPON);
-    game.advance(30);
-    game.changeAngle(0, Coordinate(-1, 0));
-    double actualTime;
-    for (actualTime = 0; actualTime < 2.5; actualTime += 0.01) {
-        game.advance(actualTime);
+    TEST(AttackAkTest, Check) {
+        GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml", "../gameConstants/WeaponsConfig.yaml");
+        Game game(parser, 10);
+        game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
+        game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
+        game.buy(0, ProductType::AK_47_WEAPON);
+        game.advance(30);
+        game.changeAngle(0, 270);
+        double actualTime;
+        for ( actualTime = 0; actualTime < 2.5; actualTime+= 0.01) {
+            game.advance(actualTime);
+        }
+        game.attack(0);
+        for (double i = actualTime; i < actualTime + 2.5; i+= 0.01) {
+            double rounded = std::round(i * 100) / 100;
+            game.advance(rounded);
+        }
+        std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
+        PlayerInfoDTO& carlosInfo = playersInfo.back();
+        //playersInfo.pop_back();
+        //PlayerInfoDTO& juanInfo = playersInfo.back();
+        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
+        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
+        bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
+        EXPECT_EQ(carlosHasLowerHealth, true);
     }
-    game.attack(0);
-    for (double i = actualTime; i < actualTime + 2.5; i += 0.01) {
-        double rounded = std::round(i * 100) / 100;
-        game.advance(rounded);
-    }
-    std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
-    PlayerInfoDTO& carlosInfo = playersInfo.back();
-    // playersInfo.pop_back();
-    // PlayerInfoDTO& juanInfo = playersInfo.back();
-    // std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de
-    // vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " <<
-    // carlosInfo.getCoordinate().getY()<< ")" << std::endl; std::cout << juanInfo.getName() << "
-    // tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" <<
-    // juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" <<
-    // std::endl;
-    bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
-    EXPECT_EQ(carlosHasLowerHealth, true);
-}
 
-TEST(AttackM3Test, Check) {
-    GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
-                      "../gameConstants/WeaponsConfig.yaml");
-    Game game(parser, 10);
-    game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
-    game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
-    game.buy(0, ProductType::M3_WEAPON);
-    double actualTime = 30;
-    game.advance(actualTime);
-    game.changeAngle(0, Coordinate(-1, 0));
-    for (actualTime = 30; actualTime < 32.5; actualTime += 0.01) {
+    TEST(AttackM3Test, Check) {
+        GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml", "../gameConstants/WeaponsConfig.yaml");
+        Game game(parser, 10);
+        game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
+        game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
+        game.buy(0, ProductType::M3_WEAPON);
+        double actualTime = 30;
         game.advance(actualTime);
+        game.changeAngle(0, 270);
+        for ( actualTime = 30; actualTime < 32.5; actualTime+= 0.01) {
+            game.advance(actualTime);
+        }
+        game.attack(0);
+        for (double i = actualTime; i < actualTime + 2.5; i+= 0.01) {
+            double rounded = std::round(i * 100) / 100;
+            game.advance(rounded);
+        }
+        std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
+        PlayerInfoDTO& carlosInfo = playersInfo.back();
+        //playersInfo.pop_back();
+        //PlayerInfoDTO& juanInfo = playersInfo.back();
+        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
+        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
+        bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
+        EXPECT_EQ(carlosHasLowerHealth, true);
     }
-    game.attack(0);
-    for (double i = actualTime; i < actualTime + 2.5; i += 0.01) {
-        double rounded = std::round(i * 100) / 100;
-        game.advance(rounded);
-    }
-    std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
-    PlayerInfoDTO& carlosInfo = playersInfo.back();
-    // playersInfo.pop_back();
-    // PlayerInfoDTO& juanInfo = playersInfo.back();
-    // std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de
-    // vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " <<
-    // carlosInfo.getCoordinate().getY()<< ")" << std::endl; std::cout << juanInfo.getName() << "
-    // tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" <<
-    // juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" <<
-    // std::endl;
-    bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
-    EXPECT_EQ(carlosHasLowerHealth, true);
-}
 
-TEST(AttackAwpTest, Check) {
-    GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
-                      "../gameConstants/WeaponsConfig.yaml");
-    Game game(parser, 10);
-    game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
-    game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
-    game.buy(0, ProductType::AWP_WEAPON);
-    double actualTime = 30;
-    game.advance(actualTime);
-    game.changeAngle(0, Coordinate(-1, 0));
-    for (actualTime = 30; actualTime < 32.5; actualTime += 0.01) {
+    TEST(AttackAwpTest, Check) {
+        GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml", "../gameConstants/WeaponsConfig.yaml");
+        Game game(parser, 10);
+        game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
+        game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
+        game.buy(0, ProductType::AWP_WEAPON);
+        double actualTime = 30;
         game.advance(actualTime);
+        game.changeAngle(0, 270);
+        for ( actualTime = 30; actualTime < 32.5; actualTime+= 0.01) {
+            game.advance(actualTime);
+        }
+        game.attack(0);
+        for (double i = actualTime; i < actualTime + 2.5; i+= 0.01) {
+            double rounded = std::round(i * 100) / 100;
+            game.advance(rounded);
+        }
+        std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
+        PlayerInfoDTO& carlosInfo = playersInfo.back();
+        //playersInfo.pop_back();
+        //PlayerInfoDTO& juanInfo = playersInfo.back();
+        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
+        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
+        bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
+        EXPECT_EQ(carlosHasLowerHealth, true);
     }
-    game.attack(0);
-    for (double i = actualTime; i < actualTime + 2.5; i += 0.01) {
-        double rounded = std::round(i * 100) / 100;
-        game.advance(rounded);
-    }
-    std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
-    PlayerInfoDTO& carlosInfo = playersInfo.back();
-    // playersInfo.pop_back();
-    // PlayerInfoDTO& juanInfo = playersInfo.back();
-    // std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de
-    // vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " <<
-    // carlosInfo.getCoordinate().getY()<< ")" << std::endl; std::cout << juanInfo.getName() << "
-    // tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" <<
-    // juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" <<
-    // std::endl;
-    bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
-    EXPECT_EQ(carlosHasLowerHealth, true);
-}
 
 TEST(PlantBombTest, Check) {
     GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
@@ -296,37 +271,36 @@ TEST(PlantBombTest, Check) {
     EXPECT_EQ(status, BOMB_PLANTED);
 }
 
-TEST(KillSomeOneGivesMoneyTest, Check) {
-    GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",
-                      "../gameConstants/WeaponsConfig.yaml");
-    Game game(parser, 10);
-    game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
-    game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
-    game.buy(0, ProductType::AWP_WEAPON);
-    double actualTime = 30;
-    game.advance(actualTime);
-    game.changeAngle(0, Coordinate(-1, 0));
-    for (actualTime = 30; actualTime < 32.5; actualTime += 0.01) {
+    TEST(KillSomeOneGivesMoneyTest, Check) {
+        GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml", "../gameConstants/WeaponsConfig.yaml");
+        Game game(parser, 10);
+        game.addPlayer(0, "juan", Team::COUNTER_TERRORISTS, SEAL_FORCE);
+        game.addPlayer(1, "carlos", Team::TERRORISTS, PHOENIX);
+        game.buy(0, ProductType::AWP_WEAPON);
+        double actualTime = 30;
         game.advance(actualTime);
+        game.changeAngle(0, 270);
+        for ( actualTime = 30; actualTime < 32.5; actualTime+= 0.01) {
+            game.advance(actualTime);
+        }
+        std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
+        PlayerInfoDTO& juanInfo = playersInfo.at(0);
+        uint16_t juanInitialMoney = juanInfo.getMoney();
+        game.attack(0);
+        for (double i = actualTime; i < actualTime + 2.5; i+= 0.01) {
+            double rounded = std::round(i * 100) / 100;
+            game.advance(rounded);
+        }
+        game.attack(0);
+        for (double i = actualTime; i < actualTime + 2.5; i+= 0.01) {
+            double rounded = std::round(i * 100) / 100;
+            game.advance(rounded);
+        }
+        playersInfo = game.getPlayersInfo();
+        PlayerInfoDTO& newJuanInfo = playersInfo.at(0);
+        uint16_t actualJuanMoney = newJuanInfo.getMoney();
+        EXPECT_EQ(actualJuanMoney > juanInitialMoney, true);
     }
-    std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
-    PlayerInfoDTO& juanInfo = playersInfo.at(0);
-    uint16_t juanInitialMoney = juanInfo.getMoney();
-    game.attack(0);
-    for (double i = actualTime; i < actualTime + 2.5; i += 0.01) {
-        double rounded = std::round(i * 100) / 100;
-        game.advance(rounded);
-    }
-    game.attack(0);
-    for (double i = actualTime; i < actualTime + 2.5; i += 0.01) {
-        double rounded = std::round(i * 100) / 100;
-        game.advance(rounded);
-    }
-    playersInfo = game.getPlayersInfo();
-    PlayerInfoDTO& newJuanInfo = playersInfo.at(0);
-    uint16_t actualJuanMoney = newJuanInfo.getMoney();
-    EXPECT_EQ(actualJuanMoney > juanInitialMoney, true);
-}
 
 TEST(BombExplosionTest, Check) {
     GameParser parser("../maps/test_map.yaml", "../gameConstants/shop.yaml",

@@ -47,7 +47,7 @@ public:
     Game(GameParser& parser, const uint8_t& rounds);
     void addPlayer(const size_t &id, const std::string &name, const Team &team, const Skin &skin) const;
     void move(const size_t& id, const Coordinate& displacement);
-    void changeAngle(const size_t& id, const Coordinate& coordinate);
+    void changeAngle(const size_t& id, const double& angle);
     void setWeapon(const size_t& id, const uint8_t& index);
     [[nodiscard]] std::vector<std::vector<uint8_t>> getMap() const;
     void buy(const size_t& id, const ProductType& product);

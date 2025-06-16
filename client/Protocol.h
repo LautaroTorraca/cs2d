@@ -40,7 +40,7 @@ public:
     virtual void attack();
     void pickUp();
     void buy(const BuyOrder& buyOrder);
-    virtual void changeAngle(const PositionDTO& positionInfo);
+    void changeAngle(const double& angle);
     void changeWeapon(const WeaponChanger& weaponChanger);
     void plantBomb();
     void defuseBomb();

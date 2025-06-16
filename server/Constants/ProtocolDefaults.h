@@ -12,6 +12,7 @@ constexpr uint8_t DEFAULT_SKIN_ID = 0;
 constexpr uint8_t DEFAULT_PLAYER_COUNT = 0;
 constexpr uint8_t DEFAULT_ROUND_COUNT = 0;
 constexpr uint16_t DEFAULT_DIRECTION = 0;
+constexpr double DEFAULT_ANGLE = 0;
 constexpr uint8_t DEFAULT_CLIENT_ID = 0;
 constexpr uint8_t DEFAULT_PLAYER_ID = 0;
 constexpr uint8_t DEFAULT_ITEM = 0;

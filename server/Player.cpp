@@ -57,8 +57,8 @@ void Player::allocate(const Position &position)  {
     this->position.updateLocationTo(position);
 }
 
-void Player::changeAngle(const Coordinate &coordinate) {
-    this->angle = this->position.getAngleTo(coordinate);
+void Player::changeAngle(const double &angle) {
+    this->angle = angle;
 }
 
 void Player::die() {

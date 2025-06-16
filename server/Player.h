@@ -55,7 +55,7 @@ public:
 
     void allocate(const Position &position) override;
 
-    void changeAngle(const Coordinate &coordinate);
+    void changeAngle(const double &angle);
 
     void die();
 

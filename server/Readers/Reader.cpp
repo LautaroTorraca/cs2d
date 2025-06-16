@@ -13,6 +13,7 @@
 #include <cmath>
 
 #define NEW 0X6E
+#define PRECISION 10000
 
 Reader::Reader(Socket& socket): socket(socket) {}
 
@@ -68,7 +69,7 @@ double Reader::doubleRead() const {
     int bytesRead = socket.recvall(&result, sizeof(result));
     this->bytesChecker(bytesRead);
     result = ntohl(result);
-    return result;
+    return result/PRECISION;
 }
 
 size_t Reader::readSizeT() const {
@@ -111,9 +112,8 @@ WeaponInformation Reader::readWeapon() const {
 PlayerInformation Reader::readPlayer() const {
     size_t id = this->readSizeT();
     std::string playerName = this->stringReader();
-    double angle = this->readInt()/1000;
+    double angle = this->doubleRead();
     std::cout << "Player name: " << playerName << " angle: " << angle << std::endl;
-    angle = angle*180/M_PI;
     CoordinateInformation position = this->readCoordinateInformation();
     uint8_t health = this->u8tReader();
     uint16_t money = this->u16tReader();
