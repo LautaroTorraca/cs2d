@@ -32,15 +32,12 @@ Request InGameHandler::handle(const uint8_t opcode) const {
 
 
 Request InGameHandler::moveRequest() const {
-    std::cout << "InGameHandler:moveRequest moviendo" << std::endl;
     uint16_t direction = reader.u16tReader();
-    std::cout << "InGameHandler:moveRequest, direction:" << (int)direction << std::endl;
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_PLAYER_MOVEMENT));
     std::vector<char> serializedDirection(sizeof(uint16_t));
     std::memcpy(serializedDirection.data(), &direction, sizeof(uint16_t));
     message.emplace(directionKey, serializedDirection);
-    std::cout << "InGameHandler:moveRequest request movimiento finalizada" << std::endl;
     return Request(userId, message);
 }
 
@@ -91,6 +88,7 @@ Request InGameHandler::changeAngleRequest() const {
 
 Request InGameHandler::switchWeaponsRequest() const {
     const uint8_t slot = reader.u8tReader();
+    //std::cout << "InGameHandler::switchWeaponRequest. Arma cambiada a " << (int)slot << std::endl;
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_SWITCH_WEAPON));
     message.emplace(slotKey, std::vector<char>(SINGLE_VALUE, slot));

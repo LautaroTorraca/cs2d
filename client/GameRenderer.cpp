@@ -42,7 +42,7 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
 
     Coords offsetCoords;
 
-    offsetCoords.x = gameSnapshot.playersInfo.at(index).position.x;
+    offsetCoords.x = gameSnapshot.playersInfo.at(index).position.x + 3*32;
     offsetCoords.y = gameSnapshot.playersInfo.at(index).position.y;
     // HACK: ver si se puede mejorar
     offsetCoords.x -= RES_WIDTH / 2;
@@ -96,7 +96,7 @@ void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int v
     int posY = TILE_SRC_SIZE * div;
 
     renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-                  Rect(player.position.x - offset.x, player.position.y - offset.y, PLAYER_WIDTH,
+                  Rect(player.position.x + 3*32 - offset.x, player.position.y - offset.y, PLAYER_WIDTH,
                        PLAYER_HEIGTH),
                   player.angle);
 }

@@ -42,7 +42,9 @@ InGameProtocol::InGameProtocol(){
 }
 
 InGameOrder InGameProtocol::handleRequest(const Request &request) {
+    //std::cout << "InGameProtocol::handleRequest. Inicio." << std::endl;
   const uint8_t opCode = request.getRequest().at(opCodeKey).front();
+    //std::cout << "InGameProtocol::handleRequest. opCode:" << (int)opCode << std::endl;
   if (!requestHandlers.contains(opCode)) {
     throw -1; // TODO FIX
   }
@@ -82,9 +84,7 @@ InGameOrder InGameProtocol::dropItemHandler(const Request &request) {
 InGameOrder InGameProtocol::switchWeaponHandler(const Request &request) {
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
-
-  const uint8_t slot = message.at(weaponKey).front();
-
+  const uint8_t slot = message.at(slotKey).front();
   return InGameOrder(ProtocolConstants::SWITCH_WEAPON, clientId,
                      slot); // weapon, direction, ammout dummys
 }

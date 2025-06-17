@@ -1,5 +1,5 @@
 playerInfo:
-  { initialLife: 100, initialMoney: 500, moneyPerKill: 200 }
+  { initialLife: 100, initialMoney: 500, moneyPerKill: 100 }
 gameInfo:
   { moneyPerWinRound: 500, buyTimeDuration: 1 }
 gameMapInfo:

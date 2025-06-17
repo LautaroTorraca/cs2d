@@ -1,5 +1,7 @@
 #include "ServerInGame.h"
 
+#include <ranges>
+
 #include "Monitor/GameMonitor.h"
 
 #define SHOP_PATH "../gameConstants/shop.yaml"
@@ -122,4 +124,11 @@ void ServerInGame::exit(const InGameOrder &order) {
   std::string gameName = this->playerToGame.at(order.getPlayerId());
   this->games.at(gameName)->kick(order.getPlayerId());
   this->protocol.disconnect({order.getPlayerId()});
+}
+
+ServerInGame::~ServerInGame() {
+    for (auto& game: this->games | std::views::values) {
+        game->stop();
+        game->join();
+    }
 }

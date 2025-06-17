@@ -31,7 +31,9 @@ option(TALLER_EDITOR "Enable / disable editor program." ON)
 option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." ON)
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
-add_library(taller_common STATIC)
+add_library(taller_common STATIC
+        server/Ui.cpp
+        server/Ui.h)
 add_subdirectory(common/)
 
 include(cmake/CompilerWarnings.cmake)
@@ -109,7 +111,8 @@ endif()
 if(TALLER_SERVER)
 
   find_package(fkYAML REQUIRED)
-  add_executable(taller_server)
+  add_executable(taller_server
+          server/Interfaces/DisconnectableProtocol.h)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
   # add_subdirectory(libs/fkYAML)

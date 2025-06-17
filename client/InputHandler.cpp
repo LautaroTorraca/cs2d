@@ -31,9 +31,22 @@ bool InputHandler::processEvent(SDL_Event event) {
             case SDLK_RIGHT:
                 protocol.move(Right);
                 break;
+            case SDLK_1:
+                protocol.changeWeapon(0);
+                break;
+            case SDLK_2:
+                protocol.changeWeapon(1);
+                break;
+            case SDLK_3:
+                protocol.changeWeapon(2);
+                break;
+            case SDLK_4:
+                protocol.changeWeapon(3);
+                break;
             case SDLK_ESCAPE:
-                return false;
+                protocol.exit();
         }
+
     } else if (event.type == SDL_MOUSEBUTTONDOWN) {
 
         switch (event.button.button) {

@@ -25,6 +25,7 @@
 
 #define BUY_TIME_DURATION_KEY "buyTimeDuration"
 #define MONEY_PER_WIN_ROUND_KEY "moneyPerWinRound"
+#define INITIAL_ROUND_COUNT 1
 
 class Game : public Advancer, public Finalizable {
     std::map<size_t, std::shared_ptr<Player>> players;
@@ -41,6 +42,7 @@ class Game : public Advancer, public Finalizable {
     GameStatus status;
     double timeUntilStart;
     std::map<Team, std::function<void(const size_t&, const std::string&, const Skin&)>> teamAdder;
+    double actualTime;
     void addCounter(const size_t &id, const std::string &name, const Skin &skin);
     void addTerrorist(const size_t &id, const std::string &name, const Skin &skin);
 public:
@@ -67,6 +69,7 @@ public:
     void nextRound(const double& actualTime);
     void restart();
     void kick(const size_t& id);
+    void clearPlayers();
 };
 
 

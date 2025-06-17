@@ -1,6 +1,7 @@
 #include "Protocol.h"
 
 #include <iostream>
+#include <ranges>
 
 #include <sys/socket.h>
 
@@ -104,8 +105,8 @@ void Protocol::handleNewConnection() {
             size_t userId = handledUsers++;
             this->clientsHandlers.emplace(
                     userId, std::make_unique<ClientHandler>(peer,
-                                                            userId, this->requestsQueue));
-
+                                                            userId,
+                                                            this->requestsQueue, *this));
             this->clientsHandlers.at(userId)->start();
             //std::cout << "creo todo bien (el socket)\n";
         } catch (LibError& e) {
@@ -123,7 +124,7 @@ std::unique_ptr<Order> Protocol::getNextOrder() {
         return this->requestMapper.at(code)(request);
     } catch (ClosedQueue&) {
         std::cerr << "Closed queue" << std::endl;
-        throw -1;  // TODO: Manejar fin de protocolo
+        throw std::runtime_error("The queue was closed");  // TODO: Manejar fin de protocolo
     }
 }
 
@@ -182,15 +183,18 @@ void Protocol::end() {
     try {
         this->acceptorSocket.shutdown(SHUT_RDWR);
         this->acceptorThread.join();
-        this->requestsQueue.close();
-        for (auto& client: this->clientsHandlers) {
-            client.second->stop();
-            client.second->join();
+        //this->requestsQueue.close();
+        //std::cout << "Protocol::end. Queue cerrada." << std::endl;
+        for (auto& handler: this->clientsHandlers | std::views::values) {
+            handler->stopService();
+            handler->join();
         }
-
     } catch (LibError&) {
         // TODO: Logging de error
     }
+}
+void Protocol::stopService() {
+    this->requestsQueue.close();
 }
 
 Protocol::~Protocol() { this->end(); }

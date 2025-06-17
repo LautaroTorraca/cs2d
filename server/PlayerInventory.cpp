@@ -89,6 +89,9 @@ void PlayerInventory::addBanned(const uint8_t &index) {
 
 void PlayerInventory::setOwner(const std::shared_ptr<Owner> &owner) {
     this->owner = owner;
+    for (auto& weapon : this->weaponSetter | std::ranges::views::values) {
+        weapon->set(owner);
+    }
 }
 
 std::vector<uint8_t> PlayerInventory::getKeysCopy() {

@@ -42,7 +42,7 @@ void GameClient::run(int argc, char* argv[]) {
             }
             case ConnectionChoice::Create: {
                 std::cout << "crear\n";
-                LobbyDTO lobby("hola", MapType::DUST, 2, 10);
+                LobbyDTO lobby("hola", MapType::DUST, 2, 2);
                 protocol.createLobby(lobby);
                 std::cout << "aca llego=?\n\n";
                 LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
@@ -53,7 +53,7 @@ void GameClient::run(int argc, char* argv[]) {
                 } else {
                     std::cout << "fallo xd\n";
                 }
-                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::GERMAN_GSG9);
+                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::PHOENIX);
                 protocol.ready(playerChoices);
                 GameLobbyDTO gameLobby = protocol.getGameLobby();
                 while (gameLobby.status != READY_STATUS) {

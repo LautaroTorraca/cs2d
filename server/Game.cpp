@@ -3,7 +3,10 @@
 //
 
 #include "Game.h"
+
+#include <iostream>
 #include <ranges>
+
 #include "Bomb.h"
 
 void Game::addCounter(const size_t &id, const std::string &name, const Skin& skin) {
@@ -26,9 +29,10 @@ void Game::addTerrorist(const size_t &id, const std::string &name, const Skin& s
 Game::Game(GameParser& parser, const uint8_t& rounds):
             terrorists(*this), counters(*this),
             gameParser(std::move(parser)), gameMap(gameParser),
-            rounds(rounds), currentRound(1), terroristsWinsRounds(0),
+            rounds(rounds), currentRound(INITIAL_ROUND_COUNT), terroristsWinsRounds(0),
             countersWinsRounds(0), bombPlanted(false), status(BUY_TIME),
-            timeUntilStart(this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY)) {
+            timeUntilStart(this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY)),
+            actualTime(0) {
     this->teamAdder.emplace(Team::COUNTER_TERRORISTS, [&] (const size_t& id, const std::string& name, const Skin& skin){this->addCounter(id, name, skin);});
     this->teamAdder.emplace(Team::TERRORISTS, [&] (const size_t& id, const std::string& name, const Skin& skin){this->addTerrorist(id, name, skin);});
     for ( auto& [type, factory] : this->gameParser.getShopFactories() ) {
@@ -95,6 +99,7 @@ void Game::attack(const size_t &id) {
 }
 
 void Game::advance(const double &actualTime) {
+    this->actualTime = actualTime;
     if (this->status == BUY_TIME && actualTime >= this->timeUntilStart) this->status = ON_GOING;
     for (auto &player: this->players | std::views::values) {
         player->advance(actualTime);
@@ -119,7 +124,6 @@ void Game::deactivateBomb(const size_t& id) {
     this->counters.deactivate(id, this->gameMap);
 }
 
-
 void Game::nextRound(const double& actualTime) {
     this->gameMap.reset(this->gameParser);
     this->counters.reset(this->gameMap);
@@ -128,6 +132,7 @@ void Game::nextRound(const double& actualTime) {
     this->timeUntilStart = actualTime + this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY);
     this->status = BUY_TIME;
     this->currentRound++;
+    this->spawnBomb();
 }
 
 void Game::restart() {
@@ -148,6 +153,13 @@ void Game::kick(const size_t& id) {
         this->gameMap.remove(this->players.at(id));
         this->players.erase(id);
     }
+}
+void Game::clearPlayers() {
+    this->players.clear();
+    this->terrorists.clear();
+    this->counters.clear();
+    this->terroristsWinsRounds = 0;
+    this->countersWinsRounds = 0;
 }
 
 void Game::terroristsWins() {
@@ -189,5 +201,5 @@ GameInfoDTO Game::getInfo() {
     std::vector<PlayerInfoDTO> playersInfo = this->getPlayersInfo();
     std::vector<DropDTO> dropsInfo = this->getDrops();
     CoordinateDTO plantedBombPosition = this->gameMap.getExplosivePosition();
-    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition);
+    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition, this->actualTime, this->rounds);
 }

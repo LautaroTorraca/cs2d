@@ -150,6 +150,8 @@ Snapshot Reader::readSnapShot() const {
         DropInformation dropInfo = this->readDrop();
         drops.push_back(dropInfo);
     }
+    double actualTime = this->doubleRead();
+    uint8_t totalRounds = this->u8tReader();
     return Snapshot(status, currentRound, countersWinsRounds, terroristsWinsRounds, playersInfo,
-                    drops, bombPosition);
+                    drops, bombPosition, actualTime, totalRounds);
 }
