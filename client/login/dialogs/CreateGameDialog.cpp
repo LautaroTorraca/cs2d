@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QMessageBox>
 
 CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent) {
     setWindowTitle("Create Game");
@@ -66,8 +67,9 @@ CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent) {
 
     auto *roundsLabel = new QLabel("Number of Rounds:");
     roundsSpinBox = new QSpinBox();
-    roundsSpinBox->setMinimum(1);
+    roundsSpinBox->setMinimum(0);
     roundsSpinBox->setMaximum(50);
+    roundsSpinBox->setSingleStep(1);
     roundsSpinBox->setValue(10);
 
     confirmButton = new QPushButton("Start Game");
@@ -83,8 +85,15 @@ CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent) {
 }
 
 void CreateGameDialog::handleConfirm() {
+    int rounds = roundsSpinBox->value();
+
+    if (rounds < 0 || rounds > 50 || rounds % 2 != 0) {
+        QMessageBox::warning(this, "Invalid Input", "Please enter an even number between 0 and 50.");
+        return;
+    }
+
     config.playerCount = playerSpinBox->value();
-    config.rounds = roundsSpinBox->value();
+    config.rounds = rounds;
     accept();
 }
 
