@@ -14,9 +14,6 @@
 #include "CoordinateInformation.h"
 #include "PlayerInformation.h"
 #include "ProjectileInformation.h"
-
-// #include "SDL_pixels.h"
-// #include "SDL2_gfxPrimitives.h"
 #include "SDL2_gfxPrimitives.h"
 #include "SDL_blendmode.h"
 #include "SDL_stdinc.h"
@@ -39,7 +36,7 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
 
-    // FIX: cambiar por un map la lista de players.
+    // TODO: cambiar por un map la lista de players.
     size_t index = 0;
     for (PlayerInformation player: gameSnapshot.playersInfo) {
         if (player.id == clientID) {
@@ -49,7 +46,13 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
     }
     PlayerInformation& currentPlayer = gameSnapshot.playersInfo.at(index);
 
-
+    srand(time(nullptr));
+    int numero = rand() % 6;
+    if (numero == 3) {
+        std::cout << "player: " << currentPlayer.name << "\n";
+    }
+    // std::cout << "y su pos: X[" << std::to_string(currentPlayer.position.x) << "]Y["
+    //           << std::to_string(currentPlayer.position.y) << "] \n";
     offset.x = (gameSnapshot.playersInfo.at(index).position.x) - int(RES_WIDTH / 2);
     offset.y = (gameSnapshot.playersInfo.at(index).position.y) - int(RES_HEIGTH / 2);
 
@@ -67,7 +70,6 @@ void GameRenderer::renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType 
 
     int posCounter = 0;
     int mapWidth = tileMap[0].size();
-    std::cout << "ancho del mapa: " << std::to_string(mapWidth) << "\n";
     for (std::vector<uint8_t> tileRow: tileMap) {
         for (int tile: tileRow) {
             renderTile(tileMapTexture, mapWidth, tile, posCounter);
@@ -93,14 +95,24 @@ void GameRenderer::renderPlayers(std::vector<PlayerInformation> players, size_t 
 
 void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int variation) {
 
-    int posX = TILE_SRC_SIZE * (variation % 2);
+    int posSrcX = TILE_SRC_SIZE * (variation % 2);
     int div = (variation / 2);
-    int posY = TILE_SRC_SIZE * div;
+    int posSrcY = TILE_SRC_SIZE * div;
 
-    renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-                  Rect(player.position.x - offset.x, player.position.y - offset.y, PLAYER_WIDTH,
-                       PLAYER_HEIGTH),
-                  player.angle);
+    // int(RES_WIDTH / 2);
+    int relPosX = player.position.x - offset.x - int(RES_WIDTH / 2);
+    int relPosY = player.position.y - offset.y - int(RES_HEIGTH / 2);
+    std::cout << "diferencia en X de currentPlayer y el otro: " << std::to_string(relPosX) << "\n";
+    std::cout << "diferencia en Y de currentPlayer y el otro: " << std::to_string(relPosY)
+              << "\n\n";
+
+    int offsetX = PLAYER_WIDTH / 2;
+    int offsetY = PLAYER_HEIGTH / 2;
+    int posPlayerX = ((RES_WIDTH) / 2) + relPosX - offsetX;
+    int posPlayerY = ((RES_HEIGTH) / 2) + relPosY - offsetY;
+
+    renderer.Copy(sprite, Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
+                  Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH), player.angle);
 }
 
 void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation) {

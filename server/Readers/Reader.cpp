@@ -1,6 +1,7 @@
 
 #include "Reader.h"
 
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -10,7 +11,6 @@
 
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
-#include <cmath>
 
 #define NEW 0X6E
 #define PRECISION 10000
@@ -69,7 +69,7 @@ double Reader::doubleRead() const {
     int bytesRead = socket.recvall(&result, sizeof(result));
     this->bytesChecker(bytesRead);
     result = ntohl(result);
-    return result/PRECISION;
+    return result / PRECISION;
 }
 
 size_t Reader::readSizeT() const {
@@ -113,7 +113,7 @@ PlayerInformation Reader::readPlayer() const {
     size_t id = this->readSizeT();
     std::string playerName = this->stringReader();
     double angle = this->doubleRead();
-    std::cout << "Player name: " << playerName << " angle: " << angle << std::endl;
+    // std::cout << "Player name: " << playerName << " angle: " << angle << std::endl;
     CoordinateInformation position = this->readCoordinateInformation();
     uint8_t health = this->u8tReader();
     uint16_t money = this->u16tReader();

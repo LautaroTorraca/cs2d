@@ -1,11 +1,9 @@
 #pragma once
 #include <string>
-#include <thread>
+// #include <thread>
 
 #include "InputHandler.h"
 #include "Protocol.h"
-#include "Protocol_testing.h"
-// #include "Protocol_testing.h"
 
 constexpr std::string PORT = "8080";
 constexpr std::string HOSTNAME = "127.0.0.1";

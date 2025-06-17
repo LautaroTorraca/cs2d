@@ -8,21 +8,18 @@
 #include "CoordinateInformation.h"
 #include "ProjectileInformation.h"
 #include "SnapshotConstants.h"
-constexpr int RES_WIDTH = 1280;
-constexpr int RES_HEIGTH = 720;
+constexpr int RES_WIDTH = 640;
+constexpr int RES_HEIGTH = 480;
 
 constexpr int LOGICAL_WIDTH = 27;
 constexpr int LOGICAL_HEIGHT = 15;
 
-constexpr int MAP_WIDTH = 11;
-constexpr int MAP_HEIGHT = 6;
-
 constexpr int TILE_SRC_SIZE = 32;
-constexpr int TILE_WIDTH = RES_WIDTH / LOGICAL_WIDTH;
-constexpr int TILE_HEIGHT = RES_HEIGTH / LOGICAL_HEIGHT;
+constexpr int TILE_WIDTH = 32;   // RES_WIDTH / LOGICAL_WIDTH;
+constexpr int TILE_HEIGHT = 32;  // RES_HEIGTH / LOGICAL_HEIGHT;
 
-constexpr int PLAYER_HEIGTH = RES_WIDTH / LOGICAL_WIDTH;
-constexpr int PLAYER_WIDTH = RES_HEIGTH / LOGICAL_HEIGHT;
+constexpr int PLAYER_HEIGTH = 32;  // RES_WIDTH / LOGICAL_WIDTH;
+constexpr int PLAYER_WIDTH = 32;   // RES_HEIGTH / LOGICAL_HEIGHT;
 
 constexpr double WPN_SZ_MULT = 1.3;
 
@@ -47,6 +44,23 @@ enum UiSymbol : int {
 
 enum UiType : uint8_t { NumsUI, SymbUI, CursorUI };
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// deprecated
 inline void fillDummies(Snapshot& gameSnapshot) {
 
     std::vector<PlayerInformation> playerList;

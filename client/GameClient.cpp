@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 
+#include <bits/types/error_t.h>
 #include <qapplication.h>
 #include <qdialog.h>
 
@@ -121,21 +122,21 @@ void GameClient::run(int argc, char* argv[]) {
     uint32_t frameStart = SDL_GetTicks();
     int frameTime;
     SDL sdl(SDL_INIT_VIDEO);
+    try {
+        while (running) {
+            // gameSnapshot = protocol.receiveSnapshot();
+            SDL_Event event;
+            if (SDL_PollEvent(&event)) {
+                running = inputHandler.processEvent(event);
+            }
+            frameTime = SDL_GetTicks() - frameStart;
 
-    while (running) {
-        // gameSnapshot = protocol.receiveSnapshot();
-        SDL_Event event;
-        if (SDL_PollEvent(&event)) {
-            running = inputHandler.processEvent(event);
+            if (frameDelay <= frameTime) {
+                // FIX: cambiar harcodeada de mapa.
+                renderer.renderScreen(protocol.receiveSnapshot(), MapType::DUST,
+                                      inputHandler.getMouseCoords());
+                frameStart = SDL_GetTicks();
+            }
         }
-        frameTime = SDL_GetTicks() - frameStart;
-
-        if (frameDelay <= frameTime) {
-            // FIX: cambiar harcodeada de mapa.
-            std::cout << "GameClient::run, sigo adentro." << std::endl;
-            renderer.renderScreen(protocol.receiveSnapshot(), MapType::DUST,
-                                  inputHandler.getMouseCoords());
-            frameStart = SDL_GetTicks();
-        }
-    }
+    } catch (...) {}
 }
