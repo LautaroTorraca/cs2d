@@ -14,5 +14,6 @@ std::unique_ptr<Product> AKFactory::getProduct(const uint16_t &) {
     double akSpeed =  this->weaponsInfo.getWeaponInfo(WeaponType::AK47, SPEED_KEY);
     double akBulletsPerShot =  this->weaponsInfo.getWeaponInfo(WeaponType::AK47, BULLETS_PER_SHOT_KEY);
     double akBurstSpeed =  this->weaponsInfo.getWeaponInfo(WeaponType::AK47, BULLETS_PER_SHOT_KEY);
-    return std::make_unique<Ak>(this->cost, akDamagePerBullet, akPrecision, akRange, akCadence, akSpeed, akBulletsPerShot, akBurstSpeed);
+    double maxBullets =  this->weaponsInfo.getWeaponInfo(WeaponType::AK47, MAX_BULLETS_KEY);
+    return std::make_unique<Ak>(this->cost, akDamagePerBullet, akPrecision, akRange, akCadence, akSpeed, akBulletsPerShot, akBurstSpeed, maxBullets);
 }

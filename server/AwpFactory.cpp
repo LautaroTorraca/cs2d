@@ -12,6 +12,7 @@ std::unique_ptr<Product> AwpFactory::getProduct(const uint16_t &) {
     double awpCadence =  this->weaponsInfo.getWeaponInfo(WeaponType::AWP, CADENCE_KEY);
     double awpSpeed =  this->weaponsInfo.getWeaponInfo(WeaponType::AWP, SPEED_KEY);
     double awpBulletsPerShot =  this->weaponsInfo.getWeaponInfo(WeaponType::AWP, BULLETS_PER_SHOT_KEY);
-    return std::make_unique<Awp>(this->cost, awpDamagePerBullet, awpPrecision, awpRange, awpCadence, awpSpeed, awpBulletsPerShot);
+    double maxBullets =  this->weaponsInfo.getWeaponInfo(WeaponType::AWP, MAX_BULLETS_KEY);
+    return std::make_unique<Awp>(this->cost, awpDamagePerBullet, awpPrecision, awpRange, awpCadence, awpSpeed, awpBulletsPerShot, maxBullets);
 }
 

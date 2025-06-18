@@ -38,6 +38,9 @@ Game::Game(GameParser& parser, const uint8_t& rounds):
     for ( auto& [type, factory] : this->gameParser.getShopFactories() ) {
         this->shop.add(type, factory);
     }
+    for (auto&[position, drop] : parser.getDrops()) {
+        this->gameMap.place(drop, position);
+    }
 }
 
 void Game::addPlayer(const size_t &id, const std::string& name, const Team& team, const Skin& skin) const {
@@ -57,7 +60,6 @@ void Game::move(const size_t& id, const Coordinate& displacement) {
 void Game::changeAngle(const size_t &id, const double& angle) {
     if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     if ( !this->players.contains(id) ) return; //TODO: Ver si conviente que estas cosas tiren una excepcion en su lugar
-    std::cout << "Game::changeAngle. Angulo: " << angle << std::endl;
     this->players.at(id)->changeAngle(angle);
 }
 
@@ -164,12 +166,14 @@ void Game::clearPlayers() {
 
 void Game::terroristsWins() {
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
+    this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
     this->status = TERRORISTS_WIN;
     this->terroristsWinsRounds++;
 }
 
 void Game::countersWins() {
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
+    this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
     status = COUNTERS_WIN;
     this->countersWinsRounds++;
 }

@@ -15,6 +15,7 @@ protected:
     double weaponCadence;
     double weaponSpeed;
     int weaponBulletsPerShot;
+    uint16_t maxBullets;
     double lastShotTime;
     bool checkedAttack() const;
 public:
@@ -23,7 +24,8 @@ public:
         const double& weaponRange,
         const double& weaponCadence,
         const double& weaponSpeed,
-        const int& weaponBulletsPerShot) :
+        const int& weaponBulletsPerShot,
+        const uint16_t& maxBullets) :
     ammo(ammo),
     weaponDamagePerBullet(weaponDamagePerBullet),
     weaponPrecision(weaponPrecision),
@@ -31,6 +33,7 @@ public:
     weaponCadence(weaponCadence),
     weaponSpeed(weaponSpeed),
     weaponBulletsPerShot(weaponBulletsPerShot),
+    maxBullets(maxBullets),
     lastShotTime(0) {}
     RechargeableWeapon(RechargeableWeapon&& other) noexcept;
     void recharge(uint16_t &amount) override;

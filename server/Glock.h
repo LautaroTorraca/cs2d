@@ -14,8 +14,16 @@
 
 class Glock : public RechargeableWeapon {
     public:
-    Glock(const double& weaponDamagePerBullet, const double& weaponPrecision, const double& weaponRange, const double& weaponCadence, const double& weaponSpeed, const int& weaponBulletsPerShot) :
-    RechargeableWeapon(GLOCK_INITIAL_AMMO, weaponDamagePerBullet, weaponPrecision, weaponRange, weaponCadence, weaponSpeed,weaponBulletsPerShot) {}
+    Glock(const double& weaponDamagePerBullet,
+        const double& weaponPrecision,
+        const double& weaponRange,
+        const double& weaponCadence,
+        const double& weaponSpeed,
+        const int& weaponBulletsPerShot,
+        const uint16_t& maxBullets) :
+    RechargeableWeapon(GLOCK_INITIAL_AMMO,
+        weaponDamagePerBullet, weaponPrecision, weaponRange,
+        weaponCadence, weaponSpeed, weaponBulletsPerShot, maxBullets) {}
     void attack(Positionable &positionable, const Position &actualPosition, const double &angle) override;
     WeaponInfoDTO getInfo() override;
 

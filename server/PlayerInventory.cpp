@@ -53,7 +53,8 @@ PlayerInventory::PlayerInventory(const GameParser &gameParser, DropPlacer& weapo
     double glockCadence = gameParser.getWeaponInfo(WeaponType::GLOCK, CADENCE_KEY);
     double glockSpeed = gameParser.getWeaponInfo(WeaponType::GLOCK, SPEED_KEY);
     double glockBulletsPerShot = gameParser.getWeaponInfo(WeaponType::GLOCK, BULLETS_PER_SHOT_KEY);
-    this->weaponSetter.emplace(GLOCK_INDEX, std::make_shared<Glock>(glockDamagePerBullet, glockPrecision, glockRange, glockCadence, glockSpeed, glockBulletsPerShot));
+    double maxBullets =  gameParser.getWeaponInfo(WeaponType::AK47, MAX_BULLETS_KEY);
+    this->weaponSetter.emplace(GLOCK_INDEX, std::make_shared<Glock>(glockDamagePerBullet, glockPrecision, glockRange, glockCadence, glockSpeed, glockBulletsPerShot, maxBullets));
 
     this->weaponSetter.at(KNIFE_INDEX)->set(this->owner);
     this->weaponSetter.at(GLOCK_INDEX)->set(this->owner);

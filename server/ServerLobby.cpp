@@ -22,7 +22,7 @@ void ServerLobby::handle(const std::unique_ptr<Order> &order) const {
   const OrderType type = lobbyOrder.getOrderType();
     std::cout << "ServerLobby::handle()" << std::endl;
   if (!translator.contains(type)) {
-    throw -1; // TODO FIX
+    throw std::runtime_error("The order is not implemented."); // TODO FIX
   }
 
   translator.at(type)(lobbyOrder);

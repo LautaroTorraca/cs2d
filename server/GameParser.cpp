@@ -23,6 +23,9 @@ std::vector<Coordinate> GameParser::getTerroristsSpawnPoints() const {
 std::vector<Coordinate> GameParser::getBombPlantPoints() const {
     return this->gameMapParser.getBombPlantPoints();
 }
+std::map<Position, std::shared_ptr<Drop>> GameParser::getDrops() const {
+    return this->gameMapParser.getDrops();
+}
 
 std::map<ProductType, std::unique_ptr<Factory>> GameParser::getShopFactories() {
     return this->shopParser.getShopFactories(this->weaponsInfoParser);

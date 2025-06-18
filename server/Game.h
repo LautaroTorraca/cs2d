@@ -25,6 +25,7 @@
 
 #define BUY_TIME_DURATION_KEY "buyTimeDuration"
 #define MONEY_PER_WIN_ROUND_KEY "moneyPerWinRound"
+#define MONEY_PER_ROUND_KEY "moneyPerRound"
 #define INITIAL_ROUND_COUNT 1
 
 class Game : public Advancer, public Finalizable {

@@ -25,13 +25,15 @@ public:
         const double& weaponCadence,
         const double& weaponSpeed,
         const int& weaponBulletsPerShot,
-        const double& akBurstSpeed) : PrimaryWeapon(cost,
+        const double& akBurstSpeed,
+        const uint16_t& maxBullets) : PrimaryWeapon(cost,
             weaponDamagePerBullet,
             weaponPrecision,
             weaponRange,
             weaponCadence,
             weaponSpeed,
-            weaponBulletsPerShot),
+            weaponBulletsPerShot,
+            maxBullets),
             timePerBurstBullet(std::round((1/akBurstSpeed) * 100.0) / 100.0) {}
 
     Ak(Ak&& other) noexcept;

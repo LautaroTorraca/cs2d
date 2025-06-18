@@ -117,9 +117,7 @@ void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
         gamesListStream << game << "\n";
     }
     std::string gamesListString = gamesListStream.str();
-    uint16_t size = gamesListString.size();
-    this->userSocket.sendall(&size, sizeof(size));
-    this->userSocket.sendall(gamesList.data(), gamesList.size());
+    this->sender.send(gamesListString);
 }
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
