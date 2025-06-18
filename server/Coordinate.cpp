@@ -8,6 +8,7 @@
 #include <cmath>
 
 #define TILE_SIZE 32 //TODO: Esto debera ser reemplazado por la medida que se termine usando
+#define PI_IN_GRADES 180
 
 void Coordinate::update(const Coordinate &coordinate) {
     this->x = coordinate.x;
@@ -47,7 +48,7 @@ double Coordinate::distanceTo(const Coordinate &coordinate) const {
 Coordinate Coordinate::rotatedIn(double deviationAngle) const {
     double norm = sqrt(this->x * this->x + this->y * this->y);
     double angle = std::atan2(this->y, this->x);
-    angle += deviationAngle;
+    angle += (deviationAngle*M_PI)/PI_IN_GRADES;
     double rotatedX = std::cos(angle);
     double rotatedY = std::sin(angle);
     rotatedX *= norm;

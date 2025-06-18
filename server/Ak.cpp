@@ -13,7 +13,8 @@ Ak::Ak(Ak &&other) noexcept : PrimaryWeapon(std::move(other)), timePerBurstBulle
 
 void Ak::attack(Positionable &positionable, const Position &actualPosition, const double &angle) {
     if (!this->checkedAttack()) return;
-    Coordinate direction(std::cos(angle), -std::sin(angle));
+    double radianAngle = ((angle + ANGLE_BIAS)*M_PI/PI_TO_GRADES);
+    Coordinate direction(std::cos(radianAngle), std::sin(radianAngle));
     for (int i = 0; i < this->weaponBulletsPerShot; i++) {
         this->timesPerBurstBullet.emplace_back(this->actualTime + this->timePerBurstBullet*i + RETARDATION);
         this->inQueueBullets.emplace_back(

@@ -4,8 +4,10 @@
 
 #include "Player.h"
 
-#include "DeactivatedBacker.h"
+#include <iostream>
+
 #include "ActivatedBacker.h"
+#include "DeactivatedBacker.h"
 
 Player::Player(const size_t& id, const std::string& name, const Skin& skin, const GameParser& gameParser, DropPlacer& weaponPlacer) :
 id(id),
@@ -134,6 +136,5 @@ PlayerInfoDTO Player::getInfo() {
     std::vector<WeaponInfoDTO> weaponsInfo = this->inventory.getWeaponsInfo();
     WeaponInfoDTO actualWeaponInfo = this->weapon->getInfo();
     CoordinateDTO coordinateInfo = this->position.getPoint();
-    PlayerInfoDTO info(this->id, this->name, this->skin, coordinateInfo, this->angle, this->wallet.getInfo(), this->healthPoints, weaponsInfo, actualWeaponInfo, this->kills);
-    return info;
+    return  {this->id, this->name, this->skin, coordinateInfo, this->angle, this->wallet.getInfo(), this->healthPoints, weaponsInfo, actualWeaponInfo, this->kills};
 }

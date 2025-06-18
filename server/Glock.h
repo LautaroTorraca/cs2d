@@ -4,11 +4,9 @@
 
 #ifndef GLOCK_H
 #define GLOCK_H
-#include <map>
 
 #include "Weapon.h"
 #include "Projectile.h"
-#include <vector>
 
 #include "RechargeableWeapon.h"
 

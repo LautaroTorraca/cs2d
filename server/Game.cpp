@@ -57,6 +57,7 @@ void Game::move(const size_t& id, const Coordinate& displacement) {
 void Game::changeAngle(const size_t &id, const double& angle) {
     if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     if ( !this->players.contains(id) ) return; //TODO: Ver si conviente que estas cosas tiren una excepcion en su lugar
+    std::cout << "Game::changeAngle. Angulo: " << angle << std::endl;
     this->players.at(id)->changeAngle(angle);
 }
 
@@ -112,7 +113,6 @@ void Game::advance(const double &actualTime) {
 }
 
 void Game::spawnBomb() {
-    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     double activationDuration = this->gameParser.getWeaponInfo(WeaponType::BOMB, BOMB_ACTIVATION_TIME_KEY);
     double deactivationDuration = this->gameParser.getWeaponInfo(WeaponType::BOMB, BOMB_DEACTIVATION_TIME_KEY);
     std::shared_ptr<Weapon> bomb = std::make_shared<Bomb>(*this, activationDuration, deactivationDuration);

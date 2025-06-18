@@ -183,8 +183,6 @@ void Protocol::end() {
     try {
         this->acceptorSocket.shutdown(SHUT_RDWR);
         this->acceptorThread.join();
-        //this->requestsQueue.close();
-        //std::cout << "Protocol::end. Queue cerrada." << std::endl;
         for (auto& handler: this->clientsHandlers | std::views::values) {
             handler->stopService();
             handler->join();
@@ -193,6 +191,7 @@ void Protocol::end() {
         // TODO: Logging de error
     }
 }
+
 void Protocol::stopService() {
     this->requestsQueue.close();
 }

@@ -137,7 +137,10 @@ void GameMonitor::run() {
         for (auto& player : gameInfo.getPlayersInfo() ) {
             if (movements.at(player.getId()).at(0) != player.getCoordinate().getX() ||
                 movements.at(player.getId()).at(1) != player.getCoordinate().getY()) {
-                std::cout << "id: " <<player.getId() << ", name: " << player.getName() << "(" << player.getCoordinate().getX() << ", " << player.getCoordinate().getY() << "), angulo:" << player.getAngle() << std::endl;
+                std::cout << "id: " <<player.getId() << ", name: " << player.getName() << "(" <<
+                    player.getCoordinate().getX() << ", " <<
+                        player.getCoordinate().getY() << "), angulo:" << player.getAngle()
+                << ", weapon: " << (int)player.getActualWeapon().getWeaponType() << std::endl;
                 movements.at(player.getId()).clear();
                 movements.at(player.getId()).push_back(player.getCoordinate().getX());
                 movements.at(player.getId()).push_back(player.getCoordinate().getY());
