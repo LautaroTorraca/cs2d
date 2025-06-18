@@ -83,7 +83,7 @@ InGameOrder InGameProtocol::switchWeaponHandler(const Request &request) {
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
 
-  const uint8_t slot = message.at(weaponKey).front();
+  const uint8_t slot = message.at(slotKey).front();
 
   return InGameOrder(ProtocolConstants::SWITCH_WEAPON, clientId,
                      slot); // weapon, direction, ammout dummys

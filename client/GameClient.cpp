@@ -1,33 +1,26 @@
 #include "GameClient.h"
 
-#include <iostream>
-#include <sstream>
-
 #include <bits/types/error_t.h>
 #include <qapplication.h>
 #include <qdialog.h>
 
 #include "client/GameRenderer.h"
-// #include "server/Constants/ConnectionStatus.h"
 #include "server/Constants/MapTypeConstants.h"
-// #include "server/DTO/GameLobbyDTO.h"
-// #include "server/DTO/LobbyConnectionDTO.h"
-// #include "server/DTO/LobbyConnectionDTO.h"
-// #include "server/DTO/PlayerChoicesDTO.h"
-// #include "server/Team.h"
 
 #include "InputHandler.h"
 #include "MainWindow.h"
-// #include "Protocol.h"
 #include "SDL_timer.h"
-
+#include "fixedOverWritingQueue.h"
 using std::stringstream;
 
 using namespace SDL2pp;
 using namespace DTO;
 
 GameClient::GameClient(char* port):
-        running(true), protocol(HOSTNAME, port), inputHandler(protocol) {}
+        running(true),
+        protocol(HOSTNAME, port),
+        inputHandler(protocol),
+        dataReceiver(protocol, snapshotQueue) {}
 
 void GameClient::run(int argc, char* argv[]) {
 
@@ -89,42 +82,19 @@ void GameClient::run(int argc, char* argv[]) {
         }
     }
     std::cout << "hasta aca todo joya no?\n";
-    //   //////////
-    //
-    //   std::string line;
-    //   std::string command;
-    //   std::getline(std::cin, line);
-    //
-    //   stringstream ss(line);
-    //   ss >> command;
-    //   if (command == "crear") {
-    //       LobbyDTO lobby("partida1", MapType::DUST, 2, 10);
-    //       protocol.createLobby(lobby);
-    //       PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::GERMAN_GSG9);
-    //       SDL_Delay(10000);
-    //       protocol.ready(playerChoices);
-    //   } else {
-    //
-    //       LobbyDTO lobby("partida1");
-    //       protocol.joinLobby(lobby);
-    //       PlayerChoicesDTO playerChoices(1432, "blackri", Team::COUNTER_TERRORISTS,
-    //       Skin::UK_SAS); protocol.ready(playerChoices);
-    //   }
-    //   ////
-    // TODO: menu QT
 
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
 
-    bool running = true;
-    const int FPS = 1000;
-    const int frameDelay = 1000 / FPS;
-    uint32_t frameStart = SDL_GetTicks();
-    int frameTime;
-    SDL sdl(SDL_INIT_VIDEO);
     try {
+        dataReceiver.start();
+        bool running = true;
+        const int FPS = 1000;
+        const int frameDelay = 1000 / FPS;
+        uint32_t frameStart = SDL_GetTicks();
+        int frameTime;
+        SDL sdl(SDL_INIT_VIDEO);
         while (running) {
-            // gameSnapshot = protocol.receiveSnapshot();
             SDL_Event event;
             if (SDL_PollEvent(&event)) {
                 running = inputHandler.processEvent(event);
@@ -133,10 +103,11 @@ void GameClient::run(int argc, char* argv[]) {
 
             if (frameDelay <= frameTime) {
                 // FIX: cambiar harcodeada de mapa.
-                renderer.renderScreen(protocol.receiveSnapshot(), MapType::DUST,
-                                      inputHandler.getMouseCoords());
+                Snapshot gameSnapshot = snapshotQueue.pop();
+                renderer.renderScreen(gameSnapshot, MapType::DUST, inputHandler.getMouseCoords());
                 frameStart = SDL_GetTicks();
             }
         }
     } catch (...) {}
+    dataReceiver.join();
 }
