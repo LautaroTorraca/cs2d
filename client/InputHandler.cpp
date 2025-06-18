@@ -15,7 +15,7 @@ InputHandler::InputHandler(Protocol& protocol): protocol(protocol) {}
 
 bool InputHandler::processEvent(SDL_Event event) {
     if (event.type == SDL_QUIT) {
-        return false;
+        protocol.exit();
     } else if (event.type == SDL_KEYDOWN) {
 
         switch (event.key.keysym.sym) {
@@ -46,7 +46,6 @@ bool InputHandler::processEvent(SDL_Event event) {
             case SDLK_ESCAPE:
                 protocol.exit();
         }
-
     } else if (event.type == SDL_MOUSEBUTTONDOWN) {
 
         switch (event.button.button) {
@@ -60,8 +59,8 @@ bool InputHandler::processEvent(SDL_Event event) {
 
     } else if (event.type == SDL_MOUSEMOTION) {
 
-        double dx = event.motion.x - RES_WIDTH / 2;
-        double dy = event.motion.y - RES_HEIGTH / 2;
+        double dx = event.motion.x - static_cast<double>(RES_WIDTH) / 2;
+        double dy = event.motion.y - static_cast<double>(RES_HEIGTH) / 2;
         double angleInRads = atan2(dy, dx);
         double angleInDegree = 180.0 * angleInRads / M_PI;
         angleInDegree += 90;

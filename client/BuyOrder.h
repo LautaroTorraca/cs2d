@@ -11,9 +11,8 @@
 struct BuyOrder {
     const ProductTypes type;
     const uint16_t amount;
-    BuyOrder(const ProductTypes& type, const uint16_t& amount) : type(type), amount(amount) {}
-    explicit BuyOrder(const ProductTypes& type) : type(type), amount(DEFAULT_AMOUNT) {}
-
+    BuyOrder(const ProductTypes& type, const uint16_t& amount): type(type), amount(amount) {}
+    explicit BuyOrder(const ProductTypes& type): type(type), amount(DEFAULT_AMOUNT) {}
 };
 
-#endif //BUYORDER_H
+#endif  // BUYORDER_H

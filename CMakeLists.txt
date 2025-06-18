@@ -16,7 +16,7 @@ project(
   taller_tp
   VERSION 1.0
   HOMEPAGE_URL "https://github.com/URL-HERE"
-  LANGUAGES CXX)
+  LANGUAGES C CXX)
 
 # Qt
 #
@@ -31,9 +31,7 @@ option(TALLER_EDITOR "Enable / disable editor program." ON)
 option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." ON)
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
-add_library(taller_common STATIC
-        server/Ui.cpp
-        server/Ui.h)
+add_library(taller_common STATIC)
 add_subdirectory(common/)
 
 include(cmake/CompilerWarnings.cmake)
@@ -99,20 +97,21 @@ endif()
 # ---------------
 if(TALLER_CLIENT)
   add_subdirectory(client)
+  add_subdirectory(libs/SDL2_gfx)
   add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
   # client/LobbyDTO.h client/GamesList.h client/BuyOrder.h
   # client/WeaponChanger.h client/PositionDTO.h client/PlayerInformation.h
   # client/CoordinateInformation.h client/WeaponInformation.h
   # client/ProjectileInformation.h client/DropInformation.h client/MainWindow.h)
   target_include_directories(taller_client PRIVATE client)
-  target_link_libraries(taller_client taller_common SDL2pp::SDL2pp Qt6::Widgets)
+  target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_gfx
+                        Qt6::Widgets)
 endif()
 
 if(TALLER_SERVER)
 
   find_package(fkYAML REQUIRED)
-  add_executable(taller_server
-          server/Interfaces/DisconnectableProtocol.h)
+  add_executable(taller_server)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
   # add_subdirectory(libs/fkYAML)

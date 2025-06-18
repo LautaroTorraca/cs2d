@@ -198,6 +198,7 @@ void GameMap::reset(GameParser& parser) {
     this->entities.clear();
     this->weaponsDrops.clear();
     this->countersSpawnPoints.clear();
+    this->dropToCoordinates.clear();
     this->terroristsSpawnPoints.clear();
     this->bombPlantPoints.clear();
     this->explosive.clear();

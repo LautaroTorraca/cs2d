@@ -23,8 +23,17 @@ void PlayerInventory::erase(const uint8_t &index) {
     this->weaponSetter.erase(index);
 }
 
-void PlayerInventory::reset() {
+std::vector<uint8_t> PlayerInventory::getIndexes() {
+    std::vector<uint8_t> indexes;
     for (const auto &index: this->weaponSetter | std::views::keys) {
+        indexes.push_back(index);
+    }
+    return indexes;
+}
+
+void PlayerInventory::reset() {
+    std::vector<uint8_t> indexes = this->getIndexes();
+    for (const auto &index : indexes) {
         if (index > GLOCK_INDEX) {
             this->drop(index);
         }

@@ -1,7 +1,7 @@
 #include "GameRenderer.h"
 
 #include <cstdint>
-// #include <iostream>
+#include <iostream>
 #include <string>
 
 #include "Constants/ClientConstants.h"
@@ -11,10 +11,16 @@
 #include "server/Constants/MapTypeConstants.h"
 #include "server/WeaponConstants.h"
 
+#include "CoordinateInformation.h"
 #include "PlayerInformation.h"
 #include "ProjectileInformation.h"
+#include "SDL2_gfxPrimitives.h"
+#include "SDL_blendmode.h"
+#include "SDL_stdinc.h"
 #include "SnapshotConstants.h"
 #include "TextureManager.h"
+
+
 // TODO: cambiar todo por offset
 GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId):
         window("CS-Go 2D???", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, RES_WIDTH,
@@ -25,8 +31,12 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
         clientID(clientId) {}
 
 void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
+
+
+    renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
 
+    // TODO: cambiar por un map la lista de players.
     size_t index = 0;
     for (PlayerInformation player: gameSnapshot.playersInfo) {
         if (player.id == clientID) {
@@ -34,46 +44,41 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
         }
         index++;
     }
+    PlayerInformation& currentPlayer = gameSnapshot.playersInfo.at(index);
 
-    for (PlayerInformation player: gameSnapshot.playersInfo) {
-        std::cout << "player : " << player.name << " esta en (" << player.position.x << ", " << player.position.y << "), angle:" << player.angle << std::endl;
+    srand(time(nullptr));
+    int numero = rand() % 6;
+    if (numero == 3) {
+        std::cout << "player: " << currentPlayer.name << "\n";
     }
+    // std::cout << "y su pos: X[" << std::to_string(currentPlayer.position.x) << "]Y["
+    //           << std::to_string(currentPlayer.position.y) << "] \n";
+    offset.x = (gameSnapshot.playersInfo.at(index).position.x) - int(RES_WIDTH / 2);
+    offset.y = (gameSnapshot.playersInfo.at(index).position.y) - int(RES_HEIGTH / 2);
 
-
-    Coords offsetCoords;
-
-    offsetCoords.x = gameSnapshot.playersInfo.at(index).position.x + 3*32;
-    offsetCoords.y = gameSnapshot.playersInfo.at(index).position.y;
-    // HACK: ver si se puede mejorar
-    offsetCoords.x -= RES_WIDTH / 2;
-    offsetCoords.y -= RES_HEIGTH / 2;
-    offset.x = offsetCoords.x;
-    offset.y = offsetCoords.y;
-
-    renderMap(tileMap, map, offsetCoords);
-    renderFloorItems(gameSnapshot.dropsInfo, offsetCoords);
-    renderPlayers(gameSnapshot.playersInfo, offsetCoords, clientID);
+    renderMap(tileMap, map);
+    renderFloorItems(gameSnapshot.dropsInfo);
+    renderPlayers(gameSnapshot.playersInfo, clientID);
+    drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 100);
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
     renderer.Present();
 }
 
-void GameRenderer::renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map,
-                             Coords offset) {
+void GameRenderer::renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map) {
 
     Texture& tileMapTexture = textureManager.getTileMap(map);
 
     int posCounter = 0;
+    int mapWidth = tileMap[0].size();
     for (std::vector<uint8_t> tileRow: tileMap) {
         for (int tile: tileRow) {
-
-            renderTile(tileMapTexture, tile, posCounter, offset);
+            renderTile(tileMapTexture, mapWidth, tile, posCounter);
             posCounter++;
         }
     }
 }
 
-void GameRenderer::renderPlayers(std::vector<PlayerInformation> players, Coords offset,
-                                 size_t clientId) {
+void GameRenderer::renderPlayers(std::vector<PlayerInformation> players, size_t clientId) {
 
     srand(time(nullptr));
     int numero = rand() % 6;
@@ -81,37 +86,49 @@ void GameRenderer::renderPlayers(std::vector<PlayerInformation> players, Coords 
     for (PlayerInformation player: players) {
         Texture& skin = textureManager.getSkin(player.skin);
         if (player.id == clientId)
-            renderCurrentPlayer(skin, player, numero, offset);
+            renderCurrentPlayer(skin, player, numero);
         else
-            renderPlayer(skin, player, numero, offset);
+            renderPlayer(skin, player, numero);
         renderBullets(player);
     }
 }
 
-void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int variation,
-                                Coords offset) {
+void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int variation) {
 
-    int posX = TILE_SRC_SIZE * (variation % 2);
+    int posSrcX = TILE_SRC_SIZE * (variation % 2);
     int div = (variation / 2);
-    int posY = TILE_SRC_SIZE * div;
+    int posSrcY = TILE_SRC_SIZE * div;
 
-    renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-                  Rect(player.position.x + 3*32 - offset.x, player.position.y - offset.y, PLAYER_WIDTH,
-                       PLAYER_HEIGTH),
-                  player.angle);
+    // int(RES_WIDTH / 2);
+    int relPosX = player.position.x - offset.x - int(RES_WIDTH / 2);
+    int relPosY = player.position.y - offset.y - int(RES_HEIGTH / 2);
+    std::cout << "diferencia en X de currentPlayer y el otro: " << std::to_string(relPosX) << "\n";
+    std::cout << "diferencia en Y de currentPlayer y el otro: " << std::to_string(relPosY)
+              << "\n\n";
+
+    int offsetX = PLAYER_WIDTH / 2;
+    int offsetY = PLAYER_HEIGTH / 2;
+    int posPlayerX = ((RES_WIDTH) / 2) + relPosX - offsetX;
+    int posPlayerY = ((RES_HEIGTH) / 2) + relPosY - offsetY;
+
+    renderer.Copy(sprite, Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
+                  Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH), player.angle);
 }
 
-void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation,
-                                       Coords offset) {
+void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation) {
 
     int posX = TILE_SRC_SIZE * (variation % 2);
     int div = (variation / 2);
     int posY = TILE_SRC_SIZE * div;
 
-    offset.x = offset.x;
+    int offsetX = PLAYER_WIDTH / 2;
+    int offsetY = PLAYER_HEIGTH / 2;
+    // offset.x = offset.x;
 
-    renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-                  Rect(RES_WIDTH / 2, RES_HEIGTH / 2, PLAYER_WIDTH, PLAYER_HEIGTH), player.angle);
+    renderer.Copy(
+            sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
+            Rect(RES_WIDTH / 2 - offsetX, RES_HEIGTH / 2 - offsetY, PLAYER_WIDTH, PLAYER_HEIGTH),
+            player.angle);
 }
 
 void GameRenderer::renderBullets(PlayerInformation& player) {
@@ -131,29 +148,29 @@ void GameRenderer::renderBullets(PlayerInformation& player) {
         renderer.SetDrawColor(0, 0, 0, 255);
     }
 }
-void GameRenderer::renderTile(Texture& mapTile, int tile, int pos, Coords offset) {
+void GameRenderer::renderTile(Texture& mapTile, int mapWidth, int tile, int pos) {
 
     int textureX = TILE_SRC_SIZE * (tile % 5);
     int div = (tile / 5);
     int textureY = TILE_SRC_SIZE * div;
 
-    int posX = TILE_WIDTH * (pos % MAP_WIDTH);
-    int div2 = (pos / MAP_WIDTH);
+    int posX = TILE_WIDTH * (pos % mapWidth);
+    int div2 = (pos / mapWidth);
     int posY = TILE_HEIGHT * div2;
 
     renderer.Copy(mapTile, Rect(textureX, textureY, TILE_SRC_SIZE, TILE_SRC_SIZE),
                   Rect(posX - offset.x, posY - offset.y, TILE_WIDTH, TILE_HEIGHT));
 }
 
-void GameRenderer::renderFloorItems(std::vector<DropInformation> weaponList, Coords offset) {
+void GameRenderer::renderFloorItems(std::vector<DropInformation> weaponList) {
 
     for (DropInformation weapon: weaponList) {
         Texture& wpnSprite = textureManager.getDroppedWeapon(weapon.weapon.weaponType);
-        renderFloorWeapon(wpnSprite, weapon, offset);
+        renderFloorWeapon(wpnSprite, weapon);
     }
 }
 
-void GameRenderer::renderFloorWeapon(Texture& sprite, DropInformation wpn, Coords offset) {
+void GameRenderer::renderFloorWeapon(Texture& sprite, DropInformation wpn) {
     renderer.Copy(sprite, NullOpt,
                   Rect(wpn.position.x - offset.x, wpn.position.y - offset.y,
                        sprite.GetWidth() * WPN_SZ_MULT, sprite.GetHeight() * WPN_SZ_MULT));
@@ -245,9 +262,39 @@ int16_t GameRenderer::renderWeaponGlyph(Coords posInScreen, WeaponType weapon) {
     Texture& sprite = textureManager.getWeapon(weapon);
     double multH = static_cast<double>(HUD_NUM_H) / sprite.GetHeight();
     sprite.SetColorMod(0, 255, 0);
+    int offX = 0;
+    int offY = 0;
+    if (weapon == WeaponType::KNIFE) {
+        multH = 2.5;
+        offX = -20;
+    }
     renderer.Copy(sprite, NullOpt,
-                  Rect(posInScreen.x - sprite.GetWidth() * multH, posInScreen.y,
+                  Rect((posInScreen.x - (sprite.GetWidth() * multH) - offX),
+                       posInScreen.y - (sprite.GetHeight() * multH / 2) - offY,
                        sprite.GetWidth() * (multH), sprite.GetHeight() * (multH)));
 
     return (posInScreen.x + (sprite.GetWidth() * multH));
+}
+
+void GameRenderer::drawFOVStencil(const CoordinateInformation& playerCoords, double directionDeg,
+                                  double fovDeg, int radius) {
+
+    Uint8 r = 255, g = 255, b = 255, a = 255;
+
+    renderer.SetTarget(textureManager.getFov().SetBlendMode(SDL_BLENDMODE_NONE));
+    renderer.SetDrawColor(r / 2, g / 2, b / 2, a);
+    renderer.Clear();
+
+    int x0 = RES_WIDTH / 2;
+    int y0 = RES_HEIGTH / 2;
+    int leftSideCone = directionDeg - (fovDeg / 2) - 90;
+    int rightSideCone = directionDeg + (fovDeg / 2) - 90;
+
+    filledPieRGBA(renderer.Get(), x0, y0, radius * 3, leftSideCone, rightSideCone, r, g, b, a);
+    filledCircleRGBA(renderer.Get(), x0, y0, radius, r, g, b, a);
+
+    renderer.SetTarget();
+    SDL_Rect dst = {0, 0, RES_WIDTH, RES_HEIGTH};
+    renderer.Copy(textureManager.getFov().SetBlendMode(SDL_BLENDMODE_MOD).SetAlphaMod(0),
+                  SDL2pp::NullOpt, dst);
 }
