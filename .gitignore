@@ -1,50 +1,33 @@
-# Qt Creator / CLion / JetBrains
-.idea/
-*.user
-*.pro.user*
-*.qbs.user*
-*.autosave
-
-# CMake build folders
 build/
-build-*/
-cmake-build-*/
-CMakeFiles/
-CMakeCache.txt
-Makefile
-cmake_install.cmake
-compile_commands.json
-
-# Qt generated files
-moc_*.cpp
-ui_*.h
-qrc_*.cpp
-
-# Binaries
+bin/
+lib/
+_deps/
+tags.*
+.cache
+*.a
+*.so
 *.exe
 *.out
-*.app
-*.dSYM/
-*.dll
-*.so
-*.a
-*.o
-*.obj
-
-# Logs and debug
-*.log
-*.core
-core.*
-
-# Docker
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+lib
+compile_commands.json
+Makefile
 Dockerfile
-docker-compose.yml
 
-# General OS files
-.DS_Store
-Thumbs.db
-
-# Backup / temp files
-*~
-*.swp
-*.tmp
+taller_client
+taller_server
+taller_editor
+taller_tests
+client/assets/weapons/old
+.vscode/launch.json
+.vscode/tasks.json
+.idea/editor.xml
+.idea/vcs.xml
+.idea/editor.xml
+.idea/vcs.xml
+.idea/editor.xml
+.idea/vcs.xml
+.idea/editor.xml
+.idea/vcs.xml

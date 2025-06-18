@@ -1,0 +1,132 @@
+name: macOS
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - .github/workflows/macos.yml
+      - cmake/**
+      - include/**
+      - single_include/**
+      - tests/**
+      - CMakeLists.txt
+  pull_request:
+    paths:
+      - .github/workflows/macos.yml
+      - cmake/**
+      - include/**
+      - single_include/**
+      - tests/**
+      - CMakeLists.txt
+  workflow_dispatch:
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  macos-latest:
+    timeout-minutes: 10
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [ Debug, Release ]
+        single_header: ["ON", "OFF"]
+    env:
+      JOBS: 2
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DFK_YAML_BUILD_TEST=ON -DFK_YAML_USE_SINGLE_HEADER=${{matrix.single_header}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} -j ${{env.JOBS}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{matrix.build_type}} --output-on-failure -j ${{env.JOBS}}
+
+  xcode_for_macos13:
+    timeout-minutes: 10
+    runs-on: macos-13
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: [ '14.1', '14.2', '14.3.1', '15.0.1', '15.1', '15.2' ]
+        build_type: [ Debug, Release ]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{matrix.xcode}}.app/Contents/Developer
+      JOBS: 3
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DFK_YAML_BUILD_TEST=ON
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} -j ${{env.JOBS}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{matrix.build_type}} --output-on-failure -j ${{env.JOBS}}
+
+  xcode_for_macos14:
+    timeout-minutes: 10
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        # The macos-14 runner image will contain only Xcode 15.x versions due to support policy changes.
+        # Xcode 16.x versions are tested with the macos-15 runner image.
+        # See https://github.com/actions/runner-images/issues/10703 for more details.
+        xcode: [ '15.0.1', '15.1', '15.2', '15.3', '15.4' ]
+        build_type: [ Debug, Release ]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{matrix.xcode}}.app/Contents/Developer
+      JOBS: 2
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DFK_YAML_BUILD_TEST=ON
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} -j ${{env.JOBS}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{matrix.build_type}} --output-on-failure -j ${{env.JOBS}}
+
+  xcode_for_macos15:
+    timeout-minutes: 10
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        # The macos-14 runner image will contain only Xcode 16.x versions.
+        # See https://github.com/actions/runner-images/issues/10703 for more details.
+        xcode: [ '16', '16.1' ]
+        build_type: [ Debug, Release ]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{matrix.xcode}}.app/Contents/Developer
+      JOBS: 2
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DFK_YAML_BUILD_TEST=ON
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} -j ${{env.JOBS}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{matrix.build_type}} --output-on-failure -j ${{env.JOBS}}
