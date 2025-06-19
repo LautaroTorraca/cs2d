@@ -100,13 +100,12 @@ InGameOrder InGameProtocol::changeAngleHandler(const Request &request) {
 }
 
 InGameOrder InGameProtocol::buyHandler(const Request &request) {
-  const size_t clientId = request.getId();
-  const std::map<std::string, std::vector<char>> message = request.getRequest();
-
-  const uint8_t amount = message.at(ammoAmountKey).front();
-  const uint8_t weapon = message.at(weaponKey).front();
-
-  return InGameOrder(ProtocolConstants::BUY, clientId, amount, weapon);
+    const size_t clientId = request.getId();
+    const std::map<std::string, std::vector<char>> message = request.getRequest();
+    uint16_t amount;
+    std::memcpy(&amount, message.at(amountKey).data(), sizeof(uint16_t));
+    const uint8_t weapon = message.at(weaponKey).front();
+    return InGameOrder(ProtocolConstants::BUY, clientId, amount, weapon);
 }
 
 InGameOrder InGameProtocol::plantBombHandler(const Request &request) {

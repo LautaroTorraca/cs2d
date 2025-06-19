@@ -66,11 +66,13 @@ Request InGameHandler::dropItemRequest() const {
 
 Request InGameHandler::buyRequest() const {
     const uint8_t weapon = reader.u8tReader();
-    const uint8_t amount = reader.u8tReader();
+    const uint16_t amount = reader.u16tReader();
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_BUY));
     message.emplace(weaponKey, std::vector<char>(SINGLE_VALUE, weapon));
-    message.emplace(ammoAmountKey, std::vector<char>(SINGLE_VALUE, amount));
+    std::vector<char> amountData(AMOUNT_VALUE);
+    std::memcpy(amountData.data(), &amount, sizeof(amount));
+    message.emplace(amountKey, amountData);
 
     return Request(userId, message);
 }

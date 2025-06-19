@@ -18,6 +18,7 @@ protected:
     DistanceWeapon( DistanceWeapon&& other) noexcept;
     virtual std::vector<std::shared_ptr<Projectile>> getProjectilesCopy();
     [[nodiscard]] virtual std::vector<ProjectileDTO> getProjectilesInfo() const;
+    double toRadians(double degrees) const;
 
 public:
     void advance(const double &actualTime) override;
