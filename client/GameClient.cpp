@@ -1,5 +1,7 @@
 #include "GameClient.h"
 
+#include <iostream>
+
 #include <bits/types/error_t.h>
 #include <qapplication.h>
 #include <qdialog.h>
@@ -85,7 +87,6 @@ void GameClient::run(int argc, char* argv[]) {
 
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
-
     try {
         dataReceiver.start();
         bool running = true;
@@ -108,6 +109,9 @@ void GameClient::run(int argc, char* argv[]) {
                 frameStart = SDL_GetTicks();
             }
         }
-    } catch (...) {}
+    } catch (...) {
+        std::cout << "catcheo en gameClient\n\n";
+    }
+    dataReceiver.close();
     dataReceiver.join();
 }

@@ -8,11 +8,12 @@
 
 class DataReceiver: public Thread {
 
+    bool running = true;
     Protocol& protocol;
     QueueFixed<Snapshot>& snapshotQueue;
 
 public:
     explicit DataReceiver(Protocol& protocol, QueueFixed<Snapshot>& queue);
-
-    virtual void run() override;
+    void run() override;
+    void close();
 };

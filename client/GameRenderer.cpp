@@ -9,6 +9,7 @@
 #include "SDL2pp/Optional.hh"
 #include "SDL2pp/Texture.hh"
 #include "server/Constants/MapTypeConstants.h"
+// #include "server/GameStatus.h"
 #include "server/WeaponConstants.h"
 
 #include "CoordinateInformation.h"
@@ -21,7 +22,6 @@
 #include "TextureManager.h"
 
 
-// TODO: cambiar todo por offset
 GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId):
         window("CS-Go 2D???", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, RES_WIDTH,
                RES_HEIGTH, 0),
@@ -177,7 +177,11 @@ void GameRenderer::renderFloorWeapon(Texture& sprite, DropInformation wpn) {
 }
 
 void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Coords mouseCoords) {
+
     renderPointer(mouseCoords);
+    // if (gameSnapshot.status == BUY_TIME) {
+    renderSymbol({RES_WIDTH - HUD_NUM_H, RES_HEIGTH - HUD_NUM_H * 4 - 10}, UiSymbol::BUY);
+    // }
 
     // health
     int healthNum1 = player.actualHealthPoints / 100;        // Primer dígito
@@ -208,6 +212,7 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
     lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H - 5},
                             bulletsNum3);
     // TODO: timer de bomba
+
     //  money
     int moneyNum1 = player.actualMoney / 10000;        // Primer dígito
     int moneyNum2 = (player.actualMoney / 1000) % 10;  // Segundo dígito

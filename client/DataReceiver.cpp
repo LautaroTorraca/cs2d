@@ -13,7 +13,7 @@ DataReceiver::DataReceiver(Protocol& protocol, QueueFixed<Snapshot>& queue):
 
 void DataReceiver::run() {
     try {
-        while (true) {
+        while (running) {
             Snapshot snapshot = protocol.receiveSnapshot();
             snapshotQueue.push(snapshot);
             std::cout << "puchie\n";
@@ -21,5 +21,14 @@ void DataReceiver::run() {
     } catch (const ClosedQueue&) {
         std::cout << "queue ded\n";
         snapshotQueue.close();
+    } catch (...) {
+        std::cout << "queue ded and other error\n";
+        snapshotQueue.close();
+        return;
     }
+}
+
+void DataReceiver::close() {
+    running = false;
+    protocol.exit();  //  XXX: esto cierra aca tambien? o solo aca?? idk
 }
