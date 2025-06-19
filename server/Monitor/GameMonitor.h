@@ -14,9 +14,12 @@ class GameMonitor : public Thread {
     std::mutex mutex;
     uint8_t rounds;
     InGameProtocolInterface& protocol;
-public:
-    GameMonitor(GameParser& parser, const uint8_t& rounds, InGameProtocolInterface& protocol) : game(parser, rounds), rounds(rounds), protocol(protocol) {}
+    std::map<Skin, Team> skinToTeamTranslator;
+    std::map<Team, Team> teamToOtherTeamTranslator;
 
+    void changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) const;
+public:
+    GameMonitor(GameParser& parser, const uint8_t& rounds, InGameProtocolInterface& protocol);
     void addPlayer(const size_t &id, const std::string &name, const Team &team, const Skin &skin);
     void move(const size_t& id, const Coordinate& displacement);
     void changeAngle(const size_t& id, const double& angle);
@@ -30,7 +33,6 @@ public:
     void deactivateBomb(const size_t& id);
     GameInfoDTO getInfo();
     void kick(const size_t& id);
-
     void sendPreSnapshot();
     void run() override;
 

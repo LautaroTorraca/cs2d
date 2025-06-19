@@ -27,11 +27,12 @@ class ServerInGame {
     void changeWeapon(const InGameOrder & order);
     void plantBomb(const InGameOrder & order);
     void defuseBomb(const InGameOrder & order);
-    void exit(const InGameOrder & order);
+    void exit(const InGameOrder& order);
 
 public:
     explicit ServerInGame(InGameProtocolInterface& protocol);
     void handle(const std::unique_ptr<Order>& order) const;
     void addNewGame(std::string& gameName, const GameLobbyDTO& gameInfo);
     void leaveGameLobby(const size_t& id);
+    ~ServerInGame();
 };

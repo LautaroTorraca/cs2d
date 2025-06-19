@@ -104,7 +104,7 @@ void GameMap::giveDrops(Inventory &inventory, const Position& position) {
 
 }
 
-void GameMap::place(std::shared_ptr<Drop> &drop, Position &position) {
+void GameMap::place(std::shared_ptr<Drop> &drop, const Position &position) {
     std::vector<Coordinate> area = position.getArea();
     for (auto& point: area) {
         Coordinate coordinate;
@@ -198,6 +198,7 @@ void GameMap::reset(GameParser& parser) {
     this->entities.clear();
     this->weaponsDrops.clear();
     this->countersSpawnPoints.clear();
+    this->dropToCoordinates.clear();
     this->terroristsSpawnPoints.clear();
     this->bombPlantPoints.clear();
     this->explosive.clear();

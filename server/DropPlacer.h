@@ -13,7 +13,7 @@ class DropPlacer {
 public:
     virtual ~DropPlacer() = default;
 
-    virtual void place(std::shared_ptr<Drop>& drop, Position& position) = 0;
+    virtual void place(std::shared_ptr<Drop>& drop, const Position& position) = 0;
     virtual void giveDrops(Inventory &inventory, const Position& position) = 0;
 };
 

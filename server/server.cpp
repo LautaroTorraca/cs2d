@@ -1,5 +1,7 @@
 #include "server.h"
 
+#include "Ui.h"
+
 Server::Server(const std::string& port) :
               protocol(port),
               inGameServer(protocol),
@@ -83,12 +85,14 @@ void Server::setupInGameOrders() {
 }
 
 void Server::run() {
-    while (true) {
+    bool serviceStopped = false;
+    Ui ui(serviceStopped, this->protocol);
+    ui.start();
+    while (!serviceStopped) {
         try {
             std::unique_ptr<Order> order = protocol.getNextOrder();
 
             OrderType type = order->getOrderType();
-            //std::cout << "Server::run, atendiendo order:" << (int)type << std::endl;
 
 
             if (!orderTranslator.contains(type)) {
@@ -103,4 +107,7 @@ void Server::run() {
             break;
         }
     }
+    std::cout << "Server::run. Joineando Ui." << std::endl;
+    ui.join();
+    std::cout << "Server::run. Joineo de Ui terminado." << std::endl;
 }

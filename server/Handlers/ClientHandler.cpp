@@ -4,19 +4,22 @@
 #include <sstream>
 #include <string>
 
+#include <sys/socket.h>
+
 #include "Constants/OpCodesConstans.h"
 
 #include "GameInfoDTO.h"
+#include "liberror.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
-                             Queue<std::shared_ptr<Request>>& requestQueue):
+                             Queue<std::shared_ptr<Request>>& requestQueue, DisconnectableProtocol& disconnectable):
         userSocket(std::move(socket)),
         id(clientId),
         requestsQueue(requestQueue),
         lobbyHandler(userSocket, clientId),
         gameLobbyHandler(userSocket, clientId),
         inGameHandler(userSocket, clientId),
-        sender(this->userSocket) {
+        sender(this->userSocket), disconnectable(disconnectable) {
 
     registerOpcodes();
 }
@@ -72,7 +75,7 @@ void ClientHandler::run() {
             Request request = this->opcodeDispatcher.at(opCode)();
 
             this->requestsQueue.push(std::make_shared<Request>(std::move(request)));
-        } catch (std::exception& e) {
+        } catch (LibError& e) {
             std::cout << "Client disconnected. error: " << e.what() << std::endl;
             this->stop();
         }
@@ -97,6 +100,8 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
         this->sender.send(drop);
     }
     this->sender.send(STOP);
+    this->sender.send(gameInfo.getElapsedTime());
+    this->sender.send(gameInfo.getRounds());
 }
 
 void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
@@ -104,7 +109,7 @@ void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
     this->sender.send(preSnapshot.map);
 }
 
-void ClientHandler::stopService() { this->userSocket.close(); }
+void ClientHandler::stopService() { this->userSocket.shutdown(SHUT_RDWR); }
 
 void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
     std::stringstream gamesListStream;
@@ -112,9 +117,7 @@ void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
         gamesListStream << game << "\n";
     }
     std::string gamesListString = gamesListStream.str();
-    uint16_t size = gamesListString.size();
-    this->userSocket.sendall(&size, sizeof(size));
-    this->userSocket.sendall(gamesList.data(), gamesList.size());
+    this->sender.send(gamesListString);
 }
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {

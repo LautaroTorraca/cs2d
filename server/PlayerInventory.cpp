@@ -23,8 +23,17 @@ void PlayerInventory::erase(const uint8_t &index) {
     this->weaponSetter.erase(index);
 }
 
-void PlayerInventory::reset() {
+std::vector<uint8_t> PlayerInventory::getIndexes() {
+    std::vector<uint8_t> indexes;
     for (const auto &index: this->weaponSetter | std::views::keys) {
+        indexes.push_back(index);
+    }
+    return indexes;
+}
+
+void PlayerInventory::reset() {
+    std::vector<uint8_t> indexes = this->getIndexes();
+    for (const auto &index : indexes) {
         if (index > GLOCK_INDEX) {
             this->drop(index);
         }
@@ -44,7 +53,8 @@ PlayerInventory::PlayerInventory(const GameParser &gameParser, DropPlacer& weapo
     double glockCadence = gameParser.getWeaponInfo(WeaponType::GLOCK, CADENCE_KEY);
     double glockSpeed = gameParser.getWeaponInfo(WeaponType::GLOCK, SPEED_KEY);
     double glockBulletsPerShot = gameParser.getWeaponInfo(WeaponType::GLOCK, BULLETS_PER_SHOT_KEY);
-    this->weaponSetter.emplace(GLOCK_INDEX, std::make_shared<Glock>(glockDamagePerBullet, glockPrecision, glockRange, glockCadence, glockSpeed, glockBulletsPerShot));
+    double maxBullets =  gameParser.getWeaponInfo(WeaponType::AK47, MAX_BULLETS_KEY);
+    this->weaponSetter.emplace(GLOCK_INDEX, std::make_shared<Glock>(glockDamagePerBullet, glockPrecision, glockRange, glockCadence, glockSpeed, glockBulletsPerShot, maxBullets));
 
     this->weaponSetter.at(KNIFE_INDEX)->set(this->owner);
     this->weaponSetter.at(GLOCK_INDEX)->set(this->owner);
@@ -89,6 +99,9 @@ void PlayerInventory::addBanned(const uint8_t &index) {
 
 void PlayerInventory::setOwner(const std::shared_ptr<Owner> &owner) {
     this->owner = owner;
+    for (auto& weapon : this->weaponSetter | std::ranges::views::values) {
+        weapon->set(owner);
+    }
 }
 
 std::vector<uint8_t> PlayerInventory::getKeysCopy() {

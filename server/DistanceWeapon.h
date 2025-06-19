@@ -7,7 +7,8 @@
 #include "GenericWeapon.h"
 #include "Projectile.h"
 #include "Weapon.h"
-
+#define ANGLE_BIAS 270
+#define PI_TO_GRADES 180
 
 class DistanceWeapon : public GenericWeapon {
 protected:

@@ -16,6 +16,7 @@
 #define CADENCE_KEY "cadence"
 #define SPEED_KEY "speed"
 #define BULLETS_PER_SHOT_KEY "bulletsPerShot"
+#define MAX_BULLETS_KEY "maxBullets"
 
 class WeaponInformer {
 public:

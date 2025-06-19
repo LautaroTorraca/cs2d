@@ -21,14 +21,16 @@ public:
         const double& weaponRange,
         const double& weaponCadence,
         const double& weaponSpeed,
-        const int& weaponBulletsPerShot) : Product(cost),
+        const int& weaponBulletsPerShot,
+        const uint16_t& maxBullets) : Product(cost),
     RechargeableWeapon(INITIAL_AMMO,
         weaponDamagePerBullet,
         weaponPrecision,
         weaponRange,
         weaponCadence,
         weaponSpeed,
-        weaponBulletsPerShot) {}
+        weaponBulletsPerShot,
+        maxBullets) {}
     PrimaryWeapon(PrimaryWeapon &&other) noexcept :
     Product(std::move(other)),
     RechargeableWeapon(std::move(other)) {}

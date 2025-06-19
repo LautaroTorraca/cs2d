@@ -23,6 +23,7 @@ public:
     [[nodiscard]] std::vector<Coordinate> getCountersSpawnPoints() const;
     [[nodiscard]] std::vector<Coordinate> getTerroristsSpawnPoints() const;
     [[nodiscard]] std::vector<Coordinate> getBombPlantPoints() const;
+    std::map<Position, std::shared_ptr<Drop>> getDrops() const;
     std::map<ProductType, std::unique_ptr<Factory>> getShopFactories();
     double getGameInfo(const std::string& key) const;
     double getPlayerInfo(const std::string& key) const;

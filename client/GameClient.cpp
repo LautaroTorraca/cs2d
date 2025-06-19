@@ -49,7 +49,7 @@ void GameClient::run(int argc, char* argv[]) {
                 } else {
                     std::cout << "fallo xd\n";
                 }
-                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::GERMAN_GSG9);
+                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::PHOENIX);
                 protocol.ready(playerChoices);
                 GameLobbyDTO gameLobby = protocol.getGameLobby();
                 while (gameLobby.status != READY_STATUS) {

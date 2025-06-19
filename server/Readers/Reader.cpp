@@ -113,7 +113,6 @@ PlayerInformation Reader::readPlayer() const {
     size_t id = this->readSizeT();
     std::string playerName = this->stringReader();
     double angle = this->doubleRead();
-    // std::cout << "Player name: " << playerName << " angle: " << angle << std::endl;
     CoordinateInformation position = this->readCoordinateInformation();
     uint8_t health = this->u8tReader();
     uint16_t money = this->u16tReader();
@@ -150,6 +149,8 @@ Snapshot Reader::readSnapShot() const {
         DropInformation dropInfo = this->readDrop();
         drops.push_back(dropInfo);
     }
+    double actualTime = this->doubleRead();
+    uint8_t totalRounds = this->u8tReader();
     return Snapshot(status, currentRound, countersWinsRounds, terroristsWinsRounds, playersInfo,
-                    drops, bombPosition);
+                    drops, bombPosition, actualTime, totalRounds);
 }

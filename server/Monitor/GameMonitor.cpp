@@ -7,6 +7,23 @@
 #include "common/Constants/SnapshotConstants.h"
 
 #define TIME_ADVANCE_IN_SECONDS 0.01
+#define SKIN_BIAS 16
+
+GameMonitor::GameMonitor(GameParser& parser, const uint8_t& rounds, InGameProtocolInterface& protocol) : game(parser, rounds), rounds(rounds), protocol(protocol) {
+    this->skinToTeamTranslator.emplace(Skin::PHOENIX, Team::TERRORISTS);
+    this->skinToTeamTranslator.emplace(Skin::L337_KREW, Team::TERRORISTS);
+    this->skinToTeamTranslator.emplace(Skin::ARCTIC_AVENGER, Team::TERRORISTS);
+    this->skinToTeamTranslator.emplace(Skin::GUERRILLA, Team::TERRORISTS);
+
+
+    this->skinToTeamTranslator.emplace(Skin::SEAL_FORCE, Team::COUNTER_TERRORISTS);
+    this->skinToTeamTranslator.emplace(Skin::GERMAN_GSG9, Team::COUNTER_TERRORISTS);
+    this->skinToTeamTranslator.emplace(Skin::UK_SAS, Team::COUNTER_TERRORISTS);
+    this->skinToTeamTranslator.emplace(Skin::FRENCH_GIGN, Team::COUNTER_TERRORISTS);
+
+    this->teamToOtherTeamTranslator.emplace(Team::TERRORISTS, Team::COUNTER_TERRORISTS);
+    this->teamToOtherTeamTranslator.emplace(Team::COUNTER_TERRORISTS, Team::TERRORISTS);
+}
 
 void GameMonitor::addPlayer(const size_t &id, const std::string &name, const Team &team, const Skin &skin) {
     std::lock_guard<std::mutex> lock(this->mutex);
@@ -21,12 +38,13 @@ void GameMonitor::move(const size_t &id, const Coordinate &displacement) {
 
 void GameMonitor::changeAngle(const size_t &id, const double& angle) {
     std::lock_guard<std::mutex> lock(this->mutex);
-    std::cout << "GameMonitor::changeAngle, Entre changeAngle, id:" << id << " angle: " << angle << std::endl;
+    //std::cout << "GameMonitor::changeAngle, Entre changeAngle, id:" << id << " angle: " << angle << std::endl;
     this->game.changeAngle(id, angle);
 }
 
 void GameMonitor::setWeapon(const size_t &id, const uint8_t &index) {
     std::lock_guard<std::mutex> lock(this->mutex);
+    //std::cout << "GameMonitor::setWeapon. El slot recibido es: " << index << std::endl;
     this->game.setWeapon(id, index);
 }
 
@@ -52,7 +70,6 @@ void GameMonitor::takeDrop(const size_t &id) {
 
 void GameMonitor::attack(const size_t &id) {
     std::lock_guard<std::mutex> lock(this->mutex);
-    std::cout << "GameMonitor::attack, estoy atacando, id: "<< (int) id << std::endl;
     this->game.attack(id);
 }
 
@@ -86,6 +103,16 @@ void GameMonitor::sendPreSnapshot() {
     }
 }
 
+
+void GameMonitor::changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) const {
+    for (auto& player : playersInfo ) {
+        Team newTeam = this->teamToOtherTeamTranslator.at(this->skinToTeamTranslator.at(player.getSkin()));
+        uint8_t skinId = player.getSkin() < SKIN_BIAS ? player.getSkin() + SKIN_BIAS : player.getSkin() - SKIN_BIAS;
+        Skin newSkin = static_cast<Skin>(skinId);
+        this->game.addPlayer(player.getId(), player.getName(), newTeam, newSkin);
+    }
+}
+
 void GameMonitor::run() {
     this->sendPreSnapshot();
     double time = 0;
@@ -98,17 +125,22 @@ void GameMonitor::run() {
     movements.at(1).push_back(272);
     movements.at(1).push_back(112);
     /*--------------------------------------------------------*/
-    while (this->should_keep_running()) {
+    GameInfoDTO gameInfo = game.getInfo();
+    while (this->should_keep_running() && gameInfo.getCurrentRound() < gameInfo.getRounds()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         std::lock_guard lock(this->mutex);
         game.advance(time);
         time += TIME_ADVANCE_IN_SECONDS;
-        GameInfoDTO gameInfo = game.getInfo();
+        gameInfo = game.getInfo();
+
         /*----------------------------------------------------Para debbug-----------------------------------------------------------------------------------------------*/
         for (auto& player : gameInfo.getPlayersInfo() ) {
             if (movements.at(player.getId()).at(0) != player.getCoordinate().getX() ||
                 movements.at(player.getId()).at(1) != player.getCoordinate().getY()) {
-                std::cout << "id: " <<player.getId() << ", name: " << player.getName() << "(" << player.getCoordinate().getX() << ", " << player.getCoordinate().getY() << "), angulo:" << player.getAngle() << std::endl;
+                std::cout << "id: " <<player.getId() << ", name: " << player.getName() << "(" <<
+                    player.getCoordinate().getX() << ", " <<
+                        player.getCoordinate().getY() << "), angulo:" << player.getAngle()
+                << ", weapon: " << (int)player.getActualWeapon().getWeaponType() << std::endl;
                 movements.at(player.getId()).clear();
                 movements.at(player.getId()).push_back(player.getCoordinate().getX());
                 movements.at(player.getId()).push_back(player.getCoordinate().getY());
@@ -117,8 +149,13 @@ void GameMonitor::run() {
         /*-------------------------------------------------------------------------------------------------------------------------------------------------------------*/
         if (gameInfo.getStatus() == TERRORISTS_WIN || gameInfo.getStatus() == COUNTERS_WIN) {
             time = 0;
+            if (gameInfo.getCurrentRound() == gameInfo.getRounds() / 2) {
+                this->game.clearPlayers();
+                this->changeTeam(gameInfo.getPlayersInfo());
+            }
             game.nextRound(time);
         }
         this->protocol.sendSnapshot(gameInfo);
     }
+
 }

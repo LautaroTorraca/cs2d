@@ -3,7 +3,10 @@
 //
 
 #include "Game.h"
+
+#include <iostream>
 #include <ranges>
+
 #include "Bomb.h"
 
 void Game::addCounter(const size_t &id, const std::string &name, const Skin& skin) {
@@ -26,13 +29,17 @@ void Game::addTerrorist(const size_t &id, const std::string &name, const Skin& s
 Game::Game(GameParser& parser, const uint8_t& rounds):
             terrorists(*this), counters(*this),
             gameParser(std::move(parser)), gameMap(gameParser),
-            rounds(rounds), currentRound(1), terroristsWinsRounds(0),
+            rounds(rounds), currentRound(INITIAL_ROUND_COUNT), terroristsWinsRounds(0),
             countersWinsRounds(0), bombPlanted(false), status(BUY_TIME),
-            timeUntilStart(this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY)) {
+            timeUntilStart(this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY)),
+            actualTime(0) {
     this->teamAdder.emplace(Team::COUNTER_TERRORISTS, [&] (const size_t& id, const std::string& name, const Skin& skin){this->addCounter(id, name, skin);});
     this->teamAdder.emplace(Team::TERRORISTS, [&] (const size_t& id, const std::string& name, const Skin& skin){this->addTerrorist(id, name, skin);});
     for ( auto& [type, factory] : this->gameParser.getShopFactories() ) {
         this->shop.add(type, factory);
+    }
+    for (auto&[position, drop] : parser.getDrops()) {
+        this->gameMap.place(drop, position);
     }
 }
 
@@ -95,6 +102,7 @@ void Game::attack(const size_t &id) {
 }
 
 void Game::advance(const double &actualTime) {
+    this->actualTime = actualTime;
     if (this->status == BUY_TIME && actualTime >= this->timeUntilStart) this->status = ON_GOING;
     for (auto &player: this->players | std::views::values) {
         player->advance(actualTime);
@@ -107,7 +115,6 @@ void Game::advance(const double &actualTime) {
 }
 
 void Game::spawnBomb() {
-    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     double activationDuration = this->gameParser.getWeaponInfo(WeaponType::BOMB, BOMB_ACTIVATION_TIME_KEY);
     double deactivationDuration = this->gameParser.getWeaponInfo(WeaponType::BOMB, BOMB_DEACTIVATION_TIME_KEY);
     std::shared_ptr<Weapon> bomb = std::make_shared<Bomb>(*this, activationDuration, deactivationDuration);
@@ -119,7 +126,6 @@ void Game::deactivateBomb(const size_t& id) {
     this->counters.deactivate(id, this->gameMap);
 }
 
-
 void Game::nextRound(const double& actualTime) {
     this->gameMap.reset(this->gameParser);
     this->counters.reset(this->gameMap);
@@ -128,6 +134,7 @@ void Game::nextRound(const double& actualTime) {
     this->timeUntilStart = actualTime + this->gameParser.getGameInfo(BUY_TIME_DURATION_KEY);
     this->status = BUY_TIME;
     this->currentRound++;
+    this->spawnBomb();
 }
 
 void Game::restart() {
@@ -149,15 +156,24 @@ void Game::kick(const size_t& id) {
         this->players.erase(id);
     }
 }
+void Game::clearPlayers() {
+    this->players.clear();
+    this->terrorists.clear();
+    this->counters.clear();
+    this->terroristsWinsRounds = 0;
+    this->countersWinsRounds = 0;
+}
 
 void Game::terroristsWins() {
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
+    this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
     this->status = TERRORISTS_WIN;
     this->terroristsWinsRounds++;
 }
 
 void Game::countersWins() {
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
+    this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
     status = COUNTERS_WIN;
     this->countersWinsRounds++;
 }
@@ -189,5 +205,5 @@ GameInfoDTO Game::getInfo() {
     std::vector<PlayerInfoDTO> playersInfo = this->getPlayersInfo();
     std::vector<DropDTO> dropsInfo = this->getDrops();
     CoordinateDTO plantedBombPosition = this->gameMap.getExplosivePosition();
-    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition);
+    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition, this->actualTime, this->rounds);
 }

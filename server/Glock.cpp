@@ -9,7 +9,8 @@
 void Glock::attack(Positionable &positionable, const Position &actualPosition, const double &angle) {
     if (this->weaponCadence == 0 || this->actualTime - this->lastShotTime < 1/this->weaponCadence) return;
     if (this->ammo == 0) return;
-    Coordinate direction(std::cos(angle), -std::sin(angle));
+    double radianAngle = ((angle + ANGLE_BIAS)*M_PI/PI_TO_GRADES);
+    Coordinate direction(std::cos(radianAngle), std::sin(radianAngle));
     for (int i = 0; i < this->weaponBulletsPerShot; i++) {
         projectiles.emplace_back(std::make_shared<Projectile>(positionable, actualPosition, direction, weaponRange, weaponPrecision, weaponSpeed, weaponDamagePerBullet));
     }

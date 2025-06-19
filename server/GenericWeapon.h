@@ -11,7 +11,7 @@ class GenericWeapon : public Weapon {
 protected:
     std::shared_ptr<Owner> owner;
 public:
-void set(std::shared_ptr<Owner> &owner) override;
+void set(const std::shared_ptr<Owner>& owner) override;
 };
 
 

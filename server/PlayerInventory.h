@@ -24,6 +24,7 @@ protected:
     std::vector<uint8_t> bannedObjects;
     std::shared_ptr<Owner> owner;
     std::vector<uint8_t> getKeysCopy();
+    std::vector<uint8_t> getIndexes();
 public:
     std::vector<WeaponInfoDTO> getWeaponsInfo();
     PlayerInventory(const GameParser& gameParser, DropPlacer& weaponPlacer, Position& position, std::shared_ptr<Weapon>& weaponInHands);
