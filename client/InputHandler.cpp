@@ -43,6 +43,9 @@ bool InputHandler::processEvent(SDL_Event event) {
             case SDLK_4:
                 protocol.changeWeapon(3);
                 break;
+            case SDLK_f:
+                protocol.defuseBomb();
+                break;
             case SDLK_ESCAPE:
                 protocol.exit();
         }

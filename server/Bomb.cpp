@@ -51,7 +51,8 @@ void Bomb::activate() {
     this->finalizable.bombHasBeenPlanted();
     this->activationStartTime = this->actualTime;
 }
-void Bomb::plant(const double& actualTime) {
+void Bomb::continueActivation(const double& actualTime) {
+    if (this->activationStartTime == 0) this->activationStartTime = actualTime;
     this->advance(actualTime);
 }
 

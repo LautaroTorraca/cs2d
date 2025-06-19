@@ -10,7 +10,7 @@ public:
     virtual ~Explosive() = default;
     virtual void deactivate() = 0;
     virtual void activate() = 0;
-    virtual void plant(const double& actualTime) = 0;
+    virtual void continueActivation(const double& actualTime) = 0;
 };
 
 #endif //EXPLOSIVE_H
