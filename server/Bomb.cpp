@@ -11,7 +11,9 @@ Bomb::Bomb(Bomb && bomb) noexcept : finalizable(bomb.finalizable) {
 }
 
 void Bomb::attack(Positionable & positionable, const Position & position, const double &) {
-    std::shared_ptr<Explosive> explosive(this, [](Explosive*){});
+    std::shared_ptr<Bomb> bombClone = std::make_shared<Bomb>(this->finalizable, this->activationDuration, this->deactivationDuration);
+    bombClone->set(this->owner);
+    std::shared_ptr<Explosive> explosive = bombClone;
     positionable.plant(explosive, position);
 }
 
@@ -48,6 +50,9 @@ void Bomb::activate() {
     this->owner->release(BOMB_INDEX);
     this->finalizable.bombHasBeenPlanted();
     this->activationStartTime = this->actualTime;
+}
+void Bomb::plant(const double& actualTime) {
+    this->advance(actualTime);
 }
 
 WeaponInfoDTO Bomb::getInfo() {

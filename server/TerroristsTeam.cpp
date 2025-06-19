@@ -12,6 +12,7 @@ void TerroristsTeam::add(const size_t &id, std::shared_ptr<TerroristPlayer> &ter
 }
 
 void TerroristsTeam::spawnBomb(std::shared_ptr<Weapon>& bomb) {
+    if (this->terrorists.empty()) return;
     Randomizator randomizer;
     int selectedIndex = randomizer.getRandom(this->terrorists.size() - 1);
     auto selectedPlayer = std::next(this->terrorists.begin(), selectedIndex)->second;

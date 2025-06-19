@@ -85,10 +85,9 @@ void Server::setupInGameOrders() {
 }
 
 void Server::run() {
-    bool serviceStopped = false;
-    Ui ui(serviceStopped, this->protocol);
+    Ui ui( this->protocol);
     ui.start();
-    while (!serviceStopped) {
+    while (true) {
         try {
             std::unique_ptr<Order> order = protocol.getNextOrder();
 
@@ -103,11 +102,9 @@ void Server::run() {
             orderTranslator.at(type)(order);
         } catch (std::exception& e) {
             // TODO FIX
-            std::cout << "Main server error: " << e.what() << std::endl;
+            std::cout << "Main server: " << e.what() << std::endl;
             break;
         }
     }
-    std::cout << "Server::run. Joineando Ui." << std::endl;
     ui.join();
-    std::cout << "Server::run. Joineo de Ui terminado." << std::endl;
 }

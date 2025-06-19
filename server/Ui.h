@@ -9,11 +9,10 @@
 
 
 class Ui : public Thread {
-    bool& serviceStopped;
     Protocol& protocol;
     public:
-    explicit Ui(bool& serviceStopped, Protocol& protocol) :
-    serviceStopped(serviceStopped), protocol(protocol) {}
+    explicit Ui(Protocol& protocol) :
+    protocol(protocol) {}
     void run() override;
 
 };

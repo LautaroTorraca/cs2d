@@ -56,7 +56,6 @@ InGameOrder InGameProtocol::movementHandler(const Request &request) {
 
   uint16_t direction;
   std::memcpy(&direction, message.at(directionKey).data(), sizeof(uint16_t));
-    std::cout << "InGameProtocol::movementHandler, id: " << clientId << "direction: " << direction << std::endl;
   return InGameOrder(ProtocolConstants::PLAYER_MOVEMENT, clientId, direction);
 }
 

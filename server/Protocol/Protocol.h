@@ -37,6 +37,7 @@ protected:
   std::map<uint8_t, std::function<std::unique_ptr<Order>(const Request &)>>
       requestMapper;
   Queue<std::shared_ptr<Request>> requestsQueue;
+    bool ended;
 
   void setupLobbyHandlers();
   void setupGameLobbyHandlers();
@@ -63,7 +64,6 @@ public:
   void sendPreSnapshot(const PreSnapshot &preSnapshot) override;
 
   void end();
-    void stopService();
   ~Protocol() override;
 };
 

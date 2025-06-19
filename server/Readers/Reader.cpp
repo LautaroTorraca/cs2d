@@ -19,7 +19,7 @@ Reader::Reader(Socket& socket): socket(socket) {}
 
 void Reader::bytesChecker(const int& bytesRead) const {
     if (bytesRead == 0) {
-        throw std::runtime_error("Connection closed");  // TODO HACERLO mas FANCY (socket cerrado)
+        throw std::runtime_error("Reader Connection closed");  // TODO HACERLO mas FANCY (socket cerrado)
     }
 }
 

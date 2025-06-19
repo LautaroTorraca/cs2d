@@ -13,6 +13,7 @@
 #include "DTO/LobbyConnectionDTO.h"
 #include "Sender/Sender.h"
 
+#include "ClientStatus.h"
 #include "GameInfoDTO.h"
 #include "GameLobbyHandler.h"
 #include "InGameHandler.h"
@@ -28,15 +29,17 @@ class ClientHandler final : public Thread {
     InGameHandler inGameHandler;
     Sender sender;
     std::unordered_map<uint8_t, std::function<Request()>> opcodeDispatcher;
-    DisconnectableProtocol& disconnectable;
+    ClientStatus status;
+    std::map<ClientStatus, std::function<void()>> disconnectionFetcher;
 
-  void registerOpcodes();
+    void registerOpcodes();
+    void setDisconnectionFetcher();
 
 public:
-  ClientHandler(Socket& socket, const size_t &clientId,
-                Queue<std::shared_ptr<Request>> &requestQueue, DisconnectableProtocol& disconnectable);
+  ClientHandler(Socket& socket, const size_t& clientId,
+                  Queue<std::shared_ptr<Request>>& requestQueue);
 
-  void run() override;
+    void run() override;
 
   ~ClientHandler() override;
 

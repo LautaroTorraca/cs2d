@@ -31,7 +31,8 @@ option(TALLER_EDITOR "Enable / disable editor program." ON)
 option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." ON)
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
-add_library(taller_common STATIC)
+add_library(taller_common STATIC
+        server/Handlers/ClientStatus.h)
 add_subdirectory(common/)
 
 include(cmake/CompilerWarnings.cmake)

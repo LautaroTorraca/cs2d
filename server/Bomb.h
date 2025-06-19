@@ -38,6 +38,7 @@ public:
     void advance(const double &actualTime) override;
     void deactivate() override;
     void activate() override;
+    void plant(const double& actualTime) override;
     WeaponInfoDTO getInfo() override;
 };
 

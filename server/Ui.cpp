@@ -9,12 +9,8 @@ void Ui::run() {
     while (command != EXIT_COMMAND) {
         std::cin >> command;
     }
-
-    this->serviceStopped = true;
-    std::cout << "Ui::run. serviceStopped." << std::endl;
     try {
-        this->protocol.stopService();
+        this->protocol.end();
     } catch (ClosedQueue&) {
-        std::cerr << "Ui: >><< Closed queue" << std::endl;
     }
 }

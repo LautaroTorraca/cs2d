@@ -23,7 +23,6 @@ void Game::addTerrorist(const size_t &id, const std::string &name, const Skin& s
     this->players.emplace(id, terrorist);
     std::shared_ptr<Entity> entity = terrorist;
     this->gameMap.spawnTerrorist(entity);
-
 }
 
 Game::Game(GameParser& parser, const uint8_t& rounds):
