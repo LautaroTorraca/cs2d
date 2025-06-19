@@ -3,7 +3,7 @@
 #include <QString>
 #include <map>
 #include <cstdint>
-#include "login/mocks/SkinMock.h"
+#include "server/Skin.h"
 
 class SkinMapper {
 public:

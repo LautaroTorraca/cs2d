@@ -3,7 +3,7 @@
 #include <QString>
 #include <map>
 #include <cstdint>
-#include "mocks/MapTypeMock.h"
+#include "server/Constants/MapTypeConstants.h"
 
 class MapMapper {
 public:

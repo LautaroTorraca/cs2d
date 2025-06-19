@@ -1,4 +1,5 @@
 #include "CreateGameDialog.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -6,11 +7,14 @@
 #include <QPushButton>
 #include <QMessageBox>
 
-CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent) {
+CreateGameDialog::CreateGameDialog(QWidget* parent) : QDialog(parent) {
     setWindowTitle("Create Game");
     setModal(true);
     resize(480, 300);
+    setupUI();
+}
 
+void CreateGameDialog::setupUI() {
     setStyleSheet(R"(
         QWidget {
             background-color: #121212;
@@ -55,17 +59,17 @@ CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent) {
         }
     )");
 
-    auto *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(15);
     mainLayout->setContentsMargins(30, 30, 30, 30);
 
-    auto *playerLabel = new QLabel("Number of Players:");
+    QLabel* playerLabel = new QLabel("Number of Players:");
     playerSpinBox = new QSpinBox();
     playerSpinBox->setMinimum(2);
     playerSpinBox->setMaximum(10);
     playerSpinBox->setValue(4);
 
-    auto *roundsLabel = new QLabel("Number of Rounds:");
+    QLabel* roundsLabel = new QLabel("Number of Rounds:");
     roundsSpinBox = new QSpinBox();
     roundsSpinBox->setMinimum(0);
     roundsSpinBox->setMaximum(50);
@@ -84,16 +88,21 @@ CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent) {
     connect(confirmButton, &QPushButton::clicked, this, &CreateGameDialog::handleConfirm);
 }
 
+bool CreateGameDialog::isValidRound(int rounds) const {
+    return rounds % 2 == 0;
+}
+
 void CreateGameDialog::handleConfirm() {
     int rounds = roundsSpinBox->value();
 
-    if (rounds < 0 || rounds > 50 || rounds % 2 != 0) {
+    if (!isValidRound(rounds)) {
         QMessageBox::warning(this, "Invalid Input", "Please enter an even number between 0 and 50.");
         return;
     }
 
-    config.playerCount = playerSpinBox->value();
-    config.rounds = rounds;
+    config.playerCount = static_cast<uint8_t>(playerSpinBox->value());
+    config.rounds = static_cast<uint8_t>(rounds);
+
     accept();
 }
 

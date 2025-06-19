@@ -2,12 +2,19 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-GameNameDialog::GameNameDialog(QWidget* parent)
+GameNameDialog::GameNameDialog(QWidget* parent,
+                               const QString& labelText,
+                               const QString& confirmText)
         : QDialog(parent) {
-    setWindowTitle("Enter Game Name");
-    resize(400, 180);
     setModal(true);
+    resize(400, 180);
+    setWindowTitle("Game Name");
 
+    setupStyle();
+    setupUI(labelText, confirmText);
+}
+
+void GameNameDialog::setupStyle() {
     setStyleSheet(R"(
         QWidget {
             background-color: #1e1e1e;
@@ -43,16 +50,18 @@ GameNameDialog::GameNameDialog(QWidget* parent)
             background-color: #005f99;
         }
     )");
+}
 
-    auto* layout = new QVBoxLayout(this);
+void GameNameDialog::setupUI(const QString& labelText, const QString& confirmText) {
+    QVBoxLayout* layout = new QVBoxLayout(this);
 
-    auto* label = new QLabel("Please enter the name of the game you want to join:");
+    QLabel* label = new QLabel(labelText);
     layout->addWidget(label);
 
     input = new QLineEdit(this);
     layout->addWidget(input);
 
-    auto* confirmBtn = new QPushButton("Join");
+    QPushButton* confirmBtn = new QPushButton(confirmText);
     layout->addWidget(confirmBtn, 0, Qt::AlignRight);
 
     connect(confirmBtn, &QPushButton::clicked, this, &QDialog::accept);

@@ -3,12 +3,15 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-TeamSelectionDialog::TeamSelectionDialog(QWidget *parent)
+TeamSelectionDialog::TeamSelectionDialog(QWidget* parent)
         : QDialog(parent), selectedTeam("") {
     setWindowTitle("Choose Your Team");
     setModal(true);
     resize(380, 240);
+    setupUI();
+}
 
+void TeamSelectionDialog::setupUI() {
     setStyleSheet(R"(
         QWidget {
             background-color: #121212;
@@ -45,15 +48,15 @@ TeamSelectionDialog::TeamSelectionDialog(QWidget *parent)
         }
     )");
 
-    auto *layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignCenter);
 
-    auto *label = new QLabel("Select your team:");
+    QLabel* label = new QLabel("Select your team:");
     label->setAlignment(Qt::AlignCenter);
     layout->addWidget(label);
 
-    auto *ctButton = new QPushButton("🛡 Counter-Terrorists");
-    auto *ttButton = new QPushButton("💣 Terrorists");
+    QPushButton* ctButton = new QPushButton("🛡 Counter-Terrorists");
+    QPushButton* ttButton = new QPushButton("💣 Terrorists");
 
     layout->addWidget(ctButton);
     layout->addWidget(ttButton);

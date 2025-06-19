@@ -1,9 +1,8 @@
 #include <QLabel>
 #include "MapSelectionDialog.h"
-#include "../mocks/MapTypeMock.h"
-
+#include "server/Constants/MapTypeConstants.h"
 MapSelectionDialog::MapSelectionDialog(QWidget* parent)
-        : QDialog(parent), selectedMap(MapConstants::DUST) {
+        : QDialog(parent), selectedMap(static_cast<uint8_t>(MapType::DUST)) {
     setWindowTitle("Select Map");
     setModal(true);
     resize(480, 240);
