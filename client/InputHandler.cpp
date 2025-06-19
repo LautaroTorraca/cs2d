@@ -43,6 +43,9 @@ bool InputHandler::processEvent(SDL_Event event) {
             case SDLK_4:
                 protocol.changeWeapon(3);
                 break;
+            case SDLK_e:
+                protocol.pickUp();
+                break;
             case SDLK_f:
                 protocol.defuseBomb();
                 break;
@@ -54,6 +57,12 @@ bool InputHandler::processEvent(SDL_Event event) {
                 break;
             case SDLK_l:
                 protocol.buy({ProductTypes::AWP_WEAPON, 1});
+                break;
+            case SDLK_COMMA:
+                protocol.buy({ProductTypes::PRIMARY_AMMO, 5});
+                break;
+            case SDLK_PERIOD:
+                protocol.buy({ProductTypes::SECONDARY_AMMO, 5});
                 break;
             case SDLK_ESCAPE:
                 protocol.exit();
