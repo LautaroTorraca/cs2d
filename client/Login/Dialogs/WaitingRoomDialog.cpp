@@ -150,7 +150,8 @@ void WaitingRoomDialog::pollLobby() {
 
                 QMetaObject::invokeMethod(this, [this]() {
                     this->accept();
-
+                    GameClient gameClient(this->protocol);
+                    gameClient.run();
 
                 }, Qt::QueuedConnection);
                 return;

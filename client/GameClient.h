@@ -11,11 +11,11 @@ constexpr std::string HOSTNAME = "127.0.0.1";
 
 class GameClient {
     bool running;
-    Protocol protocol;
+    Protocol& protocol;
     InputHandler inputHandler;
     // GameRenderer gameRenderer;
 
 public:
-    GameClient(char* port);
-    void run(int argc, char* argv[]);
+    GameClient(Protocol& protocol);
+    void run();
 };
