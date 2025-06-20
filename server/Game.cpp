@@ -23,7 +23,6 @@ void Game::addTerrorist(const size_t &id, const std::string &name, const Skin& s
     this->players.emplace(id, terrorist);
     std::shared_ptr<Entity> entity = terrorist;
     this->gameMap.spawnTerrorist(entity);
-
 }
 
 Game::Game(GameParser& parser, const uint8_t& rounds):
@@ -58,13 +57,11 @@ void Game::move(const size_t& id, const Coordinate& displacement) {
 }
 
 void Game::changeAngle(const size_t &id, const double& angle) {
-    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     if ( !this->players.contains(id) ) return; //TODO: Ver si conviente que estas cosas tiren una excepcion en su lugar
     this->players.at(id)->changeAngle(angle);
 }
 
 void Game::setWeapon(const size_t &id, const uint8_t &index) {
-    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     if ( !this->players.contains(id) ) return;
     this->players.at(id)->setWeapon(index);
 }
@@ -97,7 +94,7 @@ void Game::takeDrop(const size_t &id) {
 }
 
 void Game::attack(const size_t &id) {
-    if ( !this->players.contains(id) ) return;
+    if (!this->players.contains(id) || this->status == BUY_TIME) return;
     this->players.at(id)->attack(this->gameMap);
 }
 

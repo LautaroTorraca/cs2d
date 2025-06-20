@@ -4,6 +4,8 @@
 
 #include "DistanceWeapon.h"
 
+#include <math.h>
+
 DistanceWeapon::DistanceWeapon(DistanceWeapon &&other) noexcept : actualTime(other.actualTime), projectiles(std::move(other.projectiles)) {
     if (this != &other) {
         other.actualTime = 0;
@@ -21,10 +23,13 @@ std::vector<std::shared_ptr<Projectile>> DistanceWeapon::getProjectilesCopy() {
 
 std::vector<ProjectileDTO> DistanceWeapon::getProjectilesInfo() const {
     std::vector<ProjectileDTO> projectilesInfo;
-    for (auto& projectile : this->projectiles) {
+    for (auto& projectile: this->projectiles) {
         projectilesInfo.emplace_back(projectile->getInfo());
     }
     return projectilesInfo;
+}
+double DistanceWeapon::toRadians(double degrees) const {
+    return  degrees*M_PI/PI_TO_GRADES;
 }
 
 void DistanceWeapon::advance(const double &actualTime) {

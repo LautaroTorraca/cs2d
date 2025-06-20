@@ -14,10 +14,9 @@ M3::M3(M3 &&other) noexcept : PrimaryWeapon(std::move(other)), m3SweptAngle(othe
 
 void M3::attack(Positionable &positionable, const Position &actualPosition, const double &angle) {
     if (!this->checkedAttack()) return;
-    double radianAngle = ((angle + ANGLE_BIAS)*M_PI/PI_TO_GRADES);
-    double startAngle = radianAngle - this->m3SweptAngle / 2;
+    double startAngle = this->toRadians(angle + ANGLE_BIAS) - this->toRadians(this->m3SweptAngle / 2);
     double angleBetweenBullets = this->m3SweptAngle / (this->weaponBulletsPerShot - 1);
-    double angleBetweenBulletsInRadians = ((angleBetweenBullets + ANGLE_BIAS)*M_PI/PI_TO_GRADES);
+    double angleBetweenBulletsInRadians = this->toRadians(angleBetweenBullets);
     for (int i = 0; i < this->weaponBulletsPerShot; i++) {
         Coordinate direction(std::cos(startAngle + angleBetweenBulletsInRadians*i), std::sin(startAngle + angleBetweenBulletsInRadians*i));
         projectiles.emplace_back(std::make_shared<Projectile>(positionable, actualPosition, direction, weaponRange,

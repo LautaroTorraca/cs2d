@@ -21,6 +21,7 @@ std::vector<WeaponInfoDTO> PlayerInventory::getWeaponsInfo() {
 
 void PlayerInventory::erase(const uint8_t &index) {
     this->weaponSetter.erase(index);
+    this->set(KNIFE_INDEX);
 }
 
 std::vector<uint8_t> PlayerInventory::getIndexes() {

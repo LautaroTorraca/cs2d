@@ -174,7 +174,7 @@ void GameMap::plant(std::shared_ptr<Explosive>& explosive, const Position& posit
 
 void GameMap::advance(const double &actualTime) {
     if ( this->explosive.empty() ) return;
-    this->explosive.begin()->second->advance(actualTime);
+    this->explosive.begin()->second->continueActivation(actualTime);
 }
 
 std::vector<DropDTO> GameMap::getDrops() const {

@@ -1,6 +1,6 @@
 playerInfo:
-  { initialLife: 100, initialMoney: 500, moneyPerKill: 100 }
+  { initialLife: 100, initialMoney: 2000, moneyPerKill: 100 }
 gameInfo:
-  { moneyPerRound: 200, moneyPerWinRound: 500, buyTimeDuration: 1 }
+  { moneyPerRound: 200, moneyPerWinRound: 500, buyTimeDuration: 5 }
 gameMapInfo:
   { tileSize: 32 }

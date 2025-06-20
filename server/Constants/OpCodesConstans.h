@@ -1,5 +1,6 @@
 #pragma once
 constexpr std::size_t SINGLE_VALUE = 1;
+constexpr std::size_t AMOUNT_VALUE = 2;
 
 constexpr uint8_t OPCODE_CREATE_GAME = 0x01;
 constexpr uint8_t OPCODE_JOIN_GAME = 0x02;

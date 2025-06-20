@@ -13,7 +13,7 @@ class InGameOrder final : public Order {
     size_t playerId;
     uint16_t direction;
     double angle;
-    uint16_t ammoAmount;
+    uint16_t amount;
     uint8_t weaponInformation;
     std::map<uint8_t, OrderType> orderTranslator;
     std::map<uint16_t, Movement> movementTranslator;
@@ -30,9 +30,9 @@ public:
               const uint8_t &weaponInformation);
     InGameOrder(const uint8_t& code, const size_t& playerId, const double& angle);
     InGameOrder(const uint8_t &code, const size_t &playerId,
-              const uint16_t &ammoAmount, const uint8_t &weaponInformation);
+              const uint16_t &amount, const uint8_t &weaponInformation);
     InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& direction,
-        const double& angle, const uint16_t& ammoAmount, const uint8_t& weaponInformation,
+        const double& angle, const uint16_t& amount, const uint8_t& weaponInformation,
         const std::pair<double, double>& position);
 
 
