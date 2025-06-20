@@ -8,23 +8,29 @@
 #include "CoordinateInformation.h"
 #include "ProjectileInformation.h"
 #include "SnapshotConstants.h"
-constexpr int RES_WIDTH = 640;
-constexpr int RES_HEIGTH = 480;
+
+constexpr int RES_WIDTH_BASE = 480;
+constexpr int RES_HEIGTH_BASE = 360;
+
+// constexpr int RES_WIDTH = 480;
+// constexpr int RES_HEIGTH = 360;
+constexpr int RES_WIDTH = 1366;
+constexpr int RES_HEIGTH = 768;
 
 constexpr int LOGICAL_WIDTH = 27;
 constexpr int LOGICAL_HEIGHT = 15;
 
 constexpr int TILE_SRC_SIZE = 32;
 constexpr int TILE_WIDTH = 32;   // RES_WIDTH / LOGICAL_WIDTH;
-constexpr int TILE_HEIGHT = 32;  // RES_HEIGTH / LOGICAL_HEIGHT;
+constexpr int TILE_HEIGHT = 32;  // RES_HEIGTH / LOGICAL_HEIGHT; //FIX: relative size with tiles
 
 constexpr int PLAYER_HEIGTH = 32;  // RES_WIDTH / LOGICAL_WIDTH;
 constexpr int PLAYER_WIDTH = 32;   // RES_HEIGTH / LOGICAL_HEIGHT;
 
 constexpr double WPN_SZ_MULT = 1.3;
 
-#define HUD_NUM_H 42
-#define HUD_NUM_W 30
+#define HUD_NUM_H 24
+#define HUD_NUM_W 17
 
 enum UiSymbol : int {
     HEALTH = 0,

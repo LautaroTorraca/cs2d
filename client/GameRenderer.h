@@ -39,6 +39,7 @@ private:
     void renderFloorItems(std::vector<DropInformation> weaponList);
     void renderTile(Texture& mapTile, int mapWidth, int tile, int pos);
 
+    void renderBomb(CoordinateInformation plantedBombPosition);
     void renderFloorWeapon(Texture& sprite, DropInformation wpn);
 
     void renderPointer(Coords mouseCoords);

@@ -10,6 +10,7 @@
 #include "SDL2pp/Texture.hh"
 #include "server/Constants/MapTypeConstants.h"
 // #include "server/GameStatus.h"
+#include "server/Game.h"
 #include "server/WeaponConstants.h"
 
 #include "CoordinateInformation.h"
@@ -32,9 +33,16 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
 
 void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
-
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
+
+    float xScale = (float(RES_WIDTH) / RES_WIDTH_BASE);
+    float yScale = (float(RES_HEIGTH) / RES_HEIGTH_BASE);
+
+    // float xScale = 2;
+    // float yScale = 2;
+    std::cout << "x: " << xScale << " y: " << yScale << " \n";
+    renderer.SetScale(xScale, yScale);
 
     // TODO: cambiar por un map la lista de players.
     size_t index = 0;
@@ -51,15 +59,15 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
     if (numero == 3) {
         std::cout << "player: " << currentPlayer.name << "\n";
     }
-    // std::cout << "y su pos: X[" << std::to_string(currentPlayer.position.x) << "]Y["
-    //           << std::to_string(currentPlayer.position.y) << "] \n";
-    offset.x = (gameSnapshot.playersInfo.at(index).position.x) - int(RES_WIDTH / 2);
-    offset.y = (gameSnapshot.playersInfo.at(index).position.y) - int(RES_HEIGTH / 2);
+
+    offset.x = (gameSnapshot.playersInfo.at(index).position.x) - int(RES_WIDTH_BASE / 2);
+    offset.y = (gameSnapshot.playersInfo.at(index).position.y) - int(RES_HEIGTH_BASE / 2);
 
     renderMap(tileMap, map);
     renderFloorItems(gameSnapshot.dropsInfo);
+    renderBomb(gameSnapshot.plantedBombPosition);
     renderPlayers(gameSnapshot.playersInfo, clientID);
-    drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 100);
+    drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
     renderer.Present();
 }
@@ -76,6 +84,16 @@ void GameRenderer::renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType 
             posCounter++;
         }
     }
+}
+
+void GameRenderer::renderBomb(CoordinateInformation pos) {
+    if (pos.x == -1) {
+        return;
+    }
+    Texture& sprite = textureManager.getWeapon(WeaponType::BOMB);
+
+    renderer.Copy(sprite, NullOpt,
+                  Rect(pos.x - offset.x, pos.y - offset.y, PLAYER_WIDTH, PLAYER_HEIGTH));
 }
 
 void GameRenderer::renderPlayers(std::vector<PlayerInformation> players, size_t clientId) {
@@ -99,17 +117,17 @@ void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int v
     int div = (variation / 2);
     int posSrcY = TILE_SRC_SIZE * div;
 
-    // int(RES_WIDTH / 2);
-    int relPosX = player.position.x - offset.x - int(RES_WIDTH / 2);
-    int relPosY = player.position.y - offset.y - int(RES_HEIGTH / 2);
+    // int(RES_WIDTH_BASE / 2);
+    int relPosX = player.position.x - offset.x - int(RES_WIDTH_BASE / 2);
+    int relPosY = player.position.y - offset.y - int(RES_HEIGTH_BASE / 2);
     std::cout << "diferencia en X de currentPlayer y el otro: " << std::to_string(relPosX) << "\n";
     std::cout << "diferencia en Y de currentPlayer y el otro: " << std::to_string(relPosY)
               << "\n\n";
 
     int offsetX = PLAYER_WIDTH / 2;
     int offsetY = PLAYER_HEIGTH / 2;
-    int posPlayerX = ((RES_WIDTH) / 2) + relPosX - offsetX;
-    int posPlayerY = ((RES_HEIGTH) / 2) + relPosY - offsetY;
+    int posPlayerX = ((RES_WIDTH_BASE) / 2) + relPosX - offsetX;
+    int posPlayerY = ((RES_HEIGTH_BASE) / 2) + relPosY - offsetY;
 
     renderer.Copy(sprite, Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
                   Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH), player.angle);
@@ -125,10 +143,10 @@ void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player
     int offsetY = PLAYER_HEIGTH / 2;
     // offset.x = offset.x;
 
-    renderer.Copy(
-            sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-            Rect(RES_WIDTH / 2 - offsetX, RES_HEIGTH / 2 - offsetY, PLAYER_WIDTH, PLAYER_HEIGTH),
-            player.angle);
+    renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
+                  Rect(RES_WIDTH_BASE / 2 - offsetX, RES_HEIGTH_BASE / 2 - offsetY, PLAYER_WIDTH,
+                       PLAYER_HEIGTH),
+                  player.angle);
 }
 
 void GameRenderer::renderBullets(PlayerInformation& player) {
@@ -141,7 +159,7 @@ void GameRenderer::renderBullets(PlayerInformation& player) {
         double angleInRads = atan2(dy, dx);
         double angleInDegree = 180.0 * angleInRads / M_PI;
         angleInDegree += 90;
-        renderer.SetDrawColor(255, 255, 0, 150);
+        renderer.SetDrawColor(255, 255, 0, 0);
         renderer.DrawLine(player.position.x - offset.x, player.position.y - offset.y,
                           bullet.projectilePosition.x - offset.x,
                           bullet.projectilePosition.y - offset.y);
@@ -180,7 +198,7 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
 
     renderPointer(mouseCoords);
     // if (gameSnapshot.status == BUY_TIME) {
-    renderSymbol({RES_WIDTH - HUD_NUM_H, RES_HEIGTH - HUD_NUM_H * 4 - 10}, UiSymbol::BUY);
+    renderSymbol({RES_WIDTH_BASE - HUD_NUM_H, RES_HEIGTH_BASE - HUD_NUM_H * 4 - 10}, UiSymbol::BUY);
     // }
 
     // health
@@ -188,30 +206,22 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
     int healthNum2 = (player.actualHealthPoints / 10) % 10;  // Segundo dígito
     int healthNum3 = player.actualHealthPoints % 10;         // Tercer dígito
     int16_t lastPosX = 0;
-    lastPosX = renderSymbol({10, RES_HEIGTH - HUD_NUM_H - 5}, UiSymbol::HEALTH);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H - 5},
-                            healthNum1);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H - 5},
-                            healthNum2);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H - 5},
-                            healthNum3);
+    lastPosX = renderSymbol({5, RES_HEIGTH_BASE - 5}, UiSymbol::HEALTH);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, healthNum1);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, healthNum2);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, healthNum3);
 
     // bullets
     int bulletsNum1 = player.actualWeapon.ammoAmount / 100;        // Primer dígito
     int bulletsNum2 = (player.actualWeapon.ammoAmount / 10) % 10;  // Segundo dígito
     int bulletsNum3 = player.actualWeapon.ammoAmount % 10;         // Tercer dígito
 
-    lastPosX = RES_WIDTH - (HUD_NUM_W * 3) - 20;
+    lastPosX = RES_WIDTH_BASE - (HUD_NUM_W * 3) - 20;
 
-    renderWeaponGlyph({lastPosX, RES_HEIGTH - HUD_NUM_H - 5}, player.actualWeapon.weaponType);
-
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H - 5},
-                            bulletsNum1);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H - 5},
-                            bulletsNum2);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H - 5},
-                            bulletsNum3);
-    // TODO: timer de bomba
+    renderWeaponGlyph({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H}, player.actualWeapon.weaponType);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, bulletsNum1);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, bulletsNum2);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, bulletsNum3);
 
     //  money
     int moneyNum1 = player.actualMoney / 10000;        // Primer dígito
@@ -220,19 +230,29 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
     int moneyNum4 = (player.actualMoney / 10) % 10;    // Cuarto dígito
     int moneyNum5 = player.actualMoney % 10;           // Quinto dígito
 
-    lastPosX = RES_WIDTH - (HUD_NUM_W * 6) - 40;
+    lastPosX = RES_WIDTH_BASE - (HUD_NUM_W * 6) - 35;
 
-    lastPosX = renderSymbol({lastPosX, RES_HEIGTH - HUD_NUM_H * 2 - 10}, UiSymbol::MONEY);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H * 2 - 10},
+    lastPosX = renderSymbol({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H - 10}, UiSymbol::MONEY);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
                             moneyNum1);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H * 2 - 10},
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
                             moneyNum2);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H * 2 - 10},
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
                             moneyNum3);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H * 2 - 10},
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
                             moneyNum4);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH - HUD_NUM_H * 2 - 10},
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
                             moneyNum5);
+
+    // time left to defuse
+    lastPosX = renderSymbol(
+            {(RES_WIDTH_BASE / 2) - (HUD_NUM_H) - (HUD_NUM_H / 2), RES_HEIGTH_BASE - 5},
+            UiSymbol::TIMER);
+    int timerNum1 = gameSnapshot.actualTime / 100;           // Primer dígito
+    int timerNum2 = int(gameSnapshot.actualTime / 10) % 10;  // Segundo dígito
+    std::cout << "<<<< timer: " << gameSnapshot.actualTime << ">>>>\n";
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, timerNum1);
+    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, timerNum2);
 }
 
 void GameRenderer::renderPointer(Coords mouseCoords) {
@@ -246,7 +266,7 @@ int16_t GameRenderer::renderNumber(Coords posInScreen, int number) {
     Texture& sprite = textureManager.getUi(UiType::NumsUI);
     sprite.SetColorMod(0, 255, 0);
     renderer.Copy(sprite, Rect(numberPos, 0, 47, 66),
-                  Rect(posInScreen.x, posInScreen.y - 15, HUD_NUM_W, HUD_NUM_H));
+                  Rect(posInScreen.x, posInScreen.y - HUD_NUM_H, HUD_NUM_W, HUD_NUM_H));
 
     return (posInScreen.x + HUD_NUM_W);
 }
@@ -257,7 +277,7 @@ int16_t GameRenderer::renderSymbol(Coords posInScreen, UiSymbol symbol) {
     Texture& sprite = textureManager.getUi(UiType::SymbUI);
     sprite.SetColorMod(0, 255, 0);
     renderer.Copy(sprite, Rect(numberPos, 0, 64, 64),
-                  Rect(posInScreen.x, posInScreen.y - 15, HUD_NUM_H, HUD_NUM_H));
+                  Rect(posInScreen.x, posInScreen.y - HUD_NUM_H, HUD_NUM_H, HUD_NUM_H));
 
     return (posInScreen.x + HUD_NUM_H);
 }
@@ -268,9 +288,10 @@ int16_t GameRenderer::renderWeaponGlyph(Coords posInScreen, WeaponType weapon) {
     double multH = static_cast<double>(HUD_NUM_H) / sprite.GetHeight();
     sprite.SetColorMod(0, 255, 0);
     int offX = 0;
-    int offY = 0;
+    int offY = -5;
     if (weapon == WeaponType::KNIFE) {
-        multH = 2.5;
+        multH = 1.5;
+        offY = 0;
         offX = -20;
     }
     renderer.Copy(sprite, NullOpt,
@@ -287,11 +308,16 @@ void GameRenderer::drawFOVStencil(const CoordinateInformation& playerCoords, dou
     Uint8 r = 255, g = 255, b = 255, a = 255;
 
     renderer.SetTarget(textureManager.getFov().SetBlendMode(SDL_BLENDMODE_NONE));
+
+    float xScale = (float(RES_WIDTH) / RES_WIDTH_BASE);
+    float yScale = (float(RES_HEIGTH) / RES_HEIGTH_BASE);
+    renderer.SetScale(xScale, yScale);
+
     renderer.SetDrawColor(r / 2, g / 2, b / 2, a);
     renderer.Clear();
 
-    int x0 = RES_WIDTH / 2;
-    int y0 = RES_HEIGTH / 2;
+    int x0 = RES_WIDTH_BASE / 2;
+    int y0 = RES_HEIGTH_BASE / 2;
     int leftSideCone = directionDeg - (fovDeg / 2) - 90;
     int rightSideCone = directionDeg + (fovDeg / 2) - 90;
 
@@ -299,7 +325,7 @@ void GameRenderer::drawFOVStencil(const CoordinateInformation& playerCoords, dou
     filledCircleRGBA(renderer.Get(), x0, y0, radius, r, g, b, a);
 
     renderer.SetTarget();
-    SDL_Rect dst = {0, 0, RES_WIDTH, RES_HEIGTH};
+    SDL_Rect dst = {0, 0, RES_WIDTH_BASE, RES_HEIGTH_BASE};
     renderer.Copy(textureManager.getFov().SetBlendMode(SDL_BLENDMODE_MOD).SetAlphaMod(0),
                   SDL2pp::NullOpt, dst);
 }

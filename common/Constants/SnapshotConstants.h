@@ -3,6 +3,7 @@
 
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
+#include "server/GameStatus.h"
 
 struct PreSnapshot {
     const size_t clientId;
