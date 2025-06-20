@@ -113,5 +113,6 @@ void GameClient::run(int argc, char* argv[]) {
         std::cout << "catcheo en gameClient\n\n";
     }
     dataReceiver.close();
+    protocol.exit();
     dataReceiver.join();
 }

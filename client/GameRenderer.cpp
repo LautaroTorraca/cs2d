@@ -9,8 +9,6 @@
 #include "SDL2pp/Optional.hh"
 #include "SDL2pp/Texture.hh"
 #include "server/Constants/MapTypeConstants.h"
-// #include "server/GameStatus.h"
-#include "server/Game.h"
 #include "server/WeaponConstants.h"
 
 #include "CoordinateInformation.h"
@@ -197,62 +195,55 @@ void GameRenderer::renderFloorWeapon(Texture& sprite, DropInformation wpn) {
 void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Coords mouseCoords) {
 
     renderPointer(mouseCoords);
-    // if (gameSnapshot.status == BUY_TIME) {
-    renderSymbol({RES_WIDTH_BASE - HUD_NUM_H, RES_HEIGTH_BASE - HUD_NUM_H * 4 - 10}, UiSymbol::BUY);
-    // }
+    if (gameSnapshot.status == BUY_TIME) {
+        renderSymbol({RES_WIDTH_BASE - HUD_NUM_H, RES_HEIGTH_BASE - HUD_NUM_H * 4 - 10},
+                     UiSymbol::BUY);
+    }
 
     // health
-    int healthNum1 = player.actualHealthPoints / 100;        // Primer dígito
-    int healthNum2 = (player.actualHealthPoints / 10) % 10;  // Segundo dígito
-    int healthNum3 = player.actualHealthPoints % 10;         // Tercer dígito
-    int16_t lastPosX = 0;
+    double lastPosX = 0;
     lastPosX = renderSymbol({5, RES_HEIGTH_BASE - 5}, UiSymbol::HEALTH);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, healthNum1);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, healthNum2);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, healthNum3);
+    lastPosX = renderNumberStream({lastPosX, RES_HEIGTH_BASE - 5}, player.actualHealthPoints, 3, 2);
 
     // bullets
-    int bulletsNum1 = player.actualWeapon.ammoAmount / 100;        // Primer dígito
-    int bulletsNum2 = (player.actualWeapon.ammoAmount / 10) % 10;  // Segundo dígito
-    int bulletsNum3 = player.actualWeapon.ammoAmount % 10;         // Tercer dígito
-
-    lastPosX = RES_WIDTH_BASE - (HUD_NUM_W * 3) - 20;
-
+    lastPosX = RES_WIDTH_BASE - (HUD_NUM_W * 4);
     renderWeaponGlyph({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H}, player.actualWeapon.weaponType);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, bulletsNum1);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, bulletsNum2);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, bulletsNum3);
+    renderNumberStream({(lastPosX + 5), RES_HEIGTH_BASE - 5}, player.actualWeapon.ammoAmount, 3, 2);
 
     //  money
-    int moneyNum1 = player.actualMoney / 10000;        // Primer dígito
-    int moneyNum2 = (player.actualMoney / 1000) % 10;  // Segundo dígito
-    int moneyNum3 = (player.actualMoney / 100) % 10;   // Tercer dígito
-    int moneyNum4 = (player.actualMoney / 10) % 10;    // Cuarto dígito
-    int moneyNum5 = player.actualMoney % 10;           // Quinto dígito
-
-    lastPosX = RES_WIDTH_BASE - (HUD_NUM_W * 6) - 35;
-
+    lastPosX = RES_WIDTH_BASE - (HUD_NUM_W * 7);
     lastPosX = renderSymbol({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H - 10}, UiSymbol::MONEY);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
-                            moneyNum1);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
-                            moneyNum2);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
-                            moneyNum3);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
-                            moneyNum4);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - HUD_NUM_H - 10},
-                            moneyNum5);
-
+    lastPosX = renderNumberStream({(lastPosX), RES_HEIGTH_BASE - HUD_NUM_H - 10},
+                                  player.actualMoney, 5, 2);
     // time left to defuse
-    lastPosX = renderSymbol(
-            {(RES_WIDTH_BASE / 2) - (HUD_NUM_H) - (HUD_NUM_H / 2), RES_HEIGTH_BASE - 5},
-            UiSymbol::TIMER);
-    int timerNum1 = gameSnapshot.actualTime / 100;           // Primer dígito
-    int timerNum2 = int(gameSnapshot.actualTime / 10) % 10;  // Segundo dígito
-    std::cout << "<<<< timer: " << gameSnapshot.actualTime << ">>>>\n";
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, timerNum1);
-    lastPosX = renderNumber({static_cast<int16_t>(lastPosX + 5), RES_HEIGTH_BASE - 5}, timerNum2);
+
+    // game time
+    int timerMin = gameSnapshot.actualTime / 60;
+    int timerSeg = int(gameSnapshot.actualTime) % 60;
+
+    int midScrX = RES_WIDTH_BASE / 2;
+    int midScrY = RES_HEIGTH_BASE / 2;
+    double timerHeigthSize = int(HUD_NUM_H / 2);
+    double timerWidthSize = int(HUD_NUM_W / 2);
+
+    lastPosX = renderNumberStream({midScrX - (2 * timerWidthSize), (timerHeigthSize + 5)}, timerMin,
+                                  2, 2, timerHeigthSize, timerWidthSize);
+    lastPosX = renderNumber({(lastPosX + 1), (timerHeigthSize + 5)}, 10, timerHeigthSize,
+                            timerWidthSize);
+    lastPosX = renderNumberStream({(lastPosX - 5), (timerHeigthSize + 5)}, timerSeg, 2, 2,
+                                  timerHeigthSize, timerWidthSize);
+    // rounds
+    int roundsCT = gameSnapshot.countersWinsRounds;
+    int roundsTT = gameSnapshot.terroristsWinsRounds;
+    int rounds = gameSnapshot.totalRounds;
+    int currentRound = gameSnapshot.currentRound;
+
+    double roundHeigthSize = int(HUD_NUM_H / 2.5);
+    double roundWidthSize = int(HUD_NUM_W / 2.5);
+
+    // lastPosX = renderNumberStream(
+    //         {midScrX - (2 * roundWidthSize), (timerHeigthSize + roundHeigthSize + 3)}, rounds, 2,
+    //         5, roundHeigthSize, roundWidthSize);
 }
 
 void GameRenderer::renderPointer(Coords mouseCoords) {
@@ -260,18 +251,41 @@ void GameRenderer::renderPointer(Coords mouseCoords) {
     renderer.Copy(sprite, Rect(0, 0, 50, 50), Rect(mouseCoords.x - 15, mouseCoords.y - 15, 30, 30));
 }
 
-int16_t GameRenderer::renderNumber(Coords posInScreen, int number) {
+int16_t GameRenderer::renderNumberStream(CoordinateInformation pos, int number, int digits,
+                                         int separation, int height, int width) {
+    std::vector<int> splittedNumber;
+
+    std::string numStr = std::to_string(number);
+
+    for (char c: numStr) {
+        splittedNumber.push_back(c - '0');
+    }
+    int n = digits - splittedNumber.size();
+    if (n > 0) {
+        for (int i = 0; i < n; ++i) {
+            splittedNumber.insert(splittedNumber.begin(), 0);
+        }
+    }
+    double lastPosX = pos.x - separation;
+    for (int number: splittedNumber) {
+        lastPosX = renderNumber({lastPosX + separation, pos.y}, number, height, width);
+    }
+    return lastPosX;
+}
+
+int16_t GameRenderer::renderNumber(CoordinateInformation posInScreen, int number, int height,
+                                   int width) {
 
     int numberPos = 48 * number;
     Texture& sprite = textureManager.getUi(UiType::NumsUI);
     sprite.SetColorMod(0, 255, 0);
     renderer.Copy(sprite, Rect(numberPos, 0, 47, 66),
-                  Rect(posInScreen.x, posInScreen.y - HUD_NUM_H, HUD_NUM_W, HUD_NUM_H));
+                  Rect(posInScreen.x, posInScreen.y - height, width, height));
 
-    return (posInScreen.x + HUD_NUM_W);
+    return (posInScreen.x + width);
 }
 
-int16_t GameRenderer::renderSymbol(Coords posInScreen, UiSymbol symbol) {
+int16_t GameRenderer::renderSymbol(CoordinateInformation posInScreen, UiSymbol symbol) {
 
     int numberPos = 64 * symbol;
     Texture& sprite = textureManager.getUi(UiType::SymbUI);
@@ -282,7 +296,7 @@ int16_t GameRenderer::renderSymbol(Coords posInScreen, UiSymbol symbol) {
     return (posInScreen.x + HUD_NUM_H);
 }
 
-int16_t GameRenderer::renderWeaponGlyph(Coords posInScreen, WeaponType weapon) {
+int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, WeaponType weapon) {
 
     Texture& sprite = textureManager.getWeapon(weapon);
     double multH = static_cast<double>(HUD_NUM_H) / sprite.GetHeight();
@@ -299,6 +313,7 @@ int16_t GameRenderer::renderWeaponGlyph(Coords posInScreen, WeaponType weapon) {
                        posInScreen.y - (sprite.GetHeight() * multH / 2) - offY,
                        sprite.GetWidth() * (multH), sprite.GetHeight() * (multH)));
 
+    sprite.SetColorMod(255, 255, 255);
     return (posInScreen.x + (sprite.GetWidth() * multH));
 }
 

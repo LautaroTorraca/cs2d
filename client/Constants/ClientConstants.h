@@ -14,8 +14,8 @@ constexpr int RES_HEIGTH_BASE = 360;
 
 // constexpr int RES_WIDTH = 480;
 // constexpr int RES_HEIGTH = 360;
-constexpr int RES_WIDTH = 1366;
-constexpr int RES_HEIGTH = 768;
+constexpr int RES_WIDTH = 960;
+constexpr int RES_HEIGTH = 720;
 
 constexpr int LOGICAL_WIDTH = 27;
 constexpr int LOGICAL_HEIGHT = 15;

@@ -1,4 +1,5 @@
 #pragma once
+#include "Constants/ClientConstants.h"
 #include "SDL2pp/Texture.hh"
 #include "common/Constants/PlayerDataConstants.h"
 #include "common/Constants/SnapshotConstants.h"
@@ -45,10 +46,13 @@ private:
     void renderPointer(Coords mouseCoords);
     void renderUI(PlayerInformation& player, Snapshot gameSnapshot, Coords mouseCoords);
 
-    int16_t renderNumber(Coords posInScreen, int number);
-    int16_t renderSymbol(Coords posInScreen, UiSymbol symbol);
+    int16_t renderNumberStream(CoordinateInformation pos, int number, int digits,
+                               int separation = 0, int height = HUD_NUM_H, int width = HUD_NUM_W);
+    int16_t renderNumber(CoordinateInformation posInScreen, int number, int height = HUD_NUM_H,
+                         int width = HUD_NUM_W);
+    int16_t renderSymbol(CoordinateInformation posInScreen, UiSymbol symbol);
 
-    int16_t renderWeaponGlyph(Coords posInScreen, WeaponType weapon);
+    int16_t renderWeaponGlyph(CoordinateInformation posInScreen, WeaponType weapon);
     void renderBullets(PlayerInformation& player);
 
     Texture createLightCone(int radius, double angleDeg);
