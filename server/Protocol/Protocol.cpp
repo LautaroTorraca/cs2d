@@ -1,6 +1,7 @@
 #include "Protocol.h"
 
 #include <iostream>
+#include <ranges>
 
 #include <sys/socket.h>
 
@@ -15,7 +16,8 @@
 Protocol::Protocol(const std::string& port):
         acceptorSocket(port.c_str()),
         acceptorThread([this]() { this->handleNewConnection(); }),
-        handledUsers(0) {
+        handledUsers(0),
+        ended(false) {
     setupLobbyHandlers();
     setupGameLobbyHandlers();
     setupInGameHandlers();
@@ -95,6 +97,7 @@ void Protocol::setupInGameHandlers() {
     requestMapper[DEFUSE_BOMB] = [this](const Request& request) {
         return std::make_unique<InGameOrder>(inGameProtocol.handleRequest(request));
     };
+
 }
 
 void Protocol::handleNewConnection() {
@@ -104,10 +107,9 @@ void Protocol::handleNewConnection() {
             size_t userId = handledUsers++;
             this->clientsHandlers.emplace(
                     userId, std::make_unique<ClientHandler>(peer,
-                                                            userId, this->requestsQueue));
-
+                                                            userId,
+                                                            this->requestsQueue));
             this->clientsHandlers.at(userId)->start();
-            //std::cout << "creo todo bien (el socket)\n";
         } catch (LibError& e) {
             std::cerr << "Connection lost error: "<< e.what() << std::endl;
             break;
@@ -119,11 +121,9 @@ std::unique_ptr<Order> Protocol::getNextOrder() {
     try {
         const Request request = std::move(*this->requestsQueue.pop());
         const uint8_t code = request.getRequest().at(opCodeKey).front();
-        //std::cout << "Protocol::getNextOrder, code: " << (int)code << std::endl;
         return this->requestMapper.at(code)(request);
     } catch (ClosedQueue&) {
-        std::cerr << "Closed queue" << std::endl;
-        throw -1;  // TODO: Manejar fin de protocolo
+        throw std::runtime_error("The queue was closed");  // TODO: Manejar fin de protocolo
     }
 }
 
@@ -136,11 +136,14 @@ void Protocol::sendLobbyConnectionStatus(const LobbyConnectionDTO& lobbyConnecti
 }
 
 void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
-  if (!this->clientsHandlers.contains(disconnectionInfo.clientId)) return;
-  std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
-  client->stopService();
-  client->join();
-  this->clientsHandlers.erase(disconnectionInfo.clientId);
+    if (!this->clientsHandlers.contains(disconnectionInfo.clientId)) return;
+    std::unique_ptr<ClientHandler>& client = this->clientsHandlers.at(disconnectionInfo.clientId);
+    client->stopService();
+    client->join();
+    this->clientsHandlers.erase(disconnectionInfo.clientId);
+    if (this->clientsHandlers.empty() && this->ended) {
+        this->requestsQueue.close();
+    }
 }
 
 std::vector<size_t> Protocol::getIds(const GameLobbyDTO& gameLobbyInfo) {
@@ -182,15 +185,16 @@ void Protocol::end() {
     try {
         this->acceptorSocket.shutdown(SHUT_RDWR);
         this->acceptorThread.join();
-        this->requestsQueue.close();
-        for (auto& client: this->clientsHandlers) {
-            client.second->stop();
-            client.second->join();
+        for (auto& handler: this->clientsHandlers | std::views::values) {
+            handler->stopService();
         }
-
+        this->ended = true;
+        if (this->clientsHandlers.empty()) {
+            this->requestsQueue.close();
+        }
     } catch (LibError&) {
         // TODO: Logging de error
     }
 }
 
-Protocol::~Protocol() { this->end(); }
+Protocol::~Protocol() { }

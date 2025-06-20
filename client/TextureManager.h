@@ -22,6 +22,7 @@ private:
     std::unordered_map<UiType, Texture> texturesUI;
     std::unordered_map<WeaponType, Texture> texturesWeapons;
 
+    Texture fovTexture;
     Texture removeBackground(ColorKey color, std::string filename);
 
 public:
@@ -31,4 +32,5 @@ public:
     Texture& getDroppedWeapon(WeaponType id);
     Texture& getWeapon(WeaponType id);
     Texture& getUi(UiType id);
+    Texture& getFov();
 };

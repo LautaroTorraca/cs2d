@@ -23,13 +23,15 @@ public:
         const double& weaponCadence,
         const double& weaponSpeed,
         const int& weaponBulletsPerShot,
-        const double& m3SweptAngle) : PrimaryWeapon(cost,
+        const double& m3SweptAngle,
+        const uint16_t& maxBullets) : PrimaryWeapon(cost,
             weaponDamagePerBullet,
             weaponPrecision,
             weaponRange,
             weaponCadence,
             weaponSpeed,
-            weaponBulletsPerShot),
+            weaponBulletsPerShot,
+            maxBullets),
             m3SweptAngle(m3SweptAngle) {}
 
     void attack(Positionable &positionable, const Position &actualPosition, const double &destination) override;

@@ -1,5 +1,7 @@
 #include "server.h"
 
+#include "Ui.h"
+
 Server::Server(const std::string& port) :
               protocol(port),
               inGameServer(protocol),
@@ -83,12 +85,13 @@ void Server::setupInGameOrders() {
 }
 
 void Server::run() {
+    Ui ui( this->protocol);
+    ui.start();
     while (true) {
         try {
             std::unique_ptr<Order> order = protocol.getNextOrder();
 
             OrderType type = order->getOrderType();
-            //std::cout << "Server::run, atendiendo order:" << (int)type << std::endl;
 
 
             if (!orderTranslator.contains(type)) {
@@ -99,8 +102,9 @@ void Server::run() {
             orderTranslator.at(type)(order);
         } catch (std::exception& e) {
             // TODO FIX
-            std::cout << "Main server error: " << e.what() << std::endl;
+            std::cout << "Main server: " << e.what() << std::endl;
             break;
         }
     }
+    ui.join();
 }

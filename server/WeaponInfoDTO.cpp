@@ -4,7 +4,7 @@
 
 #include "WeaponInfoDTO.h"
 
-WeaponInfoDTO::WeaponInfoDTO(WeaponInfoDTO &&other) noexcept : ammoAmount(other.ammoAmount), weaponType(other.weaponType) {
+WeaponInfoDTO::WeaponInfoDTO(WeaponInfoDTO &&other) noexcept : ammoAmount(other.ammoAmount), weaponType(other.weaponType), projectilesInfo(other.projectilesInfo) {
     if (this != &other) {
         other.ammoAmount = 0;
         other.weaponType = WeaponType::UNKNOWN;
@@ -15,8 +15,10 @@ WeaponInfoDTO & WeaponInfoDTO::operator=(WeaponInfoDTO &&other) noexcept {
     if (this != &other) {
         this->ammoAmount = other.ammoAmount;
         this->weaponType = other.weaponType;
+        this->projectilesInfo = other.projectilesInfo;
         other.ammoAmount = 0;
         other.weaponType = WeaponType::UNKNOWN;
+        other.projectilesInfo = std::vector<ProjectileDTO>();
     }
     return *this;
 }

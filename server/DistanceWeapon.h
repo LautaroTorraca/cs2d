@@ -7,7 +7,8 @@
 #include "GenericWeapon.h"
 #include "Projectile.h"
 #include "Weapon.h"
-
+#define ANGLE_BIAS 270
+#define PI_TO_GRADES 180
 
 class DistanceWeapon : public GenericWeapon {
 protected:
@@ -17,6 +18,7 @@ protected:
     DistanceWeapon( DistanceWeapon&& other) noexcept;
     virtual std::vector<std::shared_ptr<Projectile>> getProjectilesCopy();
     [[nodiscard]] virtual std::vector<ProjectileDTO> getProjectilesInfo() const;
+    double toRadians(double degrees) const;
 
 public:
     void advance(const double &actualTime) override;

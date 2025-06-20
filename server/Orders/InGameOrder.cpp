@@ -18,12 +18,12 @@ InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const doub
 InGameOrder::InGameOrder(const uint8_t &code, const size_t &playerId, const uint8_t &weaponInformation)
     : InGameOrder(code, playerId, DEFAULT_DIRECTION, DEFAULT_ANGLE,DEFAULT_AMMO, weaponInformation, {0, 0}) {}
 
-InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& ammoAmount, const uint8_t& weaponInformation)
-    : InGameOrder(code, playerId, DEFAULT_DIRECTION, DEFAULT_ANGLE, ammoAmount, weaponInformation, {0, 0}) {}
+InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& amount, const uint8_t& weaponInformation)
+    : InGameOrder(code, playerId, DEFAULT_DIRECTION, DEFAULT_ANGLE, amount, weaponInformation, {0, 0}) {}
 
 
-InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& direction, const double& angle, const uint16_t& ammoAmount, const uint8_t& weaponInformation, const std::pair<double, double>& position)
-    : playerId(playerId), direction(direction), angle(angle), ammoAmount(ammoAmount),  weaponInformation(weaponInformation), position(position) {
+InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId, const uint16_t& direction, const double& angle, const uint16_t& amount, const uint8_t& weaponInformation, const std::pair<double, double>& position)
+    : playerId(playerId), direction(direction), angle(angle), amount(amount),  weaponInformation(weaponInformation), position(position) {
     orderTranslator = {
         {ProtocolConstants::PLAYER_MOVEMENT, IN_GAME_MOVE},
         {ProtocolConstants::ATTACK, IN_GAME_SHOOT},
@@ -71,19 +71,21 @@ InGameOrder::InGameOrder(InGameOrder&& other) noexcept
     playerId(other.playerId),
     direction(other.direction),
     angle(other.angle),
-    ammoAmount(other.ammoAmount),
+    amount(other.amount),
     weaponInformation(other.weaponInformation),
     orderTranslator(std::move(other.orderTranslator)),
     movementTranslator(std::move(other.movementTranslator)),
+    toProduct(std::move(other.toProduct)),
     position(std::move(other.position))
 {
     other.orderType = DO_NOTHING;
     other.playerId = DEFAULT_PLAYER_ID;
     other.direction = DEFAULT_DIRECTION;
     other.angle = DEFAULT_ANGLE;
-    other.ammoAmount = DEFAULT_AMMO;
+    other.amount = DEFAULT_AMMO;
     other.weaponInformation = DEFAULT_WEAPON_INFORMATION;
     other.movementTranslator = std::map<uint16_t, Movement>();
+    other.toProduct = std::map<uint8_t, ProductType>();
     other.position = std::pair<double, double>();
 }
 
@@ -93,19 +95,21 @@ InGameOrder& InGameOrder::operator=(InGameOrder&& other) noexcept {
         playerId = other.playerId;
         direction = other.direction;
         angle = other.angle;
-        ammoAmount = other.ammoAmount;
+        amount = other.amount;
         weaponInformation = other.weaponInformation;
         orderTranslator = std::move(other.orderTranslator);
         movementTranslator = std::move(other.movementTranslator);
+        toProduct = std::move(other.toProduct);
         position = std::move(other.position);
 
         other.orderType = DO_NOTHING;
         other.playerId = DEFAULT_PLAYER_ID;
         other.direction = DEFAULT_DIRECTION;
         other.angle = DEFAULT_ANGLE;
-        other.ammoAmount = DEFAULT_AMMO;
+        other.amount = DEFAULT_AMMO;
         other.weaponInformation = DEFAULT_WEAPON_INFORMATION;
         other.movementTranslator = std::map<uint16_t, Movement>();
+        other.toProduct = std::map<uint8_t, ProductType>();
         other.position = std::pair<double, double>();
     }
     return *this;
@@ -124,7 +128,7 @@ const Movement& InGameOrder::getDirection() const {
 }
 
 const uint16_t& InGameOrder::getAmount() const {
-    return this->ammoAmount;
+    return this->amount;
 }
 
 const uint8_t& InGameOrder::getWeaponInformation() const {

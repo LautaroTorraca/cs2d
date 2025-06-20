@@ -42,7 +42,9 @@ InGameProtocol::InGameProtocol(){
 }
 
 InGameOrder InGameProtocol::handleRequest(const Request &request) {
+    //std::cout << "InGameProtocol::handleRequest. Inicio." << std::endl;
   const uint8_t opCode = request.getRequest().at(opCodeKey).front();
+    //std::cout << "InGameProtocol::handleRequest. opCode:" << (int)opCode << std::endl;
   if (!requestHandlers.contains(opCode)) {
     throw -1; // TODO FIX
   }
@@ -54,7 +56,6 @@ InGameOrder InGameProtocol::movementHandler(const Request &request) {
 
   uint16_t direction;
   std::memcpy(&direction, message.at(directionKey).data(), sizeof(uint16_t));
-    std::cout << "InGameProtocol::movementHandler, id: " << clientId << "direction: " << direction << std::endl;
   return InGameOrder(ProtocolConstants::PLAYER_MOVEMENT, clientId, direction);
 }
 
@@ -82,9 +83,7 @@ InGameOrder InGameProtocol::dropItemHandler(const Request &request) {
 InGameOrder InGameProtocol::switchWeaponHandler(const Request &request) {
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
-
-  const uint8_t slot = message.at(weaponKey).front();
-
+  const uint8_t slot = message.at(slotKey).front();
   return InGameOrder(ProtocolConstants::SWITCH_WEAPON, clientId,
                      slot); // weapon, direction, ammout dummys
 }
@@ -101,13 +100,12 @@ InGameOrder InGameProtocol::changeAngleHandler(const Request &request) {
 }
 
 InGameOrder InGameProtocol::buyHandler(const Request &request) {
-  const size_t clientId = request.getId();
-  const std::map<std::string, std::vector<char>> message = request.getRequest();
-
-  const uint8_t amount = message.at(ammoAmountKey).front();
-  const uint8_t weapon = message.at(weaponKey).front();
-
-  return InGameOrder(ProtocolConstants::BUY, clientId, amount, weapon);
+    const size_t clientId = request.getId();
+    const std::map<std::string, std::vector<char>> message = request.getRequest();
+    uint16_t amount;
+    std::memcpy(&amount, message.at(amountKey).data(), sizeof(uint16_t));
+    const uint8_t weapon = message.at(weaponKey).front();
+    return InGameOrder(ProtocolConstants::BUY, clientId, amount, weapon);
 }
 
 InGameOrder InGameProtocol::plantBombHandler(const Request &request) {

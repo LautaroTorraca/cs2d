@@ -41,7 +41,7 @@ public:
     bombPlantPoints(std::move(parser.getBombPlantPoints())) {}
     void move(std::shared_ptr<Entity>& entity, const Coordinate &displacement) override;
     void giveDrops(Inventory &inventory, const Position &position) override;
-    void place(std::shared_ptr<Drop> &drop, Position &position) override;
+    void place(std::shared_ptr<Drop> &drop, const Position &position) override;
     void spawnCounter(std::shared_ptr<Entity>& entity) override;
     void spawnTerrorist(std::shared_ptr<Entity>& entity) override;
     void remove(const std::shared_ptr<Entity> &entity) override;

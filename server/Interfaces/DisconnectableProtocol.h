@@ -6,7 +6,6 @@
 #define DISCONNECTABLEPROTOCOL_H
 #include "Disconnectable.h"
 
-class DisconnectableProtocol : public Disconnectable {
-};
+class DisconnectableProtocol : public Disconnectable {};
 
 #endif //DISCONNECTABLEPROTOCOL_H

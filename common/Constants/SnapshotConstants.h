@@ -4,7 +4,6 @@
 #include "server/GameStatus.h"
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
-#include "server/GameStatus.h"
 
 struct PreSnapshot {
     const size_t clientId;
@@ -22,6 +21,8 @@ struct Snapshot {
     std::vector<PlayerInformation> playersInfo;
     std::vector<DropInformation> dropsInfo;
     CoordinateInformation plantedBombPosition;
+    double actualTime;
+    uint8_t totalRounds;
 
     //   inge
     //   ingeniado
@@ -31,12 +32,15 @@ struct Snapshot {
     Snapshot(const GameStatus& status, const uint8_t& currentRound,
              const uint8_t& countersWinsRounds, const uint8_t& terroristsWinsRounds,
              const std::vector<PlayerInformation>& playersInfo,
-             const std::vector<DropInformation>& drops, const CoordinateInformation& bombPosition):
+             const std::vector<DropInformation>& drops, const CoordinateInformation& bombPosition,
+             const double& actualTime, const uint8_t& totalRounds):
             status(status),
             currentRound(currentRound),
             countersWinsRounds(countersWinsRounds),
             terroristsWinsRounds(terroristsWinsRounds),
             playersInfo(playersInfo),
             dropsInfo(drops),
-            plantedBombPosition(bombPosition) {}
+            plantedBombPosition(bombPosition),
+            actualTime(actualTime),
+            totalRounds(totalRounds) {}
 };

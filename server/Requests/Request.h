@@ -17,6 +17,7 @@ public:
     Request& operator=(Request&& other) noexcept;
 
     Request(const size_t& id, std::map<std::string, std::vector<char>>& metaData);
+    explicit Request(const size_t& id) : id(id) {}
     [[nodiscard]] const size_t& getId() const;
     [[nodiscard]] std::map<std::string, std::vector<char>> getRequest() const;
 };

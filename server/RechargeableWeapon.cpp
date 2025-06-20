@@ -36,5 +36,6 @@ lastShotTime(other.lastShotTime) {
 }
 
 void RechargeableWeapon::recharge(uint16_t &amount) {
+    if (this->ammo + amount > this->maxBullets) return;
     this->ammo += amount;
 }

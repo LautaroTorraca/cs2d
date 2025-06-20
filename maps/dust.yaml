@@ -71,3 +71,6 @@ countersSpawnPoints:
 bombPlantPoints:
   - { x: 1, y: 2 }
   - { x: 9, y: 3 }
+
+drops:
+  - { x: 1, y: 1, weaponCode: 1}

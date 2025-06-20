@@ -15,7 +15,7 @@ InputHandler::InputHandler(Protocol& protocol): protocol(protocol) {}
 
 bool InputHandler::processEvent(SDL_Event event) {
     if (event.type == SDL_QUIT) {
-        return false;
+        protocol.exit();
     } else if (event.type == SDL_KEYDOWN) {
 
         switch (event.key.keysym.sym) {
@@ -31,8 +31,41 @@ bool InputHandler::processEvent(SDL_Event event) {
             case SDLK_RIGHT:
                 protocol.move(Right);
                 break;
+            case SDLK_1:
+                protocol.changeWeapon(0);
+                break;
+            case SDLK_2:
+                protocol.changeWeapon(1);
+                break;
+            case SDLK_3:
+                protocol.changeWeapon(2);
+                break;
+            case SDLK_4:
+                protocol.changeWeapon(3);
+                break;
+            case SDLK_e:
+                protocol.pickUp();
+                break;
+            case SDLK_f:
+                protocol.defuseBomb();
+                break;
+            case SDLK_j:
+                protocol.buy({ProductTypes::AK_47_WEAPON, 1});
+                break;
+            case SDLK_k:
+                protocol.buy({ProductTypes::M3_WEAPON, 1});
+                break;
+            case SDLK_l:
+                protocol.buy({ProductTypes::AWP_WEAPON, 1});
+                break;
+            case SDLK_COMMA:
+                protocol.buy({ProductTypes::PRIMARY_AMMO, 5});
+                break;
+            case SDLK_PERIOD:
+                protocol.buy({ProductTypes::SECONDARY_AMMO, 5});
+                break;
             case SDLK_ESCAPE:
-                return false;
+                protocol.exit();
         }
     } else if (event.type == SDL_MOUSEBUTTONDOWN) {
 
@@ -47,8 +80,8 @@ bool InputHandler::processEvent(SDL_Event event) {
 
     } else if (event.type == SDL_MOUSEMOTION) {
 
-        double dx = event.motion.x - RES_WIDTH / 2;
-        double dy = event.motion.y - RES_HEIGTH / 2;
+        double dx = event.motion.x - static_cast<double>(RES_WIDTH) / 2;
+        double dy = event.motion.y - static_cast<double>(RES_HEIGTH) / 2;
         double angleInRads = atan2(dy, dx);
         double angleInDegree = 180.0 * angleInRads / M_PI;
         angleInDegree += 90;

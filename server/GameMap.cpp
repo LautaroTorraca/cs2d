@@ -104,7 +104,7 @@ void GameMap::giveDrops(Inventory &inventory, const Position& position) {
 
 }
 
-void GameMap::place(std::shared_ptr<Drop> &drop, Position &position) {
+void GameMap::place(std::shared_ptr<Drop> &drop, const Position &position) {
     std::vector<Coordinate> area = position.getArea();
     for (auto& point: area) {
         Coordinate coordinate;
@@ -174,7 +174,7 @@ void GameMap::plant(std::shared_ptr<Explosive>& explosive, const Position& posit
 
 void GameMap::advance(const double &actualTime) {
     if ( this->explosive.empty() ) return;
-    this->explosive.begin()->second->advance(actualTime);
+    this->explosive.begin()->second->continueActivation(actualTime);
 }
 
 std::vector<DropDTO> GameMap::getDrops() const {
@@ -198,6 +198,7 @@ void GameMap::reset(GameParser& parser) {
     this->entities.clear();
     this->weaponsDrops.clear();
     this->countersSpawnPoints.clear();
+    this->dropToCoordinates.clear();
     this->terroristsSpawnPoints.clear();
     this->bombPlantPoints.clear();
     this->explosive.clear();

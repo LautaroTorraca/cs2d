@@ -4,6 +4,7 @@
 #include "common/Constants/SnapshotConstants.h"
 #include "server/Constants/MapTypeConstants.h"
 
+#include "CoordinateInformation.h"
 #include "PlayerInformation.h"
 #include "TextureManager.h"
 // #include "weaponConstants.h"
@@ -31,15 +32,14 @@ private:
     size_t clientID;
     Coords offset;
 
-    void renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map, Coords offset);
-    void renderPlayers(std::vector<PlayerInformation> players, Coords offset, size_t clientId);
-    void renderPlayer(Texture& sprite, PlayerInformation player, int variation, Coords offset);
-    void renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation,
-                             Coords offset);
-    void renderFloorItems(std::vector<DropInformation> weaponList, Coords offset);
-    void renderTile(Texture& mapTile, int tile, int pos, Coords offset);
+    void renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map);
+    void renderPlayers(std::vector<PlayerInformation> players, size_t clientId);
+    void renderPlayer(Texture& sprite, PlayerInformation player, int variation);
+    void renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation);
+    void renderFloorItems(std::vector<DropInformation> weaponList);
+    void renderTile(Texture& mapTile, int mapWidth, int tile, int pos);
 
-    void renderFloorWeapon(Texture& sprite, DropInformation wpn, Coords offset);
+    void renderFloorWeapon(Texture& sprite, DropInformation wpn);
 
     void renderPointer(Coords mouseCoords);
     void renderUI(PlayerInformation& player, Snapshot gameSnapshot, Coords mouseCoords);
@@ -49,6 +49,14 @@ private:
 
     int16_t renderWeaponGlyph(Coords posInScreen, WeaponType weapon);
     void renderBullets(PlayerInformation& player);
+
+    Texture createLightCone(int radius, double angleDeg);
+    void renderLightEffects(Texture& cone, double angle);
+    void drawFOVStencil(const CoordinateInformation& playerCoords, double directionDeg,
+                        double fovDeg, int radius);
+    // void drawStencil(const Coords& playerCoords, double playerAngle, double angleDegrees);
+    // void drawVisionCone(SDL2pp::Renderer& renderer, Coords origin, double directionDeg,
+    //                     double fovDeg, double length);
 
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);

@@ -2,26 +2,27 @@
 #define PROTOCOL_H
 
 #include <functional>
-
-#include "../common/socket.h"
 #include <map>
 #include <memory>
 
-#include "../Requests/Request.h"
-#include "../common/queue.h"
-#include "Constants/SnapshotConstants.h"
-#include "GameLobbyProtocol.h"
-#include "Handlers/ClientHandler.h"
-#include "InGameProtocol.h"
-#include "ServerLobbyProtocol.h"
-
+#include "../Interfaces/DisconnectableProtocol.h"
 #include "../Interfaces/GameLobbyProtocolInterface.h"
 #include "../Interfaces/InGameProtocolInterface.h"
 #include "../Interfaces/ServerLobbyProtocolInterface.h"
+#include "../Requests/Request.h"
+#include "../common/queue.h"
+#include "../common/socket.h"
+#include "Constants/SnapshotConstants.h"
+#include "Handlers/ClientHandler.h"
+
+#include "GameLobbyProtocol.h"
+#include "InGameProtocol.h"
+#include "ServerLobbyProtocol.h"
 
 class Protocol : public ServerLobbyProtocolInterface,
                  public GameLobbyProtocolInterface,
-                 public InGameProtocolInterface {
+                 public InGameProtocolInterface,
+                 public DisconnectableProtocol {
 protected:
   Socket acceptorSocket;
   std::thread acceptorThread;
@@ -36,6 +37,7 @@ protected:
   std::map<uint8_t, std::function<std::unique_ptr<Order>(const Request &)>>
       requestMapper;
   Queue<std::shared_ptr<Request>> requestsQueue;
+    bool ended;
 
   void setupLobbyHandlers();
   void setupGameLobbyHandlers();
@@ -62,7 +64,6 @@ public:
   void sendPreSnapshot(const PreSnapshot &preSnapshot) override;
 
   void end();
-
   ~Protocol() override;
 };
 

@@ -9,8 +9,10 @@
 #include <string>
 
 #include "Coordinate.h"
+#include "Drop.h"
 #include "Path.h"
 #include "TileType.h"
+#include "WeaponsInfoParser.h"
 class GameMapParser {
     std::vector<std::vector<uint8_t>> gameMap;
     std::vector<std::map<std::string, double>> terroristsSpawns;
@@ -18,6 +20,9 @@ class GameMapParser {
     std::vector<std::map<std::string, double>> bombPlantPoints;
     std::map<uint8_t, TileType> typeInfo;
     std::map<TileType, std::function<Tile(uint8_t&)>> tileTranslator;
+    std::vector<std::map<std::string, double>> drops;
+    std::map<double, std::function<std::shared_ptr<Drop>(Position&)>> dropTranslator;
+
 
     [[nodiscard]] std::vector<Coordinate> getPoints(
             std::vector<std::map<std::string, double>> source) const;
@@ -31,6 +36,7 @@ public:
     [[nodiscard]] std::vector<Coordinate> getTerroristsSpawnPoints() const;
     [[nodiscard]] std::vector<Coordinate> getBombPlantPoints() const;
     [[nodiscard]] uint8_t getMaxPlayersPerTeam() const;
+    std::map<Position, std::shared_ptr<Drop>> getDrops() const;
 };
 
 

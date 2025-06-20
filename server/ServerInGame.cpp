@@ -1,11 +1,16 @@
 #include "ServerInGame.h"
 
+#include <ranges>
+
 #include "Monitor/GameMonitor.h"
 
 #define SHOP_PATH "../gameConstants/shop.yaml"
 #define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 
-ServerInGame::ServerInGame(InGameProtocolInterface& protocol) : protocol(protocol) { setupTranslators(); }
+ServerInGame::ServerInGame(InGameProtocolInterface& protocol) : protocol(protocol) {
+    setupTranslators();
+    this->eraserThread = std::thread(&ServerInGame::erase, this);
+}
 
 void ServerInGame::setupTranslators() {
 
@@ -49,7 +54,7 @@ void ServerInGame::handle(const std::unique_ptr<Order> &order) const {
 
 void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInfo) {
   GameParser parser(gameInfo.mapPath, SHOP_PATH, WEAPONS_INFO_PATH);
-  this->games.emplace(gameName, std::make_shared<GameMonitor>(parser, gameInfo.rounds, this->protocol));
+  this->games.emplace(gameName, std::make_shared<GameMonitor>(gameName, parser, gameInfo.rounds, this->protocol, this->gamesToErase));
   for (auto &playerChoices : gameInfo.playersChoices) {
     this->games.at(gameName)->addPlayer(playerChoices.id, playerChoices.playerName, playerChoices.team, playerChoices.skin);
     this->playerToGame.emplace(playerChoices.id, gameName);
@@ -65,11 +70,8 @@ void ServerInGame::leaveGameLobby(const size_t &id) {
 }
 
 void ServerInGame::move(const InGameOrder &order) {
-    std::cout << "move ini" << std::endl;
   if (!this->playerToGame.contains(order.getPlayerId())) return;
-    std::cout << "move next" << std::endl;
   std::string gameName = this->playerToGame.at(order.getPlayerId());
-    std::cout << "move gameName" << std::endl;
   Coordinate& displacement = this->movements.at(order.getDirection());
   this->games.at(gameName)->move(order.getPlayerId(), displacement);
 }
@@ -118,8 +120,53 @@ void ServerInGame::defuseBomb(const InGameOrder &order) {
   this->games.at(gameName)->deactivateBomb(order.getPlayerId());
 }
 
-void ServerInGame::exit(const InGameOrder &order) {
-  std::string gameName = this->playerToGame.at(order.getPlayerId());
-  this->games.at(gameName)->kick(order.getPlayerId());
-  this->protocol.disconnect({order.getPlayerId()});
+std::vector<size_t> ServerInGame::getGameIds(std::string gameName) {
+    std::vector<size_t> ids;
+    for (auto&[id, game]: this->playerToGame) {
+        if (gameName == game) {
+            ids.emplace_back(id);
+        }
+    }
+    return ids;
+}
+
+void ServerInGame::eraseGame(const std::string& gameName) {
+    if (!this->games.contains(gameName)) return;
+    this->games.at(gameName)->join();
+    std::vector<size_t> ids = this->getGameIds(gameName);
+    for (auto& id: ids) {
+        this->protocol.disconnect({id});
+    }
+    this->games.erase(gameName);
+    std::erase_if(this->playerToGame, [&](const auto& pair) {
+        return pair.second == gameName;
+    });
+}
+
+void ServerInGame::exit(const InGameOrder& order) {
+    if (!this->playerToGame.contains(order.getPlayerId()))
+        return;
+    std::string gameName = this->playerToGame.at(order.getPlayerId());
+    this->games.at(gameName)->kick(order.getPlayerId());
+    this->playerToGame.erase(order.getPlayerId());
+    this->protocol.disconnect({order.getPlayerId()});
+}
+void ServerInGame::erase() {
+    while (true) {
+        try {
+            std::string gameName = this->gamesToErase.pop();
+            this->eraseGame(gameName);
+        } catch (ClosedQueue&) {
+            break;
+        }
+    }
+}
+
+ServerInGame::~ServerInGame() {
+    this->gamesToErase.close();
+    this->eraserThread.join();
+    for (auto& game: this->games | std::views::values) {
+        game->stop();
+        game->join();
+    }
 }

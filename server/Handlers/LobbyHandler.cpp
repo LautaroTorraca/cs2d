@@ -27,13 +27,9 @@ LobbyHandler::~LobbyHandler() = default;
 
 Request LobbyHandler::createRequest() const {
     std::string gameName = reader.stringReader();
-    std::cout << "reader1\n";
     const uint8_t playerCount = reader.u8tReader();
-    std::cout << "reader2\n";
     const uint8_t gameMap = reader.u8tReader();
-    std::cout << "reader3\n";
     const uint8_t roundsCount = reader.u8tReader();
-    std::cout << "reader4\n";
 
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_CREATE_GAME));
@@ -42,8 +38,6 @@ Request LobbyHandler::createRequest() const {
     message.emplace(gameMapKey, std::vector<char>(SINGLE_VALUE, gameMap));
     message.emplace(roundCountKey, std::vector<char>(SINGLE_VALUE, roundsCount));
 
-    std::cout << "a punto de slair de create request " << std::to_string(OPCODE_CREATE_GAME)
-              << "\n";
     return Request(userId, message);
 }
 

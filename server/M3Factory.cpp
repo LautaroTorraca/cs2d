@@ -15,6 +15,7 @@ std::unique_ptr<Product> M3Factory::getProduct(const uint16_t &) {
     double m3Speed =  this->weaponsInfo.getWeaponInfo(WeaponType::M3, SPEED_KEY);
     double m3BulletsPerShot =  this->weaponsInfo.getWeaponInfo(WeaponType::M3, BULLETS_PER_SHOT_KEY);
     double m3SweptAngle = this->weaponsInfo.getWeaponInfo(WeaponType::M3, M3_SWEPT_ANGLE_KEY);
-    return std::make_unique<M3>(this->cost, m3DamagePerBullet, m3Precision, m3Range, m3Cadence, m3Speed, m3BulletsPerShot, m3SweptAngle);
+    double maxBullets =  this->weaponsInfo.getWeaponInfo(WeaponType::AK47, MAX_BULLETS_KEY);
+    return std::make_unique<M3>(this->cost, m3DamagePerBullet, m3Precision, m3Range, m3Cadence, m3Speed, m3BulletsPerShot, m3SweptAngle, maxBullets);
 }
 

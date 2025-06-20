@@ -4,9 +4,13 @@
 #include <sstream>
 #include <string>
 
+#include <sys/socket.h>
+
 #include "Constants/OpCodesConstans.h"
 
 #include "GameInfoDTO.h"
+#include "Constants/KeyContants.h"
+#include "liberror.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
                              Queue<std::shared_ptr<Request>>& requestQueue):
@@ -16,9 +20,31 @@ ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
         lobbyHandler(userSocket, clientId),
         gameLobbyHandler(userSocket, clientId),
         inGameHandler(userSocket, clientId),
-        sender(this->userSocket) {
+        sender(this->userSocket),
+        status(IN_LOBBY) {
 
     registerOpcodes();
+    this->setDisconnectionFetcher();
+}
+
+void ClientHandler::setDisconnectionFetcher() {
+    this->disconnectionFetcher[IN_LOBBY] = [&] () {
+        std::map<std::string, std::vector<char>> message;
+        message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_DISCONNECT));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, message));
+    };
+
+    this->disconnectionFetcher[IN_GAME_LOBBY] = [&] () {
+        std::map<std::string, std::vector<char>> message;
+        message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_LOBBY));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, message));
+    };
+
+    this->disconnectionFetcher[IN_GAME] = [&] () {
+        std::map<std::string, std::vector<char>> message;
+        message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_GAME));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, message));
+    };
 }
 
 void ClientHandler::registerOpcodes() {
@@ -73,10 +99,11 @@ void ClientHandler::run() {
 
             this->requestsQueue.push(std::make_shared<Request>(std::move(request)));
         } catch (std::exception& e) {
-            std::cout << "Client disconnected. error: " << e.what() << std::endl;
             this->stop();
+            std::cout << "Client " << this->id << " disconnected. " << e.what() << std::endl;
         }
     }
+    this->disconnectionFetcher.at(this->status)();
 }
 
 
@@ -97,6 +124,8 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
         this->sender.send(drop);
     }
     this->sender.send(STOP);
+    this->sender.send(gameInfo.getElapsedTime());
+    this->sender.send(gameInfo.getRounds());
 }
 
 void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
@@ -104,7 +133,14 @@ void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
     this->sender.send(preSnapshot.map);
 }
 
-void ClientHandler::stopService() { this->userSocket.close(); }
+void ClientHandler::stopService() {
+    try {
+        this->stop();
+        this->userSocket.shutdown(SHUT_RDWR);
+    } catch (LibError&) {
+        //LOGG Error
+    }
+}
 
 void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
     std::stringstream gamesListStream;
@@ -119,6 +155,9 @@ void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
     std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
     uint8_t status = gameLobbyInfo.status;
     uint8_t mapType = static_cast<uint8_t>(gameLobbyInfo.mapType);
+    if (gameLobbyInfo.status == READY_STATUS) {
+        this->status = IN_GAME;
+    }
     this->sender.send(status);
     for (const auto &playerChoice : playersChoices) {
         uint8_t skin = playerChoice.skin;
@@ -138,8 +177,11 @@ void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
 
 void ClientHandler::sendLobbyConnectonStatus(const LobbyConnectionDTO& lobbyConnection) {
     uint8_t lobbyConnectionStatus = lobbyConnection.status;
+    if (lobbyConnection.status == SUCCESS) {
+        this->status = IN_GAME_LOBBY;
+    }
     this->sender.send(this->id);
     this->sender.send(lobbyConnectionStatus);
 }
 
-ClientHandler::~ClientHandler() { this->stopService(); }
+ClientHandler::~ClientHandler() { }
