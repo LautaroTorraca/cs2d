@@ -241,9 +241,22 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
     double roundHeigthSize = int(HUD_NUM_H / 2.5);
     double roundWidthSize = int(HUD_NUM_W / 2.5);
 
-    // lastPosX = renderNumberStream(
-    //         {midScrX - (2 * roundWidthSize), (timerHeigthSize + roundHeigthSize + 3)}, rounds, 2,
-    //         5, roundHeigthSize, roundWidthSize);
+    lastPosX = renderNumberStream(
+            {midScrX - (2 * roundWidthSize), (timerHeigthSize + roundHeigthSize + 8)},
+            gameSnapshot.currentRound, 2, 1, roundHeigthSize, roundWidthSize);
+    lastPosX = renderNumber({lastPosX, (timerHeigthSize + roundHeigthSize + 8)}, 11,
+                            roundHeigthSize, roundWidthSize);
+    lastPosX = renderNumberStream({lastPosX, (timerHeigthSize + roundHeigthSize + 8)},
+                                  gameSnapshot.totalRounds, 2, 1, roundHeigthSize, roundWidthSize);
+
+    // ct
+    lastPosX = renderNumberStream({midScrX + (4 * timerWidthSize), (timerHeigthSize + 5)},
+                                  gameSnapshot.countersWinsRounds, 2, 2, timerHeigthSize,
+                                  timerWidthSize);
+    // tt
+    lastPosX = renderNumberStream({midScrX - (5 * timerWidthSize - 2), (timerHeigthSize + 5)},
+                                  gameSnapshot.terroristsWinsRounds, 2, 2, timerHeigthSize,
+                                  timerWidthSize);
 }
 
 void GameRenderer::renderPointer(Coords mouseCoords) {
