@@ -97,28 +97,65 @@ endif()
 # ---------------
 if(TALLER_CLIENT)
     add_subdirectory(client)
-    add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS}
-            client/Login/Flows/GameFlowUtils.cpp
-            client/Login/Flows/GameFlowUtils.h
-            client/Login/Flows/CreateGameFlow.cpp
-            client/Login/Flows/CreateGameFlow.h
-            client/Login/Flows/JoinGameFlow.cpp
-            client/Login/Flows/JoinGameFlow.h
-            client/Login/Flows/GameFlowBase.cpp
-            client/Login/Flows/GameFlowBase.h
-            client/Login/Mappers/TeamMapper.cpp
-            client/Login/Mappers/TeamMapper.h
-            client/Login/Dialogs/DialogUtils.h
-            client/Login/Flows/ListGameFlow.cpp
-            client/Login/Flows/ListGameFlow.h
-            client/Login/Assets/SkinRepository.cpp
-            client/Login/Assets/SkinRepository.h)
-    # client/LobbyDTO.h client/GamesList.h client/BuyOrder.h
-    # client/WeaponChanger.h client/PositionDTO.h client/PlayerInformation.h
-    # client/CoordinateInformation.h client/WeaponInformation.h
-    # client/ProjectileInformation.h client/DropInformation.h client/MainWindow.h)
+
+    # Debug: verificar rutas
+    message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+    message(STATUS "Looking for resources at: ${CMAKE_CURRENT_SOURCE_DIR}/client/resources.qrc")
+
+    # Add Qt resources if available
+    set(CLIENT_RESOURCES ""
+            client/login/buttons/GameMenuButton.cpp
+            client/login/buttons/GameMenuButton.h
+            client/login/buttons/CreateGameButton.cpp
+            client/login/buttons/CreateGameButton.h
+            client/login/buttons/JoinGameButton.cpp
+            client/login/buttons/JoinGameButton.h
+            client/login/buttons/ListGamesButton.cpp
+            client/login/buttons/ListGamesButton.h
+            client/login/buttons/ExitGameButton.cpp
+            client/login/buttons/ExitGameButton.h
+            client/login/SkinTraslator.cpp
+            client/login/SkinTraslator.h
+            client/login/MessageBox.cpp
+            client/login/MessageBox.h
+            client/login/dialogs/GameNameDialog.cpp
+            client/login/dialogs/GameNameDialog.h
+            client/login/dialogs/GameListDialog.cpp
+            client/login/dialogs/GameListDialog.h
+            client/login/mocks/MapTypeMock.h
+            client/login/dialogs/MapSelectionDialog.cpp
+            client/login/dialogs/MapSelectionDialog.h
+            client/login/MapTraslator.cpp
+            client/login/MapTraslator.h
+            client/login/dialogs/ConfirmExitDialog.cpp
+            client/login/dialogs/ConfirmExitDialog.h)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/client/resources.qrc")
+        message(STATUS "Found resources.qrc, adding to build")
+        qt6_add_resources(CLIENT_RESOURCES client/resources.qrc)
+        message(STATUS "Added Qt resources for client: ${CLIENT_RESOURCES}")
+    else()
+        message(WARNING "resources.qrc not found at expected location!")
+    endif()
+
+    # También asegúrate de que CMAKE_AUTORCC esté activado
+    set(CMAKE_AUTORCC ON)
+
+    add_executable(taller_client
+            ${CLIENT_SOURCES}
+            ${CLIENT_HEADERS}
+            ${CLIENT_RESOURCES}
+            client/login/mocks/SkinMock.h
+            client/login/mocks/TeamConstantsMock.h
+            client/login/mocks/TeamMock.h
+    )
+
     target_include_directories(taller_client PRIVATE client)
-    target_link_libraries(taller_client taller_common SDL2pp::SDL2pp Qt6::Widgets)
+    target_link_libraries(taller_client
+            taller_common
+            SDL2pp::SDL2pp
+            Qt6::Core
+            Qt6::Gui
+            Qt6::Widgets)
 endif()
 
 if(TALLER_SERVER)

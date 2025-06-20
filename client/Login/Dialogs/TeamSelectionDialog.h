@@ -1,8 +1,8 @@
-#ifndef TEAM_SELECTION_DIALOG_H
-#define TEAM_SELECTION_DIALOG_H
-
+#pragma once
 #include <QDialog>
 #include <QString>
+
+#include "server/Team.h"
 
 class QPushButton;
 class QVBoxLayout;
@@ -16,12 +16,11 @@ private slots:
     void selectTT();
 
 private:
-    QString selectedTeam; // TODO: Cambiar a uint8_t y usar TeamConstants en el futuro
+    QString selectedTeam;
     void setupUI();
 
 public:
     explicit TeamSelectionDialog(QWidget* parent = nullptr);
-    QString getSelectedTeam() const;
+    Team getSelectedTeam() const;
 };
 
-#endif // TEAM_SELECTION_DIALOG_H

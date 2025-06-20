@@ -1,13 +1,14 @@
 #pragma once
 #include <QWidget>
-#include <QLineEdit>
 #include <QVBoxLayout>
 #include "client/Protocol.h"
 
+class UsernameInput;
 class CreateGameButton;
 class JoinGameButton;
 class ListGamesButton;
 class ExitGameButton;
+
 
 class ServerMenu : public QWidget {
     Q_OBJECT
@@ -22,7 +23,7 @@ private:
     Protocol protocol;
     QWidget* overlayWidget;
     QVBoxLayout* buttonLayout;
-    QLineEdit* usernameInput;
+    UsernameInput* usernameInput;
 
     CreateGameButton* createGameButton;
     JoinGameButton* joinGameButton;

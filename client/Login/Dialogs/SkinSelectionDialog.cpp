@@ -1,21 +1,22 @@
 #include "SkinSelectionDialog.h"
 
-#include <QCoreApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPixmap>
 #include <QIcon>
+#include <QCoreApplication>
 
 #include "server/Skin.h"
 #include "server/Team.h"
+#include "Login/Assets/SkinRepository.h"
 
-SkinSelectionDialog::SkinSelectionDialog(uint8_t team, QWidget* parent)
+SkinSelectionDialog::SkinSelectionDialog(uint8_t teamId, QWidget* parent)
         : QDialog(parent), selectedSkin(0) {
     setWindowTitle("Select Skin");
     setModal(true);
     resize(680, 320);
     setupUI();
-    loadSkinsForTeam(team);
+    loadSkinsForTeam(teamId);
     setupConnections();
     updateSkinImage(0);
 }
@@ -101,28 +102,18 @@ void SkinSelectionDialog::setupUI() {
 void SkinSelectionDialog::setupConnections() {
     connect(skinComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &SkinSelectionDialog::updateSkinImage);
-    connect(confirmButton, &QPushButton::clicked, this, &SkinSelectionDialog::handleConfirm);
+    connect(confirmButton, &QPushButton::clicked,
+            this, &SkinSelectionDialog::handleConfirm);
 }
 
-void SkinSelectionDialog::loadSkinsForTeam(uint8_t team) {
+void SkinSelectionDialog::loadSkinsForTeam(uint8_t teamId) {
     skinComboBox->clear();
     skinPaths.clear();
 
-    auto addSkin = [&](const QString& text, const QString& resourcePath, const QString& fallbackPath, uint8_t skinId) {
-        skinComboBox->addItem(QIcon(resourcePath), text, skinId);
-        skinPaths.append(resourcePath + "|" + fallbackPath);
-    };
-
-    if (team == Team::TERRORISTS) {
-        addSkin("Phoenix", ":/skins/phoenix.png", "login/assets/skins/Phoenix.png", Skin::PHOENIX);
-        addSkin("L337 Krew", ":/skins/l337.png", "login/assets/skins/L337 Krew.png", Skin::L337_KREW);
-        addSkin("Arctic Avenger", ":/skins/arctic.png", "login/assets/skins/Artic Avenger.png", Skin::ARCTIC_AVENGER);
-        addSkin("Guerrilla", ":/skins/guerrilla.png", "login/assets/skins/Guerrilla.png", Skin::GUERRILLA);
-    } else if (team == Team::COUNTER_TERRORISTS) {
-        addSkin("SEAL Force", ":/skins/sealforce.png", "login/assets/skins/SealForce.png", Skin::SEAL_FORCE);
-        addSkin("German GSG9", ":/skins/gsg9.png", "login/assets/skins/German GSG-9.png", Skin::GERMAN_GSG9);
-        addSkin("UK SAS", ":/skins/sas.png", "login/assets/skins/UK SAS.png", Skin::UK_SAS);
-        addSkin("French GIGN", ":/skins/gign.png", "login/assets/skins/French GIGN.png", Skin::FRENCH_GIGN);
+    const QVector<SkinInfo> skins = SkinRepository::getSkinsForTeam(teamId);
+    for (const auto& skin : skins) {
+        skinComboBox->addItem(QIcon(skin.resourcePath), skin.name, skin.skinId);
+        skinPaths.append(skin.resourcePath + "|" + skin.fallbackPath);
     }
 }
 
@@ -144,6 +135,7 @@ void SkinSelectionDialog::updateSkinImage(int index) {
                 "../client/" + fallbackPath,
                 fallbackPath
         };
+
         for (const QString& path : fallbacks) {
             pixmap = QPixmap(path);
             if (!pixmap.isNull()) break;

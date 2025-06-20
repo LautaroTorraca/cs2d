@@ -40,3 +40,12 @@ QString SkinMapper::toString(Skin skin) const {
     }
     return QString("Unknown Skin (%1)").arg(static_cast<uint8_t>(skin));
 }
+
+uint8_t SkinMapper::toSkinId(const QString& skinName) const {
+    for (auto it = skinToNameMap.begin(); it != skinToNameMap.end(); ++it) {
+        if (QString::compare(it->second, skinName, Qt::CaseInsensitive) == 0) {
+            return static_cast<uint8_t>(it->first);
+        }
+    }
+    return 0x00;
+}

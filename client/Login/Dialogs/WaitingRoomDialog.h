@@ -1,53 +1,55 @@
-#ifndef WAITINGROOMDIALOG_H
-#define WAITINGROOMDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QLabel>
-#include <QPushButton>
+#include <QScrollArea>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <thread>
 #include <vector>
 
-#include "server/DTO/GameLobbyDTO.h"
-#include "server/DTO/PlayerChoicesDTO.h"
 #include "client/Protocol.h"
 #include "server/DTO/PlayerChoicesDTO.h"
-
-#include "Protocol.h"
 
 class WaitingRoomDialog : public QDialog {
     Q_OBJECT
 
-public:
-    explicit WaitingRoomDialog(const QString& playerName,
-                               const QString& team,
-                               const QString& skin,
-                               Protocol& protocol,
-                               QWidget* parent = nullptr);
-
-    ~WaitingRoomDialog();
-
 private:
-    std::string playerName;
-    uint8_t team;
-    uint8_t skin;
-
-    Protocol& protocol;
-
-    std::thread roomWaiter;
-
-    QVBoxLayout* playersLayout;
-    std::vector<QLabel*> playerLabels;
-
-    QPushButton* readyButton;
-    QPushButton* exitButton;
-
-    void setupUI(const QString& playerName, const QString& team, const QString& skin);
+    void setupUI();
     void pollLobby();
     void updatePlayerList(const std::vector<PlayerChoicesDTO>& players);
 
+    // UI Components
+    QVBoxLayout* playersLayout;
+    QScrollArea* playersScrollArea;
+    QWidget* playersWidget;
+    QPushButton* readyBtn;
+    std::vector<QLabel*> playerLabels;
+
+    // Game Data
+    QString playerName;
+    QString teamStr;
+    QString skinStr;
+    Protocol& protocol;
+    // ELIMINADO: std::map<std::string, PlayerChoicesDTO> allKnownPlayers;
+
+    // Threading
+    std::thread roomWaiter;
+    std::atomic<bool> shouldStop;
+    std::atomic<bool> isReady;
+
 private slots:
     void onReadyClicked();
-};
+    void onExitClicked();
 
-#endif // WAITINGROOMDIALOG_H
+protected:
+    void closeEvent(QCloseEvent* event) override;
+
+public:
+    WaitingRoomDialog(const QString& playerName,
+                      const QString& teamStr,
+                      const QString& skinStr,
+                      Protocol& protocol,
+                      QWidget* parent = nullptr);
+    ~WaitingRoomDialog();
+};

@@ -1,10 +1,8 @@
-#ifndef EXITGAMEBUTTON_H
-#define EXITGAMEBUTTON_H
-
+#pragma once
 #include "GameMenuButton.h"
 
 class ExitGameButton : public GameMenuButton {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit ExitGameButton(QWidget* parent = nullptr);
@@ -12,5 +10,3 @@ public:
 private slots:
     void handleClick();
 };
-
-#endif // EXITGAMEBUTTON_H

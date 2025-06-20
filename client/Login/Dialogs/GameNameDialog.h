@@ -5,9 +5,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-/**
- * @brief Diálogo genérico para ingresar el nombre de una partida (crear o unirse).
- */
+
 class GameNameDialog : public QDialog {
     Q_OBJECT
 

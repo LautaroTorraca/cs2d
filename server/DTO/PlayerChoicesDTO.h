@@ -25,6 +25,9 @@ struct PlayerChoicesDTO {
         skin = other.skin;
         return *this;
     }
+
+    PlayerChoicesDTO(const std::string& playerName, const Team& team, const Skin& skin) : id(0), playerName(playerName), team(team), skin(skin) {}
+
 };
 
 #endif //PLAYERCHOICESDTO_H

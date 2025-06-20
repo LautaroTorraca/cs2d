@@ -1,8 +1,7 @@
-#ifndef CREATE_GAME_DIALOG_H
-#define CREATE_GAME_DIALOG_H
+#pragma once
 
 #include <QDialog>
-#include "login/GameDTO.h"
+#include "Login/GameDTO.h"
 
 class QSpinBox;
 class QPushButton;
@@ -28,4 +27,3 @@ public:
     GameDTO getGameConfig() const;
 };
 
-#endif // CREATE_GAME_DIALOG_H

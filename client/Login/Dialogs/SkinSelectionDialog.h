@@ -1,5 +1,4 @@
-#ifndef SKINSELECTIONDIALOG_H
-#define SKINSELECTIONDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QComboBox>
@@ -7,28 +6,25 @@
 #include <QLabel>
 #include <QStringList>
 
-
 class SkinSelectionDialog : public QDialog {
     Q_OBJECT
-
-private slots:
-    void handleConfirm();
-    void updateSkinImage(int index);
 
 private:
     void setupUI();
     void setupConnections();
-    void loadSkinsForTeam(uint8_t team);
+    void loadSkinsForTeam(uint8_t teamId);
+    void updateSkinImage(int index);
+    void handleConfirm();
 
     QComboBox* skinComboBox;
     QPushButton* confirmButton;
     QLabel* skinImageLabel;
+
     QStringList skinPaths;
     uint8_t selectedSkin;
 
 public:
-    explicit SkinSelectionDialog(uint8_t team, QWidget* parent = nullptr);
+    explicit SkinSelectionDialog(uint8_t teamId, QWidget* parent = nullptr);
     uint8_t getSelectedSkin() const;
-};
 
-#endif // SKINSELECTIONDIALOG_H
+};

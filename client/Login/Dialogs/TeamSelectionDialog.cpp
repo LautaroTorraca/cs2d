@@ -1,7 +1,10 @@
 #include "TeamSelectionDialog.h"
+
+#include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QLabel>
+
+#include "server/Team.h"
 
 TeamSelectionDialog::TeamSelectionDialog(QWidget* parent)
         : QDialog(parent), selectedTeam("") {
@@ -75,6 +78,7 @@ void TeamSelectionDialog::selectTT() {
     accept();
 }
 
-QString TeamSelectionDialog::getSelectedTeam() const {
-    return selectedTeam;
+Team TeamSelectionDialog::getSelectedTeam() const {
+    if (selectedTeam == "CT") return Team::COUNTER_TERRORISTS;
+    return Team::TERRORISTS;
 }
