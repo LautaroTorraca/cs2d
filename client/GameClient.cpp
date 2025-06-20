@@ -95,6 +95,7 @@ void GameClient::run(int argc, char* argv[]) {
     }
     std::cout << "hasta aca todo joya no?\n";
 
+    // HACK: fix constant loop rate.
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
     try {
@@ -109,22 +110,24 @@ void GameClient::run(int argc, char* argv[]) {
 
         while (running) {
             SDL_Event event;
-            if (SDL_PollEvent(&event)) {
-                running = inputHandler.processEvent(event);
-            }
             frameTime = SDL_GetTicks() - frameStart;
-
             if (frameDelay <= frameTime) {
+
+                do {
+                    running = inputHandler.processEvent(event);
+                } while (SDL_PollEvent(&event));
+
                 // FIX: cambiar harcodeada de mapa.
                 Snapshot gameSnapshot = snapshotQueue.pop();
                 renderer.renderScreen(gameSnapshot, MapType::DUST, inputHandler.getMouseCoords());
                 frameStart = SDL_GetTicks();
             }
+            SDL_Delay(10);
         }
     } catch (...) {
         std::cout << "catcheo en gameClient\n\n";
     }
-    dataReceiver.close();
     protocol.exit();
+    dataReceiver.close();
     dataReceiver.join();
 }
