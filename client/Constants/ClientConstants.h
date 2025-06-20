@@ -27,7 +27,7 @@ constexpr int TILE_HEIGHT = 32;  // RES_HEIGTH / LOGICAL_HEIGHT; //FIX: relative
 constexpr int PLAYER_HEIGTH = 32;  // RES_WIDTH / LOGICAL_WIDTH;
 constexpr int PLAYER_WIDTH = 32;   // RES_HEIGTH / LOGICAL_HEIGHT;
 
-constexpr double WPN_SZ_MULT = 1.3;
+constexpr double WPN_SZ_MULT = 1;
 
 #define HUD_NUM_H 24
 #define HUD_NUM_W 17
