@@ -7,7 +7,7 @@
 #include <complex>
 
 void Glock::attack(Positionable &positionable, const Position &actualPosition, const double &angle) {
-    if (this->weaponCadence == 0 || this->actualTime - this->lastShotTime < 1/this->weaponCadence) return;
+    if (!this->checkedAttack()) return;
     if (this->ammo == 0) return;
     double radianAngle = ((angle + ANGLE_BIAS)*M_PI/PI_TO_GRADES);
     Coordinate direction(std::cos(radianAngle), std::sin(radianAngle));

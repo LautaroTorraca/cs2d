@@ -34,7 +34,7 @@ std::vector<uint8_t> PlayerInventory::getIndexes() {
 
 void PlayerInventory::reset() {
     std::vector<uint8_t> indexes = this->getIndexes();
-    for (const auto &index : indexes) {
+    for (const auto& index: indexes) {
         if (index > GLOCK_INDEX) {
             this->drop(index);
         }

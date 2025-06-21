@@ -4,7 +4,10 @@
 
 #include "RechargeableWeapon.h"
 
-bool RechargeableWeapon::checkedAttack() const {
+bool RechargeableWeapon::checkedAttack() {
+    if (this->lastShotTime > this->actualTime) {
+        this->lastShotTime = 0;
+    }
     if (this->weaponCadence == 0 || this->actualTime - this->lastShotTime < 1/this->weaponCadence) return false;
     if (this->ammo == 0) {
         this->owner->noMoreAmmo();
