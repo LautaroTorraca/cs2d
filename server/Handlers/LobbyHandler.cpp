@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include "Constants/KeyContants.h"
-#include "Constants/OpCodesConstans.h"
+#include "server/Constants/KeyContants.h"
+#include "server/Constants/OpCodesConstans.h"
 
 LobbyHandler::LobbyHandler(Socket& user, const size_t& userId):
         userSocket(user), userId(userId), reader(user) {

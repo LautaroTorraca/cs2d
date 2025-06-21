@@ -42,6 +42,8 @@ public:
 
     DropInformation readDrop() const;
 
+    std::map<ProductType, double> readShopInfo() const;
+
     Snapshot readSnapShot() const;
 };
 

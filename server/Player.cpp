@@ -77,8 +77,12 @@ void Player::receive(Damager &damager) {
 }
 
 void Player::buy(Product &product) {
-    product.payWith(this->wallet);
-    product.addTo(this->inventory);
+    try {
+        product.payWith(this->wallet);
+        product.addTo(this->inventory);
+    } catch (std::exception &e) {
+        //LOGG The player hadn´t enough money.
+    }
 }
 
 void Player::setWeapon(const uint8_t &index) {

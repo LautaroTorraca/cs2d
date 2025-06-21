@@ -3,7 +3,7 @@
 #include <functional>
 #include "../common/socket.h"
 #include "../Requests/Request.h"
-#include "Readers/Reader.h"
+#include "server/Readers/Reader.h"
 
 
 class InGameHandler {

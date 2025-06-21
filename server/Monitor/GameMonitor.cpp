@@ -103,7 +103,8 @@ void GameMonitor::sendPreSnapshot() {
     GameInfoDTO gameInfo = game.getInfo();
     for ( auto& player : gameInfo.getPlayersInfo() ) {
         std::vector<std::vector<uint8_t>> map = game.getMap();
-        PreSnapshot preSnapshot(player.getId(), map);
+        std::map<ProductType, double> shopInfo = this->game.getShopInfo();
+        PreSnapshot preSnapshot(player.getId(), map, shopInfo);
         this->protocol.sendPreSnapshot(preSnapshot);
     }
 }
@@ -162,5 +163,9 @@ void GameMonitor::run() {
         }
         this->protocol.sendSnapshot(gameInfo);
     }
-    this->eraserQueue.push(this->gameName);
+    try {
+        this->eraserQueue.push(this->gameName);
+    } catch (ClosedQueue&) {
+        //LOGG the server has ended.A gameMonitor has stopped
+    }
 }

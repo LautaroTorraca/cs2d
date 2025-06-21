@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Requests/Request.h"
-#include "Orders/InGameOrder.h"
+#include "server/Requests/Request.h"
+#include "server/Orders/InGameOrder.h"
 #include <map>
 #include <memory>
 #include <functional>

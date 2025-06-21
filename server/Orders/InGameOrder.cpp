@@ -1,9 +1,9 @@
 #include "InGameOrder.h"
 #include <stdexcept>
 
-#include "Constants/MovementConstants.h"
-#include "Constants/ProtocolDefaults.h"
-#include "Constants/ProtocolContants.h"
+#include "server/Constants/MovementConstants.h"
+#include "server/Constants/ProtocolDefaults.h"
+#include "server/Constants/ProtocolContants.h"
 
 InGameOrder::InGameOrder(const uint8_t& code, const size_t& playerId) : InGameOrder(code, playerId, DEFAULT_DIRECTION, DEFAULT_ANGLE ,DEFAULT_AMMO, DEFAULT_WEAPON_INFORMATION, {0, 0}) {}
 

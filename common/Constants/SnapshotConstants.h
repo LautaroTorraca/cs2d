@@ -1,16 +1,19 @@
 #pragma once
+#include <map>
 #include <vector>
 
-#include "server/GameStatus.h"
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
+#include "server/GameStatus.h"
+#include "server/ProductType.h"
 
 struct PreSnapshot {
     const size_t clientId;
     const std::vector<std::vector<uint8_t>> map;
+    std::map<ProductType, double> shopInfo;
     PreSnapshot(): clientId(0) {}
-    PreSnapshot(const size_t& clientId, std::vector<std::vector<uint8_t>>& map):
-            clientId(clientId), map(std::move(map)) {}
+    PreSnapshot(const size_t& clientId, std::vector<std::vector<uint8_t>>& map, std::map<ProductType, double>& shopInfo):
+            clientId(clientId), map(std::move(map)), shopInfo(std::move(shopInfo)) {}
 };
 
 struct Snapshot {

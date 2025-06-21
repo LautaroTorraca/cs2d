@@ -133,6 +133,16 @@ DropInformation Reader::readDrop() const {
     return DropInformation(weapon, position);
 }
 
+std::map<ProductType, double> Reader::readShopInfo() const {
+    std::map<ProductType, double> shopInfo;
+    while (this->u8tReader() == NEW) {
+        ProductType product = static_cast<ProductType>(this->u8tReader());
+        double price = this->doubleRead();
+        shopInfo.emplace(product, price);
+    }
+    return shopInfo;
+}
+
 Snapshot Reader::readSnapShot() const {
     std::vector<PlayerInformation> playersInfo;
     while (this->u8tReader() == NEW) {

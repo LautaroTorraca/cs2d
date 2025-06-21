@@ -1,7 +1,7 @@
 #include "GameLobbyProtocol.h"
 
-#include "Constants/KeyContants.h"
-#include "Constants/ProtocolContants.h"
+#include "server/Constants/KeyContants.h"
+#include "server/Constants/ProtocolContants.h"
 
 
 GameLobbyProtocol::GameLobbyProtocol() {

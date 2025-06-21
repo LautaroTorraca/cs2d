@@ -10,11 +10,11 @@
 #include "../common/socket.h"
 #include "../common/thread.h"
 #include "Constants/SnapshotConstants.h"
-#include "DTO/LobbyConnectionDTO.h"
-#include "Sender/Sender.h"
+#include "server/DTO/LobbyConnectionDTO.h"
+#include "server/Sender/Sender.h"
 
 #include "ClientStatus.h"
-#include "GameInfoDTO.h"
+#include "server/GameInfoDTO.h"
 #include "GameLobbyHandler.h"
 #include "InGameHandler.h"
 #include "LobbyHandler.h"
@@ -31,6 +31,7 @@ class ClientHandler final : public Thread {
     std::unordered_map<uint8_t, std::function<Request()>> opcodeDispatcher;
     ClientStatus status;
     std::map<ClientStatus, std::function<void()>> disconnectionFetcher;
+    bool ended;
 
     void registerOpcodes();
     void setDisconnectionFetcher();
@@ -46,6 +47,7 @@ public:
   void sendSnapshot(const GameInfoDTO &gameInfo);
   void sendPreSnapshot(const PreSnapshot &preSnapshot);
   void stopService();
+  void endService();
   void sendGamesList(const std::vector<std::string> & gamesList);
   void sendGameLobby(const GameLobbyDTO & gameLobbyInfo);
 

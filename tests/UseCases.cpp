@@ -159,10 +159,6 @@ namespace {
         }
         std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
         PlayerInfoDTO& carlosInfo = playersInfo.back();
-        //playersInfo.pop_back();
-        //PlayerInfoDTO& juanInfo = playersInfo.back();
-        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
-        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
         bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
         EXPECT_EQ(carlosHasLowerHealth, true);
     }
@@ -186,11 +182,7 @@ namespace {
         }
         std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
         PlayerInfoDTO& carlosInfo = playersInfo.back();
-        //playersInfo.pop_back();
-        //PlayerInfoDTO& juanInfo = playersInfo.back();
-        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
-        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
-        bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
+       bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
         EXPECT_EQ(carlosHasLowerHealth, true);
     }
 
@@ -213,10 +205,6 @@ namespace {
         }
         std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
         PlayerInfoDTO& carlosInfo = playersInfo.back();
-        //playersInfo.pop_back();
-        //PlayerInfoDTO& juanInfo = playersInfo.back();
-        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
-        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
         bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
         EXPECT_EQ(carlosHasLowerHealth, true);
     }
@@ -240,10 +228,6 @@ namespace {
         }
         std::vector<PlayerInfoDTO> playersInfo = game.getPlayersInfo();
         PlayerInfoDTO& carlosInfo = playersInfo.back();
-        //playersInfo.pop_back();
-        //PlayerInfoDTO& juanInfo = playersInfo.back();
-        //std::cout << carlosInfo.getName() << " tiene " << (int)carlosInfo.getHealth() << " puntos de vida. pos: (" << carlosInfo.getCoordinate().getX() << ", " << carlosInfo.getCoordinate().getY()<< ")" << std::endl;
-        //std::cout << juanInfo.getName() << " tiene " << (int)juanInfo.getHealth() << " puntos de vida. pos: (" << juanInfo.getCoordinate().getX() << ", " << juanInfo.getCoordinate().getY()<< ")" << std::endl;
         bool carlosHasLowerHealth = (int)carlosInfo.getHealth() < 100;
         EXPECT_EQ(carlosHasLowerHealth, true);
     }

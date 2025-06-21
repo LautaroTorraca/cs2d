@@ -6,10 +6,10 @@
 
 #include <sys/socket.h>
 
-#include "Constants/OpCodesConstans.h"
+#include "server/Constants/OpCodesConstans.h"
 
-#include "GameInfoDTO.h"
-#include "Constants/KeyContants.h"
+#include "server/GameInfoDTO.h"
+#include "server/Constants/KeyContants.h"
 #include "liberror.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
@@ -21,7 +21,8 @@ ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
         gameLobbyHandler(userSocket, clientId),
         inGameHandler(userSocket, clientId),
         sender(this->userSocket),
-        status(IN_LOBBY) {
+        status(IN_LOBBY),
+        ended(false) {
 
     registerOpcodes();
     this->setDisconnectionFetcher();
@@ -79,7 +80,7 @@ void ClientHandler::registerOpcodes() {
     opcodeDispatcher[OPCODE_DEFUSE_BOMB] = [&]() {
         return inGameHandler.handle(OPCODE_DEFUSE_BOMB);
     };
-    opcodeDispatcher[OPCODE_EXIT_GAME] = [&]() { return inGameHandler.handle(OPCODE_JOIN_GAME); };
+    opcodeDispatcher[OPCODE_EXIT_GAME] = [&]() { return inGameHandler.handle(OPCODE_EXIT_GAME); };
 }
 
 
@@ -103,7 +104,8 @@ void ClientHandler::run() {
             std::cout << "Client " << this->id << " disconnected. " << e.what() << std::endl;
         }
     }
-    this->disconnectionFetcher.at(this->status)();
+    if (!this->ended)
+        this->disconnectionFetcher.at(this->status)();
 }
 
 
@@ -131,6 +133,7 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
 void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
     this->sender.send(preSnapshot.clientId);
     this->sender.send(preSnapshot.map);
+    this->sender.send(preSnapshot.shopInfo);
 }
 
 void ClientHandler::stopService() {
@@ -140,6 +143,11 @@ void ClientHandler::stopService() {
     } catch (LibError&) {
         //LOGG Error
     }
+}
+
+void ClientHandler::endService() {
+    this->ended = true;
+    this->stopService();
 }
 
 void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {

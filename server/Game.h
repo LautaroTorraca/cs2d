@@ -53,6 +53,7 @@ public:
     void changeAngle(const size_t& id, const double& angle);
     void setWeapon(const size_t& id, const uint8_t& index);
     [[nodiscard]] std::vector<std::vector<uint8_t>> getMap() const;
+    std::map<ProductType, double> getShopInfo();
     void buy(const size_t& id, const ProductType& product);
     void buy(const size_t& id, const ProductType& product, const uint16_t& amount);
     void takeDrop(const size_t& id);

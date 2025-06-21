@@ -3,12 +3,18 @@
 #define SENDER_H
 
 
+#include <functional>
+#include <map>
 #include <string>
-#include <bits/stdint-uintn.h>
-#include "common/socket.h"
 #include <vector>
-#include "server/PlayerInfoDTO.h"
+
+#include <bits/stdint-uintn.h>
+
+#include "common/socket.h"
 #include "server/DropDTO.h"
+#include "server/PlayerInfoDTO.h"
+
+#include "server/ProductType.h"
 
 class Sender {
   Socket& socket;
@@ -37,7 +43,8 @@ public:
 
   void send(const double &data);
 
-  void send(const DropDTO & drop);
+  void send(const DropDTO& drop);
+    void send(const std::map<ProductType, double>& shopInfo);
 };
 
 #endif // SENDER_H

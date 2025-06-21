@@ -70,6 +70,10 @@ std::vector<std::vector<uint8_t>> Game::getMap() const {
     return this->gameParser.getMap();
 }
 
+std::map<ProductType, double> Game::getShopInfo() {
+    return this->gameParser.getProductsPrices();
+}
+
 void Game::buy(const size_t &id, const ProductType &product) {
     if (this->status != BUY_TIME) return;
     if ( this->players.contains(id) ) {

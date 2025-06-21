@@ -5,8 +5,8 @@
 #include <cstdint>
 #include <string>
 
-#include "CoordinateInformation.h"
-#include "ProjectileInformation.h"
+#include "client/CoordinateInformation.h"
+#include "client/ProjectileInformation.h"
 #include "SnapshotConstants.h"
 constexpr int RES_WIDTH = 1280;
 constexpr int RES_HEIGTH = 720;

@@ -3,8 +3,8 @@
 #include <map>
 #include <vector>
 #include <stdexcept>
-#include "Constants/OpCodesConstans.h"
-#include "Constants/KeyContants.h"
+#include "server/Constants/OpCodesConstans.h"
+#include "server/Constants/KeyContants.h"
 
 GameLobbyHandler::GameLobbyHandler(Socket& user, const size_t &userId) : userSocket(user), userId(userId), reader(user) {
     requestMapper[OPCODE_READY] = [&]() { return readyRequest(); };
