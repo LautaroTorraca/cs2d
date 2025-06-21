@@ -40,6 +40,7 @@ void Sender::send(const PlayerInfoDTO& playerInfo) {
     this->send(playerInfo.getHealth());
     this->send(playerInfo.getMoney());
     this->send(playerInfo.getKills());
+    this->send(playerInfo.getDeaths());
     this->send(skin);
     this->send(playerInfo.getActualWeapon());
     for (auto& weaponInfo: playerInfo.getWeaponsInfo()) {
@@ -49,6 +50,8 @@ void Sender::send(const PlayerInfoDTO& playerInfo) {
     }
     uint8_t stop = STOP;
     this->send(stop);
+    uint8_t status = playerInfo.getStatus();
+    this->send(status);
 }
 
 void Sender::send(const WeaponInfoDTO& weaponInfo) {
@@ -83,6 +86,17 @@ void Sender::send(const double& data) {
 void Sender::send(const DropDTO& drop) {
     this->send(drop.getDropInfo());
     this->send(drop.getPosition());
+}
+void Sender::send(const std::map<ProductType, double>& shopInfo) {
+    for (auto&[productType, price]: shopInfo) {
+        uint8_t newProjectile = NEW;
+        this->send(newProjectile);
+        uint8_t product = productType;
+        this->send(product);
+        this->send(price);
+    }
+    uint8_t stop = STOP;
+    this->send(stop);
 }
 
 void Sender::send(const std::string& data) {

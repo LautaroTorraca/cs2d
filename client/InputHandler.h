@@ -7,7 +7,7 @@
 #include "SDL_events.h"
 
 using namespace DTO;
-
+using namespace Client;
 class InputHandler {
 private:
     Protocol& protocol;

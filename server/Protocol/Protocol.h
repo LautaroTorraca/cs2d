@@ -13,7 +13,7 @@
 #include "../common/queue.h"
 #include "../common/socket.h"
 #include "Constants/SnapshotConstants.h"
-#include "Handlers/ClientHandler.h"
+#include "server/Handlers/ClientHandler.h"
 
 #include "GameLobbyProtocol.h"
 #include "InGameProtocol.h"

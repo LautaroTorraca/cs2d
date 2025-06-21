@@ -21,7 +21,7 @@ class GameMonitor : public Thread {
     std::map<Team, Team> teamToOtherTeamTranslator;
     Queue<std::string>& eraserQueue;
 
-    void changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) const;
+    void changeTeam(const std::vector<PlayerInfoDTO>& playersInfo);
 public:
     GameMonitor(const std::string& gameName, GameParser& parser, const uint8_t& rounds, InGameProtocolInterface& protocol, Queue<std::string>& eraserQueue);
     void addPlayer(const size_t &id, const std::string &name, const Team &team, const Skin &skin);

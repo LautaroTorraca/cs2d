@@ -148,13 +148,13 @@ void GameMap::remove(const std::shared_ptr<Entity> &entity) {
 
 }
 
-void GameMap::deactivate(Position &position) {
+void GameMap::deactivate(Position& position, std::shared_ptr<Deactivator>& deactivator) {
     if ( this->explosive.empty() ) return;
     auto it = this->explosive.begin();
     Position explosivePosition;
     explosivePosition.updateTo(it->first);
     if (explosivePosition.intersects(position)) {
-        it->second->deactivate();
+        it->second->deactivate(deactivator);
     }
 }
 
@@ -188,10 +188,17 @@ std::vector<DropDTO> GameMap::getDrops() const {
 
 CoordinateDTO GameMap::getExplosivePosition() const {
     if (this->explosive.empty()) {
-        Coordinate coordinate(-1,-1);
+        Coordinate coordinate(-1, -1);
         return coordinate.getInfo();
     }
     return this->explosive.begin()->first.getPoint();
+}
+double GameMap::getExplosiveTime() const {
+    if (this->explosive.empty()) {
+        Coordinate coordinate(-1, -1);
+        return 0;
+    }
+    return this->explosive.begin()->second->getTime();
 }
 
 void GameMap::reset(GameParser& parser) {

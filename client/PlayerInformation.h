@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "server/PlayerStatus.h"
 #include "server/Skin.h"
 // TODO: le puedo agregar el currente frame aca....?
 #include "CoordinateInformation.h"
@@ -24,11 +25,15 @@ struct PlayerInformation {
     std::vector<WeaponInformation> weaponsInfo;
     WeaponInformation actualWeapon;
     std::uint8_t kills;
+    uint8_t deaths;
+    PlayerStatus status;
     PlayerInformation(const size_t& id, const std::string& name, const Skin& skin,
                       const CoordinateInformation& position, const double& angle,
                       const uint16_t& actualMoney, const uint8_t& actualHealthPoints,
                       std::vector<WeaponInformation>& weaponsInfo,
-                      const WeaponInformation& actualWeapon, const uint8_t& kills):
+                      const WeaponInformation& actualWeapon, const uint8_t& kills,
+                      const uint8_t& deaths,
+                      const PlayerStatus& status):
             id(id),
             name(name),
             skin(skin),
@@ -38,7 +43,9 @@ struct PlayerInformation {
             actualHealthPoints(actualHealthPoints),
             weaponsInfo(std::move(weaponsInfo)),
             actualWeapon(actualWeapon),
-            kills(kills) {}
+            kills(kills),
+            deaths(deaths),
+            status(status) {}
 };
 
 #endif  // PLAYERINFORMATION_H

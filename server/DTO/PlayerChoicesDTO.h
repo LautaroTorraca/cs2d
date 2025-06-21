@@ -15,6 +15,7 @@ struct PlayerChoicesDTO {
     Team team;
     Skin skin;
     PlayerChoicesDTO(const size_t& id,const std::string& playerName, const Team& team, const Skin& skin) : id(id), playerName(playerName), team(team), skin(skin) {}
+    PlayerChoicesDTO(const std::string& playerName, const Team& team, const Skin& skin) : id(0), playerName(playerName), team(team), skin(skin) {}
     PlayerChoicesDTO& operator=(const PlayerChoicesDTO& other) {
         if (this == &other) {
             return *this;

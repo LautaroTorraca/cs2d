@@ -357,7 +357,7 @@ int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, Weapo
     return (posInScreen.x + (sprite.GetWidth() * multH));
 }
 
-void GameRenderer::drawFOVStencil(const CoordinateInformation& playerCoords, double directionDeg,
+void GameRenderer::drawFOVStencil(const CoordinateInformation&, double directionDeg,
                                   double fovDeg, int radius) {
 
     Uint8 r = 255, g = 255, b = 255, a = 255;

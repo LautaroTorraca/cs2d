@@ -31,6 +31,9 @@ const std::vector<DropDTO> & GameInfoDTO::getDropsInfo() const {
 const CoordinateDTO& GameInfoDTO::getPlantedBombPosition() const {
     return this->plantedBombPosition;
 }
+const double& GameInfoDTO::getBombTimer() const {
+    return this->bombTimer;
+}
 
 const double& GameInfoDTO::getElapsedTime() const { return this->elapsedTime; }
 

@@ -17,7 +17,7 @@ protected:
     int weaponBulletsPerShot;
     uint16_t maxBullets;
     double lastShotTime;
-    bool checkedAttack() const;
+    bool checkedAttack();
 public:
     explicit RechargeableWeapon(const uint16_t& ammo, const double& weaponDamagePerBullet,
         const double& weaponPrecision,

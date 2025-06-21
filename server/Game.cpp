@@ -70,6 +70,10 @@ std::vector<std::vector<uint8_t>> Game::getMap() const {
     return this->gameParser.getMap();
 }
 
+std::map<ProductType, double> Game::getShopInfo() {
+    return this->gameParser.getProductsPrices();
+}
+
 void Game::buy(const size_t &id, const ProductType &product) {
     if (this->status != BUY_TIME) return;
     if ( this->players.contains(id) ) {
@@ -94,7 +98,8 @@ void Game::takeDrop(const size_t &id) {
 }
 
 void Game::attack(const size_t &id) {
-    if (!this->players.contains(id) || this->status == BUY_TIME) return;
+    if (!this->players.contains(id)) return;
+    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     this->players.at(id)->attack(this->gameMap);
 }
 
@@ -109,6 +114,11 @@ void Game::advance(const double &actualTime) {
     this->terrorists.advance(actualTime);
     this->counters.advance(actualTime);
 
+}
+
+void Game::setDeaths(const size_t& index, const uint8_t& deaths) {
+    if (!this->players.contains(index)) return;
+    this->players.at(index)->setDeaths(deaths);
 }
 
 void Game::spawnBomb() {
@@ -162,16 +172,19 @@ void Game::clearPlayers() {
 }
 
 void Game::terroristsWins() {
+    if (this->status != ON_GOING && this->status != BOMB_PLANTED && this->status != BOMB_EXPLODED) return;
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
-    this->status = TERRORISTS_WIN;
     this->terroristsWinsRounds++;
+    if(this->status == BOMB_EXPLODED) return;
+    this->status = TERRORISTS_WIN;
 }
 
 void Game::countersWins() {
+    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
-    status = COUNTERS_WIN;
+    this->status = COUNTERS_WIN;
     this->countersWinsRounds++;
 }
 
@@ -184,6 +197,11 @@ void Game::allTerroristsAreDead() {
     if (!this->bombPlanted) {
         this->countersWins();
     }
+}
+void Game::bombExploded() {
+    if (this->status != BOMB_PLANTED) return;
+    this->status = GameStatus::BOMB_EXPLODED;
+    this->terroristsWins();
 }
 
 std::vector<PlayerInfoDTO> Game::getPlayersInfo() {
@@ -202,5 +220,6 @@ GameInfoDTO Game::getInfo() {
     std::vector<PlayerInfoDTO> playersInfo = this->getPlayersInfo();
     std::vector<DropDTO> dropsInfo = this->getDrops();
     CoordinateDTO plantedBombPosition = this->gameMap.getExplosivePosition();
-    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition, this->actualTime, this->rounds);
+    double explosiveTimer = this->gameMap.getExplosiveTime();
+    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition, explosiveTimer, this->actualTime, this->rounds);
 }

@@ -8,6 +8,7 @@
 
 #define TIME_ADVANCE_IN_SECONDS 0.01
 #define SKIN_BIAS 16
+#define TIME_AFTER_GAME_END 3
 
 GameMonitor::GameMonitor(const std::string& gameName,
     GameParser& parser, const uint8_t& rounds,
@@ -103,56 +104,46 @@ void GameMonitor::sendPreSnapshot() {
     GameInfoDTO gameInfo = game.getInfo();
     for ( auto& player : gameInfo.getPlayersInfo() ) {
         std::vector<std::vector<uint8_t>> map = game.getMap();
-        PreSnapshot preSnapshot(player.getId(), map);
+        std::map<ProductType, double> shopInfo = this->game.getShopInfo();
+        PreSnapshot preSnapshot(player.getId(), map, shopInfo);
         this->protocol.sendPreSnapshot(preSnapshot);
     }
 }
 
 
-void GameMonitor::changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) const {
+void GameMonitor::changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) {
     for (auto& player : playersInfo ) {
         Team newTeam = this->teamToOtherTeamTranslator.at(this->skinToTeamTranslator.at(player.getSkin()));
         uint8_t skinId = player.getSkin() < SKIN_BIAS ? player.getSkin() + SKIN_BIAS : player.getSkin() - SKIN_BIAS;
         Skin newSkin = static_cast<Skin>(skinId);
         this->game.addPlayer(player.getId(), player.getName(), newTeam, newSkin);
+        this->game.setDeaths(player.getId(), player.getDeaths());
     }
 }
 
 void GameMonitor::run() {
     this->sendPreSnapshot();
     double time = 0;
-    /*----------------------Para debbug------------------------*/
-    /*std::map<size_t, std::vector<double>> movements;
-    movements.emplace(0,std::vector<double>());
-    movements.emplace(1,std::vector<double>());
-    movements.at(0).push_back(304);
-    movements.at(0).push_back(48);
-    movements.at(1).push_back(272);
-    movements.at(1).push_back(112);*/
-    /*--------------------------------------------------------*/
+    double endTime = -1;
     GameInfoDTO gameInfo = game.getInfo();
-    while (this->should_keep_running() && gameInfo.getCurrentRound() <= gameInfo.getRounds() && !gameInfo.getPlayersInfo().empty()) {
+    while ((this->should_keep_running() && gameInfo.getCurrentRound() <= gameInfo.getRounds() && !gameInfo.getPlayersInfo().empty()) || endTime != -1) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         std::lock_guard lock(this->mutex);
         game.advance(time);
         time += TIME_ADVANCE_IN_SECONDS;
         gameInfo = game.getInfo();
+        if (!(gameInfo.getStatus() == BUY_TIME || gameInfo.getStatus() == ON_GOING || gameInfo.getStatus() == BOMB_PLANTED)) {
 
-        /*----------------------------------------------------Para debbug-----------------------------------------------------------------------------------------------*/
-        /*for (auto& player : gameInfo.getPlayersInfo() ) {
-            if (movements.at(player.getId()).at(0) != player.getCoordinate().getX() ||
-                movements.at(player.getId()).at(1) != player.getCoordinate().getY()) {
-                std::cout << "id: " << player.getId() << ", name: " << player.getName() << "(" <<
-                    player.getCoordinate().getX() << ", " <<
-                        player.getCoordinate().getY() << "), angulo:" << player.getAngle()
-                << ", weapon: " << (int)player.getActualWeapon().getWeaponType() << std::endl;
-                movements.at(player.getId()).clear();
-                movements.at(player.getId()).push_back(player.getCoordinate().getX());
-                movements.at(player.getId()).push_back(player.getCoordinate().getY());
-                }
-        }*/
-        /*-------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-        if (gameInfo.getStatus() == TERRORISTS_WIN || gameInfo.getStatus() == COUNTERS_WIN) {
+            if (endTime == -1) {
+                endTime = time;
+            }
+
+            if (time - endTime < TIME_AFTER_GAME_END) {
+                this->protocol.sendSnapshot(gameInfo);
+                continue;
+            }
+
+            endTime = -1;
             time = 0;
             if (gameInfo.getCurrentRound() == gameInfo.getRounds() / 2) {
                 this->game.clearPlayers();
@@ -162,5 +153,9 @@ void GameMonitor::run() {
         }
         this->protocol.sendSnapshot(gameInfo);
     }
-    this->eraserQueue.push(this->gameName);
+    try {
+        this->eraserQueue.push(this->gameName);
+    } catch (ClosedQueue&) {
+        //LOGG the server has ended.A gameMonitor has stopped
+    }
 }

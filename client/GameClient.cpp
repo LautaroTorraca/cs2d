@@ -10,7 +10,7 @@
 #include "server/Constants/MapTypeConstants.h"
 
 #include "InputHandler.h"
-#include "MainWindow.h"
+#include "Protocol.h"
 #include "SDL_timer.h"
 #include "fixedOverWritingQueue.h"
 using std::stringstream;
@@ -28,74 +28,11 @@ using namespace DTO;
 // TODO: movimiento simulateno. a chequear.
 // TODO: terminar UI. Cuadros y colores.
 
-GameClient::GameClient(char* port):
-        running(true),
-        protocol(HOSTNAME, port),
-        inputHandler(protocol),
-        dataReceiver(protocol, snapshotQueue) {}
+GameClient::GameClient(Protocol& protocol):
+        running(true), protocol(protocol), inputHandler(protocol) {}
 
-void GameClient::run(int argc, char* argv[]) {
+void GameClient::run() {
 
-    QApplication app(argc, argv);
-    MainWindow mainMenu;
-    if (mainMenu.exec() == QDialog::Accepted) {
-        ConnectionChoice choice = mainMenu.getChoice();
-
-        switch (choice) {
-            case ConnectionChoice::None: {
-                std::cout << "nada\n";
-                break;
-            }
-            case ConnectionChoice::Create: {
-                std::cout << "crear\n";
-                LobbyDTO lobby("hola", MapType::DUST, 2, 6);
-                protocol.createLobby(lobby);
-                std::cout << "aca llego=?\n\n";
-                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                std::cout << "lobbyStatus, id: " << lobbyStatus.id
-                          << ", status: " << (int)lobbyStatus.status << std::endl;
-                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                    std::cout << "se creo el lobby correctamente\n";
-                } else {
-                    std::cout << "fallo xd\n";
-                }
-                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::PHOENIX);
-                protocol.ready(playerChoices);
-                GameLobbyDTO gameLobby = protocol.getGameLobby();
-                while (gameLobby.status != READY_STATUS) {
-                    std::cout << "todavia no se creo el game correctamente\n";
-                    gameLobby = protocol.getGameLobby();
-                }
-                std::cout << "Se creo el game correctamente\n";
-                break;
-            }
-            case ConnectionChoice::Join: {
-
-                std::cout << "unirse\n";
-                LobbyDTO lobby("hola");
-                protocol.joinLobby(lobby);
-                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                    std::cout << "se creo el lobby correctamente\n";
-                } else {
-                    std::cout << "fallo xd\n";
-                }
-                PlayerChoicesDTO playerChoices(4321, "pablo", Team::COUNTER_TERRORISTS,
-                                               Skin::UK_SAS);
-                protocol.ready(playerChoices);
-                GameLobbyDTO gameLobby = protocol.getGameLobby();
-                while (gameLobby.status != READY_STATUS) {
-                    std::cout << "todavia no se creo el game correctamente\n";
-                    GameLobbyDTO gameLobby = protocol.getGameLobby();
-                }
-                std::cout << "Se creo el game correctamente\n";
-                break;
-            }
-        }
-    }
-    std::cout << "hasta aca todo joya no?\n";
-
-    // HACK: fix constant loop rate.
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
     try {

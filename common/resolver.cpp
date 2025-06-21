@@ -1,5 +1,6 @@
 #include "resolver.h"
 
+#include <iostream>
 #include <stdexcept>
 
 #include <arpa/inet.h>
@@ -17,7 +18,6 @@
 Resolver::Resolver(const char* hostname, const char* servname, bool is_passive) {
     struct addrinfo hints;
     this->result = this->_next = nullptr;
-
     /*
      * `getaddrinfo` nos resuelve el nombre de una máquina (host) y de un
      * servicio a una dirección.

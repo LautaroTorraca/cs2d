@@ -13,8 +13,9 @@
 #include "Entity.h"
 #include "PlayerInfoDTO.h"
 #include "PlayerInventory.h"
-#include "Wallet.h"
+#include "PlayerStatus.h"
 #include "Skin.h"
+#include "Wallet.h"
 
 #define INITIAL_LIFE_KEY "initialLife"
 #define INITIAL_MONEY_KEY "initialMoney"
@@ -31,10 +32,12 @@ class Player : public Entity, public Damageable, public Buyer, public Advancer, 
     double angle;
     uint8_t healthPoints;
     uint8_t kills;
+    uint8_t deaths;
     std::unique_ptr<Backer> backer;
     Wallet wallet;
 
 protected:
+    PlayerStatus status;
     Position position;
     PlayerInventory inventory;
 public:
@@ -88,6 +91,8 @@ public:
     void give(const uint16_t& money);
 
     PlayerInfoDTO getInfo();
+
+    void setDeaths(const uint8_t deaths);
 };
 
 

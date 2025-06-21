@@ -5,10 +5,10 @@
 
 #include <sys/socket.h>
 
-#include "Constants/KeyContants.h"
-#include "Constants/ProtocolContants.h"
+#include "server/Constants/KeyContants.h"
+#include "server/Constants/ProtocolContants.h"
 #include "Constants/SnapshotConstants.h"
-#include "Handlers/ClientHandler.h"
+#include "server/Handlers/ClientHandler.h"
 #include "common/liberror.h"
 
 #include "ServerLobbyProtocol.h"
@@ -141,9 +141,6 @@ void Protocol::disconnect(const DisconnectionDTO &disconnectionInfo) {
     client->stopService();
     client->join();
     this->clientsHandlers.erase(disconnectionInfo.clientId);
-    if (this->clientsHandlers.empty() && this->ended) {
-        this->requestsQueue.close();
-    }
 }
 
 std::vector<size_t> Protocol::getIds(const GameLobbyDTO& gameLobbyInfo) {
@@ -165,7 +162,8 @@ void Protocol::sendLobby(const GameLobbyDTO& gameLobbyInfo) {
 std::vector<size_t> Protocol::getSnapshotIds(const std::vector<PlayerInfoDTO>& playerInfos) {
     std::vector<size_t> snapshotIds;
     for (auto& playerInfo: playerInfos) {
-        snapshotIds.emplace_back(playerInfo.getId());
+        if ( this->clientsHandlers.contains(playerInfo.getId()))
+            snapshotIds.emplace_back(playerInfo.getId());
     }
     return snapshotIds;
 }
@@ -182,19 +180,21 @@ void Protocol::sendPreSnapshot(const PreSnapshot& preSnapshot) {
 }
 
 void Protocol::end() {
+    if (this->ended) return;
     try {
         this->acceptorSocket.shutdown(SHUT_RDWR);
         this->acceptorThread.join();
         for (auto& handler: this->clientsHandlers | std::views::values) {
-            handler->stopService();
+            handler->endService();
+            handler->join();
         }
+        this->clientsHandlers.clear();
+        this->requestsQueue.close();
         this->ended = true;
-        if (this->clientsHandlers.empty()) {
-            this->requestsQueue.close();
-        }
+
     } catch (LibError&) {
         // TODO: Logging de error
     }
 }
 
-Protocol::~Protocol() { }
+Protocol::~Protocol() { this->end(); }

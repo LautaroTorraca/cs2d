@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Requests/Request.h"
-#include "Orders/ServerLobbyOrder.h"
-#include "Handlers/LobbyHandler.h"
+#include "server/Requests/Request.h"
+#include "server/Orders/ServerLobbyOrder.h"
+#include "server/Handlers/LobbyHandler.h"
 #include <map>
 #include <memory>
 #include <string>

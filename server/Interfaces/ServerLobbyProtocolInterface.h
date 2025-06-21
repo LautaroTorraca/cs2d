@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Disconnectable.h"
-#include "DTO/GamesListDTO.h"
-#include "DTO/LobbyConnectionDTO.h"
+#include "server/DTO/GamesListDTO.h"
+#include "server/DTO/LobbyConnectionDTO.h"
 
 class ServerLobbyProtocolInterface : public Disconnectable {
 

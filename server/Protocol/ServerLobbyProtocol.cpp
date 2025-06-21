@@ -1,9 +1,9 @@
 #include "ServerLobbyProtocol.h"
-#include "Constants/ProtocolContants.h"
-#include "Constants/KeyContants.h"
+#include "server/Constants/ProtocolContants.h"
+#include "server/Constants/KeyContants.h"
 #include <sstream>
 
-#include "Sender/Sender.h"
+#include "server/Sender/Sender.h"
 
 
 ServerLobbyProtocol::ServerLobbyProtocol()

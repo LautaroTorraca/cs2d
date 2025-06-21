@@ -1,6 +1,6 @@
 #pragma once
 #include "Disconnectable.h"
-#include "GameInfoDTO.h"
+#include "server/GameInfoDTO.h"
 #include "common/Constants/SnapshotConstants.h"
 
 class InGameProtocolInterface : public Disconnectable {

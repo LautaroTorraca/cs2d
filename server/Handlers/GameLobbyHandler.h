@@ -2,9 +2,9 @@
 #include <functional>
 #include <unordered_map>
 
-#include "Requests/Request.h"
+#include "server/Requests/Request.h"
 #include "common/socket.h"
-#include "Readers/Reader.h"
+#include "server/Readers/Reader.h"
 
 class GameLobbyHandler {
 

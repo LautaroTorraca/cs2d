@@ -30,7 +30,6 @@ void Projectile::collision(Damageable & damageable) {
 
 void Projectile::allocate(const Position & position) {
     this->position.updateLocationTo(position);
-    //std::cout << "Soy " << this << ", estoy en (" << this->position.getCenter().getInfo().x << ", " << this->position.getCenter().getInfo().y << ")" << std::endl;
 }
 
 void Projectile::advance(const double &actualTime) {
