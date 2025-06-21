@@ -3,7 +3,10 @@
 //
 
 #include "Bomb.h"
+
 #include <iostream>
+
+#include "Deactivator.h"
 #define BOMB_INDEX 3
 #define PERMISSIVE_RELEASE 0.5
 
@@ -26,12 +29,14 @@ void Bomb::addTo(Inventory &inventory) {
 void Bomb::advance(const double &actualTime) {
     this->actualTime = actualTime;
     if ( this->activationStartTime > 0 && (this->actualTime - this->activationStartTime) >= this->activationDuration ) {
-        this->finalizable.terroristsWins();
+        this->finalizable.bombExploded();
     }
 
     if (this->lastDeactivationTime > 0 && (this->actualTime - this->lastDeactivationTime) >= PERMISSIVE_RELEASE) {
         this->deactivationStartTime = 0;
         this->lastDeactivationTime = 0;
+        this->deactivator->deactivatingStopped();
+        this->deactivator.reset();
     }
 
     if ( this->deactivationStartTime > 0 && this->actualTime - this->deactivationStartTime >= this->deactivationDuration ) {
@@ -39,10 +44,13 @@ void Bomb::advance(const double &actualTime) {
     }
 }
 
-void Bomb::deactivate() {
+void Bomb::deactivate(std::shared_ptr<Deactivator>& deactivator) {
     if ( this->deactivationStartTime == 0 ) {
         this->deactivationStartTime = this->actualTime;
     }
+    if (this->deactivator) this->deactivator->deactivatingStopped();
+    this->deactivator = deactivator;
+    this->deactivator->deactivating();
     this->lastDeactivationTime = this->actualTime;
 }
 

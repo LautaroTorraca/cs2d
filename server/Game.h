@@ -58,13 +58,15 @@ public:
     void buy(const size_t& id, const ProductType& product, const uint16_t& amount);
     void takeDrop(const size_t& id);
     void attack(const size_t& id);
-    void advance(const double &actualTime) override;
+    void advance(const double& actualTime) override;
+    void setDeaths(const size_t& index, const uint8_t& deaths);
     void spawnBomb();
     void deactivateBomb(const size_t& id);
     void terroristsWins() override;
     void countersWins() override;
     void bombHasBeenPlanted() override;
     void allTerroristsAreDead() override;
+    void bombExploded() override;
     std::vector<PlayerInfoDTO> getPlayersInfo();
     [[nodiscard]] std::vector<DropDTO> getDrops() const;
     GameInfoDTO getInfo();

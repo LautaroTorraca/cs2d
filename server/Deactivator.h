@@ -2,7 +2,11 @@
 // Created by lionel on 21/06/25.
 //
 
-#ifndef DEACTIVATOR_H
-#define DEACTIVATOR_H
+#pragma once
 
-#endif //DEACTIVATOR_H
+class Deactivator {
+    public:
+    virtual ~Deactivator() = default;
+    virtual void deactivating() = 0;
+    virtual void deactivatingStopped() = 0;
+};

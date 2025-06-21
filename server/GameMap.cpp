@@ -148,13 +148,13 @@ void GameMap::remove(const std::shared_ptr<Entity> &entity) {
 
 }
 
-void GameMap::deactivate(Position &position) {
+void GameMap::deactivate(Position& position, std::shared_ptr<Deactivator>& deactivator) {
     if ( this->explosive.empty() ) return;
     auto it = this->explosive.begin();
     Position explosivePosition;
     explosivePosition.updateTo(it->first);
     if (explosivePosition.intersects(position)) {
-        it->second->deactivate();
+        it->second->deactivate(deactivator);
     }
 }
 

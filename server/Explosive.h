@@ -4,11 +4,12 @@
 
 #ifndef EXPLOSIVE_H
 #define EXPLOSIVE_H
+#include "Deactivator.h"
 
 class Explosive {
 public:
     virtual ~Explosive() = default;
-    virtual void deactivate() = 0;
+    virtual void deactivate(std::shared_ptr<Deactivator>& deactivator) = 0;
     virtual void activate() = 0;
     virtual void continueActivation(const double& actualTime) = 0;
 };

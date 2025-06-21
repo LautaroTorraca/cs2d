@@ -12,4 +12,6 @@ const uint16_t & PlayerInfoDTO::getMoney() const { return actualMoney; }
 const uint8_t & PlayerInfoDTO::getHealth() const { return this->actualHealthPoints; }
 const std::vector<WeaponInfoDTO> & PlayerInfoDTO::getWeaponsInfo() const { return weaponsInfo; }
 const WeaponInfoDTO & PlayerInfoDTO::getActualWeapon() const { return actualWeapon; }
-const uint8_t & PlayerInfoDTO::getKills() const { return this->kills; }
+const uint8_t& PlayerInfoDTO::getKills() const { return this->kills; }
+const uint8_t& PlayerInfoDTO::getDeaths() const { return this->deaths; }
+const PlayerStatus& PlayerInfoDTO::getStatus() const { return this->status; }

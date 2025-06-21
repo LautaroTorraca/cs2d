@@ -1,6 +1,7 @@
 
 #include "Reader.h"
 
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -10,7 +11,7 @@
 
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
-#include <cmath>
+#include "server/PlayerStatus.h"
 
 #define NEW 0X6E
 #define PRECISION 10000
@@ -117,14 +118,16 @@ PlayerInformation Reader::readPlayer() const {
     uint8_t health = this->u8tReader();
     uint16_t money = this->u16tReader();
     uint8_t kills = this->u8tReader();
+    uint8_t deaths = this->u8tReader();
     Skin skin = static_cast<Skin>(this->u8tReader());
     WeaponInformation actualWeapon = this->readWeapon();
     std::vector<WeaponInformation> weapons;
     while (this->u8tReader() == NEW) {
         weapons.push_back(this->readWeapon());
     }
+    PlayerStatus status = static_cast<PlayerStatus>(this->u8tReader());
     return PlayerInformation(id, playerName, skin, position, angle, money, health, weapons,
-                             actualWeapon, kills);
+                             actualWeapon, kills, deaths, status);
 }
 
 DropInformation Reader::readDrop() const {

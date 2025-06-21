@@ -115,6 +115,11 @@ void Game::advance(const double &actualTime) {
 
 }
 
+void Game::setDeaths(const size_t& index, const uint8_t& deaths) {
+    if (!this->players.contains(index)) return;
+    this->players.at(index)->setDeaths(deaths);
+}
+
 void Game::spawnBomb() {
     double activationDuration = this->gameParser.getWeaponInfo(WeaponType::BOMB, BOMB_ACTIVATION_TIME_KEY);
     double deactivationDuration = this->gameParser.getWeaponInfo(WeaponType::BOMB, BOMB_DEACTIVATION_TIME_KEY);
@@ -168,14 +173,15 @@ void Game::clearPlayers() {
 void Game::terroristsWins() {
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
-    this->status = TERRORISTS_WIN;
     this->terroristsWinsRounds++;
+    if(this->status == BOMB_EXPLODED) return;
+    this->status = TERRORISTS_WIN;
 }
 
 void Game::countersWins() {
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
-    status = COUNTERS_WIN;
+    this->status = COUNTERS_WIN;
     this->countersWinsRounds++;
 }
 
@@ -188,6 +194,10 @@ void Game::allTerroristsAreDead() {
     if (!this->bombPlanted) {
         this->countersWins();
     }
+}
+void Game::bombExploded() {
+    this->status = GameStatus::BOMB_EXPLODED;
+    this->terroristsWins();
 }
 
 std::vector<PlayerInfoDTO> Game::getPlayersInfo() {

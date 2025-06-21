@@ -258,7 +258,7 @@ TEST(InGameReadPreSnapshotTest, Check)
         projectilesInfo.push_back(projectile);
         weaponsInfo.push_back({30, WeaponType::GLOCK, projectilesInfo});
         WeaponInfoDTO actualWeapon(30, WeaponType::GLOCK);
-        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0});
+        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0, 0, PlayerStatus::LIVING});
         std::vector<DropDTO> dropsInfo;
         WeaponInfoDTO droppedWeapon(30, WeaponType::AK47);
         dropsInfo.push_back({droppedWeapon, {48, 48}});
@@ -288,6 +288,8 @@ TEST(InGameReadPreSnapshotTest, Check)
                                                                                 playersInformation.at(0).actualWeapon.weaponType == gameInfo.getPlayersInfo().at(0).getActualWeapon().getWeaponType() &&
                                                                                     playersInformation.at(0).actualWeapon.projectilesInfo.size() == gameInfo.getPlayersInfo().at(0).getActualWeapon().getProjectilesInfo().size() &&
                                                                                              playersInformation.at(0).kills == gameInfo.getPlayersInfo().at(0).getKills() &&
+                                                                                                 playersInformation.at(0).deaths == gameInfo.getPlayersInfo().at(0).getDeaths() &&
+                                                                                                 playersInformation.at(0).status == gameInfo.getPlayersInfo().at(0).getStatus() &&
                                                                                                     snapshot.dropsInfo.size() == gameInfo.getDropsInfo().size() &&
                                                                                                         snapshot.dropsInfo.at(0).position.x == gameInfo.getDropsInfo().at(0).getPosition().getX() &&
                                                                                                             snapshot.dropsInfo.at(0).position.y == gameInfo.getDropsInfo().at(0).getPosition().getY() &&

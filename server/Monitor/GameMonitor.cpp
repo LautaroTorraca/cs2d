@@ -110,12 +110,13 @@ void GameMonitor::sendPreSnapshot() {
 }
 
 
-void GameMonitor::changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) const {
+void GameMonitor::changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) {
     for (auto& player : playersInfo ) {
         Team newTeam = this->teamToOtherTeamTranslator.at(this->skinToTeamTranslator.at(player.getSkin()));
         uint8_t skinId = player.getSkin() < SKIN_BIAS ? player.getSkin() + SKIN_BIAS : player.getSkin() - SKIN_BIAS;
         Skin newSkin = static_cast<Skin>(skinId);
         this->game.addPlayer(player.getId(), player.getName(), newTeam, newSkin);
+        this->game.setDeaths(player.getId(), player.getDeaths());
     }
 }
 
@@ -153,7 +154,7 @@ void GameMonitor::run() {
                 }
         }*/
         /*-------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-        if (gameInfo.getStatus() == TERRORISTS_WIN || gameInfo.getStatus() == COUNTERS_WIN) {
+        if (gameInfo.getStatus() == TERRORISTS_WIN || gameInfo.getStatus() == COUNTERS_WIN || gameInfo.getStatus() == BOMB_EXPLODED) {
             time = 0;
             if (gameInfo.getCurrentRound() == gameInfo.getRounds() / 2) {
                 this->game.clearPlayers();

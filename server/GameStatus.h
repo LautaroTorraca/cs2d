@@ -11,7 +11,8 @@ enum GameStatus : uint8_t {
     ON_GOING = 1,
     BOMB_PLANTED = 2,
     TERRORISTS_WIN = 3,
-    COUNTERS_WIN = 4
+    COUNTERS_WIN = 4,
+    BOMB_EXPLODED = 5
 };
 
 #endif  // GAMESTATUS_H
