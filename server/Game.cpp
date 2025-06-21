@@ -98,7 +98,8 @@ void Game::takeDrop(const size_t &id) {
 }
 
 void Game::attack(const size_t &id) {
-    if (!this->players.contains(id) || this->status == BUY_TIME) return;
+    if (!this->players.contains(id)) return;
+    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     this->players.at(id)->attack(this->gameMap);
 }
 
@@ -171,6 +172,7 @@ void Game::clearPlayers() {
 }
 
 void Game::terroristsWins() {
+    if (this->status != ON_GOING && this->status != BOMB_PLANTED && this->status != BOMB_EXPLODED) return;
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
     this->terroristsWinsRounds++;
@@ -179,6 +181,7 @@ void Game::terroristsWins() {
 }
 
 void Game::countersWins() {
+    if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     this->counters.giveMoney(this->gameParser.getGameInfo(MONEY_PER_WIN_ROUND_KEY));
     this->terrorists.giveMoney(this->gameParser.getGameInfo(MONEY_PER_ROUND_KEY));
     this->status = COUNTERS_WIN;
@@ -196,6 +199,7 @@ void Game::allTerroristsAreDead() {
     }
 }
 void Game::bombExploded() {
+    if (this->status != BOMB_PLANTED) return;
     this->status = GameStatus::BOMB_EXPLODED;
     this->terroristsWins();
 }
