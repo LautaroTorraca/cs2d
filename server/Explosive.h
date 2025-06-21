@@ -12,6 +12,7 @@ public:
     virtual void deactivate(std::shared_ptr<Deactivator>& deactivator) = 0;
     virtual void activate() = 0;
     virtual void continueActivation(const double& actualTime) = 0;
+    virtual double getTime() = 0;
 };
 
 #endif //EXPLOSIVE_H

@@ -50,6 +50,7 @@ public:
     void advance(const double &actualTime) override;
     [[nodiscard]] std::vector<DropDTO> getDrops() const;
     [[nodiscard]] CoordinateDTO getExplosivePosition() const;
+    [[nodiscard]] double getExplosiveTime() const;
     ~GameMap() override = default;
     void reset(GameParser& parser);
 };

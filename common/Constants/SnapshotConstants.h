@@ -24,6 +24,7 @@ struct Snapshot {
     std::vector<PlayerInformation> playersInfo;
     std::vector<DropInformation> dropsInfo;
     CoordinateInformation plantedBombPosition;
+    double bombTimer;
     double actualTime;
     uint8_t totalRounds;
 
@@ -36,6 +37,7 @@ struct Snapshot {
              const uint8_t& countersWinsRounds, const uint8_t& terroristsWinsRounds,
              const std::vector<PlayerInformation>& playersInfo,
              const std::vector<DropInformation>& drops, const CoordinateInformation& bombPosition,
+             const double& bombTimer,
              const double& actualTime, const uint8_t& totalRounds):
             status(status),
             currentRound(currentRound),
@@ -44,6 +46,7 @@ struct Snapshot {
             playersInfo(playersInfo),
             dropsInfo(drops),
             plantedBombPosition(bombPosition),
+            bombTimer(bombTimer),
             actualTime(actualTime),
             totalRounds(totalRounds) {}
 };

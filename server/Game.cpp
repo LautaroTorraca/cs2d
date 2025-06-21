@@ -216,5 +216,6 @@ GameInfoDTO Game::getInfo() {
     std::vector<PlayerInfoDTO> playersInfo = this->getPlayersInfo();
     std::vector<DropDTO> dropsInfo = this->getDrops();
     CoordinateDTO plantedBombPosition = this->gameMap.getExplosivePosition();
-    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition, this->actualTime, this->rounds);
+    double explosiveTimer = this->gameMap.getExplosiveTime();
+    return GameInfoDTO(this->status, this->currentRound, this->countersWinsRounds, this->terroristsWinsRounds, playersInfo, dropsInfo, plantedBombPosition, explosiveTimer, this->actualTime, this->rounds);
 }

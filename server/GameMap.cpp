@@ -188,10 +188,17 @@ std::vector<DropDTO> GameMap::getDrops() const {
 
 CoordinateDTO GameMap::getExplosivePosition() const {
     if (this->explosive.empty()) {
-        Coordinate coordinate(-1,-1);
+        Coordinate coordinate(-1, -1);
         return coordinate.getInfo();
     }
     return this->explosive.begin()->first.getPoint();
+}
+double GameMap::getExplosiveTime() const {
+    if (this->explosive.empty()) {
+        Coordinate coordinate(-1, -1);
+        return 0;
+    }
+    return this->explosive.begin()->second->getTime();
 }
 
 void GameMap::reset(GameParser& parser) {

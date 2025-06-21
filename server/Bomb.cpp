@@ -10,8 +10,7 @@
 #define BOMB_INDEX 3
 #define PERMISSIVE_RELEASE 0.5
 
-Bomb::Bomb(Bomb && bomb) noexcept : finalizable(bomb.finalizable) {
-}
+Bomb::Bomb(Bomb && bomb) noexcept : finalizable(bomb.finalizable) {}
 
 void Bomb::attack(Positionable & positionable, const Position & position, const double &) {
     std::shared_ptr<Bomb> bombClone = std::make_shared<Bomb>(this->finalizable, this->activationDuration, this->deactivationDuration);
@@ -64,6 +63,9 @@ void Bomb::continueActivation(const double& actualTime) {
     this->advance(actualTime);
 }
 
-WeaponInfoDTO Bomb::getInfo() {
-    return {1, WeaponType::BOMB};
+WeaponInfoDTO Bomb::getInfo() { return {1, WeaponType::BOMB}; }
+
+double Bomb::getTime() {
+    if (this->deactivationStartTime == 0) return -1;
+    return this->actualTime - this->activationStartTime;
 }

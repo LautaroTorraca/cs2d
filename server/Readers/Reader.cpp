@@ -156,6 +156,7 @@ Snapshot Reader::readSnapShot() const {
     uint8_t countersWinsRounds = this->u8tReader();
     uint8_t terroristsWinsRounds = this->u8tReader();
     CoordinateInformation bombPosition = this->readCoordinateInformation();
+    double bombTimer = this->doubleRead();
     GameStatus status = static_cast<GameStatus>(this->u8tReader());
     std::vector<DropInformation> drops;
     while (this->u8tReader() == NEW) {
@@ -165,5 +166,5 @@ Snapshot Reader::readSnapShot() const {
     double actualTime = this->doubleRead();
     uint8_t totalRounds = this->u8tReader();
     return Snapshot(status, currentRound, countersWinsRounds, terroristsWinsRounds, playersInfo,
-                    drops, bombPosition, actualTime, totalRounds);
+                    drops, bombPosition, bombTimer, actualTime, totalRounds);
 }

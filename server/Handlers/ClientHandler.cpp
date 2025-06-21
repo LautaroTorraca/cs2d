@@ -120,6 +120,7 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
     this->sender.send(gameInfo.getCountersWinsRounds());
     this->sender.send(gameInfo.getTerroristsWinsRounds());
     this->sender.send(gameInfo.getPlantedBombPosition());
+    this->sender.send(gameInfo.getBombTimer());
     this->sender.send(status);
     for (auto& drop: gameInfo.getDropsInfo()) {
         this->sender.send(NEW);

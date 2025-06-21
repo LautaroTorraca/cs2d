@@ -42,6 +42,7 @@ public:
     void activate() override;
     void continueActivation(const double& actualTime) override;
     WeaponInfoDTO getInfo() override;
+    double getTime() override;
 };
 
 

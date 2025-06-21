@@ -14,7 +14,7 @@
 ProtocolTesting::ProtocolTesting(const std::string& hostName, const std::string& port):
         Protocol(hostName, port),
         snapshot(gameStatus, currentRound, countersWins, terroristsWins, playersInfo, drops,
-                 bombPosition, 0, 0) {
+                 bombPosition, 0, 0, 0) {
     fillDummies(snapshot);
 }
 //

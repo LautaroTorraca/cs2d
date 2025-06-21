@@ -262,7 +262,7 @@ TEST(InGameReadPreSnapshotTest, Check)
         std::vector<DropDTO> dropsInfo;
         WeaponInfoDTO droppedWeapon(30, WeaponType::AK47);
         dropsInfo.push_back({droppedWeapon, {48, 48}});
-        GameInfoDTO gameInfo(GameStatus::ON_GOING, 4, 0, 0, playersInfo, dropsInfo, {298, 196}, 10, 10);
+        GameInfoDTO gameInfo(GameStatus::ON_GOING, 4, 0, 0, playersInfo, dropsInfo, {298, 196}, 10, 10, 10);
         protocol.sendSnapshot(gameInfo);
         Snapshot snapshot = clientProtocol.receiveSnapshot();
         std::vector<PlayerInformation> playersInformation = snapshot.playersInfo;
@@ -298,6 +298,7 @@ TEST(InGameReadPreSnapshotTest, Check)
                                                                                                                         snapshot.dropsInfo.at(0).weapon.weaponType == gameInfo.getDropsInfo().at(0).getDropInfo().getWeaponType() &&
                                                                                                                             snapshot.plantedBombPosition.x == gameInfo.getPlantedBombPosition().getX() &&
                                                                                                                                 snapshot.plantedBombPosition.y == gameInfo.getPlantedBombPosition().getY() &&
+                                                                                                                                    snapshot.bombTimer == gameInfo.getBombTimer() &&
                                                                                                                                     snapshot.actualTime == gameInfo.getElapsedTime() &&
                                                                                                                                         snapshot.totalRounds == gameInfo.getRounds();
         EXPECT_EQ(result, true);
