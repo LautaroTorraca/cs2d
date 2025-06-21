@@ -25,7 +25,14 @@ QString GameFlowUtils::askGameName(QWidget* parent) {
     if (result != QDialog::Accepted) {
         throw std::runtime_error("Game name selection cancelled");
     }
-    return dialog.getGameName();
+
+    QString name = dialog.getGameName();
+
+    if (name.isEmpty()) {
+        throw std::runtime_error("Game name cannot be empty");
+    }
+
+    return name;
 }
 
 MapType GameFlowUtils::askMap(QWidget* parent) {

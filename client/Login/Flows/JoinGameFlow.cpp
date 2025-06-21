@@ -2,9 +2,7 @@
 
 #include "GameFlowUtils.h"
 #include "../MessageBox.h"
-#include "Login/Dialogs/GameListDialog.h"
-
-
+#include "Login/Dialogs/GameNameDialog.h"
 
 JoinGameFlow::JoinGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent)
         : GameFlowBase(usernameInput, protocol, parent) {}
@@ -14,23 +12,35 @@ void JoinGameFlow::run() {
     if (username.isEmpty()) return;
 
     try {
-        GamesList gameList = protocol.getGamesList();
-        QStringList qGames;
-        for (const std::string& game : gameList.games) {
-            qGames.append(QString::fromStdString(game));
+        GameNameDialog nameDialog(parent);
+        if (nameDialog.exec() != QDialog::Accepted) return;
+
+        QString gameName = nameDialog.getGameName().trimmed();
+        if (gameName.isEmpty()) {
+            GameFlowUtils::showError(parent, "⚠️ Invalid Name", "You must enter a valid game name.");
+            return;
         }
 
-        GameListDialog listDialog(qGames, parent);
-        int result = listDialog.exec();
-        if (result != QDialog::Accepted)
-            return;
+        GamesList gameList = protocol.getGamesList();
+        bool gameExists = false;
+        for (const std::string& game : gameList.games) {
+            if (QString::fromStdString(game) == gameName) {
+                gameExists = true;
+                break;
+            }
+        }
 
-        QString gameName = listDialog.getSelectedGame();
+        if (!gameExists) {
+            GameFlowUtils::showError(parent, "⚠️ Game Not Found",
+                                     QString("The game '%1' does not exist.").arg(gameName));
+            return;
+        }
+
         protocol.joinLobby(gameName.toStdString());
 
         LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
         if (lobbyStatus.status != ConnectionStatus::SUCCESS) {
-            GameFlowUtils::showError(parent, "Failed to Join", "Unable to join the selected game lobby.");
+            GameFlowUtils::showError(parent, "❌ Failed to Join", "Unable to join the selected game lobby.");
             return;
         }
 
@@ -42,4 +52,3 @@ void JoinGameFlow::run() {
                                  QString("An unexpected error occurred:\n\n%1").arg(e.what()));
     }
 }
-

@@ -13,7 +13,12 @@ void CreateGameFlow::run() {
     if (username.isEmpty()) return;
 
     try {
-        QString gameName = GameFlowUtils::askGameName(parent);
+        QString gameName = GameFlowUtils::askGameName(parent).trimmed();
+        if (gameName.isEmpty()) {
+            GameFlowUtils::showError(parent, "⚠️ Invalid Name", "You must enter a valid game name.");
+            return;
+        }
+
         MapType map = GameFlowUtils::askMap(parent);
         auto config = GameFlowUtils::askConfig(parent);
 

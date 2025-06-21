@@ -22,7 +22,10 @@ void ListGameFlow::run() {
 
         QStringList formattedGames;
         for (const std::string& game : gameList.games) {
-            formattedGames << QString::fromStdString(game);
+            QString clean = QString::fromStdString(game);
+            clean.remove('\n');
+            clean.remove('\r');
+            formattedGames << clean;
         }
 
         GameListDialog dialog(formattedGames, parent);

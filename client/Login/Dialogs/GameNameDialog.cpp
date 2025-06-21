@@ -1,11 +1,13 @@
 #include "GameNameDialog.h"
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 
 GameNameDialog::GameNameDialog(QWidget* parent,
                                const QString& labelText,
                                const QString& confirmText)
-        : QDialog(parent) {
+        : QDialog(parent), input(nullptr), confirmBtn(nullptr) {
     setModal(true);
     resize(400, 180);
     setWindowTitle("Game Name");
@@ -59,14 +61,33 @@ void GameNameDialog::setupUI(const QString& labelText, const QString& confirmTex
     layout->addWidget(label);
 
     input = new QLineEdit(this);
+    input->setMaxLength(30);
+
+    QRegularExpression regex("^[\\w]*$");
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(regex, this);
+    input->setValidator(validator);
+
     layout->addWidget(input);
 
-    QPushButton* confirmBtn = new QPushButton(confirmText);
+    confirmBtn = new QPushButton(confirmText);
+    confirmBtn->setEnabled(false);
     layout->addWidget(confirmBtn, 0, Qt::AlignRight);
 
     connect(confirmBtn, &QPushButton::clicked, this, &QDialog::accept);
+    connect(input, &QLineEdit::textChanged, this, &GameNameDialog::onTextChanged);
 }
 
 QString GameNameDialog::getGameName() const {
-    return input->text().trimmed();
+    QString clean = input->text().trimmed();
+    clean.remove('\n');
+    clean.remove('\r');
+    clean.remove('\t');
+    clean.remove(' ');
+    return clean;
+}
+
+void GameNameDialog::onTextChanged(const QString& text) {
+    QString trimmed = text.trimmed();
+    QRegularExpression regex("^[\\w]{1,30}$");
+    confirmBtn->setEnabled(regex.match(trimmed).hasMatch() && !trimmed.isEmpty());
 }
