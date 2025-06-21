@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Constants/PlayerDataConstants.h"
-#include "server/DTO/GameLobbyDTO.h"
+#include "server/GameStatus.h"
 
 #include "Protocol.h"
 #include "SDL_events.h"
@@ -12,11 +12,11 @@ class InputHandler {
 private:
     Protocol& protocol;
     Coords mouseCoords;
+    bool inBuyMenu = false;
 
 public:
     InputHandler(Protocol& protocol);
-    void processCommand();
-    bool processEvent(SDL_Event event);
+    bool processEvents(SDL_Event& event, GameStatus status);
+    bool isInMenu();
     Coords getMouseCoords();
-    GameLobbyDTO clientInput();
 };

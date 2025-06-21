@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Protocol.h"
+#include "SDL_timer.h"
 #include "SnapshotConstants.h"
 #include "fixedOverWritingQueue.h"
 
@@ -16,7 +17,7 @@ void DataReceiver::run() {
         while (running) {
             Snapshot snapshot = protocol.receiveSnapshot();
             snapshotQueue.push(snapshot);
-            std::cout << "puchie\n";
+            // SDL_Delay(500);
         }
     } catch (const ClosedQueue&) {
         std::cout << "queue ded\n";

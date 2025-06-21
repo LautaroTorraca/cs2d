@@ -5,13 +5,26 @@
 #include "Constants/ClientConstants.h"
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
+#include "build/_deps/sdl2_ttf-src/SDL_ttf.h"
 #include "server/Constants/MapTypeConstants.h"
 #include "server/Skin.h"
+
+// #include "Explotion.h"
+#include "RgbValue.h"
 
 TextureManager::TextureManager(Renderer& renderer):
         renderer(renderer),
         fovTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, RES_WIDTH,
-                   RES_HEIGTH) {
+                   RES_HEIGTH),
+
+        explotionTexture(removeBackground(none, "../client/assets/explosion.png")) {
+
+    if (TTF_Init() == -1) {
+        throw std::runtime_error("error ttf_init()" + std::string(TTF_GetError()));
+    }
+
+    // Explotion
+
 
     // UI
     texturesUI.emplace(UiType::NumsUI, removeBackground(black, "../client/assets/ui/hud_nums.png"));
@@ -19,6 +32,20 @@ TextureManager::TextureManager(Renderer& renderer):
                        removeBackground(black, "../client/assets/ui/hud_symbols.png"));
     texturesUI.emplace(UiType::CursorUI,
                        removeBackground(magenta, "../client/assets/ui/pointer.png"));
+
+    // weapons held
+    texturesWeaponsHeld.emplace(WeaponType::AWP,
+                                removeBackground(black, "../client/assets/weapons/awp_h.png"));
+    texturesWeaponsHeld.emplace(WeaponType::M3,
+                                removeBackground(black, "../client/assets/weapons/m3_h.png"));
+    texturesWeaponsHeld.emplace(WeaponType::GLOCK,
+                                removeBackground(black, "../client/assets/weapons/glock_h.png"));
+    texturesWeaponsHeld.emplace(WeaponType::KNIFE,
+                                removeBackground(magenta, "../client/assets/weapons/knife_h.png"));
+    texturesWeaponsHeld.emplace(WeaponType::AK47,
+                                removeBackground(black, "../client/assets/weapons/ak47_h.png"));
+    texturesWeaponsHeld.emplace(WeaponType::BOMB,
+                                removeBackground(black, "../client/assets/weapons/bomb_h.png"));
 
     // weapons
     texturesWeapons.emplace(WeaponType::AWP,
@@ -30,7 +57,7 @@ TextureManager::TextureManager(Renderer& renderer):
     texturesWeapons.emplace(WeaponType::KNIFE,
                             removeBackground(magenta, "../client/assets/weapons/knife.png"));
     texturesWeapons.emplace(WeaponType::BOMB,
-                            removeBackground(magenta, "../client/assets/weapons/bomb.png"));
+                            removeBackground(black, "../client/assets/weapons/bomb.png"));
     texturesWeapons.emplace(WeaponType::AK47,
                             removeBackground(magenta, "../client/assets/weapons/ak47.png"));
 
@@ -59,22 +86,23 @@ TextureManager::TextureManager(Renderer& renderer):
 }
 
 Texture& TextureManager::getSkin(Skin id) { return texturesSkins.at(id); }
-Texture& TextureManager::getTileMap(MapType id) {
-    return texturesTiles.at(id);
-}
+Texture& TextureManager::getTileMap(MapType id) { return texturesTiles.at(id); }
 
 Texture& TextureManager::getDroppedWeapon(WeaponType id) { return texturesWeapons.at(id); }
 
 Texture& TextureManager::getWeapon(WeaponType id) { return texturesWeapons.at(id); }
 
+Texture& TextureManager::getWeaponHeld(WeaponType id) { return texturesWeaponsHeld.at(id); }
+
 Texture& TextureManager::getUi(UiType id) { return texturesUI.at(id); }
 
 Texture& TextureManager::getFov() { return fovTexture; }
 
+Texture& TextureManager::getExplotion() { return explotionTexture; }
+
 Texture TextureManager::removeBackground(ColorKey colorKey, std::string filename) {
 
     Surface sf(filename);
-
     switch (colorKey) {
 
         case magenta:
@@ -86,8 +114,14 @@ Texture TextureManager::removeBackground(ColorKey colorKey, std::string filename
         case none:
             break;
     }
-
     Texture tx(renderer, sf);
-
     return tx;
+}
+
+Texture TextureManager::getFont(int fontSize, std::string text, RgbValue color) {
+    auto font = TTF_OpenFont("../client/assets/text/sourcesans.ttf", fontSize);
+    Surface textSurface(
+            TTF_RenderText_Solid(font, text.c_str(), {color.r, color.g, color.b, color.a}));
+    Texture textTexture(renderer, textSurface);
+    return textTexture;
 }

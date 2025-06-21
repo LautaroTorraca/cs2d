@@ -8,15 +8,19 @@
 #include "Constants/PlayerDataConstants.h"
 #include "SDL2pp/Optional.hh"
 #include "SDL2pp/Texture.hh"
+// #include "build/_deps/sdl2_ttf-src/SDL_ttf.h"
 #include "server/Constants/MapTypeConstants.h"
 #include "server/WeaponConstants.h"
 
 #include "CoordinateInformation.h"
+// #include "Explotion.h"
+#include "Explotion.h"
 #include "PlayerInformation.h"
 #include "ProjectileInformation.h"
 #include "RgbValue.h"
 #include "SDL2_gfxPrimitives.h"
 #include "SDL_blendmode.h"
+#include "SDL_render.h"
 #include "SDL_stdinc.h"
 #include "SnapshotConstants.h"
 #include "TextureManager.h"
@@ -28,19 +32,13 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
         renderer(window, -1, SDL_RENDERER_ACCELERATED),
         textureManager(renderer),
         tileMap(tileMap),
-        clientID(clientId) {}
+        clientID(clientId),
+        explotion(renderer, textureManager.getExplotion()) {}
 
-void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
-
-    renderer.SetDrawColor(0, 0, 0, 255);
-    renderer.Clear();
+void GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
     float xScale = (float(RES_WIDTH) / RES_WIDTH_BASE);
     float yScale = (float(RES_HEIGTH) / RES_HEIGTH_BASE);
-
-    // float xScale = 2;
-    // float yScale = 2;
-    std::cout << "x: " << xScale << " y: " << yScale << " \n";
     renderer.SetScale(xScale, yScale);
 
     // TODO: cambiar por un map la lista de players.
@@ -68,7 +66,7 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
     renderPlayers(gameSnapshot.playersInfo, clientID);
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
-    renderer.Present();
+    // renderer.Present();
 }
 
 void GameRenderer::renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map) {
@@ -90,23 +88,26 @@ void GameRenderer::renderBomb(CoordinateInformation pos) {
         return;
     }
     Texture& sprite = textureManager.getWeapon(WeaponType::BOMB);
+    CoordinateInformation off(offset.x + 25, offset.y + 5);
 
-    renderer.Copy(sprite, NullOpt,
-                  Rect(pos.x - offset.x, pos.y - offset.y, PLAYER_WIDTH, PLAYER_HEIGTH));
+    // explotion.draw({pos.x - offset.x, pos.y - offset.y});
+
+    renderer.Copy(sprite, NullOpt, Rect(pos.x - off.x, pos.y - off.y, PLAYER_WIDTH, PLAYER_HEIGTH));
 }
 
 void GameRenderer::renderPlayers(std::vector<PlayerInformation> players, size_t clientId) {
 
-    srand(time(nullptr));
-    int numero = rand() % 6;
-
     for (PlayerInformation player: players) {
         Texture& skin = textureManager.getSkin(player.skin);
-        if (player.id == clientId)
-            renderCurrentPlayer(skin, player, numero);
-        else
-            renderPlayer(skin, player, numero);
+        if (player.actualWeapon.weaponType == WeaponType::KNIFE ||
+            player.actualWeapon.weaponType == WeaponType::BOMB) {
+            playerFrame = 1;
+        } else {
+            playerFrame = 3;
+        }
+        renderPlayer(skin, player, playerFrame);
         renderBullets(player);
+        renderHeldWeapon(player);
     }
 }
 
@@ -116,22 +117,17 @@ void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int v
     int div = (variation / 2);
     int posSrcY = TILE_SRC_SIZE * div;
 
-    // int(RES_WIDTH_BASE / 2);
-    int relPosX = player.position.x - offset.x - int(RES_WIDTH_BASE / 2);
-    int relPosY = player.position.y - offset.y - int(RES_HEIGTH_BASE / 2);
-    std::cout << "diferencia en X de currentPlayer y el otro: " << std::to_string(relPosX) << "\n";
-    std::cout << "diferencia en Y de currentPlayer y el otro: " << std::to_string(relPosY)
-              << "\n\n";
-
-    int offsetX = PLAYER_WIDTH / 2;
-    int offsetY = PLAYER_HEIGTH / 2;
-    int posPlayerX = ((RES_WIDTH_BASE) / 2) + relPosX - offsetX;
-    int posPlayerY = ((RES_HEIGTH_BASE) / 2) + relPosY - offsetY;
+    int offsetX = PLAYER_WIDTH / 2.0;
+    int offsetY = PLAYER_HEIGTH / 2.0;
+    int posPlayerX = player.position.x - offset.x - offsetX;
+    int posPlayerY = player.position.y - offset.y - offsetY;
 
     renderer.Copy(sprite, Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
                   Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH), player.angle);
 }
 
+
+// DEPRECATED
 void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation) {
 
     int posX = TILE_SRC_SIZE * (variation % 2);
@@ -142,12 +138,32 @@ void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player
     int offsetY = PLAYER_HEIGTH / 2;
     // offset.x = offset.x;
 
-    renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-                  Rect(RES_WIDTH_BASE / 2 - offsetX, RES_HEIGTH_BASE / 2 - offsetY, PLAYER_WIDTH,
-                       PLAYER_HEIGTH),
-                  player.angle);
+    // renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
+    //               Rect(RES_WIDTH_BASE / 2 - offsetX, RES_HEIGTH_BASE / 2 - offsetY, PLAYER_WIDTH,
+    //                    PLAYER_HEIGTH),
+    //               player.angle);
 }
 
+void GameRenderer::renderHeldWeapon(PlayerInformation& player) {
+
+    // TODO: aniamcion de caminar.
+    //  if (player.actualWeapon.weaponType == WeaponType::KNIFE ||
+    //      player.actualWeapon.weaponType == WeaponType::BOMB) {
+    //      return;
+    //  }
+
+    Texture& sprite = textureManager.getWeaponHeld(player.actualWeapon.weaponType);
+
+    int offsetX = PLAYER_WIDTH / 2.0;
+    int offsetY = PLAYER_HEIGTH / 2.0;
+
+    int posPlayerX = player.position.x - offset.x - offsetX + 2;
+    int posPlayerY = player.position.y - offset.y - offsetY - 5;
+
+    Point rotationPoint(16 - 2, 16 + 5);
+    renderer.Copy(sprite, NullOpt, Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH),
+                  player.angle, rotationPoint);
+}
 void GameRenderer::renderBullets(PlayerInformation& player) {
 
     for (ProjectileInformation bullet: player.actualWeapon.projectilesInfo) {
@@ -300,7 +316,7 @@ int16_t GameRenderer::renderNumber(CoordinateInformation posInScreen, int number
 
     int numberPos = 48 * number;
     Texture& sprite = textureManager.getUi(UiType::NumsUI);
-    sprite.SetColorMod(color.red, color.green, color.blue);
+    sprite.SetColorMod(color.r, color.g, color.b);
     renderer.Copy(sprite, Rect(numberPos, 0, 47, 66),
                   Rect(posInScreen.x, posInScreen.y - height, width, height));
 
@@ -312,7 +328,7 @@ int16_t GameRenderer::renderSymbol(CoordinateInformation posInScreen, UiSymbol s
 
     int numberPos = 64 * symbol;
     Texture& sprite = textureManager.getUi(UiType::SymbUI);
-    sprite.SetColorMod(color.red, color.green, color.blue);
+    sprite.SetColorMod(color.r, color.g, color.b);
     renderer.Copy(sprite, Rect(numberPos, 0, 64, 64),
                   Rect(posInScreen.x, posInScreen.y - HUD_NUM_H, HUD_NUM_H, HUD_NUM_H));
 
@@ -324,7 +340,7 @@ int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, Weapo
 
     Texture& sprite = textureManager.getWeapon(weapon);
     double multH = static_cast<double>(HUD_NUM_H) / sprite.GetHeight();
-    sprite.SetColorMod(color.red, color.green, color.blue);
+    sprite.SetColorMod(color.r, color.g, color.b);
     int offX = 0;
     int offY = -5;
     if (weapon == WeaponType::KNIFE) {
@@ -367,4 +383,39 @@ void GameRenderer::drawFOVStencil(const CoordinateInformation& playerCoords, dou
     SDL_Rect dst = {0, 0, RES_WIDTH_BASE, RES_HEIGTH_BASE};
     renderer.Copy(textureManager.getFov().SetBlendMode(SDL_BLENDMODE_MOD).SetAlphaMod(0),
                   SDL2pp::NullOpt, dst);
+}
+
+void GameRenderer::setBuyMenu() {
+    RgbValue green(10, 255, 10, 80);
+    RgbValue darkGreen(100, 255, 100, 150);
+    RgbValue none(255, 255, 255);
+    Sint16 rad = 10;
+    int borderDist = 50;
+    double textPos = (RES_WIDTH_BASE / 2.0) - 50;
+    renderText("BUY MENU", {textPos, 20}, 20, green);
+
+
+    boxRGBA(renderer.Get(), (RES_WIDTH_BASE), 0, 0, (RES_HEIGTH_BASE), 0, 0, 0, 100);
+
+    roundedBoxRGBA(renderer.Get(), (RES_WIDTH_BASE - borderDist), borderDist, (borderDist),
+                   (RES_HEIGTH_BASE - borderDist), rad, green.r, green.g, green.b, green.a);
+
+    renderText("AK-47", {RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0)}, 20, darkGreen);
+    renderWeaponGlyph({RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0)}, WeaponType::AK47, none);
+    renderText("BUY MENU", {textPos, 20}, 20, green);
+    renderWeaponGlyph({RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0) * 2}, WeaponType::M3, none);
+    renderText("BUY MENU", {textPos, 20}, 20, green);
+    renderWeaponGlyph({RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0) * 3}, WeaponType::AWP, none);
+}
+
+void GameRenderer::renderText(std::string text, CoordinateInformation pos, int fontSize,
+                              RgbValue color) {
+    Texture font = textureManager.getFont(fontSize, text, color);
+    renderer.Copy(font, SDL2pp::NullOpt, {(int)pos.x, (int)pos.y});
+}
+
+void GameRenderer::render() {
+    renderer.Present();
+    renderer.SetDrawColor(0, 0, 0, 255);
+    renderer.Clear();
 }

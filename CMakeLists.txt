@@ -31,8 +31,7 @@ option(TALLER_EDITOR "Enable / disable editor program." ON)
 option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." ON)
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
-add_library(taller_common STATIC
-        server/Handlers/ClientStatus.h)
+add_library(taller_common STATIC server/Handlers/ClientStatus.h)
 add_subdirectory(common/)
 
 include(cmake/CompilerWarnings.cmake)
@@ -106,7 +105,7 @@ if(TALLER_CLIENT)
   # client/ProjectileInformation.h client/DropInformation.h client/MainWindow.h)
   target_include_directories(taller_client PRIVATE client)
   target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_gfx
-                        Qt6::Widgets)
+                        SDL2_ttf Qt6::Widgets)
 endif()
 
 if(TALLER_SERVER)

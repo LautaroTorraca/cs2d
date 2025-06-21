@@ -3,9 +3,11 @@
 
 struct RgbValue {
 
-    Uint8 red;
-    Uint8 green;
-    Uint8 blue;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    Uint8 a;
 
-    RgbValue(Uint8 red, Uint8 green, Uint8 blue): red(red), green(green), blue(blue) {}
+    RgbValue(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255):
+            r(red), g(green), b(blue), a(alpha) {}
 };

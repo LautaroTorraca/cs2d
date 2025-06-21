@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "server/Skin.h"
-
+// TODO: le puedo agregar el currente frame aca....?
 #include "CoordinateInformation.h"
 #include "WeaponInformation.h"
 

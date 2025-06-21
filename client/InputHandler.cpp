@@ -4,89 +4,105 @@
 
 #include "Constants/ClientConstants.h"
 #include "Constants/PlayerDataConstants.h"
+#include "server/GameStatus.h"
+#include "server/ProductTypes.h"
 
 #include "MoveConstants.h"
 #include "SDL_events.h"
+#include "SDL_keycode.h"
 
 InputHandler::InputHandler(Protocol& protocol): protocol(protocol) {}
 
-bool InputHandler::processEvent(SDL_Event event) {
+bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
 
-    try {
-        if (event.type == SDL_QUIT) {
+    do {
+        if (status != GameStatus::BUY_TIME)
+            inBuyMenu = false;
+
+        try {
+            if (event.type == SDL_QUIT) {
+                return false;
+            } else if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_b:
+                        if (status == GameStatus::BUY_TIME)
+                            inBuyMenu = !inBuyMenu;
+                        break;
+                    case SDLK_w:
+                        protocol.move(Up);
+                        break;
+                    case SDLK_s:
+                        protocol.move(Down);
+                        break;
+                    case SDLK_a:
+                        protocol.move(Left);
+                        break;
+                    case SDLK_d:
+                        protocol.move(Right);
+                        break;
+                    case SDLK_1:
+                        if (inBuyMenu)
+                            protocol.buy({ProductTypes::AK_47_WEAPON, 1});
+                        else
+                            protocol.changeWeapon(0);
+                        break;
+                    case SDLK_2:
+                        if (inBuyMenu)
+                            protocol.buy({ProductTypes::M3_WEAPON, 1});
+                        else
+                            protocol.changeWeapon(1);
+                        break;
+                    case SDLK_3:
+                        if (inBuyMenu)
+                            protocol.buy({ProductTypes::AWP_WEAPON, 1});
+                        else
+                            protocol.changeWeapon(2);
+                        break;
+                    case SDLK_4:
+                        protocol.changeWeapon(3);
+                        break;
+                    case SDLK_e:
+                        protocol.pickUp();
+                        break;
+                    case SDLK_f:
+                        protocol.defuseBomb();
+                        break;
+                    case SDLK_COMMA:
+                        if (inBuyMenu)
+                            protocol.buy({ProductTypes::PRIMARY_AMMO, 5});
+                        break;
+                    case SDLK_PERIOD:
+                        if (inBuyMenu)
+                            protocol.buy({ProductTypes::SECONDARY_AMMO, 5});
+                        break;
+                    case SDLK_ESCAPE:
+                        protocol.exit();
+                }
+            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+                switch (event.button.button) {
+                    case SDL_BUTTON_LEFT:
+                        protocol.attack();
+                        break;
+                    case SDL_BUTTON_RIGHT:
+                        break;
+                }
+            } else if (event.type == SDL_MOUSEMOTION) {
+
+                double dx = event.motion.x - static_cast<double>(RES_WIDTH) / 2;
+                double dy = event.motion.y - static_cast<double>(RES_HEIGTH) / 2;
+                double angleInRads = atan2(dy, dx);
+                double angleInDegree = 180.0 * angleInRads / M_PI;
+                angleInDegree += 90;
+                protocol.changeAngle(angleInDegree);
+            }
+        } catch (...) {
+            std::cout << "catcheo el error en inputHandler\n\n" << "\n\n";
             return false;
-        } else if (event.type == SDL_KEYDOWN) {
-            switch (event.key.keysym.sym) {
-                case SDLK_w:
-                    protocol.move(Up);
-                    break;
-                case SDLK_s:
-                    protocol.move(Down);
-                    break;
-                case SDLK_a:
-                    protocol.move(Left);
-                    break;
-                case SDLK_d:
-                    protocol.move(Right);
-                    break;
-                case SDLK_1:
-                    protocol.changeWeapon(0);
-                    break;
-                case SDLK_2:
-                    protocol.changeWeapon(1);
-                    break;
-                case SDLK_3:
-                    protocol.changeWeapon(2);
-                    break;
-                case SDLK_4:
-                    protocol.changeWeapon(3);
-                    break;
-                case SDLK_e:
-                    protocol.pickUp();
-                    break;
-                case SDLK_f:
-                    protocol.defuseBomb();
-                    break;
-                case SDLK_j:
-                    protocol.buy({ProductTypes::AK_47_WEAPON, 1});
-                    break;
-                case SDLK_k:
-                    protocol.buy({ProductTypes::M3_WEAPON, 1});
-                    break;
-                case SDLK_l:
-                    protocol.buy({ProductTypes::AWP_WEAPON, 1});
-                    break;
-                case SDLK_COMMA:
-                    protocol.buy({ProductTypes::PRIMARY_AMMO, 5});
-                    break;
-                case SDLK_PERIOD:
-                    protocol.buy({ProductTypes::SECONDARY_AMMO, 5});
-                    break;
-                case SDLK_ESCAPE:
-                    protocol.exit();
-            }
-        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-
-            switch (event.button.button) {
-                case SDL_BUTTON_LEFT:
-                    protocol.attack();
-                    break;
-                case SDL_BUTTON_RIGHT:
-                    break;
-            }
-        } else if (event.type == SDL_MOUSEMOTION) {
-
-            double dx = event.motion.x - static_cast<double>(RES_WIDTH) / 2;
-            double dy = event.motion.y - static_cast<double>(RES_HEIGTH) / 2;
-            double angleInRads = atan2(dy, dx);
-            double angleInDegree = 180.0 * angleInRads / M_PI;
-            angleInDegree += 90;
-            protocol.changeAngle(angleInDegree);
         }
-        return true;
-    } catch (...) {
-        std::cout << "catcheo el error en inputHandler\n\n" << "\n\n";
-        return false;
-    }
+    } while (SDL_PollEvent(&event));
+
+    return true;
 }
 Coords InputHandler::getMouseCoords() { return mouseCoords; }
+bool InputHandler::isInMenu() { return inBuyMenu; }

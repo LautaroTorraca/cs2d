@@ -112,14 +112,17 @@ void GameClient::run(int argc, char* argv[]) {
             SDL_Event event;
             frameTime = SDL_GetTicks() - frameStart;
             if (frameDelay <= frameTime) {
-
-                do {
-                    running = inputHandler.processEvent(event);
-                } while (SDL_PollEvent(&event));
-
-                // FIX: cambiar harcodeada de mapa.
                 Snapshot gameSnapshot = snapshotQueue.pop();
-                renderer.renderScreen(gameSnapshot, MapType::DUST, inputHandler.getMouseCoords());
+
+                running = inputHandler.processEvents(event, gameSnapshot.status);
+                // FIX: cambiar harcodeada de mapa.
+                // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
+                // renderer.
+                renderer.setScreen(gameSnapshot, MapType::DUST, inputHandler.getMouseCoords());
+                if (inputHandler.isInMenu()) {
+                    renderer.setBuyMenu();
+                }
+                renderer.render();
                 frameStart = SDL_GetTicks();
             }
             SDL_Delay(10);

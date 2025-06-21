@@ -6,6 +6,7 @@
 #include "server/Constants/MapTypeConstants.h"
 
 #include "CoordinateInformation.h"
+#include "Explotion.h"
 #include "PlayerInformation.h"
 #include "RgbValue.h"
 #include "TextureManager.h"
@@ -13,6 +14,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <string>
 
 #include <SDL2/SDL.h>
 #include <SDL2pp/SDL2pp.hh>
@@ -33,6 +35,8 @@ private:
     std::vector<std::vector<uint8_t>> tileMap;
     size_t clientID;
     Coords offset;
+    int playerFrame = 0;
+    ExplotionSprite explotion;
 
     int bombSpriteSequence = 0;
 
@@ -57,16 +61,17 @@ private:
 
     int16_t renderWeaponGlyph(CoordinateInformation posInScreen, WeaponType weapon, RgbValue color);
     void renderBullets(PlayerInformation& player);
+    void renderHeldWeapon(PlayerInformation& player);
 
     Texture createLightCone(int radius, double angleDeg);
     void renderLightEffects(Texture& cone, double angle);
     void drawFOVStencil(const CoordinateInformation& playerCoords, double directionDeg,
                         double fovDeg, int radius);
-    // void drawStencil(const Coords& playerCoords, double playerAngle, double angleDegrees);
-    // void drawVisionCone(SDL2pp::Renderer& renderer, Coords origin, double directionDeg,
-    //                     double fovDeg, double length);
+    void renderText(std::string text, CoordinateInformation pos, int fontSize, RgbValue color);
 
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);
-    void renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
+    void setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
+    void setBuyMenu();
+    void render();
 };

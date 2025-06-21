@@ -22,7 +22,7 @@ constexpr int LOGICAL_HEIGHT = 15;
 
 constexpr int TILE_SRC_SIZE = 32;
 constexpr int TILE_WIDTH = 32;   // RES_WIDTH / LOGICAL_WIDTH;
-constexpr int TILE_HEIGHT = 32;  // RES_HEIGTH / LOGICAL_HEIGHT; //FIX: relative size with tiles
+constexpr int TILE_HEIGHT = 32;  // RES_HEIGTH / LOGICAL_HEIGHT;
 
 constexpr int PLAYER_HEIGTH = 32;  // RES_WIDTH / LOGICAL_WIDTH;
 constexpr int PLAYER_WIDTH = 32;   // RES_HEIGTH / LOGICAL_HEIGHT;
