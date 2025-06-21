@@ -6,9 +6,9 @@
 #include "Buttons/ListGamesButton.h"
 #include "Buttons/ExitGameButton.h"
 #include "Visual/MenuBackground.h"
-#include <QCoreApplication>
+#include "Audio/MusicManager.h"
 
-ServerMenu::ServerMenu(const char* port, QWidget *parent)
+ServerMenu::ServerMenu(const char* port, QWidget* parent)
         : protocol("localhost", port), QWidget(parent) {
     setupUI();
 }
@@ -30,6 +30,7 @@ void ServerMenu::setupUI() {
 
     setupInput();
     setupButtons();
+    setupBackgroundMusic();
 }
 
 void ServerMenu::setupBackground() {
@@ -51,6 +52,11 @@ void ServerMenu::setupButtons() {
     buttonLayout->addWidget(joinGameButton);
     buttonLayout->addWidget(listGamesButton);
     buttonLayout->addWidget(exitGameButton);
+}
+
+void ServerMenu::setupBackgroundMusic() {
+    musicManager = new MusicManager(this);
+    musicManager->loadBackgroundMusic("menu_music.mp3", 0.3f);
 }
 
 void ServerMenu::resizeEvent(QResizeEvent* event) {

@@ -14,4 +14,8 @@
         <file alias="sas.png">Login/Assets/Skins/UK SAS.png</file>
         <file alias="gign.png">Login/Assets/Skins/French GIGN.png</file>
     </qresource>
+
+    <qresource prefix="/Music">
+        <file alias="menu_music.wav">Login/Assets/Music/menu_music.mp3</file>
+    </qresource>
 </RCC>
