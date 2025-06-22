@@ -1,14 +1,16 @@
 #pragma once
 
-#include <map>
 #include <functional>
+#include <map>
 #include <memory>
 
+#include "DTO/GamesListDTO.h"
 #include "Interfaces/GameLobbyProtocolInterface.h"
-#include "ServerInGame.h"
-#include "Orders/ServerLobbyOrder.h"
 #include "Lobby/GameLobby.h"
 #include "Orders/GameLobbyOrder.h"
+#include "Orders/ServerLobbyOrder.h"
+
+#include "ServerInGame.h"
 
 class ServerGameLobby {
     std::map<OrderType, std::function<void(GameLobbyOrder&)>> translator;
@@ -32,5 +34,5 @@ public:
 
     void exit(const GameLobbyOrder & order);
 
-    std::vector<std::string> listLobbies();
+    GamesListDTO listLobbies(const size_t& id);
 };

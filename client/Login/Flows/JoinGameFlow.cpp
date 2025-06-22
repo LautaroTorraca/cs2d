@@ -16,8 +16,8 @@ void JoinGameFlow::run() {
     try {
         GamesList gameList = protocol.getGamesList();
         QStringList qGames;
-        for (const std::string& game : gameList.games) {
-            qGames.append(QString::fromStdString(game));
+        for (const auto& game : gameList.gamesLobbies) {
+            qGames.append(QString::fromStdString(game.gameName));
         }
 
         GameListDialog listDialog(qGames, parent);

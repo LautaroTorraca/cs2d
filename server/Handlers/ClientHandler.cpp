@@ -151,13 +151,16 @@ void ClientHandler::endService() {
     this->stopService();
 }
 
-void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
-    std::stringstream gamesListStream;
-    for (const auto& game: gamesList) {
-        gamesListStream << game << "\n";
+void ClientHandler::sendGamesList(GamesListDTO& gamesList) {
+    for (auto& gameLobby: gamesList.gamesLobbies) {
+        this->sender.send(NEW);
+        this->sender.send(gameLobby.gameName);
+        this->sender.send(gameLobby.rounds);
+        uint8_t map = static_cast<uint8_t>(gameLobby.mapType);
+        this->sender.send(map);
+        this->sender.send(gameLobby.maxPlayers);
     }
-    std::string gamesListString = gamesListStream.str();
-    this->sender.send(gamesListString);
+    this->sender.send(STOP);
 }
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {

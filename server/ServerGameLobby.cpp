@@ -49,14 +49,14 @@ void ServerGameLobby::exit(const GameLobbyOrder &order) {
   }
 }
 
-std::vector<std::string> ServerGameLobby::listLobbies() {
-  std::vector<std::string> gameLobbies;
+GamesListDTO ServerGameLobby::listLobbies(const size_t& id) {
+  std::vector<GameLobbyDTO> gameLobbies;
   for ( auto& [gameName,gameLobby] : this->gameLobbies) {
     if (gameLobby.getInfo().status != READY_STATUS) {
-      gameLobbies.emplace_back(gameName);
+      gameLobbies.emplace_back(gameLobby.getInfo());
     }
   }
-  return gameLobbies;
+  return {id, gameLobbies};
 }
 
 void ServerGameLobby::ready(const GameLobbyOrder &order) {

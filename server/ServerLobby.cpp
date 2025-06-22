@@ -61,7 +61,7 @@ void ServerLobby::leaveGame(const ServerLobbyOrder &order) const {
 
 void ServerLobby::listGames(const ServerLobbyOrder &order) const {
   size_t id = order.getClientId();
-  std::vector<std::string> gamesList = this->gameLobbyserver.listLobbies();
-  GamesListDTO gamesListDTO(id, gamesList);
-  this->protocol.sendGamesList(gamesListDTO);
+  GamesListDTO gamesList = this->gameLobbyserver.listLobbies(id);
+
+  this->protocol.sendGamesList(gamesList);
 }
