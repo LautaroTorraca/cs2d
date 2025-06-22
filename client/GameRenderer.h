@@ -71,6 +71,8 @@ private:
                         double fovDeg, int radius);
     void renderText(std::string text, CoordinateInformation pos, int fontSize, RgbValue color);
     void renderBuyButton(CoordinateInformation pos, int button, int price);
+    void setRoundWinMenu(GameStatus state);
+    void setLeaderBoard(GameStatus state);
 
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);

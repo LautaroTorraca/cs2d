@@ -10,6 +10,7 @@
 #include "SDL2pp/Texture.hh"
 // #include "build/_deps/sdl2_ttf-src/SDL_ttf.h"
 #include "server/Constants/MapTypeConstants.h"
+// #include "server/Game.h"
 #include "server/GameStatus.h"
 #include "server/PlayerStatus.h"
 
@@ -61,13 +62,15 @@ void GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     offset.x = (gameSnapshot.playersInfo.at(index).position.x) - int(RES_WIDTH_BASE / 2);
     offset.y = (gameSnapshot.playersInfo.at(index).position.y) - int(RES_HEIGTH_BASE / 2);
 
-
     renderMap(tileMap, map);
     renderFloorItems(gameSnapshot.dropsInfo);
     renderBomb(gameSnapshot.plantedBombPosition, gameSnapshot.status);
     renderPlayers(gameSnapshot.playersInfo);
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
+    setRoundWinMenu(gameSnapshot.status);
+
+    setLeaderBoard(gameSnapshot.status);
 
     prevStatus = gameSnapshot.status;
 }
@@ -236,6 +239,10 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
     RgbValue blue(48, 69, 86);
     RgbValue orange(141, 93, 35);
 
+    int midScrX = RES_WIDTH_BASE / 2;
+    int midScrY = RES_HEIGTH_BASE / 2;
+
+
     renderPointer(mouseCoords);
 
     if (gameSnapshot.status == BUY_TIME) {
@@ -261,14 +268,23 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
     lastPosX = renderSymbol({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H - 10}, UiSymbol::MONEY, green);
     lastPosX = renderNumberStream({(lastPosX), RES_HEIGTH_BASE - HUD_NUM_H - 10},
                                   player.actualMoney, 5, 2, green);
+
     // time left to defuse
+    std::cout << "tiempo para defusear     : " << gameSnapshot.bombTimer << "\n\n";
+    std::cout << "tiempo para defusear(int): " << (int)gameSnapshot.bombTimer << "\n\n";
+
+    if (gameSnapshot.status == GameStatus::BOMB_PLANTED) {
+
+        lastPosX = midScrX - (HUD_NUM_W * 3);
+        lastPosX = renderSymbol({lastPosX, RES_HEIGTH_BASE - 5}, UiSymbol::TIMER, green);
+        lastPosX = renderNumberStream({(lastPosX), RES_HEIGTH_BASE - 5},
+                                      (int)gameSnapshot.bombTimer, 2, 2, green);
+    }
 
     // game time
     int timerMin = gameSnapshot.actualTime / 60;
     int timerSeg = int(gameSnapshot.actualTime) % 60;
 
-    int midScrX = RES_WIDTH_BASE / 2;
-    int midScrY = RES_HEIGTH_BASE / 2;
     double timerHeigthSize = int(HUD_NUM_H / 2);
     double timerWidthSize = int(HUD_NUM_W / 2);
 
@@ -406,6 +422,40 @@ void GameRenderer::drawFOVStencil(const CoordinateInformation&, double direction
     renderer.Copy(textureManager.getFov().SetBlendMode(SDL_BLENDMODE_MOD).SetAlphaMod(0),
                   SDL2pp::NullOpt, dst);
 }
+// FIX: colores codigo repetidos.
+void GameRenderer::setRoundWinMenu(GameStatus state) {
+
+    if (state != GameStatus::COUNTERS_WIN && state != GameStatus::TERRORISTS_WIN &&
+        state != GameStatus::BOMB_EXPLODED) {
+        return;
+    }
+    RgbValue green(10, 255, 10, 80);
+    RgbValue lightGreen(150, 255, 150, 200);
+    RgbValue none(255, 255, 255);
+    Sint16 rad = 10;
+
+    CoordinateInformation pading{50, 150};
+    double yOffset = 60;
+    double textPosX = 0;
+    std::string text;
+    if (state == GameStatus::COUNTERS_WIN) {
+        text = "Counters Terrorist Wins";
+        textPosX = pading.x + 90;
+    } else {
+        text = "Terrorist Wins";
+        textPosX = pading.x + 120;
+    }
+
+    std::cout << "texto pos y: " << (pading.y + 10 - yOffset) << "\n";
+    std::cout << "padding y: " << (pading.y) << "\n";
+
+    roundedBoxRGBA(renderer.Get(), (RES_WIDTH_BASE - pading.x), pading.y - yOffset, (pading.x),
+                   (RES_HEIGTH_BASE - pading.y) - yOffset, rad, green.r, green.g, green.b, green.a);
+
+    renderText(text, {textPosX, pading.y + 10 - yOffset}, 20, lightGreen);
+}
+
+void GameRenderer::setLeaderBoard(GameStatus state) {}
 
 void GameRenderer::setBuyMenu() {
     RgbValue green(10, 255, 10, 80);

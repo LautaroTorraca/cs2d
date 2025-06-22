@@ -20,16 +20,14 @@ using namespace SDL2pp;
 using namespace DTO;
 
 // TODO: sonido.
-// TODO: armas en la mano.
 // TODO: cuchillazos.
-// TODO: BOMBA -- ver como pasar las imagnes por tiempo
-// TODO: moviemiento de personaje.
-// TODO: tiros mas facheros.
-// TODO: MENU.
 // TODO: movimiento simulateno. a chequear.
+// TODO: tiros mas facheros.
+// TODO: MENU masomenos
 // TODO: terminar UI. Cuadros y colores.
 
-// GameClient(): protocol(protocol){};
+// NOTE: refactorizar codigo.....
+
 GameClient::GameClient(Protocol& protocol):
         running(true),
         protocol(HOSTNAME, PORT),
@@ -129,6 +127,7 @@ void GameClient::run(int argc, char* argv[]) {
                 // FIX: cambiar harcodeada de mapa.
                 // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
                 // renderer.
+
                 renderer.setScreen(gameSnapshot, MapType::DUST, inputHandler.getMouseCoords());
                 if (inputHandler.isInMenu()) {
                     renderer.setBuyMenu();
