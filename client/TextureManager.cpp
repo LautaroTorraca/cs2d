@@ -86,6 +86,10 @@ TextureManager::TextureManager(Renderer& renderer):
                           removeBackground(magenta, "../client/assets/skins/TT/tt-4.png"));
     // maps
     texturesTiles.emplace(MapType::DUST, Texture(renderer, "../client/assets/tilemaps/dust.png"));
+    texturesTiles.emplace(MapType::AZTEC_VILLAGE,
+                          Texture(renderer, "../client/assets/tilemaps/aztec.png"));
+    texturesTiles.emplace(MapType::TRAINING_ZONE,
+                          Texture(renderer, "../client/assets/tilemaps/inferno.png"));
 
     fovTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
     // fovTexture = Texture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 400);
