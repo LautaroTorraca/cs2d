@@ -9,6 +9,7 @@
 #include "Explotion.h"
 #include "PlayerInformation.h"
 #include "RgbValue.h"
+#include "SpriteConstants.h"
 #include "TextureManager.h"
 // #include "weaponConstants.h"
 
@@ -41,7 +42,7 @@ private:
     int bombSpriteSequence = 0;
 
     void renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map);
-    void renderPlayers(std::vector<PlayerInformation> players, size_t clientId);
+    void renderPlayers(std::vector<PlayerInformation> players);
     void renderPlayer(Texture& sprite, PlayerInformation player, int variation);
     void renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation);
     void renderFloorItems(std::vector<DropInformation> weaponList);
@@ -59,7 +60,7 @@ private:
                          int height = HUD_NUM_H, int width = HUD_NUM_W);
     int16_t renderSymbol(CoordinateInformation posInScreen, UiSymbol symbol, RgbValue color);
 
-    int16_t renderWeaponGlyph(CoordinateInformation posInScreen, WeaponType weapon, RgbValue color);
+    int16_t renderWeaponGlyph(CoordinateInformation posInScreen, SpriteType weapon, RgbValue color);
     void renderBullets(PlayerInformation& player);
     void renderHeldWeapon(PlayerInformation& player);
 
@@ -68,6 +69,7 @@ private:
     void drawFOVStencil(const CoordinateInformation& playerCoords, double directionDeg,
                         double fovDeg, int radius);
     void renderText(std::string text, CoordinateInformation pos, int fontSize, RgbValue color);
+    void renderBuyButton(CoordinateInformation pos, int button, int price);
 
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);

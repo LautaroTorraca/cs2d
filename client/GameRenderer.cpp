@@ -10,7 +10,7 @@
 #include "SDL2pp/Texture.hh"
 // #include "build/_deps/sdl2_ttf-src/SDL_ttf.h"
 #include "server/Constants/MapTypeConstants.h"
-#include "server/WeaponConstants.h"
+#include "server/PlayerStatus.h"
 
 #include "CoordinateInformation.h"
 // #include "Explotion.h"
@@ -23,6 +23,7 @@
 #include "SDL_render.h"
 #include "SDL_stdinc.h"
 #include "SnapshotConstants.h"
+#include "SpriteConstants.h"
 #include "TextureManager.h"
 
 
@@ -63,7 +64,7 @@ void GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     renderMap(tileMap, map);
     renderFloorItems(gameSnapshot.dropsInfo);
     renderBomb(gameSnapshot.plantedBombPosition);
-    renderPlayers(gameSnapshot.playersInfo, clientID);
+    renderPlayers(gameSnapshot.playersInfo);
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
     // renderer.Present();
@@ -87,27 +88,33 @@ void GameRenderer::renderBomb(CoordinateInformation pos) {
     if (pos.x == -1) {
         return;
     }
-    Texture& sprite = textureManager.getWeapon(WeaponType::BOMB);
-    CoordinateInformation off(offset.x + 25, offset.y + 5);
+    Texture& sprite = textureManager.getWeapon(SpriteType::BOMB);
+    CoordinateInformation off(offset.x + 20, offset.y + 7);
 
     // explotion.draw({pos.x - offset.x, pos.y - offset.y});
 
     renderer.Copy(sprite, NullOpt, Rect(pos.x - off.x, pos.y - off.y, PLAYER_WIDTH, PLAYER_HEIGTH));
 }
-
-void GameRenderer::renderPlayers(std::vector<PlayerInformation> players, size_t clientId) {
+// HACK: refactor a clase?
+void GameRenderer::renderPlayers(std::vector<PlayerInformation> players) {
 
     for (PlayerInformation player: players) {
         Texture& skin = textureManager.getSkin(player.skin);
-        if (player.actualWeapon.weaponType == WeaponType::KNIFE ||
-            player.actualWeapon.weaponType == WeaponType::BOMB) {
+        if ((SpriteType)player.actualWeapon.weaponType == SpriteType::KNIFE ||
+            (SpriteType)player.actualWeapon.weaponType == SpriteType::BOMB) {
             playerFrame = 1;
         } else {
             playerFrame = 3;
         }
-        renderPlayer(skin, player, playerFrame);
-        renderBullets(player);
-        renderHeldWeapon(player);
+        if (!(player.status == PlayerStatus::DEAD)) {
+            renderPlayer(skin, player, playerFrame);
+            renderBullets(player);
+            renderHeldWeapon(player);
+        } else if (player.id == clientID) {
+            skin.SetColorAndAlphaMod({40, 210, 210, 90});
+            renderPlayer(skin, player, 2);
+            skin.SetColorAndAlphaMod({255, 255, 255, 255});
+        }
     }
 }
 
@@ -127,7 +134,8 @@ void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int v
 }
 
 
-// DEPRECATED
+// TODO: remove depreacated.
+//  DEPRECATED
 void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation) {
 
     int posX = TILE_SRC_SIZE * (variation % 2);
@@ -147,12 +155,12 @@ void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player
 void GameRenderer::renderHeldWeapon(PlayerInformation& player) {
 
     // TODO: aniamcion de caminar.
-    //  if (player.actualWeapon.weaponType == WeaponType::KNIFE ||
-    //      player.actualWeapon.weaponType == WeaponType::BOMB) {
+    //  if (player.actualWeapon.weaponType == SpriteType::KNIFE ||
+    //      player.actualWeapon.weaponType == SpriteType::BOMB) {
     //      return;
     //  }
 
-    Texture& sprite = textureManager.getWeaponHeld(player.actualWeapon.weaponType);
+    Texture& sprite = textureManager.getWeaponHeld((SpriteType)player.actualWeapon.weaponType);
 
     int offsetX = PLAYER_WIDTH / 2.0;
     int offsetY = PLAYER_HEIGTH / 2.0;
@@ -161,6 +169,7 @@ void GameRenderer::renderHeldWeapon(PlayerInformation& player) {
     int posPlayerY = player.position.y - offset.y - offsetY - 5;
 
     Point rotationPoint(16 - 2, 16 + 5);
+
     renderer.Copy(sprite, NullOpt, Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH),
                   player.angle, rotationPoint);
 }
@@ -198,15 +207,15 @@ void GameRenderer::renderTile(Texture& mapTile, int mapWidth, int tile, int pos)
 void GameRenderer::renderFloorItems(std::vector<DropInformation> weaponList) {
 
     for (DropInformation item: weaponList) {
-        Texture& wpnSprite = textureManager.getDroppedWeapon(item.weapon.weaponType);
+        Texture& wpnSprite = textureManager.getDroppedWeapon((SpriteType)item.weapon.weaponType);
         renderFloorWeapon(wpnSprite, item);
     }
 }
 
 void GameRenderer::renderFloorWeapon(Texture& sprite, DropInformation wpn) {
     renderer.Copy(sprite, NullOpt,
-                  Rect(wpn.position.x - offset.x, wpn.position.y - offset.y,
-                       sprite.GetWidth() * WPN_SZ_MULT, sprite.GetHeight() * WPN_SZ_MULT));
+                  Rect(wpn.position.x - offset.x - 16, wpn.position.y - offset.y - 16,
+                       sprite.GetWidth(), sprite.GetHeight()));
 }
 
 void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Coords mouseCoords) {
@@ -230,8 +239,8 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
 
     // bullets
     lastPosX = RES_WIDTH_BASE - (HUD_NUM_W * 4) + 4;
-    renderWeaponGlyph({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H}, player.actualWeapon.weaponType,
-                      green);
+    renderWeaponGlyph({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H},
+                      (SpriteType)player.actualWeapon.weaponType, green);
     renderNumberStream({(lastPosX + 5), RES_HEIGTH_BASE - 5}, player.actualWeapon.ammoAmount, 3, 2,
                        green);
 
@@ -335,7 +344,7 @@ int16_t GameRenderer::renderSymbol(CoordinateInformation posInScreen, UiSymbol s
     return (posInScreen.x + HUD_NUM_H);
 }
 
-int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, WeaponType weapon,
+int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, SpriteType weapon,
                                         RgbValue color) {
 
     Texture& sprite = textureManager.getWeapon(weapon);
@@ -343,7 +352,8 @@ int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, Weapo
     sprite.SetColorMod(color.r, color.g, color.b);
     int offX = 0;
     int offY = -5;
-    if (weapon == WeaponType::KNIFE) {
+    if (weapon == SpriteType::KNIFE || weapon == SpriteType::P_AMMO ||
+        weapon == SpriteType::S_AMMO) {
         multH = 1.5;
         offY = 0;
         offX = -20;
@@ -357,8 +367,8 @@ int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, Weapo
     return (posInScreen.x + (sprite.GetWidth() * multH));
 }
 
-void GameRenderer::drawFOVStencil(const CoordinateInformation&, double directionDeg,
-                                  double fovDeg, int radius) {
+void GameRenderer::drawFOVStencil(const CoordinateInformation&, double directionDeg, double fovDeg,
+                                  int radius) {
 
     Uint8 r = 255, g = 255, b = 255, a = 255;
 
@@ -387,7 +397,7 @@ void GameRenderer::drawFOVStencil(const CoordinateInformation&, double direction
 
 void GameRenderer::setBuyMenu() {
     RgbValue green(10, 255, 10, 80);
-    RgbValue darkGreen(100, 255, 100, 150);
+    RgbValue lightGreen(150, 255, 150, 200);
     RgbValue none(255, 255, 255);
     Sint16 rad = 10;
     int borderDist = 50;
@@ -400,13 +410,60 @@ void GameRenderer::setBuyMenu() {
     roundedBoxRGBA(renderer.Get(), (RES_WIDTH_BASE - borderDist), borderDist, (borderDist),
                    (RES_HEIGTH_BASE - borderDist), rad, green.r, green.g, green.b, green.a);
 
-    renderText("AK-47", {RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0)}, 20, darkGreen);
-    renderWeaponGlyph({RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0)}, WeaponType::AK47, none);
-    renderText("BUY MENU", {textPos, 20}, 20, green);
-    renderWeaponGlyph({RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0) * 2}, WeaponType::M3, none);
-    renderText("BUY MENU", {textPos, 20}, 20, green);
-    renderWeaponGlyph({RES_WIDTH_BASE / 3.0, (RES_HEIGTH_BASE / 4.0) * 3}, WeaponType::AWP, none);
+    // RES_WIDTH_BASE = 480;
+    // RES_HEIGTH_BASE = 360;
+
+    renderText("AK-47", {90, 60}, 20, lightGreen);
+    renderWeaponGlyph({160, 100}, SpriteType::AK47, none);
+    renderBuyButton({170, 100}, 1, 500);
+
+    renderText("   M3", {90, 130}, 20, lightGreen);
+    renderWeaponGlyph({160, 170}, SpriteType::M3, none);
+    renderBuyButton({170, 170}, 2, 1500);
+
+    renderText("  AWP", {90, 200}, 20, lightGreen);
+    renderWeaponGlyph({160, 240}, SpriteType::AWP, none);
+    renderBuyButton({170, 240}, 3, 2500);
+
+
+    renderText("PRIMARY", {240, 60}, 15, lightGreen);
+    renderText("    AMMO", {240, 85}, 15, lightGreen);
+    renderWeaponGlyph({270, 100}, SpriteType::P_AMMO, none);
+    renderBuyButton({310, 100}, 9, 100);
+
+    renderText("SECONDARY", {240, 110}, 15, lightGreen);
+    renderText("    AMMO", {240, 130}, 15, lightGreen);
+    renderWeaponGlyph({270, 175}, SpriteType::S_AMMO, none);
+    renderBuyButton({310, 170}, 0, 50);
 }
+void GameRenderer::renderBuyButton(CoordinateInformation pos, int button, int price) {
+
+    RgbValue green(10, 255, 10, 150);
+    RgbValue gray(64, 64, 64, 200);
+    RgbValue lightGreen(150, 255, 150, 200);
+    RgbValue none(255, 255, 255);
+
+    int width = 55;
+    int height = 50;
+    int rad = 8;
+
+    double x1 = pos.x + width;
+    double y1 = pos.y - (height / 2.0);
+    double x2 = pos.x;
+    double y2 = pos.y + (height / 2.0);
+
+    roundedBoxRGBA(renderer.Get(), x2, y1, x1, y2, rad, gray.r, gray.g, gray.b, gray.a);
+
+    std::string line1 = "Buy [" + std::to_string(button) + "]";
+    std::string line2 = "  " + std::to_string(price);
+
+    int textOffsetX = 5;
+    int textHeight = 14;
+
+    renderText(line1.c_str(), {x2 + textOffsetX, y1 + 2}, textHeight, green);
+    renderText(line2.c_str(), {x2 + textOffsetX + 5, y1 + 2 + textHeight + 5}, textHeight, green);
+}
+
 
 void GameRenderer::renderText(std::string text, CoordinateInformation pos, int fontSize,
                               RgbValue color) {

@@ -67,11 +67,11 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
                     case SDLK_f:
                         protocol.defuseBomb();
                         break;
-                    case SDLK_COMMA:
+                    case SDLK_9:
                         if (inBuyMenu)
                             protocol.buy({ProductType::PRIMARY_AMMO, 5});
                         break;
-                    case SDLK_PERIOD:
+                    case SDLK_0:
                         if (inBuyMenu)
                             protocol.buy({ProductType::SECONDARY_AMMO, 5});
                         break;

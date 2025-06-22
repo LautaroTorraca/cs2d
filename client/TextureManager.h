@@ -9,10 +9,10 @@
 #include "SDL2pp/Texture.hh"
 #include "server/Constants/MapTypeConstants.h"
 #include "server/Skin.h"
-#include "server/WeaponConstants.h"
 
 // #include "Explotion.h"
 #include "RgbValue.h"
+#include "SpriteConstants.h"
 
 enum ColorKey { black, magenta, none };
 using namespace SDL2pp;
@@ -23,8 +23,8 @@ private:
     std::unordered_map<Skin, Texture> texturesSkins;
     std::unordered_map<MapType, Texture> texturesTiles;
     std::unordered_map<UiType, Texture> texturesUI;
-    std::unordered_map<WeaponType, Texture> texturesWeapons;
-    std::unordered_map<WeaponType, Texture> texturesWeaponsHeld;
+    std::unordered_map<SpriteType, Texture> texturesWeapons;
+    std::unordered_map<SpriteType, Texture> texturesWeaponsHeld;
     Texture explotionTexture;
 
     Texture fovTexture;
@@ -34,9 +34,9 @@ public:
     TextureManager(Renderer& renderer);
     Texture& getSkin(Skin id);
     Texture& getTileMap(MapType id);
-    Texture& getDroppedWeapon(WeaponType id);
-    Texture& getWeapon(WeaponType id);
-    Texture& getWeaponHeld(WeaponType id);
+    Texture& getDroppedWeapon(SpriteType id);
+    Texture& getWeapon(SpriteType id);
+    Texture& getWeaponHeld(SpriteType id);
     Texture& getUi(UiType id);
     Texture& getFov();
     Texture& getExplotion();

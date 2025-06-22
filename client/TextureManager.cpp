@@ -7,10 +7,12 @@
 #include "SDL2pp/Texture.hh"
 #include "build/_deps/sdl2_ttf-src/SDL_ttf.h"
 #include "server/Constants/MapTypeConstants.h"
+// #include "server/ProductType.h"
 #include "server/Skin.h"
 
 // #include "Explotion.h"
 #include "RgbValue.h"
+#include "SpriteConstants.h"
 
 TextureManager::TextureManager(Renderer& renderer):
         renderer(renderer),
@@ -23,7 +25,11 @@ TextureManager::TextureManager(Renderer& renderer):
         throw std::runtime_error("error ttf_init()" + std::string(TTF_GetError()));
     }
 
-    // Explotion
+    // AMMO
+    texturesWeapons.emplace(SpriteType::P_AMMO,
+                            removeBackground(black, "../client/assets/primaryammo.png"));
+    texturesWeapons.emplace(SpriteType::S_AMMO,
+                            removeBackground(black, "../client/assets/secondaryammo.png"));
 
 
     // UI
@@ -34,31 +40,31 @@ TextureManager::TextureManager(Renderer& renderer):
                        removeBackground(magenta, "../client/assets/ui/pointer.png"));
 
     // weapons held
-    texturesWeaponsHeld.emplace(WeaponType::AWP,
+    texturesWeaponsHeld.emplace(SpriteType::AWP,
                                 removeBackground(black, "../client/assets/weapons/awp_h.png"));
-    texturesWeaponsHeld.emplace(WeaponType::M3,
+    texturesWeaponsHeld.emplace(SpriteType::M3,
                                 removeBackground(black, "../client/assets/weapons/m3_h.png"));
-    texturesWeaponsHeld.emplace(WeaponType::GLOCK,
+    texturesWeaponsHeld.emplace(SpriteType::GLOCK,
                                 removeBackground(black, "../client/assets/weapons/glock_h.png"));
-    texturesWeaponsHeld.emplace(WeaponType::KNIFE,
+    texturesWeaponsHeld.emplace(SpriteType::KNIFE,
                                 removeBackground(magenta, "../client/assets/weapons/knife_h.png"));
-    texturesWeaponsHeld.emplace(WeaponType::AK47,
+    texturesWeaponsHeld.emplace(SpriteType::AK47,
                                 removeBackground(black, "../client/assets/weapons/ak47_h.png"));
-    texturesWeaponsHeld.emplace(WeaponType::BOMB,
-                                removeBackground(black, "../client/assets/weapons/bomb_h.png"));
+    texturesWeaponsHeld.emplace(SpriteType::BOMB,
+                                removeBackground(magenta, "../client/assets/weapons/bomb_h.png"));
 
     // weapons
-    texturesWeapons.emplace(WeaponType::AWP,
+    texturesWeapons.emplace(SpriteType::AWP,
                             removeBackground(magenta, "../client/assets/weapons/awp.png"));
-    texturesWeapons.emplace(WeaponType::M3,
+    texturesWeapons.emplace(SpriteType::M3,
                             removeBackground(magenta, "../client/assets/weapons/m3.png"));
-    texturesWeapons.emplace(WeaponType::GLOCK,
+    texturesWeapons.emplace(SpriteType::GLOCK,
                             removeBackground(magenta, "../client/assets/weapons/glock.png"));
-    texturesWeapons.emplace(WeaponType::KNIFE,
+    texturesWeapons.emplace(SpriteType::KNIFE,
                             removeBackground(magenta, "../client/assets/weapons/knife.png"));
-    texturesWeapons.emplace(WeaponType::BOMB,
+    texturesWeapons.emplace(SpriteType::BOMB,
                             removeBackground(black, "../client/assets/weapons/bomb.png"));
-    texturesWeapons.emplace(WeaponType::AK47,
+    texturesWeapons.emplace(SpriteType::AK47,
                             removeBackground(magenta, "../client/assets/weapons/ak47.png"));
 
     // skins
@@ -88,11 +94,11 @@ TextureManager::TextureManager(Renderer& renderer):
 Texture& TextureManager::getSkin(Skin id) { return texturesSkins.at(id); }
 Texture& TextureManager::getTileMap(MapType id) { return texturesTiles.at(id); }
 
-Texture& TextureManager::getDroppedWeapon(WeaponType id) { return texturesWeapons.at(id); }
+Texture& TextureManager::getDroppedWeapon(SpriteType id) { return texturesWeapons.at(id); }
 
-Texture& TextureManager::getWeapon(WeaponType id) { return texturesWeapons.at(id); }
+Texture& TextureManager::getWeapon(SpriteType id) { return texturesWeapons.at(id); }
 
-Texture& TextureManager::getWeaponHeld(WeaponType id) { return texturesWeaponsHeld.at(id); }
+Texture& TextureManager::getWeaponHeld(SpriteType id) { return texturesWeaponsHeld.at(id); }
 
 Texture& TextureManager::getUi(UiType id) { return texturesUI.at(id); }
 

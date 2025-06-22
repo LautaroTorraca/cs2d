@@ -1,9 +1,22 @@
-#include <QApplication>
-#include "Login/ServerMenu.h"
+#include <exception>
+#include <iostream>
 
-int main(int argc, char *argv[]) {
-	QApplication app(argc, argv);
-	ServerMenu menu(argv[1]);
-	menu.show();
-	return app.exec();
+#include <SDL2/SDL.h>
+
+#include "GameClient.h"
+
+using namespace DTO;
+
+
+int main(int argc, char* argv[]) {
+    try {
+
+        GameClient game(argv[1]);
+        game.run(argc, argv);
+        return 0;
+
+    } catch (std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
 }

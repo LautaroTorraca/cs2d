@@ -1,6 +1,7 @@
 #include "GameClient.h"
 
 #include <iostream>
+// #include <utility>
 
 #include <bits/types/error_t.h>
 #include <qapplication.h>
@@ -10,11 +11,9 @@
 #include "server/Constants/MapTypeConstants.h"
 
 #include "InputHandler.h"
-#include "Protocol.h"
+#include "MainWindow.h"
 #include "SDL_timer.h"
 #include "fixedOverWritingQueue.h"
-
-using namespace Client;
 using std::stringstream;
 
 using namespace SDL2pp;
@@ -30,14 +29,82 @@ using namespace DTO;
 // TODO: movimiento simulateno. a chequear.
 // TODO: terminar UI. Cuadros y colores.
 
+// GameClient(): protocol(protocol){};
 GameClient::GameClient(Protocol& protocol):
         running(true),
-        protocol(protocol),
+        protocol(HOSTNAME, PORT),
         inputHandler(protocol),
         dataReceiver(protocol, snapshotQueue) {}
 
-void GameClient::run() {
+GameClient::GameClient(char* port):
+        running(true),
+        protocol(HOSTNAME, port),
+        inputHandler(protocol),
+        dataReceiver(protocol, snapshotQueue) {}
 
+void GameClient::run() {}
+void GameClient::run(int argc, char* argv[]) {
+
+    QApplication app(argc, argv);
+    MainWindow mainMenu;
+    if (mainMenu.exec() == QDialog::Accepted) {
+        ConnectionChoice choice = mainMenu.getChoice();
+
+        switch (choice) {
+            case ConnectionChoice::None: {
+                std::cout << "nada\n";
+                break;
+            }
+            case ConnectionChoice::Create: {
+                std::cout << "crear\n";
+                LobbyDTO lobby("hola", MapType::DUST, 2, 6);
+                protocol.createLobby(lobby);
+                std::cout << "aca llego=?\n\n";
+                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
+                std::cout << "lobbyStatus, id: " << lobbyStatus.id
+                          << ", status: " << (int)lobbyStatus.status << std::endl;
+                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
+                    std::cout << "se creo el lobby correctamente\n";
+                } else {
+                    std::cout << "fallo xd\n";
+                }
+                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::PHOENIX);
+                protocol.ready(playerChoices);
+                GameLobbyDTO gameLobby = protocol.getGameLobby();
+                while (gameLobby.status != READY_STATUS) {
+                    std::cout << "todavia no se creo el game correctamente\n";
+                    gameLobby = protocol.getGameLobby();
+                }
+                std::cout << "Se creo el game correctamente\n";
+                break;
+            }
+            case ConnectionChoice::Join: {
+
+                std::cout << "unirse\n";
+                LobbyDTO lobby("hola");
+                protocol.joinLobby(lobby);
+                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
+                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
+                    std::cout << "se creo el lobby correctamente\n";
+                } else {
+                    std::cout << "fallo xd\n";
+                }
+                PlayerChoicesDTO playerChoices(4321, "pablo", Team::COUNTER_TERRORISTS,
+                                               Skin::UK_SAS);
+                protocol.ready(playerChoices);
+                GameLobbyDTO gameLobby = protocol.getGameLobby();
+                while (gameLobby.status != READY_STATUS) {
+                    std::cout << "todavia no se creo el game correctamente\n";
+                    GameLobbyDTO gameLobby = protocol.getGameLobby();
+                }
+                std::cout << "Se creo el game correctamente\n";
+                break;
+            }
+        }
+    }
+    std::cout << "hasta aca todo joya no?\n";
+
+    // HACK: fix constant loop rate.
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
     try {
@@ -53,6 +120,8 @@ void GameClient::run() {
         while (running) {
             SDL_Event event;
             frameTime = SDL_GetTicks() - frameStart;
+
+
             if (frameDelay <= frameTime) {
                 Snapshot gameSnapshot = snapshotQueue.pop();
 
