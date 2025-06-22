@@ -22,6 +22,7 @@ public:
     explicit ShopParser(const std::string& shopFile);
     ShopParser(ShopParser&& other) noexcept;
     std::map<ProductType, std::unique_ptr<Factory>> getShopFactories(WeaponInformer& weaponsInfo);
+    std::map<ProductType, double> getProductsPrices();
 };
 
 

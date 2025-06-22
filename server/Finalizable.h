@@ -10,6 +10,7 @@ public:
     virtual ~Finalizable() = default;
     virtual void bombHasBeenPlanted() = 0;
     virtual void terroristsWins() = 0;
+    virtual void bombExploded() = 0;
     virtual void countersWins() = 0;
     virtual void allTerroristsAreDead() = 0;
 };

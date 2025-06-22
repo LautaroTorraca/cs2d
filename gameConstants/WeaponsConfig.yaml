@@ -9,4 +9,4 @@ m3:
 awp:
   { damagePerBullet : 75.0, precision : 1.0, range : 500.0, cadence : 2.0, speed : 600.0, bulletsPerShot : 1.0, maxBullets: 2000 }
 bomb:
-  { activationTime: 90, deactivationTime: 10 }
+  { activationTime: 30, deactivationTime: 10 }

@@ -10,6 +10,8 @@
 #include "server/Constants/MapTypeConstants.h"
 #include "server/Constants/TeamConstants.h"
 #include "server/Skin.h"
+using namespace Client;
+
 
 class GameFlowUtils {
 public:

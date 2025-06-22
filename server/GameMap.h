@@ -45,11 +45,12 @@ public:
     void spawnCounter(std::shared_ptr<Entity>& entity) override;
     void spawnTerrorist(std::shared_ptr<Entity>& entity) override;
     void remove(const std::shared_ptr<Entity> &entity) override;
-    void deactivate(Position &position) override;
+    void deactivate(Position& position, std::shared_ptr<Deactivator>& deactivator) override;
     void plant(std::shared_ptr<Explosive>& explosive, const Position &position) override;
     void advance(const double &actualTime) override;
     [[nodiscard]] std::vector<DropDTO> getDrops() const;
     [[nodiscard]] CoordinateDTO getExplosivePosition() const;
+    [[nodiscard]] double getExplosiveTime() const;
     ~GameMap() override = default;
     void reset(GameParser& parser);
 };

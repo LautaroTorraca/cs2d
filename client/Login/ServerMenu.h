@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include "client/Protocol.h"
+using namespace Client;
 
 class UsernameInput;
 class CreateGameButton;
@@ -10,6 +11,8 @@ class JoinGameButton;
 class ListGamesButton;
 class ExitGameButton;
 class MusicManager;
+
+
 
 class ServerMenu : public QWidget {
     Q_OBJECT

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Constants/MapTypeConstants.h"
+#include "server/Constants/MapTypeConstants.h"
 #include "Order.h"
 #include "OrderType.h"
 #include <map>

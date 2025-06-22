@@ -15,6 +15,8 @@
 #include "Login/Mappers/TeamMapper.h"
 
 #include "GameClient.h"
+using namespace Client;
+
 
 WaitingRoomDialog::WaitingRoomDialog(const QString& playerName,
                                      const QString& teamStr,
@@ -152,6 +154,7 @@ void WaitingRoomDialog::pollLobby() {
                     this->accept();
                     GameClient gameClient(this->protocol);
                     gameClient.run();
+                    this->hide();
 
                 }, Qt::QueuedConnection);
                 return;

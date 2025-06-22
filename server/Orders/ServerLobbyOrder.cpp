@@ -1,8 +1,8 @@
 #include "ServerLobbyOrder.h"
 #include <utility>
 
-#include "Constants/ProtocolContants.h"
-#include "Constants/ProtocolDefaults.h"
+#include "server/Constants/ProtocolContants.h"
+#include "server/Constants/ProtocolDefaults.h"
 #include "OrderType.h"
 
 ServerLobbyOrder::ServerLobbyOrder(const uint8_t &code, const size_t &clientId)

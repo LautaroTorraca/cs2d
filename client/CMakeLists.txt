@@ -11,7 +11,7 @@ set(CLIENT_SOURCES ${CLIENT_SOURCES} ${CLIENT_ROOT_SOURCES} PARENT_SCOPE)
 set(CLIENT_HEADERS ${CLIENT_HEADERS} ${CLIENT_ROOT_HEADERS} PARENT_SCOPE)
 
 # Define the resource file path (ahora desde client/ directamente)
-set(RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc")
+set(RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}resources.qrc")
 
 # Debug: verificar que el archivo existe
 if(EXISTS ${RESOURCE_FILE})

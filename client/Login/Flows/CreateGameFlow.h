@@ -1,5 +1,6 @@
 #pragma once
 #include "GameFlowBase.h"
+using namespace Client;
 
 class CreateGameFlow : public GameFlowBase {
 public:

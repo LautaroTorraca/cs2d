@@ -18,6 +18,8 @@
 
 class LobbyDTO;
 
+using namespace  Client;
+
 class ProtocolTesting: public Protocol {
     // Socket clientSocket;
     // Sender sender;

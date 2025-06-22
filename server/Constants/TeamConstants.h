@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdint>
-#include "../Skin.h"
-#include "../Team.h"
+#include "server/Skin.h"
+#include "server/Team.h"
 
 
 namespace TeamConstants {

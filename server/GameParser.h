@@ -25,6 +25,7 @@ public:
     [[nodiscard]] std::vector<Coordinate> getBombPlantPoints() const;
     std::map<Position, std::shared_ptr<Drop>> getDrops() const;
     std::map<ProductType, std::unique_ptr<Factory>> getShopFactories();
+    std::map<ProductType, double> getProductsPrices();
     double getGameInfo(const std::string& key) const;
     double getPlayerInfo(const std::string& key) const;
     double getGameMapInfo(const std::string& key) const;

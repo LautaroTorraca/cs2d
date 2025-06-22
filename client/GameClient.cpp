@@ -17,7 +17,6 @@
 // #include "server/Team.h"
 
 #include "InputHandler.h"
-#include "MainWindow.h"
 #include "Protocol.h"
 #include "SDL_timer.h"
 

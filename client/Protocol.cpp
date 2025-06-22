@@ -4,14 +4,13 @@
 #include <sstream>
 #include <string>
 
-// #include "server/Constants/OpCodesConstans.h"
 #include "server/Constants/ProtocolContants.h"
 
 #define NEW 0X6E
-Protocol::Protocol(const std::string& hostName, const std::string& port):
+Client::Protocol::Protocol(const std::string& hostName, const std::string& port):
         clientSocket(hostName.c_str(), port.c_str()), sender(clientSocket), reader(clientSocket) {}
 
-void Protocol::createLobby(const LobbyDTO& lobbyInfo) {
+void Client::Protocol::createLobby(const LobbyDTO& lobbyInfo) {
     uint8_t code = ProtocolConstants::CREATE_GAME;
     uint8_t mapType = static_cast<uint8_t>(lobbyInfo.mapType);
     this->sender.send(code);
@@ -21,13 +20,13 @@ void Protocol::createLobby(const LobbyDTO& lobbyInfo) {
     this->sender.send(lobbyInfo.rounds);
 }
 
-LobbyConnectionDTO Protocol::getLobbyConnection() const {
+LobbyConnectionDTO Client::Protocol::getLobbyConnection() const {
     size_t id = this->reader.readSizeT();
     ConnectionStatus status = static_cast<ConnectionStatus>(this->reader.u8tReader());
     return LobbyConnectionDTO(id, status);
 }
 
-GamesList Protocol::getGamesList() {
+GamesList Client::Protocol::getGamesList() {
     uint8_t code = ProtocolConstants::GAME_LIST_REQUEST;
     this->sender.send(code);
     std::string games = this->reader.stringReader();
@@ -42,18 +41,18 @@ GamesList Protocol::getGamesList() {
     return {gotGames};
 }
 
-void Protocol::joinLobby(const LobbyDTO& lobbyInfo) {
+void Client::Protocol::joinLobby(const LobbyDTO& lobbyInfo) {
     uint8_t code = ProtocolConstants::JOIN_GAME;
     this->sender.send(code);
     this->sender.send(lobbyInfo.gameName);
 }
 
-void Protocol::leaveLobby() {
+void Client::Protocol::leaveLobby() {
     uint8_t code = ProtocolConstants::DISCONNECT;
     this->sender.send(code);
 }
 
-void Protocol::ready(const PlayerChoicesDTO& playerChoices) {
+void Client::Protocol::ready(const PlayerChoicesDTO& playerChoices) {
     uint8_t code = ProtocolConstants::READY;
     uint8_t team = static_cast<uint8_t>(playerChoices.team);
     uint8_t skin = static_cast<uint8_t>(playerChoices.skin);
@@ -63,7 +62,7 @@ void Protocol::ready(const PlayerChoicesDTO& playerChoices) {
     this->sender.send(skin);
 }
 
-GameLobbyDTO Protocol::getGameLobby() const {
+GameLobbyDTO Client::Protocol::getGameLobby() const {
     GameLobbyStatus status = static_cast<GameLobbyStatus>(this->reader.u8tReader());
     std::vector<PlayerChoicesDTO> choices;
     while (this->reader.u8tReader() == NEW) {
@@ -75,29 +74,29 @@ GameLobbyDTO Protocol::getGameLobby() const {
     return GameLobbyDTO(status, choices, gamaName, rounds, mapType);
 }
 
-void Protocol::leaveGameLobby() {
+void Client::Protocol::leaveGameLobby() {
     uint8_t code = ProtocolConstants::EXIT_LOBBY;
     this->sender.send(code);
 }
 
-void Protocol::move(const Direction& direction) {
+void Client::Protocol::move(const Direction& direction) {
     const uint8_t opCode = ProtocolConstants::PLAYER_MOVEMENT;
     uint16_t directionMove = direction;
     this->sender.send(opCode);
     this->sender.send(directionMove);
 }
 
-void Protocol::attack() {
+void Client::Protocol::attack() {
     const uint8_t opCode = ProtocolConstants::ATTACK;
     this->sender.send(opCode);
 }
 
-void Protocol::pickUp() {
+void Client::Protocol::pickUp() {
     const uint8_t opCode = ProtocolConstants::PICK_UP_ITEM;
     this->sender.send(opCode);
 }
 
-void Protocol::buy(const BuyOrder& buyOrder) {
+void Client::Protocol::buy(const BuyOrder& buyOrder) {
     const uint8_t opCode = ProtocolConstants::BUY;
     uint8_t buyOrderType = buyOrder.type;
     this->sender.send(opCode);
@@ -105,34 +104,34 @@ void Protocol::buy(const BuyOrder& buyOrder) {
     this->sender.send(buyOrder.amount);
 }
 
-void Protocol::changeAngle(const double& angle) {
+void Client::Protocol::changeAngle(const double& angle) {
     const uint8_t opCode = ProtocolConstants::CHANGE_ANGLE;
     this->sender.send(opCode);
     this->sender.send(angle);
 }
 
-void Protocol::changeWeapon(const WeaponChanger& weaponChanger) {
+void Client::Protocol::changeWeapon(const WeaponChanger& weaponChanger) {
     const uint8_t opCode = ProtocolConstants::SWITCH_WEAPON;
     this->sender.send(opCode);
     this->sender.send(weaponChanger.weaponSelection);
 }
 
-void Protocol::plantBomb() {
+void Client::Protocol::plantBomb() {
     const uint8_t opCode = ProtocolConstants::PLANT_BOMB;
     this->sender.send(opCode);
 }
 
-void Protocol::defuseBomb() {
+void Client::Protocol::defuseBomb() {
     const uint8_t opCode = ProtocolConstants::DEFUSE_BOMB;
     this->sender.send(opCode);
 }
 
-void Protocol::exit() {
+void Client::Protocol::exit() {
     const uint8_t opCode = ProtocolConstants::EXIT_GAME;
     this->sender.send(opCode);
 }
 
-PlayerChoicesDTO Protocol::readPlayerChoices() const {
+PlayerChoicesDTO Client::Protocol::readPlayerChoices() const {
     size_t id = this->reader.readSizeT();
     std::string playerName = this->reader.stringReader();
     Team team = static_cast<Team>(this->reader.u8tReader());
@@ -140,13 +139,13 @@ PlayerChoicesDTO Protocol::readPlayerChoices() const {
     return PlayerChoicesDTO(id, playerName, team, skin);
 }
 
-Snapshot Protocol::receiveSnapshot() const {
+Snapshot Client::Protocol::receiveSnapshot() const {
     std::vector<PlayerInformation> playersInfo;
     Snapshot snapshot = this->reader.readSnapShot();
     return snapshot;
 }
 
-PreSnapshot Protocol::receivePreSnapshot() const {
+PreSnapshot Client::Protocol::receivePreSnapshot() const {
     size_t id = this->reader.readSizeT();
     std::vector<char> tiles = this->reader.bytesReader();
     std::string row;
@@ -160,6 +159,7 @@ PreSnapshot Protocol::receivePreSnapshot() const {
         }
         rowData.push_back(tile);
     }
+    std::map<ProductType, double> shopInfo = this->reader.readShopInfo();
 
-    return {id, map};
+    return {id, map, shopInfo};
 }

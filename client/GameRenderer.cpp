@@ -176,7 +176,7 @@ void GameRenderer::renderFloorWeapon(Texture& sprite, DropInformation wpn) {
                        sprite.GetWidth() * WPN_SZ_MULT, sprite.GetHeight() * WPN_SZ_MULT));
 }
 
-void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Coords mouseCoords) {
+void GameRenderer::renderUI(PlayerInformation& player, Snapshot, Coords mouseCoords) {
     renderPointer(mouseCoords);
 
     // health
@@ -276,7 +276,7 @@ int16_t GameRenderer::renderWeaponGlyph(Coords posInScreen, WeaponType weapon) {
     return (posInScreen.x + (sprite.GetWidth() * multH));
 }
 
-void GameRenderer::drawFOVStencil(const CoordinateInformation& playerCoords, double directionDeg,
+void GameRenderer::drawFOVStencil(const CoordinateInformation&, double directionDeg,
                                   double fovDeg, int radius) {
 
     Uint8 r = 255, g = 255, b = 255, a = 255;

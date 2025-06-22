@@ -31,6 +31,10 @@ std::map<ProductType, std::unique_ptr<Factory>> GameParser::getShopFactories() {
     return this->shopParser.getShopFactories(this->weaponsInfoParser);
 }
 
+std::map<ProductType, double> GameParser::getProductsPrices() {
+    return  this->shopParser.getProductsPrices();
+}
+
 double GameParser::getGameInfo(const std::string &key) const {
     return this->gameInfoParser.getGameInfo(key);
 }

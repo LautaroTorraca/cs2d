@@ -6,10 +6,10 @@
 
 #include <sys/socket.h>
 
-#include "Constants/OpCodesConstans.h"
+#include "server/Constants/OpCodesConstans.h"
 
-#include "GameInfoDTO.h"
-#include "Constants/KeyContants.h"
+#include "server/GameInfoDTO.h"
+#include "server/Constants/KeyContants.h"
 #include "liberror.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
@@ -20,8 +20,10 @@ ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
         lobbyHandler(userSocket, clientId),
         gameLobbyHandler(userSocket, clientId),
         inGameHandler(userSocket, clientId),
+        reader(this->userSocket),
         sender(this->userSocket),
-        status(IN_LOBBY) {
+        status(IN_LOBBY),
+        ended(false) {
 
     registerOpcodes();
     this->setDisconnectionFetcher();
@@ -79,7 +81,7 @@ void ClientHandler::registerOpcodes() {
     opcodeDispatcher[OPCODE_DEFUSE_BOMB] = [&]() {
         return inGameHandler.handle(OPCODE_DEFUSE_BOMB);
     };
-    opcodeDispatcher[OPCODE_EXIT_GAME] = [&]() { return inGameHandler.handle(OPCODE_JOIN_GAME); };
+    opcodeDispatcher[OPCODE_EXIT_GAME] = [&]() { return inGameHandler.handle(OPCODE_EXIT_GAME); };
 }
 
 
@@ -87,8 +89,7 @@ void ClientHandler::run() {
 
     while (this->should_keep_running()) {
         try {
-            uint8_t opCode;
-            this->userSocket.recvall(&opCode, sizeof(opCode));
+            uint8_t opCode = this->reader.u8tReader();
 
             //std::cout << "ClientHandler::run, opecode: " << std::to_string(opCode) << std::endl;
             if (!this->opcodeDispatcher.contains(opCode)) {
@@ -103,7 +104,8 @@ void ClientHandler::run() {
             std::cout << "Client " << this->id << " disconnected. " << e.what() << std::endl;
         }
     }
-    this->disconnectionFetcher.at(this->status)();
+    if (!this->ended)
+        this->disconnectionFetcher.at(this->status)();
 }
 
 
@@ -113,12 +115,13 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
         this->sender.send(playerInfo);
     }
     this->sender.send(STOP);
-    uint8_t status = gameInfo.getStatus();
+    uint8_t gameStatus = gameInfo.getStatus();
     this->sender.send(gameInfo.getCurrentRound());
     this->sender.send(gameInfo.getCountersWinsRounds());
     this->sender.send(gameInfo.getTerroristsWinsRounds());
     this->sender.send(gameInfo.getPlantedBombPosition());
-    this->sender.send(status);
+    this->sender.send(gameInfo.getBombTimer());
+    this->sender.send(gameStatus);
     for (auto& drop: gameInfo.getDropsInfo()) {
         this->sender.send(NEW);
         this->sender.send(drop);
@@ -131,6 +134,7 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
 void ClientHandler::sendPreSnapshot(const PreSnapshot& preSnapshot) {
     this->sender.send(preSnapshot.clientId);
     this->sender.send(preSnapshot.map);
+    this->sender.send(preSnapshot.shopInfo);
 }
 
 void ClientHandler::stopService() {
@@ -140,6 +144,11 @@ void ClientHandler::stopService() {
     } catch (LibError&) {
         //LOGG Error
     }
+}
+
+void ClientHandler::endService() {
+    this->ended = true;
+    this->stopService();
 }
 
 void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
@@ -153,12 +162,12 @@ void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
     std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
-    uint8_t status = gameLobbyInfo.status;
+    uint8_t lobbyStatus = (uint8_t)gameLobbyInfo.status;
     uint8_t mapType = static_cast<uint8_t>(gameLobbyInfo.mapType);
     if (gameLobbyInfo.status == READY_STATUS) {
         this->status = IN_GAME;
     }
-    this->sender.send(status);
+    this->sender.send(lobbyStatus);
     for (const auto &playerChoice : playersChoices) {
         uint8_t skin = playerChoice.skin;
         uint8_t team = playerChoice.team;

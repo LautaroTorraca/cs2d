@@ -17,6 +17,7 @@ class GameInfoDTO {
     std::vector<PlayerInfoDTO> playersInfo;
     std::vector<DropDTO> dropsInfo;
     CoordinateDTO plantedBombPosition;
+    double bombTimer;
     double elapsedTime;
     uint8_t rounds;
 public:
@@ -24,6 +25,7 @@ public:
         const uint8_t& countersWinsRounds, const uint8_t& terroristsWinsRounds,
         std::vector<PlayerInfoDTO>& playersInfo,
         std::vector<DropDTO>& dropsInfo, const CoordinateDTO& plantedBombPosition,
+        const double& bombTimer,
         const double& elapsedTime, const uint8_t& rounds) :
                         status(status), currentRound(currentRound),
                         countersWinsRounds(countersWinsRounds),
@@ -31,6 +33,7 @@ public:
                         playersInfo(std::move(playersInfo)),
                         dropsInfo(std::move(dropsInfo)),
                         plantedBombPosition(plantedBombPosition),
+                        bombTimer(bombTimer),
                         elapsedTime(elapsedTime),
                         rounds(rounds) {}
     [[nodiscard]] const GameStatus& getStatus() const;
@@ -40,6 +43,7 @@ public:
     [[nodiscard]] const std::vector<PlayerInfoDTO>& getPlayersInfo() const;
     [[nodiscard]] const std::vector<DropDTO>& getDropsInfo() const;
     [[nodiscard]] const CoordinateDTO& getPlantedBombPosition() const;
+    [[nodiscard]] const double& getBombTimer() const;
     [[nodiscard]] const double& getElapsedTime() const;
     [[nodiscard]] const uint8_t& getRounds() const;
 };

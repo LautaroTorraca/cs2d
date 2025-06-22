@@ -2,9 +2,9 @@
 
 #include <stdexcept>
 
-#include "Constants/ProtocolContants.h"
-#include "Constants/ProtocolDefaults.h"
-#include "Constants/TeamConstants.h"
+#include "server/Constants/ProtocolContants.h"
+#include "server/Constants/ProtocolDefaults.h"
+#include "server/Constants/TeamConstants.h"
 
 GameLobbyOrder::GameLobbyOrder(const uint8_t &code, const size_t &playerId)
     : GameLobbyOrder(code, playerId, DEFAULT_GAME_NAME, DEFAULT_TEAM_ID, DEFAULT_SKIN_ID) {}

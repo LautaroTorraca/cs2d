@@ -5,6 +5,7 @@
 #ifndef BOMB_H
 #define BOMB_H
 #include "Addable.h"
+#include "Deactivator.h"
 #include "Explosive.h"
 #include "Finalizable.h"
 #include "GenericWeapon.h"
@@ -20,6 +21,7 @@ class Bomb : public GenericWeapon, public Addable, public Explosive {
     double deactivationStartTime;
     double lastDeactivationTime;
     double actualTime;
+    std::shared_ptr<Deactivator> deactivator;
 
 public:
     explicit Bomb(Finalizable& finalizable, const double& activationDuration, const double& deactivationDuration) :
@@ -36,10 +38,11 @@ public:
     void recharge(uint16_t &) override {}
     void addTo(Inventory &inventory) override;
     void advance(const double &actualTime) override;
-    void deactivate() override;
+    void deactivate(std::shared_ptr<Deactivator>& deactivator) override;
     void activate() override;
     void continueActivation(const double& actualTime) override;
     WeaponInfoDTO getInfo() override;
+    double getTime() override;
 };
 
 

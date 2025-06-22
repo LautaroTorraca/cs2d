@@ -1,10 +1,63 @@
 target_sources(taller_tests
-    PRIVATE
-    # .cpp files
+        PRIVATE
+        # .cpp files
+        ../client/GameClient.cpp
+        ../client/GameRenderer.cpp
+        ../client/InputHandler.cpp
+        ../client/main.cpp
+        ../client/Protocol.cpp
+        ../client/TextureManager.cpp
+        ../client/Login/Assets/SkinRepository.cpp
+        ../client/Login/Buttons/CreateGameButton.cpp
+        ../client/Login/Buttons/ExitGameButton.cpp
+        ../client/Login/Buttons/GameMenuButton.cpp
+        ../client/Login/Buttons/JoinGameButton.cpp
+        ../client/Login/Buttons/ListGamesButton.cpp
+        ../client/Login/Dialogs/ConfirmExitDialog.cpp
+        ../client/Login/Dialogs/CreateGameDialog.cpp
+        ../client/Login/Dialogs/GameListDialog.cpp
+        ../client/Login/Dialogs/GameNameDialog.cpp
+        ../client/Login/Dialogs/MapSelectionDialog.cpp
+        ../client/Login/Dialogs/SkinSelectionDialog.cpp
+        ../client/Login/Dialogs/TeamSelectionDialog.cpp
+        ../client/Login/Dialogs/WaitingRoomDialog.cpp
+        ../client/Login/Flows/CreateGameFlow.cpp
+        ../client/Login/Flows/GameFlowBase.cpp
+        ../client/Login/Flows/GameFlowUtils.cpp
+        ../client/Login/Flows/JoinGameFlow.cpp
+        ../client/Login/Flows/ListGameFlow.cpp
+        ../client/Login/Mappers/MapMapper.cpp
+        ../client/Login/Mappers/SkinTraslator.cpp
+        ../client/Login/Mappers/TeamMapper.cpp
+        ../client/Login/Visual/MenuBackground.cpp
+        ../client/Login/Widgets/UsernameInput.cpp
+        ../client/Login/MessageBox.cpp
+        ../client/Login/ServerMenu.cpp
+        ../common/foo.cpp
+        ../common/liberror.cpp
+        ../common/resolver.cpp
+        ../common/resolvererror.cpp
+        ../common/socket.cpp
+        ../server/Handlers/ClientHandler.cpp
+        ../server/Handlers/GameLobbyHandler.cpp
+        ../server/Handlers/InGameHandler.cpp
+        ../server/Handlers/LobbyHandler.cpp
+        ../server/Lobby/GameLobby.cpp
+        ../server/Lobby/Lobby.cpp
+        ../server/Monitor/GameMonitor.cpp
+        ../server/Orders/GameLobbyOrder.cpp
+        ../server/Orders/InGameOrder.cpp
+        ../server/Orders/ServerLobbyOrder.cpp
+        ../server/Protocol/GameLobbyProtocol.cpp
+        ../server/Protocol/InGameProtocol.cpp
+        ../server/Protocol/Protocol.cpp
+        ../server/Protocol/ServerLobbyProtocol.cpp
+        ../server/Readers/Reader.cpp
+        ../server/Requests/Request.cpp
+        ../server/Sender/Sender.cpp
         ../server/ActivatedBacker.cpp
         ../server/Coordinate.cpp
         ../server/CounterPlayer.cpp
-        ../server/CountersTeam.cpp
         ../server/DeactivatedBacker.cpp
         ../server/Game.cpp
         ../server/GameMap.cpp
@@ -13,6 +66,7 @@ target_sources(taller_tests
         ../server/Path.cpp
         ../server/Player.cpp
         ../server/Position.cpp
+        ../server/Product.cpp
         ../server/TerroristPlayer.cpp
         ../server/TerroristsTeam.cpp
         ../server/PlayerInfoDTO.cpp
@@ -20,7 +74,6 @@ target_sources(taller_tests
         ../server/ShopParser.cpp
         ../server/Wallet.cpp
         ../server/PlayerInventory.cpp
-        ../server/Product.cpp
         ../server/AKFactory.cpp
         ../server/M3Factory.cpp
         ../server/AwpFactory.cpp
@@ -51,14 +104,114 @@ target_sources(taller_tests
         ../server/DistanceWeapon.cpp
         ../server/RechargeableWeapon.cpp
         ../server/GameInfoParser.cpp
+        ../server/Ui.cpp
 
 
-    foo.cpp UseCases.cpp
-    PUBLIC
-    # .h files
+        foo.cpp UseCases.cpp ProtocolTests.cpp
+        PUBLIC
+        # .h files
+        ../client/Constants/ClientConstants.h
+        ../client/Login/Assets/SkinRepository.h
+        ../client/Login/Buttons/CreateGameButton.h
+        ../client/Login/Buttons/ExitGameButton.h
+        ../client/Login/Buttons/GameMenuButton.h
+        ../client/Login/Buttons/JoinGameButton.h
+        ../client/Login/Buttons/ListGamesButton.h
+        ../client/Login/Dialogs/ConfirmExitDialog.h
+        ../client/Login/Dialogs/CreateGameDialog.h
+        ../client/Login/Dialogs/DialogUtils.h
+        ../client/Login/Dialogs/GameListDialog.h
+        ../client/Login/Dialogs/GameNameDialog.h
+        ../client/Login/Dialogs/MapSelectionDialog.h
+        ../client/Login/Dialogs/SkinSelectionDialog.h
+        ../client/Login/Dialogs/TeamSelectionDialog.h
+        ../client/Login/Dialogs/WaitingRoomDialog.h
+        ../client/Login/Flows/CreateGameFlow.h
+        ../client/Login/Flows/GameFlowBase.h
+        ../client/Login/Flows/GameFlowUtils.h
+        ../client/Login/Flows/JoinGameFlow.h
+        ../client/Login/Flows/ListGameFlow.h
+        ../client/Login/Mappers/MapMapper.h
+        ../client/Login/Mappers/SkinTraslator.h
+        ../client/Login/Mappers/TeamMapper.h
+        ../client/Login/Visual/MenuBackground.h
+        ../client/Login/Widgets/UsernameInput.h
+        ../client/Login/GameDTO.h
+        ../client/Login/MessageBox.h
+        ../client/Login/ServerMenu.h
+        ../client/BuyOrder.h
+        ../client/CoordinateInformation.h
+        ../client/DropInformation.h
+        ../client/GameClient.h
+        ../client/GameRenderer.h
+        ../client/GamesList.h
+        ../client/InputHandler.h
+        ../client/LobbyDTO.h
+        ../client/MoveConstants.h
+        ../client/PlayerInformation.h
+        ../client/PositionDTO.h
+        ../client/ProjectileInformation.h
+        ../client/Protocol.h
+        ../client/Protocol_testing.h
+        ../client/TextureManager.h
+        ../client/WeaponChanger.h
+        ../client/WeaponInformation.h
+        ../common/Constants/PlayerDataConstants.h
+        ../common/Constants/SnapshotConstants.h
+        ../common/foo.h
+        ../common/liberror.h
+        ../common/queue.h
+        ../common/resolver.h
+        ../common/resolvererror.h
+        ../common/socket.h
+        ../common/thread.h
+        ../server/Constants/ConnectionStatus.h
+        ../server/Constants/GameDataConstant.h
+        ../server/Constants/KeyContants.h
+        ../server/Constants/MapTypeConstants.h
+        ../server/Constants/Movement.h
+        ../server/Constants/MovementConstants.h
+        ../server/Constants/OpCodesConstans.h
+        ../server/Constants/ProtocolContants.h
+        ../server/Constants/ProtocolDefaults.h
+        ../server/Constants/TeamConstants.h
+        ../server/Constants/WeaponConstants.h
+        ../server/DTO/DisconnectionDTO.h
+        ../server/DTO/GameLobbyDTO.h
+        ../server/DTO/GamesListDTO.h
+        ../server/DTO/LobbyConnectionDTO.h
+        ../server/DTO/PlayerChoicesDTO.h
+        ../server/Handlers/ClientHandler.h
+        ../server/Handlers/ClientStatus.h
+        ../server/Handlers/GameLobbyHandler.h
+        ../server/Handlers/InGameHandler.h
+        ../server/Handlers/LobbyHandler.h
+        ../server/Interfaces/Disconnectable.h
+        ../server/Interfaces/DisconnectableProtocol.h
+        ../server/Interfaces/GameLobbyProtocolInterface.h
+        ../server/Interfaces/InGameProtocolInterface.h
+        ../server/Interfaces/ServerLobbyProtocolInterface.h
+        ../server/Lobby/GameLobby.h
+        ../server/Lobby/Lobby.h
+        ../server/Monitor/GameMonitor.h
+        ../server/Orders/GameLobbyOrder.h
+        ../server/Orders/InGameOrder.h
+        ../server/Orders/Order.h
+        ../server/Orders/OrderType.h
+        ../server/Orders/ServerLobbyOrder.h
+        ../server/Protocol/GameLobbyProtocol.h
+        ../server/Protocol/InGameProtocol.h
+        ../server/Protocol/Protocol.h
+        ../server/Protocol/ServerLobbyProtocol.h
+        ../server/Readers/Reader.h
+        ../server/Requests/Request.h
+        ../server/Sender/Sender.h
         ../server/ActivatedBacker.h
+        ../server/Addable.h
         ../server/Backer.h
+        ../server/Buyer.h
         ../server/Coordinate.h
+        ../server/CoordinateDTO.h
         ../server/CounterPlayer.h
         ../server/Damageable.h
         ../server/Damager.h
@@ -68,9 +221,12 @@ target_sources(taller_tests
         ../server/GameMap.h
         ../server/GameMapParser.h
         ../server/GameParser.h
+        ../server/Informable.h
+        ../server/Inventory.h
         ../server/Path.h
         ../server/Player.h
         ../server/Position.h
+        ../server/Positionable.h
         ../server/Team.h
         ../server/TerroristPlayer.h
         ../server/TerroristsTeam.h
@@ -120,6 +276,34 @@ target_sources(taller_tests
         ../server/DistanceWeapon.h
         ../server/RechargeableWeapon.h
         ../server/GameInfoParser.h
+        ../server/Ui.h
+)
 
-
-    )
+include_directories(
+        ${CMAKE_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/client
+        ${CMAKE_SOURCE_DIR}/server
+        ${CMAKE_SOURCE_DIR}/common
+        ${CMAKE_SOURCE_DIR}/common/Constants
+        ${CMAKE_SOURCE_DIR}/client/Constants
+        ${CMAKE_SOURCE_DIR}/client/Login
+        ${CMAKE_SOURCE_DIR}/client/Assets
+        ${CMAKE_SOURCE_DIR}/client/Buttons
+        ${CMAKE_SOURCE_DIR}/client/Login/Dialogs
+        ${CMAKE_SOURCE_DIR}/client/Flows
+        ${CMAKE_SOURCE_DIR}/client/Mappers
+        ${CMAKE_SOURCE_DIR}/client/Visual
+        ${CMAKE_SOURCE_DIR}/client/Widgets
+        ${CMAKE_SOURCE_DIR}/libs
+        ${CMAKE_SOURCE_DIR}/server/Constants
+        ${CMAKE_SOURCE_DIR}/server/DTO
+        ${CMAKE_SOURCE_DIR}/server/Handlers
+        ${CMAKE_SOURCE_DIR}/server/Interfaces
+        ${CMAKE_SOURCE_DIR}/server/Lobby
+        ${CMAKE_SOURCE_DIR}/server/Monitor
+        ${CMAKE_SOURCE_DIR}/server/Orders
+        ${CMAKE_SOURCE_DIR}/server/Protocol
+        ${CMAKE_SOURCE_DIR}/server/Readers
+        ${CMAKE_SOURCE_DIR}/server/Requests
+        ${CMAKE_SOURCE_DIR}/server/Sender
+)

@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QLineEdit>
 #include "client/Protocol.h"
+using namespace Client;
 
 class GameFlowBase {
 protected:

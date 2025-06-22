@@ -3,12 +3,14 @@
 //
 
 #include "Bomb.h"
+
 #include <iostream>
+
+#include "Deactivator.h"
 #define BOMB_INDEX 3
 #define PERMISSIVE_RELEASE 0.5
 
-Bomb::Bomb(Bomb && bomb) noexcept : finalizable(bomb.finalizable) {
-}
+Bomb::Bomb(Bomb && bomb) noexcept : finalizable(bomb.finalizable) {}
 
 void Bomb::attack(Positionable & positionable, const Position & position, const double &) {
     std::shared_ptr<Bomb> bombClone = std::make_shared<Bomb>(this->finalizable, this->activationDuration, this->deactivationDuration);
@@ -26,12 +28,14 @@ void Bomb::addTo(Inventory &inventory) {
 void Bomb::advance(const double &actualTime) {
     this->actualTime = actualTime;
     if ( this->activationStartTime > 0 && (this->actualTime - this->activationStartTime) >= this->activationDuration ) {
-        this->finalizable.terroristsWins();
+        this->finalizable.bombExploded();
     }
 
     if (this->lastDeactivationTime > 0 && (this->actualTime - this->lastDeactivationTime) >= PERMISSIVE_RELEASE) {
         this->deactivationStartTime = 0;
         this->lastDeactivationTime = 0;
+        this->deactivator->deactivatingStopped();
+        this->deactivator.reset();
     }
 
     if ( this->deactivationStartTime > 0 && this->actualTime - this->deactivationStartTime >= this->deactivationDuration ) {
@@ -39,10 +43,13 @@ void Bomb::advance(const double &actualTime) {
     }
 }
 
-void Bomb::deactivate() {
+void Bomb::deactivate(std::shared_ptr<Deactivator>& deactivator) {
     if ( this->deactivationStartTime == 0 ) {
         this->deactivationStartTime = this->actualTime;
     }
+    if (this->deactivator) this->deactivator->deactivatingStopped();
+    this->deactivator = deactivator;
+    this->deactivator->deactivating();
     this->lastDeactivationTime = this->actualTime;
 }
 
@@ -56,6 +63,9 @@ void Bomb::continueActivation(const double& actualTime) {
     this->advance(actualTime);
 }
 
-WeaponInfoDTO Bomb::getInfo() {
-    return {1, WeaponType::BOMB};
+WeaponInfoDTO Bomb::getInfo() { return {1, WeaponType::BOMB}; }
+
+double Bomb::getTime() {
+    if (this->deactivationStartTime == 0) return -1;
+    return this->actualTime - this->activationStartTime;
 }

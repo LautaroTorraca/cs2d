@@ -53,3 +53,12 @@ std::map<ProductType, std::unique_ptr<Factory>> ShopParser::getShopFactories(Wea
         }
     return shopFactories;
 }
+
+std::map<ProductType, double> ShopParser::getProductsPrices() {
+    std::map<ProductType, double> productsPrices;
+    for (const auto &[productName, price] : this->shopPrices) {
+        ProductType type = this->typeTranslator.at(productName);
+        productsPrices.emplace(type, price);
+    }
+    return productsPrices;
+}

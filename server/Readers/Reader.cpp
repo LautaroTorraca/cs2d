@@ -1,6 +1,7 @@
 
 #include "Reader.h"
 
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -10,7 +11,7 @@
 
 #include "client/DropInformation.h"
 #include "client/PlayerInformation.h"
-#include <cmath>
+#include "server/PlayerStatus.h"
 
 #define NEW 0X6E
 #define PRECISION 10000
@@ -117,20 +118,32 @@ PlayerInformation Reader::readPlayer() const {
     uint8_t health = this->u8tReader();
     uint16_t money = this->u16tReader();
     uint8_t kills = this->u8tReader();
+    uint8_t deaths = this->u8tReader();
     Skin skin = static_cast<Skin>(this->u8tReader());
     WeaponInformation actualWeapon = this->readWeapon();
     std::vector<WeaponInformation> weapons;
     while (this->u8tReader() == NEW) {
         weapons.push_back(this->readWeapon());
     }
+    PlayerStatus status = static_cast<PlayerStatus>(this->u8tReader());
     return PlayerInformation(id, playerName, skin, position, angle, money, health, weapons,
-                             actualWeapon, kills);
+                             actualWeapon, kills, deaths, status);
 }
 
 DropInformation Reader::readDrop() const {
     WeaponInformation weapon = this->readWeapon();
     CoordinateInformation position = this->readCoordinateInformation();
     return DropInformation(weapon, position);
+}
+
+std::map<ProductType, double> Reader::readShopInfo() const {
+    std::map<ProductType, double> shopInfo;
+    while (this->u8tReader() == NEW) {
+        ProductType product = static_cast<ProductType>(this->u8tReader());
+        double price = this->doubleRead();
+        shopInfo.emplace(product, price);
+    }
+    return shopInfo;
 }
 
 Snapshot Reader::readSnapShot() const {
@@ -143,6 +156,7 @@ Snapshot Reader::readSnapShot() const {
     uint8_t countersWinsRounds = this->u8tReader();
     uint8_t terroristsWinsRounds = this->u8tReader();
     CoordinateInformation bombPosition = this->readCoordinateInformation();
+    double bombTimer = this->doubleRead();
     GameStatus status = static_cast<GameStatus>(this->u8tReader());
     std::vector<DropInformation> drops;
     while (this->u8tReader() == NEW) {
@@ -152,5 +166,5 @@ Snapshot Reader::readSnapShot() const {
     double actualTime = this->doubleRead();
     uint8_t totalRounds = this->u8tReader();
     return Snapshot(status, currentRound, countersWinsRounds, terroristsWinsRounds, playersInfo,
-                    drops, bombPosition, actualTime, totalRounds);
+                    drops, bombPosition, bombTimer, actualTime, totalRounds);
 }

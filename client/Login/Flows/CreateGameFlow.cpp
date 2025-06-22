@@ -29,8 +29,10 @@ void CreateGameFlow::run() {
         if (lobbyStatus.status != ConnectionStatus::SUCCESS)
             return;
 
+        parent->hide();
         PlayerChoicesDTO choices = getPlayerChoices();
         showWaitingRoom(username, choices.team, choices.skin);
+
 
     } catch (const std::exception& e) {
         GameFlowUtils::showError(parent, "❌ Failed to Create Game",

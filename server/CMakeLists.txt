@@ -2,12 +2,11 @@
 
 # Glob all .cpp files en las subcarpetas relevantes
 file(GLOB_RECURSE COMMON_SOURCES ${CMAKE_SOURCE_DIR}/common/*.cpp
-     ${CMAKE_SOURCE_DIR}/common/Constants/*.cpp)
+        ${CMAKE_SOURCE_DIR}/common/Constants/*.cpp)
 
 file(
         GLOB_RECURSE
         SERVER_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Protocol/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Readers/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Requests/*.cpp
@@ -54,17 +53,17 @@ target_include_directories(taller_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # Agregar cada subdirectorio
 foreach(subdir ${SERVER_INCLUDE_DIRS})
   target_include_directories(taller_server
-                             PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${subdir})
+          PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${subdir})
 endforeach()
 
 # Agregar directorios de common si es necesario
 target_include_directories(
-  taller_server PRIVATE ${CMAKE_SOURCE_DIR}/common
-                        ${CMAKE_SOURCE_DIR}/common/Constants)
+        taller_server PRIVATE ${CMAKE_SOURCE_DIR}/common
+        ${CMAKE_SOURCE_DIR}/common/Constants)
 
 set(SERVER_SOURCES
-    ${SERVER_SOURCES}
-    PARENT_SCOPE)
+        ${SERVER_SOURCES}
+        PARENT_SCOPE)
 set(SERVER_HEADERS
-    ${SERVER_HEADERS}
-    PARENT_SCOPE)
+        ${SERVER_HEADERS}
+        PARENT_SCOPE)

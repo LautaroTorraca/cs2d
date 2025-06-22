@@ -1,21 +1,21 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource prefix="/Login">
-        <file alias="image_background.png">Login/Assets/image_background.png</file>
+        <file alias="image_background.png">Assets/image_background.png</file>
     </qresource>
 
     <qresource prefix="/skins">
-        <file alias="phoenix.png">Login/Assets/Skins/Phoenix.png</file>
-        <file alias="l337.png">Login/Assets/Skins/L337 Krew.png</file>
-        <file alias="arctic.png">Login/Assets/Skins/Artic Avenger.png</file>
-        <file alias="guerrilla.png">Login/Assets/Skins/Guerrilla.png</file>
-        <file alias="sealforce.png">Login/Assets/Skins/SealForce.png</file>
-        <file alias="gsg9.png">Login/Assets/Skins/German GSG-9.png</file>
-        <file alias="sas.png">Login/Assets/Skins/UK SAS.png</file>
-        <file alias="gign.png">Login/Assets/Skins/French GIGN.png</file>
+        <file alias="phoenix.png">Assets/Skins/Phoenix.png</file>
+        <file alias="l337.png">Assets/Skins/L337 Krew.png</file>
+        <file alias="arctic.png">Assets/Skins/Artic Avenger.png</file>
+        <file alias="guerrilla.png">Assets/Skins/Guerrilla.png</file>
+        <file alias="sealforce.png">Assets/Skins/SealForce.png</file>
+        <file alias="gsg9.png">Assets/Skins/German GSG-9.png</file>
+        <file alias="sas.png">Assets/Skins/UK SAS.png</file>
+        <file alias="gign.png">Assets/Skins/French GIGN.png</file>
     </qresource>
 
     <qresource prefix="/Music">
-        <file alias="menu_music.wav">Login/Assets/Music/menu_music.mp3</file>
+        <file alias="menu_music.wav">Assets/Music/menu_music.mp3</file>
     </qresource>
 </RCC>

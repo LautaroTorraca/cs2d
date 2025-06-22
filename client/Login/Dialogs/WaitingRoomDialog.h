@@ -10,6 +10,7 @@
 
 #include "client/Protocol.h"
 #include "server/DTO/PlayerChoicesDTO.h"
+using namespace Client;
 
 class WaitingRoomDialog : public QDialog {
     Q_OBJECT
