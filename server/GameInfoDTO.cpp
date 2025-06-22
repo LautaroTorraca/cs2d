@@ -4,6 +4,10 @@
 
 #include "GameInfoDTO.h"
 
+void GameInfoDTO::setStatus(const GameStatus& status) {
+    this->status = status;
+}
+
 const GameStatus& GameInfoDTO::getStatus() const {
     return this->status;
 }

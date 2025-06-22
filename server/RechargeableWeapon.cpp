@@ -25,7 +25,8 @@ weaponRange(other.weaponRange),
 weaponCadence(other.weaponCadence),
 weaponSpeed(other.weaponSpeed),
 weaponBulletsPerShot(other.weaponBulletsPerShot),
-lastShotTime(other.lastShotTime) {
+maxBullets(other.maxBullets),
+lastShotTime(other.lastShotTime){
     if ( this != &other ) {
         other.ammo = 0;
         other.weaponDamagePerBullet = 0;
@@ -34,6 +35,7 @@ lastShotTime(other.lastShotTime) {
         other.weaponCadence = 0;
         other.weaponSpeed = 0;
         other.weaponBulletsPerShot = 0;
+        other.maxBullets = 0;
         other.lastShotTime = 0;
     }
 }

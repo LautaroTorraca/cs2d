@@ -144,6 +144,7 @@ void ServerInGame::eraseGame(const std::string& gameName) {
 }
 
 void ServerInGame::exit(const InGameOrder& order) {
+    std::lock_guard<std::mutex> lock(this->mutex);
     if (!this->playerToGame.contains(order.getPlayerId()))
         return;
     std::string gameName = this->playerToGame.at(order.getPlayerId());
@@ -155,6 +156,7 @@ void ServerInGame::erase() {
     while (true) {
         try {
             std::string gameName = this->gamesToErase.pop();
+            std::lock_guard<std::mutex> lock(this->mutex);
             this->eraseGame(gameName);
         } catch (ClosedQueue&) {
             break;

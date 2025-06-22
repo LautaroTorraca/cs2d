@@ -111,7 +111,11 @@ endif()
 if(TALLER_SERVER)
 
   find_package(fkYAML REQUIRED)
-  add_executable(taller_server server/PlayerStatus.h server/Deactivator.h)
+  add_executable(taller_server
+          server/PlayerStatus.h
+          server/Deactivator.h
+          server/WeaponNotFoundException.cpp
+          server/WeaponNotFoundException.h)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
   # add_subdirectory(libs/fkYAML)

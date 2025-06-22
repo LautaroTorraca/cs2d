@@ -7,10 +7,12 @@
 #include <string>
 #include <vector>
 
+#include "GameLobbyDTO.h"
+
 struct GamesListDTO {
     const size_t id;
-    const std::vector<std::string> games;
-    GamesListDTO(const size_t& id, std::vector<std::string>& games) : id(id), games(std::move(games)) {};
+    std::vector<GameLobbyDTO> gamesLobbies;
+    GamesListDTO(const size_t& id, std::vector<GameLobbyDTO>& gamesLobbies) : id(id), gamesLobbies(std::move(gamesLobbies)) {};
 
 };
 

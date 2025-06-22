@@ -15,6 +15,7 @@ public:
     Product(Product&& other) noexcept;
     ~Product() override = default;
     void payWith(Wallet& wallet) const;
+    void reintegrateTo(Wallet& wallet);
 };
 
 #endif //PRODUCT_H

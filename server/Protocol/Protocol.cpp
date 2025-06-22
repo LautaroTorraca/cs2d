@@ -128,7 +128,7 @@ std::unique_ptr<Order> Protocol::getNextOrder() {
 }
 
 void Protocol::sendGamesList(GamesListDTO& gamesList) {
-    this->clientsHandlers.at(gamesList.id)->sendGamesList(gamesList.games);
+    this->clientsHandlers.at(gamesList.id)->sendGamesList(gamesList);
 }
 
 void Protocol::sendLobbyConnectionStatus(const LobbyConnectionDTO& lobbyConnection) {

@@ -36,6 +36,7 @@ public:
                         bombTimer(bombTimer),
                         elapsedTime(elapsedTime),
                         rounds(rounds) {}
+    void setStatus(const GameStatus& status);
     [[nodiscard]] const GameStatus& getStatus() const;
     [[nodiscard]] const uint8_t& getCurrentRound() const;
     [[nodiscard]] const uint8_t& getCountersWinsRounds() const;

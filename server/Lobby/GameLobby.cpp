@@ -56,7 +56,8 @@ GameLobbyDTO GameLobby::getInfo() const {
             std::get<Team>(playerChoices.at(PLAYER_TEAM_INDEX)),
             std::get<Skin>(playerChoices.at(PLAYER_SKIN_INDEX)));
     }
-    return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath, this->mapType};
+    uint8_t maxPlayers = this->parser.getMaxPlayersPerTeam() * 2;
+    return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath, this->mapType, maxPlayers};
 }
 
 void GameLobby::kick(const size_t& id) {

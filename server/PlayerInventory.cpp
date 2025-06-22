@@ -3,13 +3,17 @@
 //
 
 #include "PlayerInventory.h"
+
 #include <ranges>
+
 #include "DropBox.h"
 #include "Glock.h"
 #include "Knife.h"
+#include "WeaponNotFoundException.h"
 
 #define PRIMARY_INDEX 2
 #define BOMB_INDEX 3
+#define INVALID_WEAPON_TO_RECHARGE_MESSAGE "The player hadn't the solicitated weapon."
 
 std::vector<WeaponInfoDTO> PlayerInventory::getWeaponsInfo() {
     std::vector<WeaponInfoDTO> weaponsInfo;
@@ -89,9 +93,11 @@ void PlayerInventory::drop(const uint8_t &index) {
 }
 
 void PlayerInventory::recharge(const uint8_t &index, uint16_t &ammoAmount) {
-    if (this->weaponSetter.contains(index)) {
-        this->weaponSetter.at(index)->recharge(ammoAmount);
+    if (!this->weaponSetter.contains(index)) {
+        throw WeaponNotFoundException(INVALID_WEAPON_TO_RECHARGE_MESSAGE);
     }
+    this->weaponSetter.at(index)->recharge(ammoAmount);
+
 }
 
 void PlayerInventory::addBanned(const uint8_t &index) {

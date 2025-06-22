@@ -8,8 +8,8 @@
 #include <vector>
 
 struct GamesList {
-    std::vector<std::string> games;
-    GamesList(std::vector<std::string>& games): games(games) {}
+    std::vector<GameLobbyDTO> gamesLobbies;
+    GamesList(std::vector<GameLobbyDTO> gamesLobbies) : gamesLobbies(gamesLobbies) {}
 };
 
 #endif  // GAMESLIST_H

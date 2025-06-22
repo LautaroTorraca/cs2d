@@ -20,6 +20,7 @@ ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
         lobbyHandler(userSocket, clientId),
         gameLobbyHandler(userSocket, clientId),
         inGameHandler(userSocket, clientId),
+        reader(this->userSocket),
         sender(this->userSocket),
         status(IN_LOBBY),
         ended(false) {
@@ -88,8 +89,7 @@ void ClientHandler::run() {
 
     while (this->should_keep_running()) {
         try {
-            uint8_t opCode;
-            this->userSocket.recvall(&opCode, sizeof(opCode));
+            uint8_t opCode = this->reader.u8tReader();
 
             //std::cout << "ClientHandler::run, opecode: " << std::to_string(opCode) << std::endl;
             if (!this->opcodeDispatcher.contains(opCode)) {
@@ -151,13 +151,16 @@ void ClientHandler::endService() {
     this->stopService();
 }
 
-void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
-    std::stringstream gamesListStream;
-    for (const auto& game: gamesList) {
-        gamesListStream << game << "\n";
+void ClientHandler::sendGamesList(GamesListDTO& gamesList) {
+    for (auto& gameLobby: gamesList.gamesLobbies) {
+        this->sender.send(NEW);
+        this->sender.send(gameLobby.gameName);
+        this->sender.send(gameLobby.rounds);
+        uint8_t map = static_cast<uint8_t>(gameLobby.mapType);
+        this->sender.send(map);
+        this->sender.send(gameLobby.maxPlayers);
     }
-    std::string gamesListString = gamesListStream.str();
-    this->sender.send(gamesListString);
+    this->sender.send(STOP);
 }
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {

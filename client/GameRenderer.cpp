@@ -37,7 +37,11 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
         clientID(clientId),
         explotion(renderer, textureManager.getExplotion()) {}
 
-void GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
+bool GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
+
+    if (gameSnapshot.status == GameStatus::GAME_OVER) {
+        return false;
+    }
 
     float xScale = (float(RES_WIDTH) / RES_WIDTH_BASE);
     float yScale = (float(RES_HEIGTH) / RES_HEIGTH_BASE);
@@ -73,6 +77,7 @@ void GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     setLeaderBoard(gameSnapshot.status);
 
     prevStatus = gameSnapshot.status;
+    return true;
 }
 
 void GameRenderer::renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map) {
