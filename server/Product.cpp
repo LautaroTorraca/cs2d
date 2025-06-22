@@ -9,6 +9,8 @@ Product::Product(Product &&other) noexcept : cost(other.cost){
     }
 }
 
-void Product::payWith(Wallet& wallet) const {
-    wallet.waste(this->cost);
+void Product::payWith(Wallet& wallet) const { wallet.waste(this->cost); }
+
+void Product::reintegrateTo(Wallet& wallet) {
+    wallet.addMoney(this->cost);
 }

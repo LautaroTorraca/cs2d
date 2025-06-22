@@ -8,6 +8,7 @@
 
 #include "ActivatedBacker.h"
 #include "DeactivatedBacker.h"
+#include "WeaponNotFoundException.h"
 
 Player::Player(const size_t& id, const std::string& name, const Skin& skin, const GameParser& gameParser, DropPlacer& weaponPlacer) :
 id(id),
@@ -87,8 +88,10 @@ void Player::buy(Product &product) {
     try {
         product.payWith(this->wallet);
         product.addTo(this->inventory);
-    } catch (std::exception &e) {
-        //LOGG The player hadn´t enough money.
+    } catch (WeaponNotFoundException &) {
+        product.reintegrateTo(this->wallet);
+    } catch (std::exception &) {
+        //LOGG The player had not enough money.
     }
 }
 
