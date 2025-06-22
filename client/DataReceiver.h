@@ -5,6 +5,7 @@
 #include "fixedOverWritingQueue.h"
 #include "thread.h"
 
+using namespace Client;
 
 class DataReceiver: public Thread {
 

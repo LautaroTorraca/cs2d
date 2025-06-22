@@ -5,7 +5,7 @@
 #include "Constants/ClientConstants.h"
 #include "Constants/PlayerDataConstants.h"
 #include "server/GameStatus.h"
-#include "server/ProductTypes.h"
+#include "server/ProductType.h"
 
 #include "MoveConstants.h"
 #include "SDL_events.h"
@@ -42,19 +42,19 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
                         break;
                     case SDLK_1:
                         if (inBuyMenu)
-                            protocol.buy({ProductTypes::AK_47_WEAPON, 1});
+                            protocol.buy({ProductType::AK_47_WEAPON, 1});
                         else
                             protocol.changeWeapon(0);
                         break;
                     case SDLK_2:
                         if (inBuyMenu)
-                            protocol.buy({ProductTypes::M3_WEAPON, 1});
+                            protocol.buy({ProductType::M3_WEAPON, 1});
                         else
                             protocol.changeWeapon(1);
                         break;
                     case SDLK_3:
                         if (inBuyMenu)
-                            protocol.buy({ProductTypes::AWP_WEAPON, 1});
+                            protocol.buy({ProductType::AWP_WEAPON, 1});
                         else
                             protocol.changeWeapon(2);
                         break;
@@ -69,11 +69,11 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
                         break;
                     case SDLK_COMMA:
                         if (inBuyMenu)
-                            protocol.buy({ProductTypes::PRIMARY_AMMO, 5});
+                            protocol.buy({ProductType::PRIMARY_AMMO, 5});
                         break;
                     case SDLK_PERIOD:
                         if (inBuyMenu)
-                            protocol.buy({ProductTypes::SECONDARY_AMMO, 5});
+                            protocol.buy({ProductType::SECONDARY_AMMO, 5});
                         break;
                     case SDLK_ESCAPE:
                         protocol.exit();

@@ -1,6 +1,6 @@
 #include "Protocol.h"
 
-#include <iostream>
+// #include <iostream>
 #include <sstream>
 #include <string>
 
@@ -163,5 +163,3 @@ PreSnapshot Client::Protocol::receivePreSnapshot() const {
 
     return {id, map, shopInfo};
 }
-
-void Protocol::emptyBullets() { std::cout << "xd\n"; }

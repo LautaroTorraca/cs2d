@@ -13,6 +13,8 @@
 #include "Protocol.h"
 #include "SDL_timer.h"
 #include "fixedOverWritingQueue.h"
+
+using namespace Client;
 using std::stringstream;
 
 using namespace SDL2pp;
@@ -29,7 +31,10 @@ using namespace DTO;
 // TODO: terminar UI. Cuadros y colores.
 
 GameClient::GameClient(Protocol& protocol):
-        running(true), protocol(protocol), inputHandler(protocol) {}
+        running(true),
+        protocol(protocol),
+        inputHandler(protocol),
+        dataReceiver(protocol, snapshotQueue) {}
 
 void GameClient::run() {
 

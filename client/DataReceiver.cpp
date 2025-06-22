@@ -4,10 +4,11 @@
 #include <iostream>
 
 #include "Protocol.h"
-#include "SDL_timer.h"
+// #include "SDL_timer.h"
 #include "SnapshotConstants.h"
 #include "fixedOverWritingQueue.h"
 
+using namespace Client;
 DataReceiver::DataReceiver(Protocol& protocol, QueueFixed<Snapshot>& queue):
         protocol(protocol), snapshotQueue(queue) {};
 
