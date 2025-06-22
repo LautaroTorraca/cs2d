@@ -9,7 +9,7 @@
 #include "Audio/MusicManager.h"
 
 ServerMenu::ServerMenu(const char* port, QWidget* parent)
-        : protocol("localhost", port), QWidget(parent) {
+        : protocol("localhost", port), QWidget(parent) , port(port){
     setupUI();
 }
 
@@ -66,3 +66,8 @@ void ServerMenu::resizeEvent(QResizeEvent* event) {
     }
     setupBackground();
 }
+
+MusicManager* ServerMenu::getMusicManager() const {
+    return musicManager;
+}
+

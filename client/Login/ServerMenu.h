@@ -25,6 +25,8 @@ private:
     void setupBackgroundMusic();
     void resizeEvent(QResizeEvent* event) override;
 
+    std::string port;
+
     Protocol protocol;
     QWidget* overlayWidget;
     QVBoxLayout* buttonLayout;
@@ -39,4 +41,5 @@ private:
 
 public:
     explicit ServerMenu(const char* port, QWidget *parent = nullptr);
+    MusicManager* getMusicManager() const;
 };

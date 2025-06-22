@@ -6,8 +6,8 @@
 #include <QStringList>
 #include <stdexcept>
 
-ListGameFlow::ListGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent)
-        : GameFlowBase(usernameInput, protocol, parent) {}
+ListGameFlow::ListGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
+        : GameFlowBase(usernameInput, protocol, parent, menu) {}
 
 void ListGameFlow::run() {
     QString username = getUsername();

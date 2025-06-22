@@ -9,6 +9,7 @@ JoinGameButton::JoinGameButton(QWidget* parent, QLineEdit* usernameInput, Protoc
 }
 
 void JoinGameButton::handleClick() {
-    JoinGameFlow flow(usernameInput, protocol, this->parentWidget());
+    ServerMenu* menu = qobject_cast<ServerMenu*>(this->window());
+    JoinGameFlow flow(usernameInput, protocol, this->parentWidget(), menu);
     flow.run();
 }

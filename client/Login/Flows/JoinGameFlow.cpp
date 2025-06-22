@@ -4,8 +4,8 @@
 #include "../MessageBox.h"
 #include "Login/Dialogs/GameNameDialog.h"
 
-JoinGameFlow::JoinGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent)
-        : GameFlowBase(usernameInput, protocol, parent) {}
+JoinGameFlow::JoinGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
+        : GameFlowBase(usernameInput, protocol, parent, menu) {}
 
 void JoinGameFlow::run() {
     QString username = getUsername();

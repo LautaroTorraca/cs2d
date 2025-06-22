@@ -5,6 +5,8 @@
 #include <QMetaObject>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QApplication>
+#include <QTimer>
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -13,39 +15,42 @@
 
 #include "Login/Mappers/SkinTraslator.h"
 #include "Login/Mappers/TeamMapper.h"
-
+#include "Login/Audio/MusicManager.h"
 #include "GameClient.h"
-using namespace Client;
 
+using namespace Client;
 
 WaitingRoomDialog::WaitingRoomDialog(const QString& playerName,
                                      const QString& teamStr,
                                      const QString& skinStr,
                                      Protocol& protocol,
+                                     ServerMenu* menu,
                                      QWidget* parent)
         : QDialog(parent),
         playerName(playerName),
         teamStr(teamStr),
         skinStr(skinStr),
         protocol(protocol),
+        menu(menu),
         shouldStop(false),
-        isReady(false) {
+        isReady(false),
+        gameStarted(false) {
 
     setWindowTitle("⌛ Waiting Room");
-    resize(440, 360);
+    resize(500, 400);
     setModal(true);
 
     setupUI();
+    startPolling();
 
-    roomWaiter = std::thread(&WaitingRoomDialog::pollLobby, this);
+    if (menu) {
+        menu->hide();
+        menu->getMusicManager()->setVolume(0.0f);
+    }
 }
 
 WaitingRoomDialog::~WaitingRoomDialog() {
-    shouldStop = true;
-
-    if (roomWaiter.joinable()) {
-        roomWaiter.join();
-    }
+    stopPolling();
 }
 
 void WaitingRoomDialog::setupUI() {
@@ -54,17 +59,19 @@ void WaitingRoomDialog::setupUI() {
             background-color: #121212;
             color: #f0f0f0;
             font-family: 'Segoe UI', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
         }
         QLabel {
             padding: 6px;
+            border-radius: 4px;
         }
         QPushButton {
             background-color: #1e88e5;
             color: white;
             border-radius: 6px;
-            padding: 8px 16px;
-            margin: 10px 10px 0px 0px;
+            padding: 10px 16px;
+            margin: 5px;
+            font-weight: bold;
         }
         QPushButton:hover {
             background-color: #1565c0;
@@ -73,52 +80,81 @@ void WaitingRoomDialog::setupUI() {
             background-color: #555555;
             color: #aaaaaa;
         }
+        QScrollArea {
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #1a1a1a;
+        }
     )");
 
-    QVBoxLayout* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(20, 20, 20, 20);
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(20, 20, 20, 20);
+    mainLayout->setSpacing(15);
 
-    QLabel* title = new QLabel("Players in the Room:");
-    title->setStyleSheet("font-weight: bold; font-size: 16px;");
-    layout->addWidget(title);
+    QLabel* title = new QLabel("🎮 Players in the Room");
+    title->setStyleSheet("font-weight: bold; font-size: 18px; color: #64B5F6; padding: 10px;");
+    title->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(title);
 
+    setupPlayersArea();
+    mainLayout->addWidget(playersScrollArea);
+
+    setupButtons();
+    mainLayout->addLayout(buttonLayout);
+
+    updateSelfPlayerDisplay();
+}
+
+void WaitingRoomDialog::setupPlayersArea() {
     playersScrollArea = new QScrollArea();
     playersWidget = new QWidget();
-
     playersLayout = new QVBoxLayout();
-    playersWidget->setLayout(playersLayout);
 
+    playersLayout->setSpacing(8);
+    playersLayout->setContentsMargins(10, 10, 10, 10);
+
+    playersWidget->setLayout(playersLayout);
     playersScrollArea->setWidget(playersWidget);
     playersScrollArea->setWidgetResizable(true);
-    layout->addWidget(playersScrollArea);
+    playersScrollArea->setMinimumHeight(200);
+}
 
-    // Muestro el jugador a entrar
-    QString selfEntry = QString("%1 - Team: %2 - Skin: %3 - [Waiting ⏳]").arg(playerName, teamStr, skinStr);
-    QLabel* selfLabel = new QLabel(selfEntry);
-    selfLabel->setStyleSheet("font-weight: bold; color: #FFC107;");
-    playersLayout->addWidget(selfLabel);
-    playerLabels.push_back(selfLabel);
+void WaitingRoomDialog::setupButtons() {
+    buttonLayout = new QHBoxLayout();
+    buttonLayout->setSpacing(10);
 
-    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    readyBtn = new QPushButton("✅ I'm Ready!");
+    readyBtn->setStyleSheet("QPushButton { background-color: #4CAF50; } QPushButton:hover { background-color: #45a049; }");
 
-    readyBtn = new QPushButton("✅ Ready");
-    QPushButton* exitBtn = new QPushButton("❌ Exit");
+    QPushButton* exitBtn = new QPushButton("❌ Leave Room");
+    exitBtn->setStyleSheet("QPushButton { background-color: #f44336; } QPushButton:hover { background-color: #da190b; }");
 
     connect(readyBtn, &QPushButton::clicked, this, &WaitingRoomDialog::onReadyClicked);
     connect(exitBtn, &QPushButton::clicked, this, &WaitingRoomDialog::onExitClicked);
 
     buttonLayout->addWidget(readyBtn);
     buttonLayout->addWidget(exitBtn);
-    layout->addLayout(buttonLayout);
+}
+
+void WaitingRoomDialog::startPolling() {
+    roomWaiter = std::thread(&WaitingRoomDialog::pollLobby, this);
+}
+
+void WaitingRoomDialog::stopPolling() {
+    shouldStop = true;
+    if (roomWaiter.joinable()) {
+        roomWaiter.join();
+    }
 }
 
 void WaitingRoomDialog::pollLobby() {
     std::vector<std::string> lastKnownPlayerNames;
 
-    while (!shouldStop) {
+    while (!shouldStop && !gameStarted) {
         try {
             GameLobbyDTO lobby = protocol.getGameLobby();
 
+            // Verificar si cambió la lista de jugadores
             std::vector<std::string> currentPlayerNames;
             for (const auto& player : lobby.playersChoices) {
                 currentPlayerNames.push_back(player.playerName);
@@ -130,42 +166,29 @@ void WaitingRoomDialog::pollLobby() {
             if (currentPlayerNames != lastKnownPlayerNames) {
                 lastKnownPlayerNames = currentPlayerNames;
 
-                // UI update en hilo main
+                // Actualizar UI en el hilo principal
                 QMetaObject::invokeMethod(this, [this, players = lobby.playersChoices]() {
                     updatePlayerList(players);
                 }, Qt::QueuedConnection);
             }
 
-            if (lobby.status == READY_STATUS) {
-                QMetaObject::invokeMethod(this, [this]() {
-                    setWindowTitle("🎮 Starting Game...");
-                    readyBtn->setEnabled(false);
-                    readyBtn->setText("Starting Game...");
-
-                    QLabel* startingLabel = new QLabel("All players ready! Game starting...");
-                    startingLabel->setStyleSheet("font-weight: bold; color: #4CAF50; font-size: 16px; padding: 10px;");
-                    playersLayout->addWidget(startingLabel);
-
-                }, Qt::QueuedConnection);
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            // Verificar si el juego está listo para empezar
+            if (lobby.status == READY_STATUS && !gameStarted) {
+                gameStarted = true;
 
                 QMetaObject::invokeMethod(this, [this]() {
-                    this->accept();
-                    GameClient gameClient(this->protocol);
-                    gameClient.run();
-                    this->hide();
-
+                    handleGameStart();
                 }, Qt::QueuedConnection);
+
                 return;
             }
 
         } catch (const std::exception& e) {
-            QMetaObject::invokeMethod(this, [this, error = std::string(e.what())]() {
-                QMessageBox::warning(this, "Connection Error",
-                                     QString("Lost connection to server: %1").arg(QString::fromStdString(error)));
-                this->reject();
-            }, Qt::QueuedConnection);
+            if (!shouldStop) {
+                QMetaObject::invokeMethod(this, [this, error = std::string(e.what())]() {
+                    handleConnectionError(error);
+                }, Qt::QueuedConnection);
+            }
             return;
         }
 
@@ -174,38 +197,15 @@ void WaitingRoomDialog::pollLobby() {
 }
 
 void WaitingRoomDialog::updatePlayerList(const std::vector<PlayerChoicesDTO>& readyPlayers) {
+    clearPlayerLabels();
+
+    int totalPlayers = readyPlayers.size() + (isLocalPlayerInList(readyPlayers) ? 0 : 1);
+    setWindowTitle(QString("⌛ Waiting Room (%1 players)").arg(totalPlayers));
+
+    updateSelfPlayerDisplay();
+
     TeamMapper teamMapper;
     SkinMapper skinMapper;
-
-    for (QLabel* label : playerLabels) {
-        playersLayout->removeWidget(label);
-        delete label;
-    }
-    playerLabels.clear();
-
-    bool localPlayerReady = false;
-    for (const auto& player : readyPlayers) {
-        if (player.playerName == playerName.toStdString()) {
-            localPlayerReady = true;
-            break;
-        }
-    }
-
-    QString selfEntry = QString("%1 — Team: %2 — Skin: %3").arg(playerName, teamStr, skinStr);
-    if (localPlayerReady) {
-        selfEntry += " — [Ready ✅]";
-    } else {
-        selfEntry += " — [Waiting ⏳]";
-    }
-
-    QLabel* selfLabel = new QLabel(selfEntry);
-    if (localPlayerReady) {
-        selfLabel->setStyleSheet("font-weight: bold; color: #4CAF50;"); // Verde para ready
-    } else {
-        selfLabel->setStyleSheet("font-weight: bold; color: #FFC107;"); // Amarillo para waiting
-    }
-    playersLayout->addWidget(selfLabel);
-    playerLabels.push_back(selfLabel);
 
     for (const auto& player : readyPlayers) {
         if (player.playerName == playerName.toStdString()) {
@@ -216,74 +216,200 @@ void WaitingRoomDialog::updatePlayerList(const std::vector<PlayerChoicesDTO>& re
         QString team = teamMapper.toString(player.team);
         QString skin = skinMapper.toString(player.skin);
 
-        QString labelText = QString("%1 — Team: %2 — Skin: %3 — [Ready ✅]").arg(name, team, skin);
-
-        QLabel* label = new QLabel(labelText);
-        label->setStyleSheet("color: #4CAF50;");
-
+        QLabel* label = createPlayerLabel(name, team, skin, true);
         playersLayout->addWidget(label);
         playerLabels.push_back(label);
     }
 
-    int totalReadyPlayers = readyPlayers.size();
-    setWindowTitle(QString("⌛ Waiting Room (%1 ready)").arg(totalReadyPlayers));
+    playersLayout->addStretch();
 }
+
+void WaitingRoomDialog::updateSelfPlayerDisplay() {
+    // Eliminar label anterior del jugador local si existe
+    if (!playerLabels.empty() && playerLabels[0]->styleSheet().contains("font-weight: bold")) {
+        playersLayout->removeWidget(playerLabels[0]);
+        delete playerLabels[0];
+        playerLabels.erase(playerLabels.begin());
+    }
+
+    QString status = isReady ? "[Ready ✅]" : "[Waiting ⏳]";
+    QString color = isReady ? "#4CAF50" : "#FFC107";
+
+    QLabel* selfLabel = createPlayerLabel(playerName, teamStr, skinStr, isReady, true);
+
+    // Insertar al principio
+    playersLayout->insertWidget(0, selfLabel);
+    playerLabels.insert(playerLabels.begin(), selfLabel);
+}
+
+QLabel* WaitingRoomDialog::createPlayerLabel(const QString& name, const QString& team,
+                                             const QString& skin, bool ready, bool isSelf) {
+    QString status = ready ? "[Ready ✅]" : "[Waiting ⏳]";
+    QString labelText = QString("%1 — Team: %2 — Skin: %3 — %4").arg(name, team, skin, status);
+
+    QLabel* label = new QLabel(labelText);
+
+    QString baseStyle = "padding: 8px; margin: 2px; border-radius: 4px; ";
+
+    if (isSelf) {
+        QString color = ready ? "#4CAF50" : "#FFC107";
+        label->setStyleSheet(baseStyle + QString("font-weight: bold; color: %1; background-color: rgba(255,255,255,0.1);").arg(color));
+    } else {
+        label->setStyleSheet(baseStyle + "color: #4CAF50; background-color: rgba(76,175,80,0.1);");
+    }
+
+    return label;
+}
+
+bool WaitingRoomDialog::isLocalPlayerInList(const std::vector<PlayerChoicesDTO>& players) {
+    for (const auto& player : players) {
+        if (player.playerName == playerName.toStdString()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void WaitingRoomDialog::clearPlayerLabels() {
+    for (QLabel* label : playerLabels) {
+        playersLayout->removeWidget(label);
+        delete label;
+    }
+    playerLabels.clear();
+}
+
+void WaitingRoomDialog::handleGameStart() {
+    setWindowTitle("🎮 Starting Game...");
+    readyBtn->setEnabled(false);
+    readyBtn->setText("🚀 Game Starting...");
+    readyBtn->setStyleSheet("QPushButton { background-color: #FF9800; }");
+
+    clearPlayerLabels();
+
+    QLabel* startingLabel = new QLabel("All players ready!\nStarting game...");
+    startingLabel->setStyleSheet("font-weight: bold; color: #4CAF50; font-size: 18px; "
+                                 "padding: 20px; text-align: center; background-color: rgba(76,175,80,0.2); "
+                                 "border-radius: 8px;");
+    startingLabel->setAlignment(Qt::AlignCenter);
+    playersLayout->addWidget(startingLabel);
+
+    QTimer::singleShot(2000, this, [this]() {
+        closeMenuAndStartGame();
+    });
+}
+
+void WaitingRoomDialog::closeMenuAndStartGame() {
+    if (menu && menu->getMusicManager()) {
+        menu->getMusicManager()->setVolume(0.0f);
+    }
+
+    this->accept();
+
+    try {
+        GameClient gameClient(protocol);
+        gameClient.run();
+
+        restoreMenu();
+
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Game Error",
+                              QString("Failed to start game: %1").arg(e.what()));
+        restoreMenu();
+    }
+}
+
+void WaitingRoomDialog::handleConnectionError(const std::string& error) {
+    QMessageBox::warning(this, "Connection Error",
+                         QString("Lost connection to server: %1").arg(QString::fromStdString(error)));
+    this->reject();
+}
+
+void WaitingRoomDialog::restoreMenu() {
+    if (menu) {
+        if (menu->getMusicManager()) {
+            menu->getMusicManager()->setVolume(0.4f);
+        }
+
+        menu->showNormal();
+        menu->raise();
+        menu->activateWindow();
+    }
+}
+
 
 void WaitingRoomDialog::onReadyClicked() {
     if (isReady) {
         return;
     }
 
-    try {
-        TeamMapper teamMapper;
-        SkinMapper skinMapper;
+    readyBtn->setEnabled(false);
+    readyBtn->setText("⏳ Sending...");
 
-        Team team = teamMapper.fromString(teamStr);
-        Skin skin = static_cast<Skin>(skinMapper.toSkinId(skinStr));
+    std::thread([this]() {
+        try {
+            TeamMapper teamMapper;
+            SkinMapper skinMapper;
 
-        PlayerChoicesDTO playerChoice(playerName.toStdString(), team, skin);
+            Team team = teamMapper.fromString(teamStr);
+            Skin skin = static_cast<Skin>(skinMapper.toSkinId(skinStr));
 
-        std::thread([this, playerChoice]() {
-            try {
-                protocol.ready(playerChoice);
-                QMetaObject::invokeMethod(this, [this]() {
-                    isReady = true;
-                    readyBtn->setText("✅ Ready (Waiting for others...)");
-                    readyBtn->setEnabled(false);
+            PlayerChoicesDTO playerChoice(playerName.toStdString(), team, skin);
 
-                    // muestro que estoy ready
-                    QLabel* confirmLabel = new QLabel("✅ You are ready! Waiting for other players...");
-                    confirmLabel->setStyleSheet("color: #4CAF50; font-style: italic; padding: 5px;");
-                    playersLayout->addWidget(confirmLabel);
+            // Enviar estado ready al servidor
+            protocol.ready(playerChoice);
 
-                }, Qt::QueuedConnection);
+            // Actualizar UI en el hilo principal
+            QMetaObject::invokeMethod(this, [this]() {
+                isReady = true;
+                readyBtn->setText("✅ Ready! (Waiting for others...)");
+                readyBtn->setStyleSheet("QPushButton { background-color: #4CAF50; }");
 
-            } catch (const std::exception& e) {
-                QMetaObject::invokeMethod(this, [this, error = std::string(e.what())]() {
-                    QMessageBox::warning(this, "Error",
-                                         QString("Failed to send ready status: %1").arg(QString::fromStdString(error)));
-                }, Qt::QueuedConnection);
-            }
-        }).detach();
+                // Actualizar display del jugador local
+                updateSelfPlayerDisplay();
 
-    } catch (const std::exception& e) {
-        QMessageBox::warning(this, "Error",
-                             QString("Failed to prepare ready status: %1").arg(e.what()));
-    }
+                QLabel* confirmLabel = new QLabel("✅ You are ready! Waiting for other players...");
+                confirmLabel->setStyleSheet("color: #4CAF50; font-style: italic; padding: 8px; "
+                                            "background-color: rgba(76,175,80,0.1); border-radius: 4px;");
+                playersLayout->addWidget(confirmLabel);
+
+            }, Qt::QueuedConnection);
+
+        } catch (const std::exception& e) {
+            QMetaObject::invokeMethod(this, [this, error = std::string(e.what())]() {
+                readyBtn->setEnabled(true);
+                readyBtn->setText("✅ I'm Ready!");
+                QMessageBox::warning(this, "Error",
+                                     QString("Failed to send ready status: %1").arg(QString::fromStdString(error)));
+            }, Qt::QueuedConnection);
+        }
+    }).detach();
 }
 
 void WaitingRoomDialog::onExitClicked() {
     shouldStop = true;
+
     std::thread([this]() {
         try {
             protocol.exit();
-        } catch (...) {}
+        } catch (...) {
+        }
     }).detach();
+
+    if (menu) {
+        menu->close();
+    }
 
     this->reject();
 }
 
 void WaitingRoomDialog::closeEvent(QCloseEvent* event) {
     shouldStop = true;
+
+    std::thread([this]() {
+        try {
+            protocol.exit();
+        } catch (...) {}
+    }).detach();
+
     QDialog::closeEvent(event);
 }

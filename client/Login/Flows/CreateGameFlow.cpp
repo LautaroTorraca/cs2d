@@ -1,12 +1,16 @@
 #include "CreateGameFlow.h"
-#include "GameFlowUtils.h"
-#include "../MessageBox.h"
-#include "Login/Dialogs/MapSelectionDialog.h"
+
 #include <stdexcept>
 
+#include "../MessageBox.h"
+#include "Login/Dialogs/MapSelectionDialog.h"
+#include "Login/ServerMenu.h"
+#include "Login/Audio/MusicManager.h"
 
-CreateGameFlow::CreateGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent)
-        : GameFlowBase(usernameInput, protocol, parent) {}
+#include "GameFlowUtils.h"
+
+CreateGameFlow::CreateGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
+        : GameFlowBase(usernameInput, protocol, parent, menu) {}
 
 void CreateGameFlow::run() {
     QString username = getUsername();
@@ -29,10 +33,8 @@ void CreateGameFlow::run() {
         if (lobbyStatus.status != ConnectionStatus::SUCCESS)
             return;
 
-        parent->hide();
         PlayerChoicesDTO choices = getPlayerChoices();
         showWaitingRoom(username, choices.team, choices.skin);
-
 
     } catch (const std::exception& e) {
         GameFlowUtils::showError(parent, "❌ Failed to Create Game",
