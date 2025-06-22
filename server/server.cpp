@@ -95,7 +95,6 @@ void Server::run() {
 
 
             if (!orderTranslator.contains(type)) {
-                // TODO FIX
                 continue;
             }
 

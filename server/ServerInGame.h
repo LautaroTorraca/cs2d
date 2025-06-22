@@ -22,6 +22,7 @@ class ServerInGame {
     InGameProtocolInterface& protocol;
     std::thread eraserThread;
     Queue<std::string> gamesToErase;
+    std::mutex mutex;
     void setupTranslators();
     void move(const InGameOrder &order);
     void attack(const InGameOrder & order);

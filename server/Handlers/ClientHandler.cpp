@@ -20,6 +20,7 @@ ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
         lobbyHandler(userSocket, clientId),
         gameLobbyHandler(userSocket, clientId),
         inGameHandler(userSocket, clientId),
+        reader(this->userSocket),
         sender(this->userSocket),
         status(IN_LOBBY),
         ended(false) {
@@ -88,8 +89,7 @@ void ClientHandler::run() {
 
     while (this->should_keep_running()) {
         try {
-            uint8_t opCode;
-            this->userSocket.recvall(&opCode, sizeof(opCode));
+            uint8_t opCode = this->reader.u8tReader();
 
             //std::cout << "ClientHandler::run, opecode: " << std::to_string(opCode) << std::endl;
             if (!this->opcodeDispatcher.contains(opCode)) {

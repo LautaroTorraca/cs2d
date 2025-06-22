@@ -27,6 +27,7 @@ class ClientHandler final : public Thread {
     LobbyHandler lobbyHandler;
     GameLobbyHandler gameLobbyHandler;
     InGameHandler inGameHandler;
+    Reader reader;
     Sender sender;
     std::unordered_map<uint8_t, std::function<Request()>> opcodeDispatcher;
     ClientStatus status;
