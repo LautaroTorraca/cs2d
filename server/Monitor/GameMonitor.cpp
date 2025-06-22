@@ -153,6 +153,8 @@ void GameMonitor::run() {
         }
         this->protocol.sendSnapshot(gameInfo);
     }
+    gameInfo.setStatus(GAME_OVER);
+    this->protocol.sendSnapshot(gameInfo);
     try {
         this->eraserQueue.push(this->gameName);
     } catch (ClosedQueue&) {

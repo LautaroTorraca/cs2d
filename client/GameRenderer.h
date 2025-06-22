@@ -60,5 +60,5 @@ private:
 
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);
-    void renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
+    bool renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
 };

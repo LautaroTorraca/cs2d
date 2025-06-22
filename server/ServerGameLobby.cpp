@@ -69,5 +69,6 @@ void ServerGameLobby::ready(const GameLobbyOrder &order) {
   if (gameLobbyInfo.status == GameLobbyStatus::READY_STATUS) {
     this->serverInGame.addNewGame(gameName, gameLobbyInfo);
     this->gameLobbies.erase(gameName);
+      this->playersToLobby.erase(order.getPlayerId());
   }
 }

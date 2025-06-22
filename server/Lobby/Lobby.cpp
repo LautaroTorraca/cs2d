@@ -10,9 +10,9 @@
 
 
 Lobby::Lobby() {
-    this->mapsPaths.emplace(MapType::AZTEC_VILLAGE, "../../maps/aztec.yaml");
+    this->mapsPaths.emplace(MapType::AZTEC_VILLAGE, "../maps/aztec.yaml");
     this->mapsPaths.emplace(MapType::DUST, "../maps/dust.yaml");
-    this->mapsPaths.emplace(MapType::TRAINING_ZONE, "../../maps/training_zone.yaml");
+    this->mapsPaths.emplace(MapType::TRAINING_ZONE, "../maps/training_zone.yaml");
 }
 
 GameLobby Lobby::createGameLobby(const size_t &id, const std::string &gameName, const MapType& map, const uint8_t& rounds) {

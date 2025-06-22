@@ -50,7 +50,7 @@ void GameClient::run() {
 
             if (frameDelay <= frameTime) {
                 // FIX: cambiar harcodeada de mapa.
-                renderer.renderScreen(protocol.receiveSnapshot(), MapType::DUST,
+                running = renderer.renderScreen(protocol.receiveSnapshot(), MapType::DUST,
                                       inputHandler.getMouseCoords());
                 frameStart = SDL_GetTicks();
             }

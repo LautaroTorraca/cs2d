@@ -66,6 +66,6 @@ void Bomb::continueActivation(const double& actualTime) {
 WeaponInfoDTO Bomb::getInfo() { return {1, WeaponType::BOMB}; }
 
 double Bomb::getTime() {
-    if (this->deactivationStartTime == 0) return -1;
-    return this->actualTime - this->activationStartTime;
+    if (this->activationStartTime == 0) return -1;
+    return this->activationDuration - (this->actualTime - this->activationStartTime);
 }

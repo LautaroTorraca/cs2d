@@ -30,8 +30,11 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
         tileMap(tileMap),
         clientID(clientId) {}
 
-void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
+bool GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
+    if (gameSnapshot.status == GameStatus::GAME_OVER) {
+        return false;
+    }
 
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
@@ -62,6 +65,7 @@ void GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouse
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 100);
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
     renderer.Present();
+    return true;
 }
 
 void GameRenderer::renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map) {
