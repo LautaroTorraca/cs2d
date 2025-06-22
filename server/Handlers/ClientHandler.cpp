@@ -91,7 +91,6 @@ void ClientHandler::run() {
         try {
             uint8_t opCode = this->reader.u8tReader();
 
-            //std::cout << "ClientHandler::run, opecode: " << std::to_string(opCode) << std::endl;
             if (!this->opcodeDispatcher.contains(opCode)) {
                 throw std::runtime_error("OpCode no soportado: " + std::to_string(opCode));
             }

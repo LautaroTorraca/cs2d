@@ -9,17 +9,14 @@
 #include <stdexcept>
 
 
-Lobby::Lobby() {
+Lobby::Lobby(ServerGameLobby& serverGameLobby) : serverGameLobby(serverGameLobby) {
     this->mapsPaths.emplace(MapType::AZTEC_VILLAGE, "../maps/aztec.yaml");
     this->mapsPaths.emplace(MapType::DUST, "../maps/dust.yaml");
     this->mapsPaths.emplace(MapType::TRAINING_ZONE, "../maps/training_zone.yaml");
 }
 
 GameLobby Lobby::createGameLobby(const size_t &id, const std::string &gameName, const MapType& map, const uint8_t& rounds) {
-    if (this->gamesLobbies.contains(gameName)) {
-        throw std::invalid_argument("Game already exists");
-    }
-    this->gamesLobbies[gameName].push_back(id);
+    this->serverGameLobby.add(gameName, id, this->gamesLobbies);
     GameMapParser parser(this->mapsPaths.at(map));
     this->maxPlayers.emplace(gameName, 2 * parser.getMaxPlayersPerTeam());
     return GameLobby(this->mapsPaths.at(map), map, gameName, rounds);

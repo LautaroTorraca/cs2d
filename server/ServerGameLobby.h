@@ -34,5 +34,7 @@ public:
 
     void exit(const GameLobbyOrder & order);
 
+    void add (const std::string& gameName, const size_t& id, std::map<std::string, std::vector<size_t>>& lobbies) const;
+
     GamesListDTO listLobbies(const size_t& id);
 };

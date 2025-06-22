@@ -2,10 +2,10 @@
 
 #include "Constants/ConnectionStatus.h"
 #include "DTO/LobbyConnectionDTO.h"
-#include "ServerGameLobby.h"
+#include "server/ServerGameLobby.h"
 
 ServerLobby::ServerLobby(ServerLobbyProtocolInterface& protocol, ServerGameLobby& serverGameLobby) :
-protocol(protocol), gameLobbyserver(serverGameLobby) { setupTranslators(); }
+protocol(protocol), gameLobbyserver(serverGameLobby), lobby(gameLobbyserver) { setupTranslators(); }
 
 void ServerLobby::setupTranslators() {
   translator[LOBBY_CREATE] = [&](const ServerLobbyOrder &order) { this->createGame(order); };
