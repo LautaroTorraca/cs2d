@@ -10,7 +10,7 @@
 
 #include "server/PlayerStatus.h"
 #include "server/Skin.h"
-// TODO: le puedo agregar el currente frame aca....?
+
 #include "CoordinateInformation.h"
 #include "WeaponInformation.h"
 
@@ -32,8 +32,7 @@ struct PlayerInformation {
                       const uint16_t& actualMoney, const uint8_t& actualHealthPoints,
                       std::vector<WeaponInformation>& weaponsInfo,
                       const WeaponInformation& actualWeapon, const uint8_t& kills,
-                      const uint8_t& deaths,
-                      const PlayerStatus& status):
+                      const uint8_t& deaths, const PlayerStatus& status):
             id(id),
             name(name),
             skin(skin),

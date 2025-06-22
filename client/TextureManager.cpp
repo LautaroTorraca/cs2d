@@ -11,8 +11,8 @@
 #include "server/Skin.h"
 
 // #include "Explotion.h"
+#include "EntityConstants.h"
 #include "RgbValue.h"
-#include "SpriteConstants.h"
 
 TextureManager::TextureManager(Renderer& renderer):
         renderer(renderer),
@@ -26,9 +26,9 @@ TextureManager::TextureManager(Renderer& renderer):
     }
 
     // AMMO
-    texturesWeapons.emplace(SpriteType::P_AMMO,
+    texturesWeapons.emplace(EntityType::P_AMMO,
                             removeBackground(black, "../client/assets/primaryammo.png"));
-    texturesWeapons.emplace(SpriteType::S_AMMO,
+    texturesWeapons.emplace(EntityType::S_AMMO,
                             removeBackground(black, "../client/assets/secondaryammo.png"));
 
 
@@ -40,31 +40,31 @@ TextureManager::TextureManager(Renderer& renderer):
                        removeBackground(magenta, "../client/assets/ui/pointer.png"));
 
     // weapons held
-    texturesWeaponsHeld.emplace(SpriteType::AWP,
+    texturesWeaponsHeld.emplace(EntityType::AWP,
                                 removeBackground(black, "../client/assets/weapons/awp_h.png"));
-    texturesWeaponsHeld.emplace(SpriteType::M3,
+    texturesWeaponsHeld.emplace(EntityType::M3,
                                 removeBackground(black, "../client/assets/weapons/m3_h.png"));
-    texturesWeaponsHeld.emplace(SpriteType::GLOCK,
+    texturesWeaponsHeld.emplace(EntityType::GLOCK,
                                 removeBackground(black, "../client/assets/weapons/glock_h.png"));
-    texturesWeaponsHeld.emplace(SpriteType::KNIFE,
+    texturesWeaponsHeld.emplace(EntityType::KNIFE,
                                 removeBackground(magenta, "../client/assets/weapons/knife_h.png"));
-    texturesWeaponsHeld.emplace(SpriteType::AK47,
+    texturesWeaponsHeld.emplace(EntityType::AK47,
                                 removeBackground(black, "../client/assets/weapons/ak47_h.png"));
-    texturesWeaponsHeld.emplace(SpriteType::BOMB,
+    texturesWeaponsHeld.emplace(EntityType::BOMB,
                                 removeBackground(magenta, "../client/assets/weapons/bomb_h.png"));
 
     // weapons
-    texturesWeapons.emplace(SpriteType::AWP,
+    texturesWeapons.emplace(EntityType::AWP,
                             removeBackground(magenta, "../client/assets/weapons/awp.png"));
-    texturesWeapons.emplace(SpriteType::M3,
+    texturesWeapons.emplace(EntityType::M3,
                             removeBackground(magenta, "../client/assets/weapons/m3.png"));
-    texturesWeapons.emplace(SpriteType::GLOCK,
+    texturesWeapons.emplace(EntityType::GLOCK,
                             removeBackground(magenta, "../client/assets/weapons/glock.png"));
-    texturesWeapons.emplace(SpriteType::KNIFE,
+    texturesWeapons.emplace(EntityType::KNIFE,
                             removeBackground(magenta, "../client/assets/weapons/knife.png"));
-    texturesWeapons.emplace(SpriteType::BOMB,
+    texturesWeapons.emplace(EntityType::BOMB,
                             removeBackground(black, "../client/assets/weapons/bomb.png"));
-    texturesWeapons.emplace(SpriteType::AK47,
+    texturesWeapons.emplace(EntityType::AK47,
                             removeBackground(magenta, "../client/assets/weapons/ak47.png"));
 
     // skins
@@ -98,11 +98,11 @@ TextureManager::TextureManager(Renderer& renderer):
 Texture& TextureManager::getSkin(Skin id) { return texturesSkins.at(id); }
 Texture& TextureManager::getTileMap(MapType id) { return texturesTiles.at(id); }
 
-Texture& TextureManager::getDroppedWeapon(SpriteType id) { return texturesWeapons.at(id); }
+Texture& TextureManager::getDroppedWeapon(EntityType id) { return texturesWeapons.at(id); }
 
-Texture& TextureManager::getWeapon(SpriteType id) { return texturesWeapons.at(id); }
+Texture& TextureManager::getWeapon(EntityType id) { return texturesWeapons.at(id); }
 
-Texture& TextureManager::getWeaponHeld(SpriteType id) { return texturesWeaponsHeld.at(id); }
+Texture& TextureManager::getWeaponHeld(EntityType id) { return texturesWeaponsHeld.at(id); }
 
 Texture& TextureManager::getUi(UiType id) { return texturesUI.at(id); }
 

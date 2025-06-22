@@ -1,4 +1,4 @@
-#include "Explotion.h"
+#include "ExplotionSprite.h"
 
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
@@ -6,7 +6,7 @@
 #include "CoordinateInformation.h"
 
 ExplotionSprite::ExplotionSprite(Renderer& renderer, Texture& texture):
-        sprite(texture), lastFrame(0), renderer(renderer) {}
+        sprite(texture), renderer(renderer) {}
 
 int ExplotionSprite::getFrame() {
     int returnFrame = lastFrame;
@@ -14,16 +14,19 @@ int ExplotionSprite::getFrame() {
     return returnFrame;
 }
 
-// Texture& ExplotionSprite::getSprite() { return sprite; }
-bool ExplotionSprite::ongoing() { return lastFrame < MAX_FRAME; }
-bool ExplotionSprite::ended() { return lastFrame >= MAX_FRAME; }
+void ExplotionSprite::start() {
+    ongoing = true;
+    lastFrame = 0;
+}
+bool ExplotionSprite::ended() {
+    ongoing = lastFrame < MAX_FRAME;
+    return !ongoing;
+}
 void ExplotionSprite::draw(CoordinateInformation pos) {
 
     int expSz = 256;
-    if (ended()) {
-        lastFrame = 0;
+    if (ended())
         return;
-    }
 
     int frame = getFrame();
 

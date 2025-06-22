@@ -11,14 +11,14 @@ class ExplotionSprite {
 private:
     Texture& sprite;
     Renderer& renderer;
-    int lastFrame;
+    int lastFrame = 0;
 
-    bool ongoing();
+    bool ongoing;
     int getFrame();
 
 public:
     ExplotionSprite(Renderer& renderer, Texture& texture);
-    // Texture& getSprite();
     bool ended();
+    void start();
     void draw(CoordinateInformation pos);
 };

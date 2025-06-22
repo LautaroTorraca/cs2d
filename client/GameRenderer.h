@@ -4,18 +4,19 @@
 #include "common/Constants/PlayerDataConstants.h"
 #include "common/Constants/SnapshotConstants.h"
 #include "server/Constants/MapTypeConstants.h"
+#include "server/GameStatus.h"
 
 #include "CoordinateInformation.h"
-#include "Explotion.h"
-#include "PlayerInformation.h"
+#include "EntityConstants.h"
+#include "ExplotionSprite.h"
 #include "RgbValue.h"
-#include "SpriteConstants.h"
 #include "TextureManager.h"
 // #include "weaponConstants.h"
 
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include <SDL2/SDL.h>
 #include <SDL2pp/SDL2pp.hh>
@@ -38,8 +39,8 @@ private:
     Coords offset;
     int playerFrame = 0;
     ExplotionSprite explotion;
-
-    int bombSpriteSequence = 0;
+    bool roundBombExploded = false;
+    GameStatus prevStatus;
 
     void renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map);
     void renderPlayers(std::vector<PlayerInformation> players);
@@ -48,7 +49,7 @@ private:
     void renderFloorItems(std::vector<DropInformation> weaponList);
     void renderTile(Texture& mapTile, int mapWidth, int tile, int pos);
 
-    void renderBomb(CoordinateInformation plantedBombPosition);
+    void renderBomb(CoordinateInformation plantedBombPosition, GameStatus status);
     void renderFloorWeapon(Texture& sprite, DropInformation wpn);
 
     void renderPointer(Coords mouseCoords);
@@ -60,7 +61,7 @@ private:
                          int height = HUD_NUM_H, int width = HUD_NUM_W);
     int16_t renderSymbol(CoordinateInformation posInScreen, UiSymbol symbol, RgbValue color);
 
-    int16_t renderWeaponGlyph(CoordinateInformation posInScreen, SpriteType weapon, RgbValue color);
+    int16_t renderWeaponGlyph(CoordinateInformation posInScreen, EntityType weapon, RgbValue color);
     void renderBullets(PlayerInformation& player);
     void renderHeldWeapon(PlayerInformation& player);
 
