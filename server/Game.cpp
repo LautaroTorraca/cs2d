@@ -175,8 +175,16 @@ void Game::setKills(const size_t& id, const uint8_t& kills) const {
     this->players.at(id)->setKills(kills);
 }
 void Game::addCollectedMoney(const size_t& id, const uint16_t& collectedMoney) {
-    if (!this->players.contains(id)) return;
+    if (!this->players.contains(id))
+        return;
     this->players.at(id)->addCollectedMoney(collectedMoney);
+}
+void Game::setCountersWinRounds(const uint8_t& winRounds) {
+    this->countersWinsRounds = winRounds;
+}
+
+void Game::setTerroristsWinRounds(const uint8_t& winRounds) {
+    this->terroristsWinsRounds = winRounds;
 }
 
 void Game::terroristsWins() {

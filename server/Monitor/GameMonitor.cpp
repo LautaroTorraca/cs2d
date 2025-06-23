@@ -150,6 +150,8 @@ void GameMonitor::run() {
             if (gameInfo.getCurrentRound() == gameInfo.getRounds() / 2) {
                 this->game.clearPlayers();
                 this->changeTeam(gameInfo.getPlayersInfo());
+                this->game.setCountersWinRounds(gameInfo.getTerroristsWinsRounds());
+                this->game.setTerroristsWinRounds(gameInfo.getCountersWinsRounds());
             }
             game.nextRound(time);
         }

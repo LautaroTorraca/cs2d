@@ -76,6 +76,8 @@ public:
     void clearPlayers();
     void setKills(const size_t& id, const uint8_t& kills) const;
     void addCollectedMoney(const size_t& id, const uint16_t& collectedMoney);
+    void setCountersWinRounds(const uint8_t& winRounds);
+    void setTerroristsWinRounds(const uint8_t& winRounds);
 };
 
 
