@@ -3,6 +3,7 @@
 #include "Constants/ClientConstants.h"
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
+#include "server/PlayerStatus.h"
 
 #include "CoordinateInformation.h"
 #include "PlayerInformation.h"
@@ -23,6 +24,8 @@ private:
     PlayerInformation prevPlayerInfo;
     CoordinateInformation offSet;
     CoordinateInformation prevOffSet;
+    PlayerStatus prevState;
+
     bool isClient;
     int frame;
     Texture& skin;
@@ -30,6 +33,7 @@ private:
     void renderPlayer();
     void renderHeldWeapon();
     void renderBullets();
+    void renderBullets2();
     void playSound();
     bool isPlayerClose();
 

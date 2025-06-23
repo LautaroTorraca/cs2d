@@ -1,7 +1,10 @@
 #include <cmath>
+#include <iostream>
 
 #include "Constants/ClientConstants.h"
+#include "server/PlayerStatus.h"
 
+#include "EntityConstants.h"
 #include "PlayerInformation.h"
 #include "PlayerSprite.h"
 #include "SoundManager.h"
@@ -15,11 +18,13 @@ PlayerSprite::PlayerSprite(SDL2pp::Renderer& renderer, TextureManager& textureMa
         prevPlayerInfo(info),
         frame(0),
         isClient(isClient),
-        skin(textureManager.getSkin(info.skin)) {}
+        skin(textureManager.getSkin(info.skin)),
+        prevState(PlayerStatus::LIVING) {}
 
 void PlayerSprite::update(const PlayerInformation newPlayerInfo,
                           const CoordinateInformation offset) {
     prevPlayerInfo = playerInfo;
+    prevState = playerInfo.status;
     playerInfo = newPlayerInfo;
     prevOffSet = offSet;
     offSet = offset;
@@ -36,14 +41,14 @@ void PlayerSprite::render() {
 
     if (playerInfo.status != PlayerStatus::DEAD) {
         renderPlayer();
-        renderBullets();
+        renderBullets2();
         renderHeldWeapon();
-        playSound();
     } else if (isClient) {
         skin.SetColorAndAlphaMod({40, 210, 210, 90});
         renderPlayer();
         skin.SetColorAndAlphaMod({255, 255, 255, 255});
     }
+    playSound();
 }
 
 bool PlayerSprite::isPlayerClose() {
@@ -53,6 +58,9 @@ bool PlayerSprite::isPlayerClose() {
 }
 void PlayerSprite::playSound() {
 
+    if (prevState != PlayerStatus::DEAD && playerInfo.status == PlayerStatus::DEAD) {
+        soundManager.playDeathSound();
+    }
 
     if (prevPlayerInfo.actualWeapon.weaponType == playerInfo.actualWeapon.weaponType) {
 
@@ -102,6 +110,8 @@ void PlayerSprite::renderHeldWeapon() {
 }
 
 void PlayerSprite::renderBullets() {
+    if ((EntityType)playerInfo.actualWeapon.weaponType == EntityType::KNIFE)
+        return;
     renderer.SetDrawColor(255, 255, 0, 0);
     for (const auto& bullet: playerInfo.actualWeapon.projectilesInfo) {
         double dx = bullet.projectilePosition.x - playerInfo.position.x;
@@ -110,5 +120,22 @@ void PlayerSprite::renderBullets() {
                           bullet.projectilePosition.x - offSet.x,
                           bullet.projectilePosition.y - offSet.y);
     }
+    renderer.SetDrawColor(0, 0, 0, 255);
+}
+
+void PlayerSprite::renderBullets2() {
+    if ((EntityType)playerInfo.actualWeapon.weaponType == EntityType::KNIFE)
+        return;
+
+    renderer.SetDrawColor(235, 255, 0, 255);
+
+    for (const auto& bullet: playerInfo.actualWeapon.projectilesInfo) {
+        int x = static_cast<int>(bullet.projectilePosition.x - offSet.x);
+        int y = static_cast<int>(bullet.projectilePosition.y - offSet.y);
+
+        SDL_Rect bulletRect = {x - 1, y - 1, 2, 2};
+        renderer.FillRect(bulletRect);
+    }
+
     renderer.SetDrawColor(0, 0, 0, 255);
 }

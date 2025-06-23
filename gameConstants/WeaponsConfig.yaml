@@ -1,12 +1,45 @@
-knife:
-  { minDamage : 10.0, maxDamage : 20.0, range : 32.0, speed : 300.0 }
+knife: { minDamage: 10.0, maxDamage: 20.0, range: 32.0, speed: 300.0 }
 glock:
-  { damagePerBullet : 40.0, precision : 0.8, range : 224.0, cadence : 2.0, speed : 600.0, bulletsPerShot : 1.0, maxBullets: 2000 }
+  {
+    damagePerBullet: 40.0,
+    precision: 0.8,
+    range: 224.0,
+    cadence: 2.0,
+    speed: 600.0,
+    bulletsPerShot: 1.0,
+    maxBullets: 2000,
+  }
 ak47:
-  { damagePerBullet : 20.0, precision : 0.7, range : 320.0, cadence : 2, speed : 600.0, bulletsPerShot : 3.0, burstSpeed: 2.5, maxBullets: 2000 }
+  {
+    damagePerBullet: 20.0,
+    precision: 0.7,
+    range: 320.0,
+    cadence: 2,
+    speed: 1200.0,
+    bulletsPerShot: 3.0,
+    burstSpeed: 0.5,
+    maxBullets: 2000,
+  }
 m3:
-  { damagePerBullet : 50.0, precision : 0.5, range : 160.0, cadence : 1.0, speed : 900.0, bulletsPerShot : 5.0, sweptAngle: 90.0, maxBullets: 2000 }
+  {
+    damagePerBullet: 50.0,
+    precision: 0.5,
+    range: 160.0,
+    cadence: 1.0,
+    speed: 900.0,
+    bulletsPerShot: 5.0,
+    sweptAngle: 90.0,
+    maxBullets: 2000,
+  }
 awp:
-  { damagePerBullet : 75.0, precision : 1.0, range : 500.0, cadence : 2.0, speed : 600.0, bulletsPerShot : 1.0, maxBullets: 2000 }
-bomb:
-  { activationTime: 30, deactivationTime: 10 }
+  {
+    damagePerBullet: 75.0,
+    precision: 1.0,
+    range: 500.0,
+    cadence: 2.0,
+    speed: 600.0,
+    bulletsPerShot: 1.0,
+    maxBullets: 2000,
+  }
+bomb: { activationTime: 30, deactivationTime: 10 }
+

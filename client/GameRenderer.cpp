@@ -1,7 +1,7 @@
 #include "GameRenderer.h"
 
 #include <cstdint>
-#include <iostream>
+// #include <iostream>
 #include <string>
 
 #include "Constants/ClientConstants.h"
@@ -83,8 +83,10 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
     setRoundWinMenu(gameSnapshot.status);
+    stateSounds(gameSnapshot.status);
 
-    setLeaderBoard(gameSnapshot.playersInfo);
+    if (gameSnapshot.status == GameStatus::GAME_OVER)
+        setLeaderBoard(gameSnapshot.playersInfo);
 
     prevStatus = gameSnapshot.status;
     return true;
@@ -373,50 +375,78 @@ void GameRenderer::setRoundWinMenu(GameStatus state) {
         textPosX = pading.x + 120;
     }
 
-    std::cout << "texto pos y: " << (pading.y + 10 - yOffset) << "\n";
-    std::cout << "padding y: " << (pading.y) << "\n";
-
     roundedBoxRGBA(renderer.Get(), (RES_WIDTH_BASE - pading.x), pading.y - yOffset, (pading.x),
                    (RES_HEIGTH_BASE - pading.y) - yOffset, rad, green.r, green.g, green.b, green.a);
 
     renderText(text, {textPosX, pading.y + 10 - yOffset}, 20, lightGreen);
 }
-
 void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players) {
-    RgbValue green(10, 255, 10, 80);
-    RgbValue lightGreen(150, 255, 150, 200);
-    RgbValue none(255, 255, 255);
-    Sint16 rad = 10;
+    RgbValue gray(80, 80, 80, 180);
+    RgbValue lightGreen(150, 255, 150, 255);
+    RgbValue textColor(220, 220, 220);
+    Sint16 rad = 8;
 
-    int boardWidth = RES_WIDTH_BASE / 2;
-    int boardHeight = RES_HEIGTH_BASE * 3 / 4;
+    int boardWidth = RES_WIDTH_BASE * 0.8;
+    int boardHeight = RES_HEIGTH_BASE * 0.7;
+
     double boardX = (RES_WIDTH_BASE - boardWidth) / 2.0;
     double boardY = (RES_HEIGTH_BASE - boardHeight) / 2.0;
 
     roundedBoxRGBA(renderer.Get(), boardX, boardY, boardX + boardWidth, boardY + boardHeight, rad,
-                   green.r, green.g, green.b, green.a);
+                   gray.r, gray.g, gray.b, gray.a);
 
-    renderText("Leaderboard", {boardX + 20, boardY + 20}, 25, lightGreen);
+    int titleFontSize = 20;
+    // Calculate title position to truly center it horizontally
+    int titleWidth = textureManager.getFont(titleFontSize, "Leaderboard", lightGreen).GetWidth();
+    renderText("Leaderboard", {boardX + (boardWidth - titleWidth) / 2.0, boardY + 10},
+               titleFontSize, lightGreen);
 
-    double nameX = boardX + 20;
-    double killsX = boardX + boardWidth / 2.0 + 30;
-    double deathsX = killsX + 70;
-    double moneyX = deathsX + 70;
+    int headerFontSize = 14;
+    int colPadding = 10;
 
-    renderText("Name", {nameX, boardY + 60}, 18, lightGreen);
-    renderText("Kills", {killsX, boardY + 60}, 18, lightGreen);
-    renderText("Deaths", {deathsX, boardY + 60}, 18, lightGreen);
-    renderText("Money", {moneyX, boardY + 60}, 18, lightGreen);
+    double nameX = boardX + colPadding;
+    double killsX = boardX + boardWidth * 0.4;
+    double deathsX = boardX + boardWidth * 0.6;
+    double moneyX = boardX + boardWidth * 0.8;
 
-    double startY = boardY + 90;
-    double lineHeight = 25;
+    renderText("Name", {nameX, boardY + 40}, headerFontSize, lightGreen);
+    renderText("K", {killsX, boardY + 40}, headerFontSize, lightGreen);
+    renderText("D", {deathsX, boardY + 40}, headerFontSize, lightGreen);
+    renderText("Money", {moneyX, boardY + 40}, headerFontSize, lightGreen);
 
-    for (const PlayerInformation& player: players) {
-        renderText(player.name, {nameX, startY}, 18, none);
-        renderNumberStream({killsX, startY + 16}, player.kills, 2, 2, none, 16, 12);
-        renderNumberStream({deathsX, startY + 16}, player.deaths, 2, 2, none, 16, 12);
-        renderNumberStream({moneyX, startY + 16}, player.totalMoney, 5, 2, none, 16, 12);
+    double startY = boardY + 65;
+    double lineHeight = 18;
+    int playerInfoFontSize = 12;
+    int numberStreamHeight = 12;
+    int numberStreamWidth = 9;
+
+
+    std::vector<PlayerInformation> sortedPlayers = players;
+    std::sort(sortedPlayers.begin(), sortedPlayers.end(),
+              [](const PlayerInformation& a, const PlayerInformation& b) {
+                  return a.kills > b.kills;
+              });
+
+    for (const PlayerInformation& player: sortedPlayers) {
+
+        std::string displayName = player.name;
+        if (displayName.length() > 10) {
+            displayName = displayName.substr(0, 7) + "...";
+        }
+        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColor);
+
+        renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.kills, 2, 2, textColor, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.deaths, 2, 2, textColor, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.totalMoney, 5, 2, textColor, numberStreamHeight,
+                           numberStreamWidth);
+
         startY += lineHeight;
+        if (startY > boardY + boardHeight - lineHeight) {
+            break;
+        }
     }
 }
 
@@ -493,18 +523,21 @@ void GameRenderer::renderText(std::string text, CoordinateInformation pos, int f
     renderer.Copy(font, SDL2pp::NullOpt, {(int)pos.x, (int)pos.y});
 }
 
+void GameRenderer::stateSounds(GameStatus state) {
+    if (prevStatus == GameStatus::ON_GOING && state == GameStatus::BOMB_PLANTED) {
+        soundManager.playBombPlanted();
+    } else if (prevStatus == GameStatus::ON_GOING && state == GameStatus::COUNTERS_WIN) {
+        soundManager.playCtWins();
+    } else if (prevStatus == GameStatus::BOMB_PLANTED && state == GameStatus::COUNTERS_WIN) {
+        soundManager.playCtWinsBombDefused();
+    } else if ((prevStatus == GameStatus::ON_GOING || prevStatus == GameStatus::BOMB_PLANTED) &&
+               state == GameStatus::TERRORISTS_WIN) {
+        soundManager.playTtWins();
+    }
+}
+
 void GameRenderer::render() {
     renderer.Present();
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
-}
-
-int GameRenderer::getPlayerFrame(PlayerInformation& player) {
-
-    if ((EntityType)player.actualWeapon.weaponType == EntityType::KNIFE ||
-        (EntityType)player.actualWeapon.weaponType == EntityType::BOMB) {
-        return playerFrame = 1;
-    } else {
-        return playerFrame = 3;
-    }
 }

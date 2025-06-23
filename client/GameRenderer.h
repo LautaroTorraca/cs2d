@@ -78,9 +78,7 @@ private:
     void renderBuyButton(CoordinateInformation pos, int button, int price);
     void setRoundWinMenu(GameStatus state);
     void setLeaderBoard(const std::vector<PlayerInformation>& players);
-
-
-    int getPlayerFrame(PlayerInformation& player);
+    void stateSounds(GameStatus state);
 
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);

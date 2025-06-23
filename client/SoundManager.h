@@ -18,6 +18,12 @@ private:
     std::unordered_map<EntityType, Chunk> farSoundsMap;
     std::unordered_map<EntityType, Chunk> drawSoundsMap;
 
+    Chunk ctWins;
+    Chunk ctWinswBomb;
+    Chunk ttWins;
+    Chunk bombPlanted;
+    Chunk death;
+
     void loadCloseSound(const EntityType entity, const std::string& filepath);
     void loadFarSound(const EntityType entity, const std::string& filepath);
     void loadDrawSound(const EntityType entity, const std::string& filepath);
@@ -27,6 +33,11 @@ public:
     void playCloseSound(const EntityType entityId, int loops = 0);
     void playFarSound(const EntityType entityId, int loops = 0);
     void playDrawSound(const EntityType entityId, int loops = 0);
+    void playBombPlanted();
+    void playTtWins();
+    void playCtWinsBombDefused();
+    void playCtWins();
+    void playDeathSound();
     bool isPlaying();
     void stopAll();
 };
