@@ -1,24 +1,37 @@
 #pragma once
+
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
 
-// #include "CoordinateInformation.h"
-// #define MAX_FRAME 22
-
-using namespace SDL2pp;
+#include "CoordinateInformation.h"
+#include "PlayerInformation.h"
+#include "SoundManager.h"
+#include "TextureManager.h"
 
 class PlayerSprite {
+
 private:
-    // Texture& sprite;
-    // Renderer& renderer;
-    // int lastFrame = 0;
-    //
-    // bool ongoing;
-    // int getFrame();
+    Renderer& renderer;
+    TextureManager& textureManager;
+    SoundManager& soundManager;
+
+    PlayerInformation playerInfo;
+    PlayerInformation prevPlayerInfo;
+    CoordinateInformation offSet;
+    CoordinateInformation prevOffSet;
+    bool isClient;
+    int frame;
+    Texture& skin;
+
+    void renderPlayer();
+    void renderHeldWeapon();
+    void renderBullets();
+    void playSound();
 
 public:
-    PlayerSprite(Renderer& renderer, Texture& texture);
-    // bool ended();
-    // void start();
-    // void draw(CoordinateInformation pos);
+    PlayerSprite(Renderer& renderer, TextureManager& textureManager, SoundManager& soundManager,
+                 PlayerInformation info, bool isClient = false);
+
+    void update(const PlayerInformation info, const CoordinateInformation offset);
+    void render();
 };

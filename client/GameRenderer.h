@@ -10,6 +10,7 @@
 #include "EntityConstants.h"
 #include "ExplotionSprite.h"
 #include "PlayerInformation.h"
+#include "PlayerSprite.h"
 #include "RgbValue.h"
 #include "SoundManager.h"
 #include "TextureManager.h"
@@ -38,13 +39,13 @@ private:
     TextureManager textureManager;
     std::vector<std::vector<uint8_t>> tileMap;
     size_t clientID;
-    Coords offset;
+    CoordinateInformation offset;
     int playerFrame = 0;
     ExplotionSprite explotion;
     bool roundBombExploded = false;
     GameStatus prevStatus;
     SoundManager soundManager;
-    std::unordered_map<size_t, PlayerInformation> prevPlayerInfo;
+    std::unordered_map<size_t, PlayerSprite> playerSprites;
 
     void renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map);
     void renderPlayers(std::vector<PlayerInformation> players);

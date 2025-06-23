@@ -27,5 +27,6 @@ public:
     void playCloseSound(const EntityType entityId, int loops = 0);
     void playFarSound(const EntityType entityId, int loops = 0);
     void playDrawSound(const EntityType entityId, int loops = 0);
+    bool isPlaying();
     void stopAll();
 };

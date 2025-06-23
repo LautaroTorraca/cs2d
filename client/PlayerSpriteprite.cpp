@@ -1,38 +1,101 @@
-// #include "SDL2pp/Renderer.hh"
-// #include "SDL2pp/Texture.hh"
-//
-// #include "CoordinateInformation.h"
-// #include "PlayerSprite.h"
-//
-// ExplotionSprite::ExplotionSprite(Renderer& renderer, Texture& texture):
-//         sprite(texture), renderer(renderer) {}
-//
-// int ExplotionSprite::getFrame() {
-//     int returnFrame = lastFrame;
-//     lastFrame++;
-//     return returnFrame;
-// }
-//
-// void ExplotionSprite::start() {
-//     ongoing = true;
-//     lastFrame = 0;
-// }
-// bool ExplotionSprite::ended() {
-//     ongoing = lastFrame < MAX_FRAME;
-//     return !ongoing;
-// }
-// void ExplotionSprite::draw(CoordinateInformation pos) {
-//
-//     int expSz = 256;
-//     if (ended())
-//         return;
-//
-//     int frame = getFrame();
-//
-//     int textureX = 64 * (frame % 5);
-//     int div = (frame / 5);
-//     int textureY = 64 * div;
-//
-//     renderer.Copy(sprite, Rect(textureX, textureY, 64, 64),
-//                   Rect(pos.x - (expSz / 2.0), pos.y - (expSz / 2.0), expSz, expSz));
-// }
+#include <cmath>
+
+#include "PlayerInformation.h"
+#include "PlayerSprite.h"
+#include "SoundManager.h"
+
+PlayerSprite::PlayerSprite(SDL2pp::Renderer& renderer, TextureManager& textureManager,
+                           SoundManager& soundManager, PlayerInformation info, bool isClient):
+        renderer(renderer),
+        textureManager(textureManager),
+        soundManager(soundManager),
+        playerInfo(info),
+        prevPlayerInfo(info),
+        frame(0),
+        isClient(isClient),
+        skin(textureManager.getSkin(info.skin)) {}
+
+void PlayerSprite::update(const PlayerInformation newPlayerInfo,
+                          const CoordinateInformation offset) {
+    prevPlayerInfo = playerInfo;
+    playerInfo = newPlayerInfo;
+    prevOffSet = offSet;
+    offSet = offset;
+
+    if ((EntityType)newPlayerInfo.actualWeapon.weaponType == EntityType::KNIFE ||
+        (EntityType)newPlayerInfo.actualWeapon.weaponType == EntityType::BOMB) {
+        frame = 1;
+    } else {
+        frame = 3;
+    }
+}
+
+void PlayerSprite::render() {
+
+    if (playerInfo.status != PlayerStatus::DEAD) {
+        renderPlayer();
+        renderBullets();
+        renderHeldWeapon();
+        playSound();
+    } else if (isClient) {
+        skin.SetColorAndAlphaMod({40, 210, 210, 90});
+        renderPlayer();
+        skin.SetColorAndAlphaMod({255, 255, 255, 255});
+    }
+}
+
+void PlayerSprite::playSound() {
+
+
+    if (prevPlayerInfo.actualWeapon.weaponType == playerInfo.actualWeapon.weaponType) {
+
+        if (prevPlayerInfo.actualWeapon.ammoAmount == playerInfo.actualWeapon.ammoAmount)
+            return;
+
+        if (prevPlayerInfo.actualWeapon.ammoAmount > playerInfo.actualWeapon.ammoAmount)
+            soundManager.playCloseSound(
+                    static_cast<EntityType>(playerInfo.actualWeapon.weaponType));
+    } else {
+        soundManager.playDrawSound(static_cast<EntityType>(playerInfo.actualWeapon.weaponType));
+    }
+}
+
+void PlayerSprite::renderPlayer() {
+    int posSrcX = TILE_SRC_SIZE * (frame % 2);
+    int posSrcY = TILE_SRC_SIZE * (frame / 2);
+
+    int offsetX = PLAYER_WIDTH / 2.0;
+    int offsetY = PLAYER_HEIGTH / 2.0;
+
+    int x = playerInfo.position.x - offSet.x - offsetX;
+    int y = playerInfo.position.y - offSet.y - offsetY;
+
+    renderer.Copy(skin, Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
+                  Rect(x, y, PLAYER_WIDTH, PLAYER_HEIGTH), playerInfo.angle);
+}
+
+void PlayerSprite::renderHeldWeapon() {
+    Texture& weaponTex =
+            textureManager.getWeaponHeld((EntityType)playerInfo.actualWeapon.weaponType);
+
+    int offsetX = PLAYER_WIDTH / 2.0;
+    int offsetY = PLAYER_HEIGTH / 2.0;
+    int x = playerInfo.position.x - offSet.x - offsetX + 2;
+    int y = playerInfo.position.y - offSet.y - offsetY - 5;
+
+    Point pivot(16 - 2, 16 + 5);
+    renderer.Copy(weaponTex, NullOpt, Rect(x, y, PLAYER_WIDTH, PLAYER_HEIGTH), playerInfo.angle,
+                  pivot);
+}
+
+void PlayerSprite::renderBullets() {
+    renderer.SetDrawColor(255, 255, 0, 0);
+    for (const auto& bullet: playerInfo.actualWeapon.projectilesInfo) {
+        double dx = bullet.projectilePosition.x - playerInfo.position.x;
+        double dy = bullet.projectilePosition.y - playerInfo.position.y;
+        renderer.DrawLine(playerInfo.position.x - offSet.x, playerInfo.position.y - offSet.y,
+                          bullet.projectilePosition.x - offSet.x,
+                          bullet.projectilePosition.y - offSet.y);
+    }
+    renderer.SetDrawColor(0, 0, 0, 255);
+}

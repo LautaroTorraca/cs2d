@@ -27,6 +27,17 @@ struct PlayerInformation {
     std::uint8_t kills;
     uint8_t deaths;
     PlayerStatus status;
+    PlayerInformation():
+            id(0),
+            name(""),
+            skin(Skin::ARCTIC_AVENGER),
+            position({0, 0}),
+            angle(0),
+            actualMoney(0),
+            actualHealthPoints(0),
+            kills(0),
+            deaths(0),
+            status(PlayerStatus::LIVING) {}
     PlayerInformation(const size_t& id, const std::string& name, const Skin& skin,
                       const CoordinateInformation& position, const double& angle,
                       const uint16_t& actualMoney, const uint8_t& actualHealthPoints,

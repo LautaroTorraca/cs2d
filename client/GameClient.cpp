@@ -128,7 +128,8 @@ void GameClient::run(int argc, char* argv[]) {
                 // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
                 // renderer.
 
-                running = renderer.setScreen(gameSnapshot, MapType::DUST, inputHandler.getMouseCoords());
+                running = renderer.setScreen(gameSnapshot, MapType::DUST,
+                                             inputHandler.getMouseCoords());
                 if (inputHandler.isInMenu()) {
                     renderer.setBuyMenu();
                 }

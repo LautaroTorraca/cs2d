@@ -12,12 +12,13 @@
 #include "server/Constants/MapTypeConstants.h"
 // #include "server/Game.h"
 #include "server/GameStatus.h"
-#include "server/PlayerStatus.h"
+// #include "server/PlayerStatus.h"
 
 #include "CoordinateInformation.h"
 #include "EntityConstants.h"
 #include "ExplotionSprite.h"
 #include "PlayerInformation.h"
+#include "PlayerSprite.h"
 #include "ProjectileInformation.h"
 #include "RgbValue.h"
 #include "SDL2_gfxPrimitives.h"
@@ -43,6 +44,19 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
         return false;
     }
 
+    if (playerSprites.size() == 0) {
+
+        for (PlayerInformation player: gameSnapshot.playersInfo) {
+
+            if (player.id == clientID) {
+                playerSprites.emplace(player.id, PlayerSprite(renderer, textureManager,
+                                                              soundManager, player, true));
+            } else {
+                playerSprites.emplace(player.id, PlayerSprite(renderer, textureManager,
+                                                              soundManager, player, false));
+            }
+        }
+    }
     float xScale = (float(RES_WIDTH) / RES_WIDTH_BASE);
     float yScale = (float(RES_HEIGTH) / RES_HEIGTH_BASE);
     renderer.SetScale(xScale, yScale);
@@ -120,18 +134,22 @@ void GameRenderer::renderPlayers(std::vector<PlayerInformation> players) {
 
     for (PlayerInformation player: players) {
 
-        Texture& skin = textureManager.getSkin(player.skin);
+        PlayerSprite& playerSprite = playerSprites.at(player.id);
 
-        playerFrame = getPlayerFrame(player);
-        if (!(player.status == PlayerStatus::DEAD)) {
-            renderPlayer(skin, player, playerFrame);
-            renderBullets(player);
-            renderHeldWeapon(player);
-        } else if (player.id == clientID) {
-            skin.SetColorAndAlphaMod({40, 210, 210, 90});
-            renderPlayer(skin, player, 2);
-            skin.SetColorAndAlphaMod({255, 255, 255, 255});
-        }
+        playerSprite.update(player, offset);
+        playerSprite.render();
+        // Texture& skin = textureManager.getSkin(player.skin);
+        //
+        // playerFrame = getPlayerFrame(player);
+        // if (!(player.status == PlayerStatus::DEAD)) {
+        //     renderPlayer(skin, player, playerFrame);
+        //     renderBullets(player);
+        //     renderHeldWeapon(player);
+        // } else if (player.id == clientID) {
+        //     skin.SetColorAndAlphaMod({40, 210, 210, 90});
+        //     renderPlayer(skin, player, 2);
+        //     skin.SetColorAndAlphaMod({255, 255, 255, 255});
+        // }
     }
 }
 
