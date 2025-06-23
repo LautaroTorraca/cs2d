@@ -6,10 +6,11 @@
 
 #include <sys/socket.h>
 
-#include "server/Constants/OpCodesConstans.h"
-
-#include "server/GameInfoDTO.h"
 #include "server/Constants/KeyContants.h"
+#include "server/Constants/OpCodesConstans.h"
+#include "server/GameInfoDTO.h"
+
+#include "server/ConnectionClosed.h"
 #include "liberror.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
@@ -92,13 +93,13 @@ void ClientHandler::run() {
             uint8_t opCode = this->reader.u8tReader();
 
             if (!this->opcodeDispatcher.contains(opCode)) {
-                throw std::runtime_error("OpCode no soportado: " + std::to_string(opCode));
+                throw ConnectionClosed("OpCode no soportado: " + std::to_string(opCode));
             }
 
             Request request = this->opcodeDispatcher.at(opCode)();
 
             this->requestsQueue.push(std::make_shared<Request>(std::move(request)));
-        } catch (std::exception& e) {
+        } catch (ConnectionClosed& e) {
             this->stop();
             std::cout << "Client " << this->id << " disconnected. " << e.what() << std::endl;
         }
@@ -193,6 +194,7 @@ void ClientHandler::sendLobbyConnectonStatus(const LobbyConnectionDTO& lobbyConn
     }
     this->sender.send(this->id);
     this->sender.send(lobbyConnectionStatus);
+    this->sender.send(lobbyConnection.info);
 }
 
 ClientHandler::~ClientHandler() { }

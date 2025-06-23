@@ -4,6 +4,9 @@
 
 #include "Interfaces/GameLobbyProtocolInterface.h"
 
+#include "GameAlreadyExistsException.h"
+#include "OrderNotImplementedException.h"
+
 ServerGameLobby::ServerGameLobby(ServerInGame& serverInGame, GameLobbyProtocolInterface& protocol) : serverInGame(serverInGame), protocol(protocol) { setupTranslators(); }
 
 void ServerGameLobby::setupTranslators() {
@@ -18,7 +21,7 @@ void ServerGameLobby::handle(const std::unique_ptr<Order> &order) const {
 
 
   if (!translator.contains(type)) {
-    throw -1; // TODO FIX
+    throw OrderNotImplementedException("The requested action is not implemented.");
   }
 
   translator.at(type)(gameLobbyOrder);
@@ -53,7 +56,7 @@ void ServerGameLobby::exit(const GameLobbyOrder& order) {
 }
 void ServerGameLobby::add(const std::string& gameName, const size_t& id, std::map<std::string, std::vector<size_t>>& lobbies) const {
     if (this->gameLobbies.contains(gameName)) {
-        throw std::runtime_error("The lobby already exists.");
+        throw GameAlreadyExistsException("The lobby already exists.");
     }
     this->serverInGame.add(gameName, id, lobbies);
 

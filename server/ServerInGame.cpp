@@ -4,6 +4,8 @@
 
 #include "Monitor/GameMonitor.h"
 
+#include "OrderNotImplementedException.h"
+
 #define SHOP_PATH "../gameConstants/shop.yaml"
 #define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 
@@ -46,7 +48,7 @@ void ServerInGame::handle(const std::unique_ptr<Order> &order) const {
   const OrderType type = inGameOrder.getOrderType();
 
   if (!translator.contains(type)) {
-    throw -1; // TODO FIX
+    throw OrderNotImplementedException("The requested action is not implemented.");
   }
 
   translator.at(type)(inGameOrder);

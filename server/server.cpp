@@ -100,7 +100,6 @@ void Server::run() {
 
             orderTranslator.at(type)(order);
         } catch (std::exception& e) {
-            // TODO FIX
             std::cout << "Main server: " << e.what() << std::endl;
             break;
         }

@@ -6,6 +6,8 @@
 #include "server/Constants/KeyContants.h"
 #include "server/Constants/ProtocolContants.h"
 
+#include "server/OrderNotImplementedException.h"
+
 InGameProtocol::InGameProtocol(){
   using namespace ProtocolConstants;
 
@@ -42,11 +44,9 @@ InGameProtocol::InGameProtocol(){
 }
 
 InGameOrder InGameProtocol::handleRequest(const Request &request) {
-    //std::cout << "InGameProtocol::handleRequest. Inicio." << std::endl;
   const uint8_t opCode = request.getRequest().at(opCodeKey).front();
-    //std::cout << "InGameProtocol::handleRequest. opCode:" << (int)opCode << std::endl;
   if (!requestHandlers.contains(opCode)) {
-    throw -1; // TODO FIX
+    throw OrderNotImplementedException("The requested action is not implemented.");
   }
   return requestHandlers[opCode](request);
 }
@@ -85,18 +85,17 @@ InGameOrder InGameProtocol::switchWeaponHandler(const Request &request) {
   const std::map<std::string, std::vector<char>> message = request.getRequest();
   const uint8_t slot = message.at(slotKey).front();
   return InGameOrder(ProtocolConstants::SWITCH_WEAPON, clientId,
-                     slot); // weapon, direction, ammout dummys
+                     slot);
 }
 
 InGameOrder InGameProtocol::changeAngleHandler(const Request &request) {
-    //std::cout << "InGameProtocol::changeAngleHandler, entre cambio angulo." << std::endl;
   const size_t clientId = request.getId();
   const std::map<std::string, std::vector<char>> message = request.getRequest();
   double angle;
   std::vector<char> serializedAngle = message.at(angleKey);
   std::memcpy(&angle, serializedAngle.data(), sizeof(double));
 
-  return InGameOrder(ProtocolConstants::CHANGE_ANGLE, clientId, angle); // slot, direction, ammout dummys
+  return InGameOrder(ProtocolConstants::CHANGE_ANGLE, clientId, angle);
 }
 
 InGameOrder InGameProtocol::buyHandler(const Request &request) {

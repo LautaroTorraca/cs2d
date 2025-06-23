@@ -103,9 +103,17 @@ GameMapParser::GameMapParser(GameMapParser &&other) noexcept :
             countersSpawns(std::move(other.countersSpawns)),
             bombPlantPoints(std::move(other.bombPlantPoints)),
             typeInfo(std::move(other.typeInfo)),
+            tileTranslator(std::move(other.tileTranslator)),
             drops(other.drops),
             dropTranslator(other.dropTranslator) {
-    //TODO: Implementar lo que le pasa a other
+    other.gameMap = std::vector<std::vector<uint8_t>>();
+    other.terroristsSpawns = std::vector<std::map<std::string, double>>();
+    other.countersSpawns = std::vector<std::map<std::string, double>>();
+    other.bombPlantPoints = std::vector<std::map<std::string, double>>();
+    other.typeInfo = std::map<uint8_t, TileType>();
+    other.tileTranslator = std::map<TileType, std::function<Tile(uint8_t&)>>();
+    other.drops = std::vector<std::map<std::string, double>>();
+    other.dropTranslator = std::map<double, std::function<std::shared_ptr<Drop>(Position&)>>();
 }
 
 std::map<Coordinate, Path> GameMapParser::getMapPath() const {
@@ -114,7 +122,7 @@ std::map<Coordinate, Path> GameMapParser::getMapPath() const {
         for (size_t j = 0; j < gameMap[i].size(); j++) {
             uint8_t tile = gameMap[i][j];
             if ( this->typeInfo.contains(tile) && this->typeInfo.at(tile) == PATH_TILE )
-                mapPath.emplace(std::move(Coordinate(j, i)), Path(tile)); // TODO: Mirar lo del narrow convertion a double de j, i.
+                mapPath.emplace(std::move(Coordinate(j, i)), Path(tile));
         }
     }
     return mapPath;
@@ -147,7 +155,7 @@ std::vector<Coordinate> GameMapParser::getBombPlantPoints() const {
 }
 
 uint8_t GameMapParser::getMaxPlayersPerTeam() const {
-    size_t maxPlayersPerTeam = this->getCountersSpawnPoints().size();
+    size_t maxPlayersPerTeam = std::min(this->getCountersSpawnPoints().size(), this->getTerroristsSpawnPoints().size());
     return maxPlayersPerTeam;
 }
 

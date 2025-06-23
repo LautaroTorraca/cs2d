@@ -13,6 +13,8 @@
 #include "client/PlayerInformation.h"
 #include "server/PlayerStatus.h"
 
+#include "server/ConnectionClosed.h"
+
 #define NEW 0X6E
 #define PRECISION 10000
 
@@ -20,7 +22,7 @@ Reader::Reader(Socket& socket): socket(socket) {}
 
 void Reader::bytesChecker(const int& bytesRead) const {
     if (bytesRead == 0) {
-        throw std::runtime_error("Reader Connection closed");  // TODO HACERLO mas FANCY (socket cerrado)
+        throw ConnectionClosed("Reader Connection closed");
     }
 }
 

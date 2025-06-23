@@ -60,10 +60,11 @@ namespace {
         bool result = lobbyOrder.getOrderType() == LOBBY_JOIN &&
             lobbyOrder.getClientId() == 0 &&
                 lobbyOrder.getGameName() == "hola";
-        LobbyConnectionDTO lobbyConnection(lobbyOrder.getClientId(), ConnectionStatus::SUCCESS);
+        LobbyConnectionDTO lobbyConnection(lobbyOrder.getClientId(), ConnectionStatus::SUCCESS, "good");
         protocol.sendLobbyConnectionStatus(lobbyConnection);
         LobbyConnectionDTO connectionStatus = clientProtocol.getLobbyConnection();
         result = result && connectionStatus.status == ConnectionStatus::SUCCESS;
+        result = result && connectionStatus.info == "good";
         protocol.end();
         std::unique_ptr<Order> exitOrder = protocol.getNextOrder();
         protocol.disconnect({0});

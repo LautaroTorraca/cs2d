@@ -9,13 +9,15 @@
 #include <netinet/in.h>
 
 #include "common/socket.h"
+
+#include "server/ConnectionClosed.h"
 #define NEW 0x6E
 #define STOP 0X73
 #define PRECISION 10000
 
 void Sender::bytesChecker(const int& sendBytes) {
     if (sendBytes == 0) {
-        throw std::runtime_error("Connection closed");  // TODO HACERLO mas FANCY (socket cerrado)
+        throw ConnectionClosed("Connection closed");
     }
 }
 

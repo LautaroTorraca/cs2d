@@ -10,7 +10,7 @@
 class Wallet {
     uint16_t money;
 public:
-    Wallet(const uint16_t& money): money(money) {}
+    explicit Wallet(const uint16_t& money): money(money) {}
     void waste(const uint16_t& amount);
     void addMoney(const uint16_t& amount);
     void wasteAll();

@@ -116,7 +116,17 @@ if(TALLER_SERVER)
           server/PlayerStatus.h
           server/Deactivator.h
           server/WeaponNotFoundException.cpp
-          server/WeaponNotFoundException.h)
+          server/WeaponNotFoundException.h
+          server/NotEnoughMoneyException.cpp
+          server/NotEnoughMoneyException.h
+          server/ConnectionClosed.cpp
+          server/ConnectionClosed.h
+          server/OrderNotImplementedException.cpp
+          server/OrderNotImplementedException.h
+          server/GameAlreadyExistsException.cpp
+          server/GameAlreadyExistsException.h
+          server/Collisionable.h
+          server/LobbyAdder.h)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
   # add_subdirectory(libs/fkYAML)

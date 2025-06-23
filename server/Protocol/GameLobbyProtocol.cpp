@@ -2,6 +2,7 @@
 
 #include "server/Constants/KeyContants.h"
 #include "server/Constants/ProtocolContants.h"
+#include "server/OrderNotImplementedException.h"
 
 
 GameLobbyProtocol::GameLobbyProtocol() {
@@ -14,7 +15,7 @@ GameLobbyOrder GameLobbyProtocol::handleRequest(const Request& request) {
     const uint8_t opCode = request.getRequest().at(opCodeKey).front();
 
     if (!requestHandlers.contains(opCode)) {
-        throw -1; //TODO FIX
+        throw OrderNotImplementedException("The GameLobby Order is not implemented.");
     }
     return requestHandlers[opCode](request);
 }
@@ -32,9 +33,6 @@ GameLobbyOrder GameLobbyProtocol::readyHandler(const Request& request) {
 
 GameLobbyOrder GameLobbyProtocol::exitLobbyHandler(const Request& request) {
     const size_t clientId = request.getId();
-
-    //TODO AGREGAR LOGICA
-
     return GameLobbyOrder(ProtocolConstants::EXIT_LOBBY, clientId);
 }
 

@@ -4,8 +4,11 @@
 
 #include "DropDTO.h"
 
+#include "Position.h"
+
 DropDTO::DropDTO(DropDTO&& drop) noexcept : weapon(std::move(drop.weapon)), position(drop.position) {
-    //TODO: Implementar como debe quedar el estado inconsistente del otro.
+    drop.weapon = WeaponInfoDTO(0, WeaponType::UNKNOWN);
+    drop.position = CoordinateDTO(0, 0);
 }
 
 const WeaponInfoDTO & DropDTO::getDropInfo() const {

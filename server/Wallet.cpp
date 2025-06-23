@@ -3,11 +3,14 @@
 //
 
 #include "Wallet.h"
+
 #include <stdexcept>
+
+#include "NotEnoughMoneyException.h"
 
 void Wallet::waste(const uint16_t& amount){
     if (amount > this->money){
-        throw std::runtime_error("Not enough money"); //TODO: Reemplazar por una excepcion personalizada
+        throw NotEnoughMoneyException("Not enough money");
     }
     this->money -= amount;
 }
