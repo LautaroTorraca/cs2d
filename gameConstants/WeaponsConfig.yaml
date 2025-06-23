@@ -3,7 +3,7 @@ knife:
 glock:
   { damagePerBullet : 40.0, precision : 0.8, range : 224.0, cadence : 2.0, speed : 600.0, bulletsPerShot : 1.0, maxBullets: 2000 }
 ak47:
-  { damagePerBullet : 20.0, precision : 0.7, range : 320.0, cadence : 2, speed : 600.0, bulletsPerShot : 3.0, burstSpeed: 0.4, maxBullets: 2000 }
+  { damagePerBullet : 20.0, precision : 0.7, range : 320.0, cadence : 2, speed : 600.0, bulletsPerShot : 3.0, burstSpeed: 6.0, maxBullets: 2000 }
 m3:
   { damagePerBullet : 50.0, precision : 0.5, range : 160.0, cadence : 1.0, speed : 900.0, bulletsPerShot : 5.0, sweptAngle: 90.0, maxBullets: 2000 }
 awp:
