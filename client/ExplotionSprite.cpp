@@ -4,9 +4,11 @@
 #include "SDL2pp/Texture.hh"
 
 #include "CoordinateInformation.h"
+#include "EntityConstants.h"
+#include "SoundManager.h"
 
-ExplotionSprite::ExplotionSprite(Renderer& renderer, Texture& texture):
-        sprite(texture), renderer(renderer) {}
+ExplotionSprite::ExplotionSprite(Renderer& renderer, Texture& texture, SoundManager& soundManager):
+        sprite(texture), renderer(renderer), soundManager(soundManager) {}
 
 int ExplotionSprite::getFrame() {
     int returnFrame = lastFrame;
@@ -17,6 +19,7 @@ int ExplotionSprite::getFrame() {
 void ExplotionSprite::start() {
     ongoing = true;
     lastFrame = 0;
+    soundManager.playCloseSound(EntityType::BOMB);
 }
 bool ExplotionSprite::ended() {
     ongoing = lastFrame < MAX_FRAME;

@@ -8,7 +8,7 @@
 
 #define TIME_ADVANCE_IN_SECONDS 0.01
 #define SKIN_BIAS 16
-#define TIME_AFTER_GAME_END 3
+#define TIME_AFTER_GAME_END 5
 
 GameMonitor::GameMonitor(const std::string& gameName,
     GameParser& parser, const uint8_t& rounds,

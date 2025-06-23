@@ -19,7 +19,6 @@
 #include "ExplotionSprite.h"
 #include "PlayerInformation.h"
 #include "PlayerSprite.h"
-#include "ProjectileInformation.h"
 #include "RgbValue.h"
 #include "SDL2_gfxPrimitives.h"
 #include "SDL_blendmode.h"
@@ -36,7 +35,7 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
         textureManager(renderer),
         tileMap(tileMap),
         clientID(clientId),
-        explotion(renderer, textureManager.getExplotion()) {}
+        explotion(renderer, textureManager.getExplotion(), soundManager) {}
 
 bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
@@ -125,7 +124,6 @@ void GameRenderer::renderBomb(CoordinateInformation pos, GameStatus status) {
                       Rect(pos.x - off.x, pos.y - off.y, PLAYER_WIDTH, PLAYER_HEIGTH));
     } else if (status == BOMB_EXPLODED) {
 
-        // if (!explotion.ended())
         explotion.draw({pos.x - offset.x, pos.y - offset.y});
     }
 }
@@ -138,93 +136,9 @@ void GameRenderer::renderPlayers(std::vector<PlayerInformation> players) {
 
         playerSprite.update(player, offset);
         playerSprite.render();
-        // Texture& skin = textureManager.getSkin(player.skin);
-        //
-        // playerFrame = getPlayerFrame(player);
-        // if (!(player.status == PlayerStatus::DEAD)) {
-        //     renderPlayer(skin, player, playerFrame);
-        //     renderBullets(player);
-        //     renderHeldWeapon(player);
-        // } else if (player.id == clientID) {
-        //     skin.SetColorAndAlphaMod({40, 210, 210, 90});
-        //     renderPlayer(skin, player, 2);
-        //     skin.SetColorAndAlphaMod({255, 255, 255, 255});
-        // }
     }
 }
 
-void GameRenderer::renderPlayer(Texture& sprite, PlayerInformation player, int variation) {
-
-    int posSrcX = TILE_SRC_SIZE * (variation % 2);
-    int div = (variation / 2);
-    int posSrcY = TILE_SRC_SIZE * div;
-
-    int offsetX = PLAYER_WIDTH / 2.0;
-    int offsetY = PLAYER_HEIGTH / 2.0;
-    int posPlayerX = player.position.x - offset.x - offsetX;
-    int posPlayerY = player.position.y - offset.y - offsetY;
-
-    renderer.Copy(sprite, Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-                  Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH), player.angle);
-}
-
-
-// TODO: remove depreacated.
-//  DEPRECATED
-void GameRenderer::renderCurrentPlayer(Texture& sprite, PlayerInformation player, int variation) {
-
-    int posX = TILE_SRC_SIZE * (variation % 2);
-    int div = (variation / 2);
-    int posY = TILE_SRC_SIZE * div;
-
-    int offsetX = PLAYER_WIDTH / 2;
-    int offsetY = PLAYER_HEIGTH / 2;
-    // offset.x = offset.x;
-
-    // renderer.Copy(sprite, Rect(posX, posY, TILE_SRC_SIZE, TILE_SRC_SIZE),
-    //               Rect(RES_WIDTH_BASE / 2 - offsetX, RES_HEIGTH_BASE / 2 - offsetY, PLAYER_WIDTH,
-    //                    PLAYER_HEIGTH),
-    //               player.angle);
-}
-
-void GameRenderer::renderHeldWeapon(PlayerInformation& player) {
-
-    // TODO: aniamcion de caminar.
-    //  if (player.actualWeapon.weaponType == EntityType::KNIFE ||
-    //      player.actualWeapon.weaponType == EntityType::BOMB) {
-    //      return;
-    //  }
-
-    Texture& sprite = textureManager.getWeaponHeld((EntityType)player.actualWeapon.weaponType);
-
-    int offsetX = PLAYER_WIDTH / 2.0;
-    int offsetY = PLAYER_HEIGTH / 2.0;
-
-    int posPlayerX = player.position.x - offset.x - offsetX + 2;
-    int posPlayerY = player.position.y - offset.y - offsetY - 5;
-
-    Point rotationPoint(16 - 2, 16 + 5);
-
-    renderer.Copy(sprite, NullOpt, Rect(posPlayerX, posPlayerY, PLAYER_WIDTH, PLAYER_HEIGTH),
-                  player.angle, rotationPoint);
-}
-void GameRenderer::renderBullets(PlayerInformation& player) {
-
-    for (ProjectileInformation bullet: player.actualWeapon.projectilesInfo) {
-
-        double dx = bullet.projectilePosition.x - player.position.x;
-        double dy = bullet.projectilePosition.y - player.position.y;
-
-        double angleInRads = atan2(dy, dx);
-        double angleInDegree = 180.0 * angleInRads / M_PI;
-        angleInDegree += 90;
-        renderer.SetDrawColor(255, 255, 0, 0);
-        renderer.DrawLine(player.position.x - offset.x, player.position.y - offset.y,
-                          bullet.projectilePosition.x - offset.x,
-                          bullet.projectilePosition.y - offset.y);
-        renderer.SetDrawColor(0, 0, 0, 255);
-    }
-}
 void GameRenderer::renderTile(Texture& mapTile, int mapWidth, int tile, int pos) {
 
     int textureX = TILE_SRC_SIZE * (tile % 5);

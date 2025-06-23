@@ -10,19 +10,22 @@ SoundManager::SoundManager():
     mixer.AllocateChannels(32);
     loadCloseSound(EntityType::AK47, "../client/assets/sounds/ak47.wav");
     loadFarSound(EntityType::AK47, "../client/assets/sounds/ak47-distant.wav");
-    loadDrawSound(EntityType::AK47, "../client/assets/sounds/ak47_draw.ogg");
+    loadDrawSound(EntityType::AK47, "../client/assets/sounds/ak47_draw.wav");
 
     loadCloseSound(EntityType::AWP, "../client/assets/sounds/awp.wav");
     loadFarSound(EntityType::AWP, "../client/assets/sounds/awp-distant.wav");
-    loadDrawSound(EntityType::AWP, "../client/assets/sounds/awp_draw.ogg");
+    loadDrawSound(EntityType::AWP, "../client/assets/sounds/awp_draw.wav");
 
     loadCloseSound(EntityType::M3, "../client/assets/sounds/m3.wav");
     loadFarSound(EntityType::M3, "../client/assets/sounds/m3-distant.wav");
-    loadDrawSound(EntityType::M3, "../client/assets/sounds/m3_draw.ogg");
+    loadDrawSound(EntityType::M3, "../client/assets/sounds/m3_draw.wav");
 
     loadCloseSound(EntityType::GLOCK, "../client/assets/sounds/glock.wav");
     loadFarSound(EntityType::GLOCK, "../client/assets/sounds/glock-distant.wav");
-    loadDrawSound(EntityType::GLOCK, "../client/assets/sounds/glock_draw.ogg");
+    loadDrawSound(EntityType::GLOCK, "../client/assets/sounds/glock_draw.wav");
+
+
+    loadCloseSound(EntityType::BOMB, "../client/assets/sounds/c4_explode.wav");
 }
 
 
