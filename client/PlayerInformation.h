@@ -21,6 +21,7 @@ struct PlayerInformation {
     CoordinateInformation position;
     double angle;
     uint16_t actualMoney;
+    uint16_t collectedMoney;
     uint8_t actualHealthPoints;
     std::vector<WeaponInformation> weaponsInfo;
     WeaponInformation actualWeapon;
@@ -29,7 +30,8 @@ struct PlayerInformation {
     PlayerStatus status;
     PlayerInformation(const size_t& id, const std::string& name, const Skin& skin,
                       const CoordinateInformation& position, const double& angle,
-                      const uint16_t& actualMoney, const uint8_t& actualHealthPoints,
+                      const uint16_t& actualMoney, const uint16_t& collectedMoney,
+                      const uint8_t& actualHealthPoints,
                       std::vector<WeaponInformation>& weaponsInfo,
                       const WeaponInformation& actualWeapon, const uint8_t& kills,
                       const uint8_t& deaths,
@@ -40,6 +42,7 @@ struct PlayerInformation {
             position(position),
             angle(angle),
             actualMoney(actualMoney),
+            collectedMoney(collectedMoney),
             actualHealthPoints(actualHealthPoints),
             weaponsInfo(std::move(weaponsInfo)),
             actualWeapon(actualWeapon),

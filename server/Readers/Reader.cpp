@@ -117,6 +117,7 @@ PlayerInformation Reader::readPlayer() const {
     CoordinateInformation position = this->readCoordinateInformation();
     uint8_t health = this->u8tReader();
     uint16_t money = this->u16tReader();
+    uint16_t collectedMoney = this->u16tReader();
     uint8_t kills = this->u8tReader();
     uint8_t deaths = this->u8tReader();
     Skin skin = static_cast<Skin>(this->u8tReader());
@@ -126,7 +127,7 @@ PlayerInformation Reader::readPlayer() const {
         weapons.push_back(this->readWeapon());
     }
     PlayerStatus status = static_cast<PlayerStatus>(this->u8tReader());
-    return PlayerInformation(id, playerName, skin, position, angle, money, health, weapons,
+    return PlayerInformation(id, playerName, skin, position, angle, money, collectedMoney, health, weapons,
                              actualWeapon, kills, deaths, status);
 }
 

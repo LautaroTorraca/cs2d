@@ -170,6 +170,15 @@ void Game::clearPlayers() {
     this->terroristsWinsRounds = 0;
     this->countersWinsRounds = 0;
 }
+void Game::setKills(const size_t& id, const uint8_t& kills) const {
+    if (!this->players.contains(id))
+        return;
+    this->players.at(id)->setKills(kills);
+}
+void Game::addCollectedMoney(const size_t& id, const uint16_t& collectedMoney) {
+    if (!this->players.contains(id)) return;
+    this->players.at(id)->addCollectedMoney(collectedMoney);
+}
 
 void Game::terroristsWins() {
     if (this->status != ON_GOING && this->status != BOMB_PLANTED && this->status != BOMB_EXPLODED) return;

@@ -21,8 +21,9 @@ kills(0),
 deaths(0),
 backer(std::make_unique<DeactivatedBacker>()),
 wallet(parser.getPlayerInfo(INITIAL_MONEY_KEY)),
+collectedMoney(0),
 status(LIVING),
-position(0,0,parser.getGameMapInfo(TILE_SIZE_KEY), parser.getGameMapInfo(TILE_SIZE_KEY)),
+position(0, 0, parser.getGameMapInfo(TILE_SIZE_KEY), parser.getGameMapInfo(TILE_SIZE_KEY)),
 inventory(gameParser, weaponPlacer, position, weapon) {
     this->inventory.set(INITIAL_SELECTED_WEAPON_INDEX);
     std::shared_ptr<Owner> owner(this, [](Owner*) {});
@@ -139,6 +140,7 @@ void Player::release(const uint8_t &index) {
 
 void Player::informKill() {
     this->kills++;
+    this->collectedMoney += parser.getPlayerInfo(MONEY_PER_KILL_KEY);
     this->wallet.addMoney(parser.getPlayerInfo(MONEY_PER_KILL_KEY));
 }
 
@@ -147,11 +149,20 @@ void Player::noMoreAmmo() {
 }
 
 void Player::give(const uint16_t &money) {
+    this->collectedMoney += money;
     this->wallet.addMoney(money);
 }
 
-void Player::setDeaths(const uint8_t deaths) {
-    this->deaths = deaths;
+void Player::setDeaths(const uint8_t& deaths) { this->deaths = deaths; }
+
+void Player::setKills(const uint8_t& kills) {
+    if (this->kills > kills)
+        return;
+    this->kills = kills;
+}
+
+void Player::addCollectedMoney(const uint16_t& collectedMoney) {
+    this->collectedMoney += collectedMoney;
 }
 
 PlayerInfoDTO Player::getInfo() {
@@ -161,5 +172,5 @@ PlayerInfoDTO Player::getInfo() {
     return {this->id,           this->name,  this->skin,
             coordinateInfo,     this->angle, this->wallet.getInfo(),
             this->healthPoints, weaponsInfo, actualWeaponInfo,
-            this->kills, this->deaths, this->status};
+            this->kills, this->deaths, this->status, this->collectedMoney};
 }

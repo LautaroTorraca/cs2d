@@ -39,6 +39,7 @@ void Sender::send(const PlayerInfoDTO& playerInfo) {
     this->send(playerInfo.getCoordinate());
     this->send(playerInfo.getHealth());
     this->send(playerInfo.getMoney());
+    this->send(playerInfo.getCollectedMoney());
     this->send(playerInfo.getKills());
     this->send(playerInfo.getDeaths());
     this->send(skin);

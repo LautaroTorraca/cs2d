@@ -261,7 +261,7 @@ TEST(InGameReadPreSnapshotTest, Check)
         projectilesInfo.push_back(projectile);
         weaponsInfo.push_back({30, WeaponType::GLOCK, projectilesInfo});
         WeaponInfoDTO actualWeapon(30, WeaponType::GLOCK);
-        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0, 0, PlayerStatus::LIVING});
+        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0, 0, PlayerStatus::LIVING, 500});
         std::vector<DropDTO> dropsInfo;
         WeaponInfoDTO droppedWeapon(30, WeaponType::AK47);
         dropsInfo.push_back({droppedWeapon, {48, 48}});
