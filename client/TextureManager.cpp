@@ -26,6 +26,11 @@ TextureManager::TextureManager(Renderer& renderer):
         throw std::runtime_error("error ttf_init()" + std::string(TTF_GetError()));
     }
 
+    // FONTS
+    fontSizes.emplace(20, (TTF_OpenFont("../client/assets/text/sourcesans.ttf", 20)));
+    fontSizes.emplace(18, (TTF_OpenFont("../client/assets/text/sourcesans.ttf", 18)));
+    fontSizes.emplace(15, (TTF_OpenFont("../client/assets/text/sourcesans.ttf", 15)));
+
     // AMMO
     texturesWeapons.emplace(EntityType::P_AMMO,
                             removeBackground(black, "../client/assets/primaryammo.png"));
@@ -93,7 +98,8 @@ TextureManager::TextureManager(Renderer& renderer):
                           Texture(renderer, "../client/assets/tilemaps/inferno.png"));
 
     fovTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
-    // fovTexture = Texture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 400);
+    // fovTexture = Texture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640,
+    // 400);
 }
 
 Texture& TextureManager::getSkin(Skin id) { return texturesSkins.at(id); }
@@ -130,9 +136,13 @@ Texture TextureManager::removeBackground(ColorKey colorKey, std::string filename
 }
 
 Texture TextureManager::getFont(int fontSize, std::string text, RgbValue color) {
-    auto font = TTF_OpenFont("../client/assets/text/sourcesans.ttf", fontSize);
-    Surface textSurface(
-            TTF_RenderText_Solid(font, text.c_str(), {color.r, color.g, color.b, color.a}));
+
+    if (!fontSizes.contains(fontSize)) {
+        fontSizes.emplace(fontSize,
+                          (TTF_OpenFont("../client/assets/text/sourcesans.ttf", fontSize)));
+    }
+    Font& font = fontSizes.at(fontSize);
+    Surface textSurface(font.RenderText_Solid(text.c_str(), {color.r, color.g, color.b, color.a}));
     Texture textTexture(renderer, textSurface);
     return textTexture;
 }

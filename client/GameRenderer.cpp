@@ -70,7 +70,7 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     srand(time(nullptr));
     int numero = rand() % 6;
     if (numero == 3) {
-        std::cout << "player: " << currentPlayer.name << "\n";
+        // std::cout << "player: " << currentPlayer.name << "\n";
     }
 
     offset.x = (gameSnapshot.playersInfo.at(index).position.x) - int(RES_WIDTH_BASE / 2);
@@ -199,10 +199,6 @@ void GameRenderer::renderUI(PlayerInformation& player, Snapshot gameSnapshot, Co
     lastPosX = renderSymbol({lastPosX, RES_HEIGTH_BASE - HUD_NUM_H - 10}, UiSymbol::MONEY, green);
     lastPosX = renderNumberStream({(lastPosX), RES_HEIGTH_BASE - HUD_NUM_H - 10},
                                   player.actualMoney, 5, 2, green);
-
-    // time left to defuse
-    std::cout << "tiempo para defusear     : " << gameSnapshot.bombTimer << "\n\n";
-    std::cout << "tiempo para defusear(int): " << (int)gameSnapshot.bombTimer << "\n\n";
 
     if (gameSnapshot.status == GameStatus::BOMB_PLANTED) {
 
@@ -416,7 +412,7 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
     double lineHeight = 25;
 
     for (const PlayerInformation& player: players) {
-        renderText(player.name, {nameX, startY}, 16, none);
+        renderText(player.name, {nameX, startY}, 18, none);
         renderNumberStream({killsX, startY + 16}, player.kills, 2, 2, none, 16, 12);
         renderNumberStream({deathsX, startY + 16}, player.deaths, 2, 2, none, 16, 12);
         renderNumberStream({moneyX, startY + 16}, player.totalMoney, 5, 2, none, 16, 12);

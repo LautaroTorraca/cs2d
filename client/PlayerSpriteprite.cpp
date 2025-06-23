@@ -1,5 +1,7 @@
 #include <cmath>
 
+#include "Constants/ClientConstants.h"
+
 #include "PlayerInformation.h"
 #include "PlayerSprite.h"
 #include "SoundManager.h"
@@ -44,6 +46,11 @@ void PlayerSprite::render() {
     }
 }
 
+bool PlayerSprite::isPlayerClose() {
+
+    return ((abs(offSet.x - playerInfo.position.x)) <= CLOSE_RANGE_X &&
+            (abs(offSet.y - playerInfo.position.y)) <= CLOSE_RANGE_Y);
+}
 void PlayerSprite::playSound() {
 
 
@@ -52,9 +59,15 @@ void PlayerSprite::playSound() {
         if (prevPlayerInfo.actualWeapon.ammoAmount == playerInfo.actualWeapon.ammoAmount)
             return;
 
-        if (prevPlayerInfo.actualWeapon.ammoAmount > playerInfo.actualWeapon.ammoAmount)
-            soundManager.playCloseSound(
-                    static_cast<EntityType>(playerInfo.actualWeapon.weaponType));
+        if (prevPlayerInfo.actualWeapon.ammoAmount > playerInfo.actualWeapon.ammoAmount) {
+
+            if (isPlayerClose())
+                soundManager.playCloseSound(
+                        static_cast<EntityType>(playerInfo.actualWeapon.weaponType));
+            else
+                soundManager.playFarSound(
+                        static_cast<EntityType>(playerInfo.actualWeapon.weaponType));
+        }
     } else {
         soundManager.playDrawSound(static_cast<EntityType>(playerInfo.actualWeapon.weaponType));
     }

@@ -25,6 +25,7 @@ private:
     std::unordered_map<UiType, Texture> texturesUI;
     std::unordered_map<EntityType, Texture> texturesWeapons;
     std::unordered_map<EntityType, Texture> texturesWeaponsHeld;
+    std::unordered_map<int, Font> fontSizes;
     Texture explotionTexture;
 
     Texture fovTexture;
