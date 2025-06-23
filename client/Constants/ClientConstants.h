@@ -30,6 +30,7 @@ constexpr int PLAYER_WIDTH = 32;   // RES_HEIGTH / LOGICAL_HEIGHT;
 #define HUD_NUM_H 24
 #define HUD_NUM_W 17
 
+// enum Sound {};
 enum UiSymbol : int {
     HEALTH = 0,
     SHIELD = 1,

@@ -81,9 +81,10 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
             } else if (event.type == SDL_MOUSEBUTTONDOWN) {
 
                 switch (event.button.button) {
-                    case SDL_BUTTON_LEFT:
+                    case SDL_BUTTON_LEFT: {
                         protocol.attack();
                         break;
+                    }
                     case SDL_BUTTON_RIGHT:
                         break;
                 }

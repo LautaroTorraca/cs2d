@@ -9,7 +9,9 @@
 #include "CoordinateInformation.h"
 #include "EntityConstants.h"
 #include "ExplotionSprite.h"
+#include "PlayerInformation.h"
 #include "RgbValue.h"
+#include "SoundManager.h"
 #include "TextureManager.h"
 // #include "weaponConstants.h"
 
@@ -41,6 +43,8 @@ private:
     ExplotionSprite explotion;
     bool roundBombExploded = false;
     GameStatus prevStatus;
+    SoundManager soundManager;
+    std::unordered_map<size_t, PlayerInformation> prevPlayerInfo;
 
     void renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map);
     void renderPlayers(std::vector<PlayerInformation> players);
@@ -74,9 +78,12 @@ private:
     void setRoundWinMenu(GameStatus state);
     void setLeaderBoard(GameStatus state);
 
+
+    int getPlayerFrame(PlayerInformation& player);
+
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);
-    void setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
+    bool setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
     void setBuyMenu();
     void render();
 };

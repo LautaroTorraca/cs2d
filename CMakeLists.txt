@@ -59,17 +59,6 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE)
 
-  set(SDL2PP_WITH_IMAGE
-      ON
-      CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
-
-  # SDL2pp
-  FetchContent_Declare(
-    libSDL2pp
-    OVERRIDE_FIND_PACKAGE
-    URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
-  )
-
   FetchContent_Declare(
     SDL2_mixer
     GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
@@ -86,9 +75,27 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE)
 
-  # FetchContent_Declare( libSDL2pp OVERRIDE_FIND_PACKAGE URL
+  set(SDL2PP_WITH_IMAGE
+      ON
+      CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
+  set(SDL2PP_WITH_MIXER
+      ON
+      CACHE BOOL "Enable SDL2_mixer support in SDL2pp" FORCE)
+  set(SDL2PP_WITH_TTF
+      ON
+      CACHE BOOL "Enable SDL2_ttf support in SDL2pp" FORCE)
+
+  # SDL2pp FetchContent_Declare( libSDL2pp OVERRIDE_FIND_PACKAGE URL
   # https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
   # )
+
+  FetchContent_Declare(
+    libSDL2pp
+    GIT_REPOSITORY https://github.com/libSDL2pp/libSDL2pp.git
+    GIT_REV cc198c9 # <--- Changed from GIT_TAG to GIT_REV with the commit hash
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE)
 
   FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
 endif()
@@ -99,23 +106,30 @@ if(TALLER_CLIENT)
   add_subdirectory(client)
   add_subdirectory(libs/SDL2_gfx)
   add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+  target_include_directories(taller_client
+                             PRIVATE ${SDL2_mixer_SOURCE_DIR}/include)
   # client/LobbyDTO.h client/GamesList.h client/BuyOrder.h
   # client/WeaponChanger.h client/PositionDTO.h client/PlayerInformation.h
   # client/CoordinateInformation.h client/WeaponInformation.h
   # client/ProjectileInformation.h client/DropInformation.h client/MainWindow.h)
   target_include_directories(taller_client PRIVATE client)
-  target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_gfx
-                        SDL2_ttf Qt6::Widgets)
+  target_link_libraries(
+    taller_client
+    taller_common
+    SDL2pp::SDL2pp
+    SDL2_mixer
+    SDL2_gfx
+    SDL2_ttf
+    Qt6::Widgets)
 endif()
 
 if(TALLER_SERVER)
 
   find_package(fkYAML REQUIRED)
-  add_executable(taller_server
-          server/PlayerStatus.h
-          server/Deactivator.h
-          server/WeaponNotFoundException.cpp
-          server/WeaponNotFoundException.h)
+  add_executable(
+    taller_server
+    server/PlayerStatus.h server/Deactivator.h
+    server/WeaponNotFoundException.cpp server/WeaponNotFoundException.h)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
   # add_subdirectory(libs/fkYAML)

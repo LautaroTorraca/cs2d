@@ -37,7 +37,7 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
         clientID(clientId),
         explotion(renderer, textureManager.getExplotion()) {}
 
-bool GameRenderer::renderScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
+bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
     if (gameSnapshot.status == GameStatus::GAME_OVER) {
         return false;
@@ -119,13 +119,10 @@ void GameRenderer::renderBomb(CoordinateInformation pos, GameStatus status) {
 void GameRenderer::renderPlayers(std::vector<PlayerInformation> players) {
 
     for (PlayerInformation player: players) {
+
         Texture& skin = textureManager.getSkin(player.skin);
-        if ((EntityType)player.actualWeapon.weaponType == EntityType::KNIFE ||
-            (EntityType)player.actualWeapon.weaponType == EntityType::BOMB) {
-            playerFrame = 1;
-        } else {
-            playerFrame = 3;
-        }
+
+        playerFrame = getPlayerFrame(player);
         if (!(player.status == PlayerStatus::DEAD)) {
             renderPlayer(skin, player, playerFrame);
             renderBullets(player);
@@ -542,4 +539,14 @@ void GameRenderer::render() {
     renderer.Present();
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
+}
+
+int GameRenderer::getPlayerFrame(PlayerInformation& player) {
+
+    if ((EntityType)player.actualWeapon.weaponType == EntityType::KNIFE ||
+        (EntityType)player.actualWeapon.weaponType == EntityType::BOMB) {
+        return playerFrame = 1;
+    } else {
+        return playerFrame = 3;
+    }
 }

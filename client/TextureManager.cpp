@@ -5,8 +5,9 @@
 #include "Constants/ClientConstants.h"
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
-#include "build/_deps/sdl2_ttf-src/SDL_ttf.h"
 #include "server/Constants/MapTypeConstants.h"
+
+#include "SDL_ttf.h"
 // #include "server/ProductType.h"
 #include "server/Skin.h"
 
