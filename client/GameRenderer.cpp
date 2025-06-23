@@ -65,6 +65,10 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
         }
         index++;
     }
+
+    for (PlayerInformation player: gameSnapshot.playersInfo) {
+        std::cout << "collectedMoney: " << player.collectedMoney << ", deaths: " << (int)player.deaths << ", kills:" << (int)player.kills << std::endl;
+    }
     PlayerInformation& currentPlayer = gameSnapshot.playersInfo.at(index);
 
     srand(time(nullptr));

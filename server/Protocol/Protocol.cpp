@@ -123,7 +123,7 @@ std::unique_ptr<Order> Protocol::getNextOrder() {
         const uint8_t code = request.getRequest().at(opCodeKey).front();
         return this->requestMapper.at(code)(request);
     } catch (ClosedQueue&) {
-        throw std::runtime_error("The queue was closed");  // TODO: Manejar fin de protocolo
+        throw;
     }
 }
 
@@ -193,7 +193,7 @@ void Protocol::end() {
         this->ended = true;
 
     } catch (LibError&) {
-        // TODO: Logging de error
+        //Logg: Error de coneccion
     }
 }
 

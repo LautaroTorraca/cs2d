@@ -41,8 +41,6 @@ Request InGameHandler::moveRequest() const {
     return Request(userId, message);
 }
 
-// TODO REVISAR DE ACA
-// PENSAR EN ALGUN FORMA DE ENCAPSULAR LOGICA REPETIDA (no ahora jeje)
 Request InGameHandler::shootRequest() const {
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_SHOOT));
@@ -90,7 +88,6 @@ Request InGameHandler::changeAngleRequest() const {
 
 Request InGameHandler::switchWeaponsRequest() const {
     const uint8_t slot = reader.u8tReader();
-    //std::cout << "InGameHandler::switchWeaponRequest. Arma cambiada a " << (int)slot << std::endl;
     std::map<std::string, std::vector<char>> message;
     message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_SWITCH_WEAPON));
     message.emplace(slotKey, std::vector<char>(SINGLE_VALUE, slot));

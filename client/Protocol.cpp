@@ -24,7 +24,8 @@ void Client::Protocol::createLobby(const LobbyDTO& lobbyInfo) {
 LobbyConnectionDTO Client::Protocol::getLobbyConnection() const {
     size_t id = this->reader.readSizeT();
     ConnectionStatus status = static_cast<ConnectionStatus>(this->reader.u8tReader());
-    return LobbyConnectionDTO(id, status);
+    std::string info = this->reader.stringReader();
+    return LobbyConnectionDTO(id, status, info);
 }
 
 GamesList Client::Protocol::getGamesList() {

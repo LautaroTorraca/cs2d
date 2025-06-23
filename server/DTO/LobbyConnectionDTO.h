@@ -12,8 +12,9 @@ class LobbyConnectionDTO {
 public:
     const size_t id;
     const ConnectionStatus status;
-    explicit LobbyConnectionDTO(const size_t& id, const ConnectionStatus& status):
-            id(id), status(status) {};
+    const std::string info;
+    LobbyConnectionDTO(const size_t& id, const ConnectionStatus& status, const std::string& info):
+            id(id), status(status), info(info) {}
 };
 
 #endif  // SUCCESSLOBBYCONNECTIONDTO_H

@@ -60,10 +60,11 @@ namespace {
         bool result = lobbyOrder.getOrderType() == LOBBY_JOIN &&
             lobbyOrder.getClientId() == 0 &&
                 lobbyOrder.getGameName() == "hola";
-        LobbyConnectionDTO lobbyConnection(lobbyOrder.getClientId(), ConnectionStatus::SUCCESS);
+        LobbyConnectionDTO lobbyConnection(lobbyOrder.getClientId(), ConnectionStatus::SUCCESS, "good");
         protocol.sendLobbyConnectionStatus(lobbyConnection);
         LobbyConnectionDTO connectionStatus = clientProtocol.getLobbyConnection();
         result = result && connectionStatus.status == ConnectionStatus::SUCCESS;
+        result = result && connectionStatus.info == "good";
         protocol.end();
         std::unique_ptr<Order> exitOrder = protocol.getNextOrder();
         protocol.disconnect({0});
@@ -261,7 +262,7 @@ TEST(InGameReadPreSnapshotTest, Check)
         projectilesInfo.push_back(projectile);
         weaponsInfo.push_back({30, WeaponType::GLOCK, projectilesInfo});
         WeaponInfoDTO actualWeapon(30, WeaponType::GLOCK);
-        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0, 0, PlayerStatus::LIVING});
+        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0, 0, PlayerStatus::LIVING, 500});
         std::vector<DropDTO> dropsInfo;
         WeaponInfoDTO droppedWeapon(30, WeaponType::AK47);
         dropsInfo.push_back({droppedWeapon, {48, 48}});

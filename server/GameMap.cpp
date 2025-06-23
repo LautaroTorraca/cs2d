@@ -71,8 +71,6 @@ void GameMap::move(std::shared_ptr<Entity>& entity, const Coordinate &displaceme
 }
 
 std::vector<std::shared_ptr<Drop>> GameMap::getActualDropsInArea(const Position &position) {
-    //TODO: Esto tiene el bug de que los counter tambien pueden agarrar la bomba, ver como manejarlo.
-    //TODO: Ademas, refactorizar esto.
     std::vector<Coordinate> area = position.getArea();
     std::vector<std::shared_ptr<Drop>> actualDrops;
     for (auto& point: area) {

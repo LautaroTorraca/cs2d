@@ -20,7 +20,6 @@ void Bomb::attack(Positionable & positionable, const Position & position, const 
 }
 
 void Bomb::addTo(Inventory &inventory) {
-    //TODO: Fijarse si se puede pasar este codigo pseudo-repetido en todas las weapons a la clase padre.
     std::shared_ptr<Weapon> weapon = std::make_shared<Bomb>(std::move(*this));
     inventory.add(BOMB_INDEX, weapon);
 }

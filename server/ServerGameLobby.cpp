@@ -4,6 +4,9 @@
 
 #include "Interfaces/GameLobbyProtocolInterface.h"
 
+#include "GameAlreadyExistsException.h"
+#include "OrderNotImplementedException.h"
+
 ServerGameLobby::ServerGameLobby(ServerInGame& serverInGame, GameLobbyProtocolInterface& protocol) : serverInGame(serverInGame), protocol(protocol) { setupTranslators(); }
 
 void ServerGameLobby::setupTranslators() {
@@ -18,7 +21,7 @@ void ServerGameLobby::handle(const std::unique_ptr<Order> &order) const {
 
 
   if (!translator.contains(type)) {
-    throw -1; // TODO FIX
+    throw OrderNotImplementedException("The requested action is not implemented.");
   }
 
   translator.at(type)(gameLobbyOrder);
@@ -38,15 +41,25 @@ void ServerGameLobby::join(const std::string &gameName, const size_t &playerId) 
   this->protocol.sendLobby(gameLobbyInfo);
 }
 
-void ServerGameLobby::exit(const GameLobbyOrder &order) {
-  std::string gameName = this->playersToLobby.at(order.getPlayerId());
-  GameLobby& gameLobby = this->gameLobbies.at(gameName);
-  gameLobby.kick(order.getPlayerId());
-  this->protocol.disconnect({ order.getPlayerId() });
-  GameLobbyDTO gameLobbyInfo = gameLobby.getInfo();
-  if (gameLobbyInfo.status == READY_STATUS) {
-    this->serverInGame.addNewGame(gameName, gameLobbyInfo);
-  }
+void ServerGameLobby::exit(const GameLobbyOrder& order) {
+    std::string gameName = this->playersToLobby.at(order.getPlayerId());
+    GameLobby& gameLobby = this->gameLobbies.at(gameName);
+    gameLobby.kick(order.getPlayerId());
+    this->protocol.disconnect({order.getPlayerId()});
+    GameLobbyDTO gameLobbyInfo = gameLobby.getInfo();
+    if (gameLobbyInfo.status == READY_STATUS) {
+        std::erase_if(this->playersToLobby,
+                      [&](const auto& pair) { return pair.second == gameName; });
+        this->gameLobbies.erase(gameName);
+        this->serverInGame.addNewGame(gameName, gameLobbyInfo);
+    }
+}
+void ServerGameLobby::add(const std::string& gameName, const size_t& id, std::map<std::string, std::vector<size_t>>& lobbies) const {
+    if (this->gameLobbies.contains(gameName)) {
+        throw GameAlreadyExistsException("The lobby already exists.");
+    }
+    this->serverInGame.add(gameName, id, lobbies);
+
 }
 
 GamesListDTO ServerGameLobby::listLobbies(const size_t& id) {
@@ -67,8 +80,8 @@ void ServerGameLobby::ready(const GameLobbyOrder &order) {
   GameLobbyDTO gameLobbyInfo = gameLobby.getInfo();
   this->protocol.sendLobby(gameLobbyInfo);
   if (gameLobbyInfo.status == GameLobbyStatus::READY_STATUS) {
-    this->serverInGame.addNewGame(gameName, gameLobbyInfo);
-    this->gameLobbies.erase(gameName);
-      this->playersToLobby.erase(order.getPlayerId());
+      std::erase_if(this->playersToLobby, [&](const auto& pair) { return pair.second == gameName; });
+      this->gameLobbies.erase(gameName);
+      this->serverInGame.addNewGame(gameName, gameLobbyInfo);
   }
 }

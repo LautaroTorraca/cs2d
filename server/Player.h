@@ -35,6 +35,7 @@ class Player : public Entity, public Damageable, public Buyer, public Advancer, 
     uint8_t deaths;
     std::unique_ptr<Backer> backer;
     Wallet wallet;
+    uint16_t collectedMoney;
 
 protected:
     PlayerStatus status;
@@ -92,7 +93,11 @@ public:
 
     PlayerInfoDTO getInfo();
 
-    void setDeaths(const uint8_t deaths);
+    void setDeaths(const uint8_t& deaths);
+
+    void setKills(const uint8_t& kills);
+
+    void addCollectedMoney(const uint16_t& collectedMoney);
 };
 
 

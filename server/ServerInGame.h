@@ -43,4 +43,5 @@ public:
     void addNewGame(std::string& gameName, const GameLobbyDTO& gameInfo);
     void leaveGameLobby(const size_t& id);
     ~ServerInGame();
+    void add(const std::string& gameName, const size_t& id, std::map<std::string, std::vector<unsigned long>>& lobbies);
 };

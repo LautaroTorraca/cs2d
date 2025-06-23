@@ -25,14 +25,15 @@ class PlayerInfoDTO {
     uint8_t kills;
     uint8_t deaths;
     PlayerStatus status;
+    uint16_t collectedMoney;
     public:
     PlayerInfoDTO(const size_t& id, const std::string& name, const Skin& skin, const CoordinateDTO& coordinate,
         const double& angle, const uint16_t& actualMoney, const uint8_t& actualHealthPoints,
-        std::vector<WeaponInfoDTO>& weaponInfo, WeaponInfoDTO& actualWeaponInfo, const uint8_t& kills, const uint8_t& deaths, const PlayerStatus& status):
+        std::vector<WeaponInfoDTO>& weaponInfo, WeaponInfoDTO& actualWeaponInfo, const uint8_t& kills, const uint8_t& deaths, const PlayerStatus& status, const uint16_t& collectedMoney):
     id(id), name(name), skin(skin), coordinate(coordinate), angle(angle), actualMoney(actualMoney),
     actualHealthPoints(actualHealthPoints), weaponsInfo(std::move(weaponInfo)),
     actualWeapon(std::move(actualWeaponInfo)),
-    kills(kills), deaths(deaths), status(status) {}
+    kills(kills), deaths(deaths), status(status), collectedMoney(collectedMoney) {}
 
     [[nodiscard]] const size_t& getId() const;
     [[nodiscard]]const std::string& getName() const;
@@ -40,6 +41,7 @@ class PlayerInfoDTO {
     [[nodiscard]]const CoordinateDTO& getCoordinate() const;
     [[nodiscard]]const double& getAngle() const;
     [[nodiscard]]const uint16_t& getMoney() const;
+    [[nodiscard]]const uint16_t& getCollectedMoney() const;
     [[nodiscard]]const uint8_t& getHealth() const;
     [[nodiscard]]const std::vector<WeaponInfoDTO>& getWeaponsInfo() const;
     [[nodiscard]]const WeaponInfoDTO& getActualWeapon() const;

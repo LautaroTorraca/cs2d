@@ -20,7 +20,7 @@ void TerroristsTeam::spawnBomb(std::shared_ptr<Weapon>& bomb) {
 }
 
 void TerroristsTeam::reset(Spawner & spawner) {
-    this->cemetery.clear();//TODO: Subir este codigo repetido aca y en CountersTeam a una nueva clase padre, llamada Team.
+    this->cemetery.clear();
     for (auto &terrorist: this->terrorists | std::views::values) {
         terrorist->reset();
         std::shared_ptr<Entity> entity = terrorist;

@@ -118,6 +118,8 @@ void GameMonitor::changeTeam(const std::vector<PlayerInfoDTO>& playersInfo) {
         Skin newSkin = static_cast<Skin>(skinId);
         this->game.addPlayer(player.getId(), player.getName(), newTeam, newSkin);
         this->game.setDeaths(player.getId(), player.getDeaths());
+        this->game.setKills(player.getId(), player.getKills());
+        this->game.addCollectedMoney(player.getId(), player.getCollectedMoney());
     }
 }
 
