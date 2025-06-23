@@ -302,26 +302,26 @@ int16_t GameRenderer::renderSymbol(CoordinateInformation posInScreen, UiSymbol s
 }
 
 int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, EntityType weapon,
-                                        RgbValue color) {
+                                        RgbValue color, double mult) {
 
     Texture& sprite = textureManager.getWeapon(weapon);
-    double multH = static_cast<double>(HUD_NUM_H) / sprite.GetHeight();
+    // double multH = static_cast<double>(HUD_NUM_H) / sprite.GetHeight();
     sprite.SetColorMod(color.r, color.g, color.b);
-    int offX = 0;
-    int offY = -5;
-    if (weapon == EntityType::KNIFE || weapon == EntityType::P_AMMO ||
-        weapon == EntityType::S_AMMO) {
-        multH = 1.5;
-        offY = 0;
-        offX = -20;
-    }
+    // int offX = 0;
+    // int offY = -5;
+    // if (weapon == EntityType::KNIFE || weapon == EntityType::P_AMMO ||
+    //     weapon == EntityType::S_AMMO) {
+    //     multH = 1.5;
+    // offY = 0;
+    // offX = -20;
+    // }
     renderer.Copy(sprite, NullOpt,
-                  Rect((posInScreen.x - (sprite.GetWidth() * multH) - offX),
-                       posInScreen.y - (sprite.GetHeight() * multH / 2) - offY,
-                       sprite.GetWidth() * (multH), sprite.GetHeight() * (multH)));
+                  Rect((posInScreen.x - (sprite.GetWidth() * mult)),
+                       posInScreen.y - (sprite.GetHeight() * mult / 2), sprite.GetWidth() * (mult),
+                       sprite.GetHeight() * (mult)));
 
     sprite.SetColorMod(255, 255, 255);
-    return (posInScreen.x + (sprite.GetWidth() * multH));
+    return (posInScreen.x + (sprite.GetWidth() * mult));
 }
 
 void GameRenderer::drawFOVStencil(const CoordinateInformation&, double directionDeg, double fovDeg,
@@ -451,42 +451,41 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
 }
 
 void GameRenderer::setBuyMenu() {
-    RgbValue green(10, 255, 10, 80);
+    RgbValue grey(80, 80, 80, 80);
     RgbValue lightGreen(150, 255, 150, 200);
     RgbValue none(255, 255, 255);
     Sint16 rad = 10;
     int borderDist = 50;
     double textPos = (RES_WIDTH_BASE / 2.0) - 50;
-    renderText("BUY MENU", {textPos, 20}, 20, green);
+    renderText("BUY MENU", {textPos, 20}, 20, grey);
 
 
     boxRGBA(renderer.Get(), (RES_WIDTH_BASE), 0, 0, (RES_HEIGTH_BASE), 0, 0, 0, 100);
 
     roundedBoxRGBA(renderer.Get(), (RES_WIDTH_BASE - borderDist), borderDist, (borderDist),
-                   (RES_HEIGTH_BASE - borderDist), rad, green.r, green.g, green.b, green.a);
+                   (RES_HEIGTH_BASE - borderDist), rad, grey.r, grey.g, grey.b, grey.a);
 
     renderText("AK-47", {90, 60}, 20, lightGreen);
-    renderWeaponGlyph({160, 100}, EntityType::AK47, none);
+    renderWeaponGlyph({160, 100}, EntityType::AK47, none, 1.5);
     renderBuyButton({170, 100}, 1, 500);
 
     renderText("   M3", {90, 130}, 20, lightGreen);
-    renderWeaponGlyph({160, 170}, EntityType::M3, none);
+    renderWeaponGlyph({160, 170}, EntityType::M3, none, 1.5);
     renderBuyButton({170, 170}, 2, 1500);
 
     renderText("  AWP", {90, 200}, 20, lightGreen);
-    renderWeaponGlyph({160, 240}, EntityType::AWP, none);
+    renderWeaponGlyph({160, 240}, EntityType::AWP, none, 1.5);
     renderBuyButton({170, 240}, 3, 2500);
 
+    renderText("PRIMARY", {260, 73}, 12, lightGreen);
+    renderText("    AMMO", {260, 85}, 12, lightGreen);
+    renderWeaponGlyph({320, 120}, EntityType::P_AMMO, none, 3);
+    renderBuyButton({330, 100}, 9, 100);
 
-    renderText("PRIMARY", {240, 60}, 15, lightGreen);
-    renderText("    AMMO", {240, 85}, 15, lightGreen);
-    renderWeaponGlyph({270, 100}, EntityType::P_AMMO, none);
-    renderBuyButton({310, 100}, 9, 100);
-
-    renderText("SECONDARY", {240, 110}, 15, lightGreen);
-    renderText("    AMMO", {240, 130}, 15, lightGreen);
-    renderWeaponGlyph({270, 175}, EntityType::S_AMMO, none);
-    renderBuyButton({310, 170}, 0, 50);
+    renderText("SECONDARY", {260, 153}, 12, lightGreen);
+    renderText("    AMMO", {260, 165}, 12, lightGreen);
+    renderWeaponGlyph({330, 215}, EntityType::S_AMMO, none, 4.5);
+    renderBuyButton({330, 200}, 0, 50);
 }
 void GameRenderer::renderBuyButton(CoordinateInformation pos, int button, int price) {
 

@@ -66,7 +66,8 @@ private:
                          int height = HUD_NUM_H, int width = HUD_NUM_W);
     int16_t renderSymbol(CoordinateInformation posInScreen, UiSymbol symbol, RgbValue color);
 
-    int16_t renderWeaponGlyph(CoordinateInformation posInScreen, EntityType weapon, RgbValue color);
+    int16_t renderWeaponGlyph(CoordinateInformation posInScreen, EntityType weapon, RgbValue color,
+                              double mult = 1);
     void renderBullets(PlayerInformation& player);
     void renderHeldWeapon(PlayerInformation& player);
 
