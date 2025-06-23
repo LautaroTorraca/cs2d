@@ -30,6 +30,7 @@
 #define TILE_SIZE 32
 #define WEAPON_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 #define M3_SWEPT_ANGLE_KEY "sweptAngle"
+#define BURST_SPEED_KEY "burstSpeed"
 
 
 GameMapParser::GameMapParser(const std::string &mapFilePath) {
@@ -62,7 +63,7 @@ GameMapParser::GameMapParser(const std::string &mapFilePath) {
         double akCadence =  parser.getWeaponInfo(WeaponType::AK47, CADENCE_KEY);
         double akSpeed =  parser.getWeaponInfo(WeaponType::AK47, SPEED_KEY);
         double akBulletsPerShot =  parser.getWeaponInfo(WeaponType::AK47, BULLETS_PER_SHOT_KEY);
-        double akBurstSpeed =  parser.getWeaponInfo(WeaponType::AK47, BULLETS_PER_SHOT_KEY);
+        double akBurstSpeed =  parser.getWeaponInfo(WeaponType::AK47, BURST_SPEED_KEY);
         double maxBullets =  parser.getWeaponInfo(WeaponType::AK47, MAX_BULLETS_KEY);
         std::shared_ptr<Ak> ak = std::make_shared<Ak>(0, akDamagePerBullet, akPrecision, akRange, akCadence, akSpeed, akBulletsPerShot, akBurstSpeed, maxBullets);
         return std::make_shared<DropBox>(2, ak, position);
