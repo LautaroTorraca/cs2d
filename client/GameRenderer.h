@@ -77,7 +77,7 @@ private:
     void renderText(std::string text, CoordinateInformation pos, int fontSize, RgbValue color);
     void renderBuyButton(CoordinateInformation pos, int button, int price);
     void setRoundWinMenu(GameStatus state);
-    void setLeaderBoard(GameStatus state);
+    void setLeaderBoard(const std::vector<PlayerInformation>& players);
 
 
     int getPlayerFrame(PlayerInformation& player);

@@ -21,6 +21,7 @@ struct PlayerInformation {
     CoordinateInformation position;
     double angle;
     uint16_t actualMoney;
+    uint16_t totalMoney;
     uint8_t actualHealthPoints;
     std::vector<WeaponInformation> weaponsInfo;
     WeaponInformation actualWeapon;

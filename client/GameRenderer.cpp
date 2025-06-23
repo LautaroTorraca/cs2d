@@ -8,11 +8,8 @@
 #include "Constants/PlayerDataConstants.h"
 #include "SDL2pp/Optional.hh"
 #include "SDL2pp/Texture.hh"
-// #include "build/_deps/sdl2_ttf-src/SDL_ttf.h"
 #include "server/Constants/MapTypeConstants.h"
-// #include "server/Game.h"
 #include "server/GameStatus.h"
-// #include "server/PlayerStatus.h"
 
 #include "CoordinateInformation.h"
 #include "EntityConstants.h"
@@ -87,7 +84,7 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
     setRoundWinMenu(gameSnapshot.status);
 
-    setLeaderBoard(gameSnapshot.status);
+    setLeaderBoard(gameSnapshot.playersInfo);
 
     prevStatus = gameSnapshot.status;
     return true;
@@ -389,7 +386,43 @@ void GameRenderer::setRoundWinMenu(GameStatus state) {
     renderText(text, {textPosX, pading.y + 10 - yOffset}, 20, lightGreen);
 }
 
-void GameRenderer::setLeaderBoard(GameStatus state) {}
+void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players) {
+    RgbValue green(10, 255, 10, 80);
+    RgbValue lightGreen(150, 255, 150, 200);
+    RgbValue none(255, 255, 255);
+    Sint16 rad = 10;
+
+    int boardWidth = RES_WIDTH_BASE / 2;
+    int boardHeight = RES_HEIGTH_BASE * 3 / 4;
+    double boardX = (RES_WIDTH_BASE - boardWidth) / 2.0;
+    double boardY = (RES_HEIGTH_BASE - boardHeight) / 2.0;
+
+    roundedBoxRGBA(renderer.Get(), boardX, boardY, boardX + boardWidth, boardY + boardHeight, rad,
+                   green.r, green.g, green.b, green.a);
+
+    renderText("Leaderboard", {boardX + 20, boardY + 20}, 25, lightGreen);
+
+    double nameX = boardX + 20;
+    double killsX = boardX + boardWidth / 2.0 + 30;
+    double deathsX = killsX + 70;
+    double moneyX = deathsX + 70;
+
+    renderText("Name", {nameX, boardY + 60}, 18, lightGreen);
+    renderText("Kills", {killsX, boardY + 60}, 18, lightGreen);
+    renderText("Deaths", {deathsX, boardY + 60}, 18, lightGreen);
+    renderText("Money", {moneyX, boardY + 60}, 18, lightGreen);
+
+    double startY = boardY + 90;
+    double lineHeight = 25;
+
+    for (const PlayerInformation& player: players) {
+        renderText(player.name, {nameX, startY}, 16, none);
+        renderNumberStream({killsX, startY + 16}, player.kills, 2, 2, none, 16, 12);
+        renderNumberStream({deathsX, startY + 16}, player.deaths, 2, 2, none, 16, 12);
+        renderNumberStream({moneyX, startY + 16}, player.totalMoney, 5, 2, none, 16, 12);
+        startY += lineHeight;
+    }
+}
 
 void GameRenderer::setBuyMenu() {
     RgbValue green(10, 255, 10, 80);
@@ -405,9 +438,6 @@ void GameRenderer::setBuyMenu() {
 
     roundedBoxRGBA(renderer.Get(), (RES_WIDTH_BASE - borderDist), borderDist, (borderDist),
                    (RES_HEIGTH_BASE - borderDist), rad, green.r, green.g, green.b, green.a);
-
-    // RES_WIDTH_BASE = 480;
-    // RES_HEIGTH_BASE = 360;
 
     renderText("AK-47", {90, 60}, 20, lightGreen);
     renderWeaponGlyph({160, 100}, EntityType::AK47, none);
