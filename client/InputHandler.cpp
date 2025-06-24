@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#include "Constants/ClientConstants.h"
 #include "Constants/PlayerDataConstants.h"
 #include "server/GameStatus.h"
 #include "server/ProductType.h"
@@ -13,7 +12,7 @@
 
 InputHandler::InputHandler(Protocol& protocol): protocol(protocol) {}
 
-bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
+bool InputHandler::processEvents(SDL_Event& event, GameStatus status, double res_w, double res_h) {
 
     do {
         if (status != GameStatus::BUY_TIME)
@@ -94,8 +93,8 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
                 }
             } else if (event.type == SDL_MOUSEMOTION) {
 
-                double dx = event.motion.x - static_cast<double>(RES_WIDTH) / 2;
-                double dy = event.motion.y - static_cast<double>(RES_HEIGTH) / 2;
+                double dx = event.motion.x - static_cast<double>(res_w) / 2;
+                double dy = event.motion.y - static_cast<double>(res_h) / 2;
                 double angleInRads = atan2(dy, dx);
                 double angleInDegree = 180.0 * angleInRads / M_PI;
                 angleInDegree += 90;

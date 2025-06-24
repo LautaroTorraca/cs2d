@@ -2,6 +2,8 @@
 
 #include <cstdint>
 // #include <iostream>
+// #include <iostream>
+#include <exception>
 #include <string>
 
 #include "Constants/ClientConstants.h"
@@ -25,59 +27,28 @@
 #include "TextureManager.h"
 
 
-GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId):
-        window("CS-Go 2D???", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, RES_WIDTH,
-               RES_HEIGTH, 0),
+GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId, double width,
+                           double height):
+        resolution_width(width),
+        resolution_heigth(height),
+        window("CS-Go 2D???", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resolution_width,
+               resolution_heigth, 0),
         renderer(window, -1, SDL_RENDERER_ACCELERATED),
-        textureManager(renderer),
+        textureManager(renderer, resolution_width, resolution_heigth),
         tileMap(tileMap),
         clientID(clientId),
         explotion(renderer, textureManager.getExplotion(), soundManager) {}
 
 bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
+    PlayerInformation& currentPlayer = fillPlayerStatesAndFindClient(gameSnapshot);
 
-    if (playerSprites.size() == 0) {
-
-        for (PlayerInformation player: gameSnapshot.playersInfo) {
-
-            if (player.id == clientID) {
-                playerSprites.emplace(player.id, PlayerSprite(renderer, textureManager,
-                                                              soundManager, player, true));
-            } else {
-                playerSprites.emplace(player.id, PlayerSprite(renderer, textureManager,
-                                                              soundManager, player, false));
-            }
-        }
-    }
-    float xScale = (float(RES_WIDTH) / RES_WIDTH_BASE);
-    float yScale = (float(RES_HEIGTH) / RES_HEIGTH_BASE);
+    float xScale = (float(resolution_width) / RES_WIDTH_BASE);
+    float yScale = (float(resolution_heigth) / RES_HEIGTH_BASE);
     renderer.SetScale(xScale, yScale);
 
-    // TODO: cambiar por un map la lista de players.
-    size_t index = 0;
-    for (PlayerInformation player: gameSnapshot.playersInfo) {
-        if (player.id == clientID) {
-            break;
-        }
-        index++;
-    }
-
-    for (PlayerInformation player: gameSnapshot.playersInfo) {
-        std::cout << "collectedMoney: " << player.collectedMoney
-                  << ", deaths: " << (int)player.deaths << ", kills:" << (int)player.kills
-                  << std::endl;
-    }
-    PlayerInformation& currentPlayer = gameSnapshot.playersInfo.at(index);
-
-    srand(time(nullptr));
-    int numero = rand() % 6;
-    if (numero == 3) {
-        // std::cout << "player: " << currentPlayer.name << "\n";
-    }
-
-    offset.x = (gameSnapshot.playersInfo.at(index).position.x) - int(RES_WIDTH_BASE / 2);
-    offset.y = (gameSnapshot.playersInfo.at(index).position.y) - int(RES_HEIGTH_BASE / 2);
+    offset.x = currentPlayer.position.x - int(RES_WIDTH_BASE / 2);
+    offset.y = currentPlayer.position.y - int(RES_HEIGTH_BASE / 2);
 
     renderMap(tileMap, map);
     renderFloorItems(gameSnapshot.dropsInfo);
@@ -86,6 +57,8 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
 
 
+    setLeaderBoard(gameSnapshot.playersInfo);
+
     if (gameSnapshot.status == GameStatus::GAME_OVER) {
         setLeaderBoard(gameSnapshot.playersInfo);
         render();
@@ -93,8 +66,7 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
         return false;
     }
 
-
-    renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
+    renderUI(currentPlayer, gameSnapshot, mouseCoords);
     setRoundWinMenu(gameSnapshot.status);
     stateSounds(gameSnapshot.status);
 
@@ -341,8 +313,8 @@ void GameRenderer::drawFOVStencil(const CoordinateInformation&, double direction
 
     renderer.SetTarget(textureManager.getFov().SetBlendMode(SDL_BLENDMODE_NONE));
 
-    float xScale = (float(RES_WIDTH) / RES_WIDTH_BASE);
-    float yScale = (float(RES_HEIGTH) / RES_HEIGTH_BASE);
+    float xScale = (float(resolution_width) / RES_WIDTH_BASE);
+    float yScale = (float(resolution_heigth) / RES_HEIGTH_BASE);
     renderer.SetScale(xScale, yScale);
 
     renderer.SetDrawColor(r / 2, g / 2, b / 2, a);
@@ -452,60 +424,56 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
               });
 
 
-    for (int x = 0; x < 5; x++) {
+    // for (int x = 0; x < 5; x++) {
 
-        for (const PlayerInformation& player: sortedTT) {
+    for (const PlayerInformation& player: sortedTT) {
 
-            std::string displayName = player.name;
-            if (displayName.length() > 10) {
-                displayName = displayName.substr(0, 7) + "...";
-            }
-            renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorTT);
+        std::string displayName = player.name;
+        if (displayName.length() > 10) {
+            displayName = displayName.substr(0, 7) + "...";
+        }
+        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorTT);
 
-            renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                               player.kills, 2, 2, textColorTT, numberStreamHeight,
-                               numberStreamWidth);
-            renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                               player.deaths, 2, 2, textColorTT, numberStreamHeight,
-                               numberStreamWidth);
-            renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                               player.collectedMoney, 5, 2, textColorTT, numberStreamHeight,
-                               numberStreamWidth);
+        renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.kills, 2, 2, textColorTT, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.deaths, 2, 2, textColorTT, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.collectedMoney, 5, 2, textColorTT, numberStreamHeight,
+                           numberStreamWidth);
 
-            startY += lineHeight;
-            if (startY > boardY + boardHeight - lineHeight) {
-                break;
-            }
+        startY += lineHeight;
+        if (startY > boardY + boardHeight - lineHeight) {
+            break;
         }
     }
+    // }
+    // std::cout << "VALOR DE START Y: " << startY << "\n";
+    startY = 210;
 
-    startY += 30;
+    // for (int x = 0; x < 5; x++) {
+    for (const PlayerInformation& player: sortedCT) {
 
-    for (int x = 0; x < 5; x++) {
-        for (const PlayerInformation& player: sortedCT) {
+        std::string displayName = player.name;
+        if (displayName.length() > 10) {
+            displayName = displayName.substr(0, 7) + "...";
+        }
+        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorCT);
 
-            std::string displayName = player.name;
-            if (displayName.length() > 10) {
-                displayName = displayName.substr(0, 7) + "...";
-            }
-            renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorCT);
+        renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.kills, 2, 2, textColorCT, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.deaths, 2, 2, textColorCT, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.collectedMoney, 5, 2, textColorCT, numberStreamHeight,
+                           numberStreamWidth);
 
-            renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                               player.kills, 2, 2, textColorCT, numberStreamHeight,
-                               numberStreamWidth);
-            renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                               player.deaths, 2, 2, textColorCT, numberStreamHeight,
-                               numberStreamWidth);
-            renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                               player.collectedMoney, 5, 2, textColorCT, numberStreamHeight,
-                               numberStreamWidth);
-
-            startY += lineHeight;
-            if (startY > boardY + boardHeight - lineHeight) {
-                break;
-            }
+        startY += lineHeight;
+        if (startY > boardY + boardHeight - lineHeight) {
+            break;
         }
     }
+    // }
 }
 
 void GameRenderer::setBuyMenu() {
@@ -597,4 +565,30 @@ void GameRenderer::render() {
     renderer.Present();
     renderer.SetDrawColor(0, 0, 0, 255);
     renderer.Clear();
+}
+
+
+PlayerInformation& GameRenderer::fillPlayerStatesAndFindClient(Snapshot& snapshot) {
+    if (playerSprites.size() == 0) {
+
+        for (PlayerInformation player: snapshot.playersInfo) {
+
+            if (player.id == clientID) {
+                playerSprites.emplace(player.id, PlayerSprite(renderer, textureManager,
+                                                              soundManager, player, true));
+            } else {
+                playerSprites.emplace(player.id, PlayerSprite(renderer, textureManager,
+                                                              soundManager, player, false));
+            }
+        }
+    }
+
+    size_t index = 0;
+    for (PlayerInformation player: snapshot.playersInfo) {
+        if (player.id == clientID) {
+            return snapshot.playersInfo.at(index);
+        }
+        index++;
+    }
+    throw std::exception();
 }

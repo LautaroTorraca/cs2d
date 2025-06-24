@@ -32,7 +32,7 @@ private:
     Texture removeBackground(ColorKey color, std::string filename);
 
 public:
-    TextureManager(Renderer& renderer);
+    TextureManager(Renderer& renderer, double res_w, double res_h);
     Texture& getSkin(Skin id);
     Texture& getTileMap(MapType id);
     Texture& getDroppedWeapon(EntityType id);

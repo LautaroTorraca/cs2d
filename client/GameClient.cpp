@@ -32,13 +32,15 @@ GameClient::GameClient(Protocol& protocol):
         running(true),
         protocol(HOSTNAME, PORT),
         inputHandler(protocol),
-        dataReceiver(protocol, snapshotQueue) {}
+        dataReceiver(protocol, snapshotQueue),
+        parser("../settings.yaml") {}
 
 GameClient::GameClient(char* port):
         running(true),
         protocol(HOSTNAME, port),
         inputHandler(protocol),
-        dataReceiver(protocol, snapshotQueue) {}
+        dataReceiver(protocol, snapshotQueue),
+        parser("../settings.yaml") {}
 
 void GameClient::run() {}
 void GameClient::run(int argc, char* argv[]) {
@@ -103,8 +105,14 @@ void GameClient::run(int argc, char* argv[]) {
     std::cout << "hasta aca todo joya no?\n";
 
     // HACK: fix constant loop rate.
+    double res_width = parser.getResolution("resolution_width");
+    double res_height = parser.getResolution("resolution_height");
+
+    std::cout << "res width de parser " << res_width << "\n";
+    std::cout << "res geight de parser " << res_height << "\n";
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
-    GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
+
+    GameRenderer renderer(preSnapshot.map, preSnapshot.clientId, res_width, res_height);
     try {
         dataReceiver.start();
         bool running = true;
@@ -123,7 +131,8 @@ void GameClient::run(int argc, char* argv[]) {
             if (frameDelay <= frameTime) {
                 Snapshot gameSnapshot = snapshotQueue.pop();
 
-                running = inputHandler.processEvents(event, gameSnapshot.status);
+                running = inputHandler.processEvents(event, gameSnapshot.status, res_width,
+                                                     res_height);
                 // FIX: cambiar harcodeada de mapa.
                 // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
                 // renderer.

@@ -15,10 +15,9 @@
 #include "EntityConstants.h"
 #include "RgbValue.h"
 
-TextureManager::TextureManager(Renderer& renderer):
+TextureManager::TextureManager(Renderer& renderer, double res_w, double res_h):
         renderer(renderer),
-        fovTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, RES_WIDTH,
-                   RES_HEIGTH),
+        fovTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, res_w, res_h),
 
         explotionTexture(removeBackground(none, "../client/assets/explosion.png")) {
 

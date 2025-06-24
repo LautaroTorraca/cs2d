@@ -26,14 +26,12 @@
 
 using namespace SDL2pp;
 using namespace DTO;
-// TODO: cambiar por las resoluciones configuradas en el YAML.
-// constexpr int RES_WIDTH = 640;
-// constexpr int RES_HEIGTH = 400;
-
 
 class GameRenderer {
 
 private:
+    double resolution_width;
+    double resolution_heigth;
     Window window;
     Renderer renderer;
     TextureManager textureManager;
@@ -80,9 +78,12 @@ private:
     void setRoundWinMenu(GameStatus state);
     void setLeaderBoard(const std::vector<PlayerInformation>& players);
     void stateSounds(GameStatus state);
+    PlayerInformation& fillPlayerStatesAndFindClient(Snapshot& snapshot);
 
 public:
-    GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId);
+    GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId, double width,
+                 double height);
+
     bool setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
     void setBuyMenu();
     void render();

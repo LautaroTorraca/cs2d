@@ -15,9 +15,11 @@ private:
     bool inBuyMenu = false;
 
 public:
+    // InputHandler(Protocol& protocol);
     InputHandler(Protocol& protocol);
+    bool processEvents(SDL_Event& event, GameStatus status, double res_h, double res_w);
     void checkDiagonalMovement();
-    bool processEvents(SDL_Event& event, GameStatus status);
+    // bool processEvents(SDL_Event & event, GameStatus status);
     bool isInMenu();
     Coords getMouseCoords();
 };
