@@ -30,6 +30,7 @@ void ListGameFlow::run() {
             std::ostringstream oss;
             oss << game.gameName
                 << " | Rounds: " << static_cast<int>(game.rounds)
+                << " | Map: " << mapMapper.toString(game.mapType).toStdString()
                 << " | Max Players: " << static_cast<int>(game.maxPlayers);
 
             QString entry = QString::fromStdString(oss.str());

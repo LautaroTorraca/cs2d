@@ -66,6 +66,8 @@ void GameClient::run(const MapType& mapType ) {
 
                 running = renderer.setScreen(gameSnapshot, mapType,
                                              inputHandler.getMouseCoords());
+
+
                 if (inputHandler.isInMenu()) {
                     renderer.setBuyMenu();
                 }
@@ -77,7 +79,9 @@ void GameClient::run(const MapType& mapType ) {
     } catch (...) {
         std::cout << "catcheo en gameClient\n\n";
     }
-    protocol.exit();
     dataReceiver.close();
+    std::cout << "antes de join" << std::endl;
     dataReceiver.join();
+    std::cout << "antes de join" << std::endl;
+
 }

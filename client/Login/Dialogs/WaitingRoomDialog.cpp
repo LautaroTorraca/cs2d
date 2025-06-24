@@ -310,13 +310,14 @@ void WaitingRoomDialog::closeMenuAndStartGame(const MapType& mapType) {
         GameClient gameClient(protocol);
         gameClient.run(mapType);
 
-        restoreMenu();
+
 
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Game Error",
                               QString("Failed to start game: %1").arg(e.what()));
-        restoreMenu();
+
     }
+    restoreMenu();
 }
 
 void WaitingRoomDialog::handleConnectionError(const std::string& error) {
@@ -326,14 +327,17 @@ void WaitingRoomDialog::handleConnectionError(const std::string& error) {
 }
 
 void WaitingRoomDialog::restoreMenu() {
+    std::cout << "restore menu" << std::endl;
     if (menu) {
-        if (menu->getMusicManager()) {
-            menu->getMusicManager()->setVolume(0.4f);
-        }
-
-        menu->showNormal();
+        std::cout << "adentro if  restore" << std::endl;
+        menu->getMusicManager()->setVolume(0.4f);
+        std::cout << " music" << std::endl;
+        menu->show();
+        std::cout << "show" << std::endl;
         menu->raise();
+        std::cout << "raise" << std::endl;
         menu->activateWindow();
+        std::cout << "active windowu" << std::endl;
     }
 }
 
@@ -413,4 +417,5 @@ void WaitingRoomDialog::closeEvent(QCloseEvent* event) {
     }).detach();
 
     QDialog::closeEvent(event);
+    restoreMenu(); //TODO VER SI ESTA BIEN!!!!
 }

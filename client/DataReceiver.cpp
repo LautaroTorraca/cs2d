@@ -18,11 +18,14 @@ void DataReceiver::run() {
         while (running) {
             Snapshot snapshot = protocol.receiveSnapshot();
             snapshotQueue.push(snapshot);
+            if(snapshot.status == GAME_OVER)
+                return;
             // SDL_Delay(500);
         }
     } catch (const ClosedQueue&) {
         std::cout << "queue ded\n";
         snapshotQueue.close();
+        return;
     } catch (...) {
         std::cout << "queue ded and other error\n";
         snapshotQueue.close();
