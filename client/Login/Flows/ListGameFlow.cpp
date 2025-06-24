@@ -1,10 +1,13 @@
 #include "ListGameFlow.h"
-#include "Login/Dialogs/GameListDialog.h"
-#include "Login/MessageBox.h"
-#include "Login/Flows/GameFlowUtils.h"
 
 #include <QStringList>
+#include <iostream>
 #include <stdexcept>
+
+#include "Login/Dialogs/GameListDialog.h"
+#include "Login/Flows/GameFlowUtils.h"
+#include "Login/Mappers/MapMapper.h"
+#include "Login/MessageBox.h"
 
 ListGameFlow::ListGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
         : GameFlowBase(usernameInput, protocol, parent, menu) {}
@@ -21,20 +24,30 @@ void ListGameFlow::run() {
             return;
         }
 
+        MapMapper mapMapper;
         QStringList formattedGames;
         for (const auto& game : gameList.gamesLobbies) {
-            QString clean = QString::fromStdString(game.gameName);
-            clean.remove('\n');
-            clean.remove('\r');
-            formattedGames << clean;
+            std::ostringstream oss;
+            oss << game.gameName
+                << " | Rounds: " << static_cast<int>(game.rounds)
+                << " | Max Players: " << static_cast<int>(game.maxPlayers);
+
+            QString entry = QString::fromStdString(oss.str());
+            entry.remove('\n');
+            entry.remove('\r');
+            formattedGames << entry;
         }
+
 
         GameListDialog dialog(formattedGames, parent);
         if (dialog.exec() != QDialog::Accepted) return;
 
         QString selected = dialog.getSelectedGame();
-
-        protocol.joinLobby(selected.toStdString());
+        std::stringstream gameInfo(selected.toStdString());
+        std::string gameName;
+        gameInfo >> gameName;
+        std::cout << gameName << std::endl;
+        protocol.joinLobby(gameName);
 
         LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
         if (lobbyStatus.status != ConnectionStatus::SUCCESS) {
