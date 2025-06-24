@@ -4,6 +4,8 @@
 
 #include "Monitor/GameMonitor.h"
 
+#include "OrderNotImplementedException.h"
+
 #define SHOP_PATH "../gameConstants/shop.yaml"
 #define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 
@@ -46,7 +48,7 @@ void ServerInGame::handle(const std::unique_ptr<Order> &order) const {
   const OrderType type = inGameOrder.getOrderType();
 
   if (!translator.contains(type)) {
-    throw -1; // TODO FIX
+    throw OrderNotImplementedException("The requested action is not implemented.");
   }
 
   translator.at(type)(inGameOrder);
@@ -135,7 +137,7 @@ void ServerInGame::eraseGame(const std::string& gameName) {
     this->games.at(gameName)->join();
     std::vector<size_t> ids = this->getGameIds(gameName);
     for (auto& id: ids) {
-        this->protocol.disconnect({id});
+        this->playerToGame.erase(id);
     }
     this->games.erase(gameName);
     std::erase_if(this->playerToGame, [&](const auto& pair) {
@@ -171,4 +173,11 @@ ServerInGame::~ServerInGame() {
         game->stop();
         game->join();
     }
+}
+void ServerInGame::add(const std::string& gameName, const size_t& id,
+                        std::map<std::string, std::vector<unsigned long>>& lobbies) {
+    if (this->games.contains(gameName)) {
+        throw std::runtime_error("The game already exists.");
+    }
+    lobbies[gameName].push_back(id);
 }

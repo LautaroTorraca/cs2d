@@ -25,7 +25,4 @@ public:
     ServerLobbyProtocol& operator=(ServerLobbyProtocol&&) = delete;
 
     ServerLobbyOrder handleRequest(const Request& request);
-
-
-    void end();
 };

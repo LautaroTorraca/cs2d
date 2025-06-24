@@ -5,9 +5,9 @@
 #include <cstdint>
 #include <string>
 
-#include "client/CoordinateInformation.h"
-#include "client/ProjectileInformation.h"
-#include "common/Constants/SnapshotConstants.h"
+#include "CoordinateInformation.h"
+#include "ProjectileInformation.h"
+#include "SnapshotConstants.h"
 
 constexpr int RES_WIDTH_BASE = 480;
 constexpr int RES_HEIGTH_BASE = 360;
@@ -27,11 +27,10 @@ constexpr int TILE_HEIGHT = 32;  // RES_HEIGTH / LOGICAL_HEIGHT; //FIX: relative
 constexpr int PLAYER_HEIGTH = 32;  // RES_WIDTH / LOGICAL_WIDTH;
 constexpr int PLAYER_WIDTH = 32;   // RES_HEIGTH / LOGICAL_HEIGHT;
 
-constexpr double WPN_SZ_MULT = 1;
-
 #define HUD_NUM_H 24
 #define HUD_NUM_W 17
 
+// enum Sound {};
 enum UiSymbol : int {
     HEALTH = 0,
     SHIELD = 1,
@@ -119,9 +118,9 @@ inline void fillDummies(Snapshot& gameSnapshot) {
     // p3_skin = GameConstants::Skins::L337_KREW;
     // p3_team = GameConstants::Team::TERRORISTS;
     //
-    PlayerInformation p1(p1_id, p1_nombre, p1_skin, p1_coords, p1_angle, p1_actualMoney,
+    PlayerInformation p1(p1_id, p1_nombre, p1_skin, p1_coords, p1_angle, p1_actualMoney, p1_actualMoney,
                          p1_actualHealthPoints, p1_weaponsInfo, p1_actualWeapon, p1_kills, 0, PlayerStatus::LIVING);
-    PlayerInformation p2(p2_id, p2_nombre, p2_skin, p2_coords, p2_angle, p2_actualMoney,
+    PlayerInformation p2(p2_id, p2_nombre, p2_skin, p2_coords, p2_angle, p2_actualMoney, p2_actualMoney,
                          p2_actualHealthPoints, p2_weaponsInfo, p2_actualWeapon, p2_kills, 0, PlayerStatus::LIVING);
     // PlayerInformation p3_
 

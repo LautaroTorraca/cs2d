@@ -6,10 +6,11 @@
 
 #include <sys/socket.h>
 
-#include "server/Constants/OpCodesConstans.h"
-
-#include "server/GameInfoDTO.h"
 #include "server/Constants/KeyContants.h"
+#include "server/Constants/OpCodesConstans.h"
+#include "server/GameInfoDTO.h"
+
+#include "server/ConnectionClosed.h"
 #include "liberror.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,
@@ -91,15 +92,14 @@ void ClientHandler::run() {
         try {
             uint8_t opCode = this->reader.u8tReader();
 
-            //std::cout << "ClientHandler::run, opecode: " << std::to_string(opCode) << std::endl;
             if (!this->opcodeDispatcher.contains(opCode)) {
-                throw std::runtime_error("OpCode no soportado: " + std::to_string(opCode));
+                throw ConnectionClosed("OpCode no soportado: " + std::to_string(opCode));
             }
 
             Request request = this->opcodeDispatcher.at(opCode)();
 
             this->requestsQueue.push(std::make_shared<Request>(std::move(request)));
-        } catch (std::exception& e) {
+        } catch (ConnectionClosed& e) {
             this->stop();
             std::cout << "Client " << this->id << " disconnected. " << e.what() << std::endl;
         }
@@ -151,13 +151,16 @@ void ClientHandler::endService() {
     this->stopService();
 }
 
-void ClientHandler::sendGamesList(const std::vector<std::string>& gamesList) {
-    std::stringstream gamesListStream;
-    for (const auto& game: gamesList) {
-        gamesListStream << game << "\n";
+void ClientHandler::sendGamesList(GamesListDTO& gamesList) {
+    for (auto& gameLobby: gamesList.gamesLobbies) {
+        this->sender.send(NEW);
+        this->sender.send(gameLobby.gameName);
+        this->sender.send(gameLobby.rounds);
+        uint8_t map = static_cast<uint8_t>(gameLobby.mapType);
+        this->sender.send(map);
+        this->sender.send(gameLobby.maxPlayers);
     }
-    std::string gamesListString = gamesListStream.str();
-    this->sender.send(gamesListString);
+    this->sender.send(STOP);
 }
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
@@ -191,6 +194,7 @@ void ClientHandler::sendLobbyConnectonStatus(const LobbyConnectionDTO& lobbyConn
     }
     this->sender.send(this->id);
     this->sender.send(lobbyConnectionStatus);
+    this->sender.send(lobbyConnection.info);
 }
 
 ClientHandler::~ClientHandler() { }

@@ -1,10 +1,11 @@
 #include "Protocol.h"
 
-#include <iostream>
+// #include <iostream>
 #include <sstream>
 #include <string>
 
 #include "server/Constants/ProtocolContants.h"
+#include "server/DTO/GamesListDTO.h"
 
 #define NEW 0X6E
 Client::Protocol::Protocol(const std::string& hostName, const std::string& port):
@@ -23,22 +24,23 @@ void Client::Protocol::createLobby(const LobbyDTO& lobbyInfo) {
 LobbyConnectionDTO Client::Protocol::getLobbyConnection() const {
     size_t id = this->reader.readSizeT();
     ConnectionStatus status = static_cast<ConnectionStatus>(this->reader.u8tReader());
-    return LobbyConnectionDTO(id, status);
+    std::string info = this->reader.stringReader();
+    return LobbyConnectionDTO(id, status, info);
 }
 
 GamesList Client::Protocol::getGamesList() {
     uint8_t code = ProtocolConstants::GAME_LIST_REQUEST;
     this->sender.send(code);
-    std::string games = this->reader.stringReader();
-    std::stringstream ss(games);
-    std::vector<std::string> gotGames;
-    std::string game;
-
-    while (ss >> game) {
-        gotGames.push_back(game);
+    std::vector<GameLobbyDTO> games;
+    while (this->reader.u8tReader() == NEW) {
+        std::string gameName = this->reader.stringReader();
+        uint8_t rounds = this->reader.u8tReader();
+        MapType map = static_cast<MapType>(this->reader.u8tReader());
+        uint8_t maxPlayers = this->reader.u8tReader();
+        games.emplace_back(GameLobbyDTO(gameName, rounds, map, maxPlayers));
     }
 
-    return {gotGames};
+    return {games};
 }
 
 void Client::Protocol::joinLobby(const LobbyDTO& lobbyInfo) {

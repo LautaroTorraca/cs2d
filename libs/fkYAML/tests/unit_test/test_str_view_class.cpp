@@ -1,17 +1,16 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
 // SPDX-License-Identifier: MIT
 
 #include <cstring>
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <catch2/catch.hpp>
-
 #include <fkYAML/node.hpp>
 
 TEST_CASE("StrView_DefaultCtor") {
@@ -72,7 +71,7 @@ TEST_CASE("StrView_MoveCtor") {
 TEST_CASE("StrView_CopyAssignmentOperator") {
     const char str[] = "hello world!";
     fkyaml::detail::str_view view = str;
-    fkyaml::detail::str_view sv {};
+    fkyaml::detail::str_view sv{};
     sv = view;
 
     REQUIRE(sv.compare("hello world!") == 0);
@@ -85,7 +84,7 @@ TEST_CASE("StrView_CopyAssignmentOperator") {
 TEST_CASE("StrView_MoveAssignmentOperator") {
     const char str[] = "hello world!";
     fkyaml::detail::str_view view = str;
-    fkyaml::detail::str_view sv {};
+    fkyaml::detail::str_view sv{};
     sv = std::move(view);
 
     REQUIRE(sv.compare("hello world!") == 0);
@@ -147,7 +146,7 @@ TEST_CASE("StrView_Data") {
     fkyaml::detail::str_view sv = str;
     REQUIRE(sv.data() == str);
 
-    fkyaml::detail::str_view sv2 {};
+    fkyaml::detail::str_view sv2{};
     REQUIRE(sv2.data() == nullptr);
 }
 
@@ -213,8 +212,10 @@ TEST_CASE("StrView_Compare") {
     REQUIRE(sv.compare("`") == 1);
 
     // skip checks of comparisons with a large string object if int == ptrdiff_t
-    if (static_cast<std::ptrdiff_t>(std::numeric_limits<int>::max()) < std::numeric_limits<std::ptrdiff_t>::max()) {
-        constexpr std::size_t long_str_size = static_cast<std::size_t>(std::numeric_limits<int>::max()) + 4u;
+    if (static_cast<std::ptrdiff_t>(std::numeric_limits<int>::max()) <
+        std::numeric_limits<std::ptrdiff_t>::max()) {
+        constexpr std::size_t long_str_size =
+                static_cast<std::size_t>(std::numeric_limits<int>::max()) + 4u;
         char* p_long_str = (char*)std::malloc(long_str_size);
         for (std::size_t i = 0; i < long_str_size - 1; i++) {
             p_long_str[i] = 'a';
@@ -304,7 +305,7 @@ TEST_CASE("StrView_FindFirstOf") {
     REQUIRE(sv.find_first_of("abc", 0, 3) == 0);
     REQUIRE(sv.find_first_of("abc", 0, 0) == fkyaml::detail::str_view::npos);
     REQUIRE(sv.find_first_of("efg", 0, 3) == fkyaml::detail::str_view::npos);
-    REQUIRE(sv.find_first_of(fkyaml::detail::str_view {"abc"}) == 0);
+    REQUIRE(sv.find_first_of(fkyaml::detail::str_view{"abc"}) == 0);
 }
 
 TEST_CASE("StrView_FindLastOf") {
@@ -314,7 +315,7 @@ TEST_CASE("StrView_FindLastOf") {
     REQUIRE(sv.find_last_of("a") == 3);
     REQUIRE(sv.find_last_of("a", 0, 1) == 0);
     REQUIRE(sv.find_last_of("a", 0, sv.size() + 1) == fkyaml::detail::str_view::npos);
-    REQUIRE(sv.find_last_of(fkyaml::detail::str_view {"aa"}) == 3);
+    REQUIRE(sv.find_last_of(fkyaml::detail::str_view{"aa"}) == 3);
 }
 
 TEST_CASE("StrView_FindFirstNotOf") {
@@ -326,7 +327,7 @@ TEST_CASE("StrView_FindFirstNotOf") {
     REQUIRE(sv.find_first_not_of("a") == 4);
     REQUIRE(sv.find_first_not_of("a", 3) == 4);
     REQUIRE(sv.find_first_not_of("a", sv.size()) == fkyaml::detail::str_view::npos);
-    REQUIRE(sv.find_first_not_of(fkyaml::detail::str_view {"a"}) == 4);
+    REQUIRE(sv.find_first_not_of(fkyaml::detail::str_view{"a"}) == 4);
 }
 
 TEST_CASE("StrView_FindLastNotOf") {
@@ -340,7 +341,7 @@ TEST_CASE("StrView_FindLastNotOf") {
     REQUIRE(sv.find_last_not_of("bcd") == 3);
     REQUIRE(sv.find_last_not_of("bcd", 5) == 3);
     REQUIRE(empty_sv.find_last_not_of("bcd") == fkyaml::detail::str_view::npos);
-    REQUIRE(sv.find_last_not_of(fkyaml::detail::str_view {"bcd"}) == 3);
+    REQUIRE(sv.find_last_not_of(fkyaml::detail::str_view{"bcd"}) == 3);
 }
 
 TEST_CASE("StrView_EqualToOperator") {
@@ -369,34 +370,34 @@ TEST_CASE("StrView_NotEqualToOperator") {
 
 TEST_CASE("StrView_LessThanOperator") {
     fkyaml::detail::str_view sv = "a";
-    REQUIRE_FALSE(sv < fkyaml::detail::str_view {"a"});
-    REQUIRE(sv < fkyaml::detail::str_view {"b"});
-    REQUIRE_FALSE(sv < fkyaml::detail::str_view {"`"});
+    REQUIRE_FALSE(sv < fkyaml::detail::str_view{"a"});
+    REQUIRE(sv < fkyaml::detail::str_view{"b"});
+    REQUIRE_FALSE(sv < fkyaml::detail::str_view{"`"});
 }
 
 TEST_CASE("StrView_LessThanOrEqualToOperator") {
     fkyaml::detail::str_view sv = "a";
-    REQUIRE(sv <= fkyaml::detail::str_view {"a"});
-    REQUIRE(sv <= fkyaml::detail::str_view {"b"});
-    REQUIRE_FALSE(sv <= fkyaml::detail::str_view {"`"});
+    REQUIRE(sv <= fkyaml::detail::str_view{"a"});
+    REQUIRE(sv <= fkyaml::detail::str_view{"b"});
+    REQUIRE_FALSE(sv <= fkyaml::detail::str_view{"`"});
 }
 
 TEST_CASE("StrView_GreaterThanOperator") {
     fkyaml::detail::str_view sv = "a";
-    REQUIRE_FALSE(sv > fkyaml::detail::str_view {"a"});
-    REQUIRE_FALSE(sv > fkyaml::detail::str_view {"b"});
-    REQUIRE(sv > fkyaml::detail::str_view {"`"});
+    REQUIRE_FALSE(sv > fkyaml::detail::str_view{"a"});
+    REQUIRE_FALSE(sv > fkyaml::detail::str_view{"b"});
+    REQUIRE(sv > fkyaml::detail::str_view{"`"});
 }
 
 TEST_CASE("StrView_GreaterThanOrEqualToOperator") {
     fkyaml::detail::str_view sv = "a";
-    REQUIRE(sv >= fkyaml::detail::str_view {"a"});
-    REQUIRE_FALSE(sv >= fkyaml::detail::str_view {"b"});
-    REQUIRE(sv >= fkyaml::detail::str_view {"`"});
+    REQUIRE(sv >= fkyaml::detail::str_view{"a"});
+    REQUIRE_FALSE(sv >= fkyaml::detail::str_view{"b"});
+    REQUIRE(sv >= fkyaml::detail::str_view{"`"});
 }
 
 TEST_CASE("StrView_InsertionOperator") {
-    std::ostringstream ss {};
+    std::ostringstream ss{};
     fkyaml::detail::str_view sv = "abc";
     REQUIRE(ss.str().empty());
     ss << sv;

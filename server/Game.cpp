@@ -49,7 +49,6 @@ void Game::addPlayer(const size_t &id, const std::string& name, const Team& team
 }
 
 void Game::move(const size_t& id, const Coordinate& displacement) {
-    //TODO: Despues, implementar un patron state para sacar estos ifs de comprobacion de cada metodo.
     if (this->status != ON_GOING && this->status != BOMB_PLANTED) return;
     if ( !this->players.contains(id) ) return;
     std::shared_ptr<Entity> entity = this->players.at(id);
@@ -57,7 +56,7 @@ void Game::move(const size_t& id, const Coordinate& displacement) {
 }
 
 void Game::changeAngle(const size_t &id, const double& angle) {
-    if ( !this->players.contains(id) ) return; //TODO: Ver si conviente que estas cosas tiren una excepcion en su lugar
+    if ( !this->players.contains(id) ) return;
     this->players.at(id)->changeAngle(angle);
 }
 
@@ -169,6 +168,15 @@ void Game::clearPlayers() {
     this->counters.clear();
     this->terroristsWinsRounds = 0;
     this->countersWinsRounds = 0;
+}
+void Game::setKills(const size_t& id, const uint8_t& kills) const {
+    if (!this->players.contains(id))
+        return;
+    this->players.at(id)->setKills(kills);
+}
+void Game::addCollectedMoney(const size_t& id, const uint16_t& collectedMoney) {
+    if (!this->players.contains(id)) return;
+    this->players.at(id)->addCollectedMoney(collectedMoney);
 }
 
 void Game::terroristsWins() {

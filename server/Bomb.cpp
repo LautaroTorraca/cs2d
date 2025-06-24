@@ -20,7 +20,6 @@ void Bomb::attack(Positionable & positionable, const Position & position, const 
 }
 
 void Bomb::addTo(Inventory &inventory) {
-    //TODO: Fijarse si se puede pasar este codigo pseudo-repetido en todas las weapons a la clase padre.
     std::shared_ptr<Weapon> weapon = std::make_shared<Bomb>(std::move(*this));
     inventory.add(BOMB_INDEX, weapon);
 }
@@ -66,6 +65,6 @@ void Bomb::continueActivation(const double& actualTime) {
 WeaponInfoDTO Bomb::getInfo() { return {1, WeaponType::BOMB}; }
 
 double Bomb::getTime() {
-    if (this->deactivationStartTime == 0) return -1;
-    return this->actualTime - this->activationStartTime;
+    if (this->activationStartTime == 0) return -1;
+    return this->activationDuration - (this->actualTime - this->activationStartTime);
 }

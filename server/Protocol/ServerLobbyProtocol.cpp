@@ -1,9 +1,12 @@
 #include "ServerLobbyProtocol.h"
-#include "server/Constants/ProtocolContants.h"
-#include "server/Constants/KeyContants.h"
+
 #include <sstream>
 
+#include "server/Constants/KeyContants.h"
+#include "server/Constants/ProtocolContants.h"
 #include "server/Sender/Sender.h"
+
+#include "server/OrderNotImplementedException.h"
 
 
 ServerLobbyProtocol::ServerLobbyProtocol()
@@ -18,7 +21,7 @@ ServerLobbyOrder ServerLobbyProtocol::handleRequest(const Request& request) {
     const uint8_t opCode = request.getRequest().at(opCodeKey).front();
 
     if (!requestHandlers.contains(opCode)) {
-        throw -1; //TODO FIX
+        throw OrderNotImplementedException("The request is not implemented.");
     }
     return requestHandlers[opCode](request);
 }
@@ -51,14 +54,6 @@ ServerLobbyOrder ServerLobbyProtocol::createHandler(const Request& request) {
 
 ServerLobbyOrder ServerLobbyProtocol::disconnectHandler(const Request& request) {
     const size_t clientId = request.getId();
-
-    // TODO Implementar lógica de desconexión
-
     return ServerLobbyOrder(ProtocolConstants::DISCONNECT, clientId);
-}
-
-
-void ServerLobbyProtocol::end() {
-    // TODO Finalizar cada LobbyHandler
 }
 

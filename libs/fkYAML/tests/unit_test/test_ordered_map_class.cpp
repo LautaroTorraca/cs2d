@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -9,7 +9,6 @@
 #include <string>
 
 #include <catch2/catch.hpp>
-
 #include <fkYAML/node.hpp>
 
 TEST_CASE("OrderedMap_DefaultCtor") {
@@ -18,7 +17,7 @@ TEST_CASE("OrderedMap_DefaultCtor") {
 }
 
 TEST_CASE("OrderedMap_InitListCtor") {
-    fkyaml::ordered_map<std::string, bool> map {{"foo", true}, {"bar", false}};
+    fkyaml::ordered_map<std::string, bool> map{{"foo", true}, {"bar", false}};
     REQUIRE_FALSE(map.empty());
     REQUIRE(map.size() == 2);
     REQUIRE(map["foo"] == true);
@@ -35,7 +34,7 @@ TEST_CASE("OrderedMap_InitListCtor") {
 }
 
 TEST_CASE("OrderedMap_SubscriptOperator") {
-    fkyaml::ordered_map<std::string, bool> map {{"foo", true}, {"buz", false}};
+    fkyaml::ordered_map<std::string, bool> map{{"foo", true}, {"buz", false}};
     REQUIRE(map["foo"] == true);
     REQUIRE(map["bar"] == false);
     REQUIRE(map["buz"] == false);

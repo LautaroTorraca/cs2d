@@ -10,7 +10,8 @@
 struct DropInformation {
     const WeaponInformation weapon;
     const CoordinateInformation position;
-    DropInformation(const WeaponInformation& weaponInfo, const CoordinateInformation& positionInfo) : weapon(weaponInfo), position(positionInfo) {}
+    DropInformation(const WeaponInformation& weaponInfo, const CoordinateInformation& positionInfo):
+            weapon(weaponInfo), position(positionInfo) {}
 };
 
-#endif //DROPINFORMATION_H
+#endif  // DROPINFORMATION_H

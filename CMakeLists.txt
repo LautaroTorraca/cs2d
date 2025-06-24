@@ -13,10 +13,10 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 # set(YAML_CPP_BUILD_TESTS OFF CACHE INTERNAL "Disable yaml-cpp tests")
 project(
-        taller_tp
-        VERSION 1.0
-        HOMEPAGE_URL "https://github.com/URL-HERE"
-        LANGUAGES C CXX)
+  taller_tp
+  VERSION 1.0
+  HOMEPAGE_URL "https://github.com/URL-HERE"
+  LANGUAGES C CXX)
 
 # Qt
 #
@@ -27,12 +27,11 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 option(TALLER_TESTS "Enable / disable tests." OFF)
 option(TALLER_CLIENT "Enable / disable client program." ON)
 option(TALLER_SERVER "Enable / disable server program." ON)
-option(TALLER_EDITOR "Enable / disable editor program." ON)
+option(TALLER_EDITOR "Enable / disable editor program." OFF)
 option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." ON)
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
-add_library(taller_common STATIC
-        server/Handlers/ClientStatus.h)
+add_library(taller_common STATIC server/Handlers/ClientStatus.h)
 add_subdirectory(common/)
 
 include(cmake/CompilerWarnings.cmake)
@@ -44,52 +43,59 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
 
   # SDL2
   FetchContent_Declare(
-          SDL2
-          GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-          GIT_TAG release-2.30.8
-          GIT_SHALLOW TRUE
-          GIT_PROGRESS TRUE
-          OVERRIDE_FIND_PACKAGE)
+    SDL2
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+    GIT_TAG release-2.30.8
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE)
 
   # SDL2_image
   FetchContent_Declare(
-          SDL2_image
-          GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-          GIT_TAG release-2.8.2
-          GIT_SHALLOW TRUE
-          GIT_PROGRESS TRUE
-          OVERRIDE_FIND_PACKAGE)
+    SDL2_image
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+    GIT_TAG release-2.8.2
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE)
+
+  FetchContent_Declare(
+    SDL2_mixer
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+    GIT_TAG release-2.8.0
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE)
+
+  FetchContent_Declare(
+    SDL2_ttf
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+    GIT_TAG release-2.22.0
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE)
 
   set(SDL2PP_WITH_IMAGE
-          ON
-          CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
+      ON
+      CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
+  set(SDL2PP_WITH_MIXER
+      ON
+      CACHE BOOL "Enable SDL2_mixer support in SDL2pp" FORCE)
+  set(SDL2PP_WITH_TTF
+      ON
+      CACHE BOOL "Enable SDL2_ttf support in SDL2pp" FORCE)
 
-  # SDL2pp
-  FetchContent_Declare(
-          libSDL2pp
-          OVERRIDE_FIND_PACKAGE
-          URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
-  )
-
-  FetchContent_Declare(
-          SDL2_mixer
-          GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
-          GIT_TAG release-2.8.0
-          GIT_SHALLOW TRUE
-          GIT_PROGRESS TRUE
-          OVERRIDE_FIND_PACKAGE)
-
-  FetchContent_Declare(
-          SDL2_ttf
-          GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-          GIT_TAG release-2.22.0
-          GIT_SHALLOW TRUE
-          GIT_PROGRESS TRUE
-          OVERRIDE_FIND_PACKAGE)
-
-  # FetchContent_Declare( libSDL2pp OVERRIDE_FIND_PACKAGE URL
+  # SDL2pp FetchContent_Declare( libSDL2pp OVERRIDE_FIND_PACKAGE URL
   # https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
   # )
+
+  FetchContent_Declare(
+    libSDL2pp
+    GIT_REPOSITORY https://github.com/libSDL2pp/libSDL2pp.git
+    GIT_REV cc198c9 # <--- Changed from GIT_TAG to GIT_REV with the commit hash
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE)
 
   FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
 endif()
@@ -97,49 +103,33 @@ endif()
 # Program section
 # ---------------
 if(TALLER_CLIENT)
-  set(CMAKE_AUTOMOC ON)
-  set(CMAKE_AUTORCC ON)
-  set(CMAKE_AUTOUIC ON)
-  find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
-
-  set(CLIENT_RESOURCES client/Login/resources.qrc)
-
   add_subdirectory(client)
   add_subdirectory(libs/SDL2_gfx)
-
-  add_executable(taller_client
-          ${CLIENT_SOURCES}
-          ${CLIENT_HEADERS}
-          ${CLIENT_RESOURCES}
-          client/Login/Audio/MusicManager.cpp
-          client/Login/Audio/MusicManager.h
-  )
-
+  add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+  target_include_directories(taller_client
+                             PRIVATE ${SDL2_mixer_SOURCE_DIR}/include)
+  # client/LobbyDTO.h client/GamesList.h client/BuyOrder.h
+  # client/WeaponChanger.h client/PositionDTO.h client/PlayerInformation.h
+  # client/CoordinateInformation.h client/WeaponInformation.h
+  # client/ProjectileInformation.h client/DropInformation.h client/MainWindow.h)
   target_include_directories(taller_client PRIVATE client)
-
-  target_link_libraries(taller_client
-          taller_common
-          SDL2pp::SDL2pp
-          SDL2_gfx
-          Qt6::Core
-          Qt6::Widgets
-          Qt6::Multimedia
-  )
+  target_link_libraries(
+    taller_client
+    taller_common
+    SDL2pp::SDL2pp
+    SDL2_mixer
+    SDL2_gfx
+    SDL2_ttf
+    Qt6::Widgets)
 endif()
-
-
-
-
-
-
-
 
 if(TALLER_SERVER)
 
   find_package(fkYAML REQUIRED)
-  add_executable(taller_server
-          server/PlayerStatus.h
-          server/Deactivator.h)
+  add_executable(
+    taller_server
+    server/PlayerStatus.h server/Deactivator.h
+    server/WeaponNotFoundException.cpp server/WeaponNotFoundException.h)
   add_dependencies(taller_server taller_common)
   add_subdirectory(server)
   # add_subdirectory(libs/fkYAML)
@@ -164,16 +154,16 @@ if(TALLER_TESTS)
   # Let's use google test
   include(FetchContent)
   FetchContent_Declare(
-          googletest
-          URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
   )
 
   # For Windows: Prevent overriding the parent project's compiler/linker
   # settings (borrowed from
   # https://google.github.io/googletest/quickstart-cmake.html)
   set(gtest_force_shared_crt
-          ON
-          CACHE BOOL "" FORCE)
+      ON
+      CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(googletest)
   include(GoogleTest)
 
@@ -198,9 +188,10 @@ if(TALLER_TESTS)
 
   # Say where googletest headers can be found
   target_include_directories(taller_tests PUBLIC ${gtest_SOURCE_DIR}/include
-          ${gmock_SOURCE_DIR}/include)
+                                                 ${gmock_SOURCE_DIR}/include)
 
   # HEY!! TODO XXX: I'm assuming that the code under testing is in taller_common
   # Change this if you have to.
-  target_link_libraries(taller_tests taller_common GTest::gtest_main Qt6::Widgets SDL2pp::SDL2pp SDL2_gfx)
+  target_link_libraries(taller_tests taller_common GTest::gtest_main
+                        Qt6::Widgets SDL2pp::SDL2pp SDL2_gfx)
 endif()

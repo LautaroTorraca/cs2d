@@ -1,12 +1,13 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
 // SPDX-License-Identifier: MIT
 
 #include <iostream>
+
 #include <fkYAML/node.hpp>
 
 int main() {
@@ -24,11 +25,11 @@ int main() {
     s.emplace_back(123);
     s.emplace_back("foo");
 
-    for (auto& elem : s) {
+    for (auto& elem: s) {
         std::cout << elem << std::endl;
     }
     std::cout << std::endl;
-    for (const auto& celem : cs) {
+    for (const auto& celem: cs) {
         std::cout << celem << std::endl;
     }
 }

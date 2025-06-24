@@ -7,7 +7,7 @@
 #include <tuple>
 #include <cmath>
 
-#define TILE_SIZE 32 //TODO: Esto debera ser reemplazado por la medida que se termine usando
+#define TILE_SIZE 32
 #define PI_IN_GRADES 180
 
 void Coordinate::update(const Coordinate &coordinate) {

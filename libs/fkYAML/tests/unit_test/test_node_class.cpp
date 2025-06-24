@@ -1,13 +1,13 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
 // SPDX-License-Identifier: MIT
 
-#include <cmath>
 #include <cfloat>
+#include <cmath>
 #include <deque>
 #include <fstream>
 #include <list>
@@ -20,7 +20,6 @@
 #include <unordered_set>
 
 #include <catch2/catch.hpp>
-
 #include <fkYAML/node.hpp>
 
 // generated in test/unit_test/CMakeLists.txt
@@ -123,486 +122,483 @@ TEST_CASE("Node_StringTypeCtor(deprecated)") {
 
 TEST_CASE("Node_ThrowingSpecializationTypeCtor") {
     struct String {
-        String() {
-            throw fkyaml::exception();
-        }
+        String() { throw fkyaml::exception(); }
     };
 
     using NodeType = fkyaml::basic_node<std::vector, std::map, bool, int64_t, double, String>;
     REQUIRE_THROWS_AS(NodeType(fkyaml::node_type::STRING), fkyaml::exception);
 }
 
-TEST_CASE("Node_CtorWithCompatibleType") {
-    // sequence-like types
+TEST_CASE("Node_CtorWithCompatibleType"){
+        // sequence-like types
 
-    SECTION("1D C-style array") {
-        fkyaml::node ints_node_val[2] {1, 2};
-        int ints_val[2] {1, 2};
+        SECTION("1D C-style array"){fkyaml::node ints_node_val[2]{1, 2};
+int ints_val[2]{1, 2};
 
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_integer());
-            REQUIRE(n[0].get_value<int>() == 1);
-            REQUIRE(n[1].is_integer());
-            REQUIRE(n[1].get_value<int>() == 2);
-        };
+auto validate = [](const fkyaml::node& n) {
+    REQUIRE(n.is_sequence());
+    REQUIRE(n.size() == 2);
+    REQUIRE(n[0].is_integer());
+    REQUIRE(n[0].get_value<int>() == 1);
+    REQUIRE(n[1].is_integer());
+    REQUIRE(n[1].get_value<int>() == 2);
+};
 
-        fkyaml::node ints_node(ints_node_val);
-        validate(ints_node);
+fkyaml::node ints_node(ints_node_val);
+validate(ints_node);
 
-        fkyaml::node ints(ints_val);
-        validate(ints);
+fkyaml::node ints(ints_val);
+validate(ints);
+}
+
+SECTION("2D C-style array") {
+    fkyaml::node ints_node_val[3][3]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    int ints_val[3][3]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+    auto validate = [](const fkyaml::node& n, int i, int j) {
+        REQUIRE(n.at(i).at(j).is_integer());
+        REQUIRE(n.at(i).at(j).as_int() == i * 3 + j + 1);
+    };
+
+    fkyaml::node ints_node(ints_node_val);
+    fkyaml::node ints(ints_val);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            validate(ints_node, i, j);
+            validate(ints, i, j);
+        }
     }
+}
 
-    SECTION("2D C-style array") {
-        fkyaml::node ints_node_val[3][3] {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-        int ints_val[3][3] {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+SECTION("3D C-style array") {
+    fkyaml::node ints_node_val[3][3][3]{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+                                        {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}},
+                                        {{19, 20, 21}, {22, 23, 24}, {25, 26, 27}}};
+    int ints_val[3][3][3]{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+                          {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}},
+                          {{19, 20, 21}, {22, 23, 24}, {25, 26, 27}}};
 
-        auto validate = [](const fkyaml::node& n, int i, int j) {
-            REQUIRE(n.at(i).at(j).is_integer());
-            REQUIRE(n.at(i).at(j).as_int() == i * 3 + j + 1);
-        };
+    auto validate = [](const fkyaml::node& n, int i, int j, int k) {
+        REQUIRE(n.at(i).at(j).at(k).is_integer());
+        REQUIRE(n.at(i).at(j).at(k).as_int() == i * 9 + j * 3 + k + 1);
+    };
 
-        fkyaml::node ints_node(ints_node_val);
-        fkyaml::node ints(ints_val);
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                validate(ints_node, i, j);
-                validate(ints, i, j);
+    fkyaml::node ints_node(ints_node_val);
+    fkyaml::node ints(ints_val);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
+                validate(ints_node, i, j, k);
+                validate(ints, i, j, k);
             }
         }
     }
-
-    SECTION("3D C-style array") {
-        fkyaml::node ints_node_val[3][3][3] {
-            {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
-            {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}},
-            {{19, 20, 21}, {22, 23, 24}, {25, 26, 27}}};
-        int ints_val[3][3][3] {
-            {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
-            {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}},
-            {{19, 20, 21}, {22, 23, 24}, {25, 26, 27}}};
-
-        auto validate = [](const fkyaml::node& n, int i, int j, int k) {
-            REQUIRE(n.at(i).at(j).at(k).is_integer());
-            REQUIRE(n.at(i).at(j).at(k).as_int() == i * 9 + j * 3 + k + 1);
-        };
-
-        fkyaml::node ints_node(ints_node_val);
-        fkyaml::node ints(ints_val);
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                for (int k = 0; k < 3; k++) {
-                    validate(ints_node, i, j, k);
-                    validate(ints, i, j, k);
-                }
-            }
-        }
-    }
-
-    SECTION("std::vector") {
-        std::vector<fkyaml::node> vector_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::vector<bool> vector_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == true);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == false);
-        };
-
-        fkyaml::node vector_node(vector_node_val);
-        validate(vector_node);
-
-        fkyaml::node vector_bool(vector_bool_val);
-        validate(vector_bool);
-    }
-
-    SECTION("std::array") {
-        std::array<fkyaml::node, 2> array_node_val {{fkyaml::node(true), fkyaml::node(false)}};
-        std::array<bool, 2> array_bool_val {{true, false}};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == true);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == false);
-        };
-
-        fkyaml::node array_node(array_node_val);
-        validate(array_node);
-
-        fkyaml::node array_bool(array_bool_val);
-        validate(array_bool);
-    }
-
-    SECTION("std::valarray") {
-        std::valarray<fkyaml::node> valarray_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::valarray<bool> valarray_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == true);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == false);
-        };
-
-        fkyaml::node valarray_node(valarray_node_val);
-        validate(valarray_node);
-
-        fkyaml::node valarray_bool(valarray_bool_val);
-        validate(valarray_bool);
-    }
-
-    SECTION("std::forward_list") {
-        std::forward_list<fkyaml::node> forward_list_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::forward_list<bool> forward_list_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == true);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == false);
-        };
-
-        fkyaml::node forward_list_node(forward_list_node_val);
-        validate(forward_list_node);
-
-        fkyaml::node forward_list_bool(forward_list_bool_val);
-        validate(forward_list_bool);
-    }
-
-    SECTION("std::deque") {
-        std::deque<fkyaml::node> deque_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::deque<bool> deque_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == true);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == false);
-        };
-
-        fkyaml::node deque_node(deque_node_val);
-        validate(deque_node);
-
-        fkyaml::node deque_bool(deque_bool_val);
-        validate(deque_bool);
-    }
-
-    SECTION("std::list") {
-        std::list<fkyaml::node> list_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::list<bool> list_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == true);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == false);
-        };
-
-        fkyaml::node list_node(list_node_val);
-        validate(list_node);
-
-        fkyaml::node list_bool(list_bool_val);
-        validate(list_bool);
-    }
-
-    SECTION("std::set") {
-        std::set<fkyaml::node> set_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::set<bool> set_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == false);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == true);
-        };
-
-        fkyaml::node set_node(set_node_val);
-        validate(set_node);
-
-        fkyaml::node set_bool(set_bool_val);
-        validate(set_bool);
-    }
-
-    SECTION("std::multiset") {
-        std::multiset<fkyaml::node> multiset_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::multiset<bool> multiset_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            REQUIRE(n[0].get_value<bool>() == false);
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == true);
-        };
-
-        fkyaml::node multiset_node(multiset_node_val);
-        validate(multiset_node);
-
-        fkyaml::node multiset_bool(multiset_bool_val);
-        validate(multiset_bool);
-    }
-
-    SECTION("std::unordered_set") {
-        std::unordered_set<fkyaml::node> unordered_set_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::unordered_set<bool> unordered_set_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            bool ret = n[0].get_value<bool>();
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == !ret);
-        };
-
-        fkyaml::node unordered_set_node(unordered_set_node_val);
-        validate(unordered_set_node);
-
-        fkyaml::node unordered_set_bool(unordered_set_bool_val);
-        validate(unordered_set_bool);
-    }
-
-    SECTION("std::unordered_multiset") {
-        std::unordered_multiset<fkyaml::node> unordered_multiset_node_val {fkyaml::node(true), fkyaml::node(false)};
-        std::unordered_multiset<bool> unordered_multiset_bool_val {true, false};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_boolean());
-            bool ret = n[0].get_value<bool>();
-            REQUIRE(n[1].is_boolean());
-            REQUIRE(n[1].get_value<bool>() == !ret);
-        };
-
-        fkyaml::node unordered_multiset_node(unordered_multiset_node_val);
-        validate(unordered_multiset_node);
-
-        fkyaml::node unordered_multiset_bool(unordered_multiset_bool_val);
-        validate(unordered_multiset_bool);
-    }
-
-    SECTION("std::pair") {
-        std::pair<fkyaml::node, fkyaml::node> pair_node_val = {"test", 123};
-        std::pair<std::string, int> pair_val = {"test", 123};
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n[0].is_string());
-            REQUIRE(n[0].as_str() == "test");
-            REQUIRE(n[1].is_integer());
-            REQUIRE(n[1].as_int() == 123);
-        };
-
-        fkyaml::node pair_node(pair_node_val);
-        validate(pair_node);
-
-        fkyaml::node pair(pair_val);
-        validate(pair);
-    }
-
-    SECTION("std::tuple") {
-        std::tuple<fkyaml::node, fkyaml::node, fkyaml::node> tuple_node_val("test", 123, true);
-        std::tuple<std::string, int, bool> tuple_val("test", 123, true);
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_sequence());
-            REQUIRE(n.size() == 3);
-            REQUIRE(n[0].is_string());
-            REQUIRE(n[0].as_str() == "test");
-            REQUIRE(n[1].is_integer());
-            REQUIRE(n[1].as_int() == 123);
-            REQUIRE(n[2].is_boolean());
-            REQUIRE(n[2].as_bool() == true);
-        };
-
-        fkyaml::node tuple_node(tuple_node_val);
-        validate(tuple_node);
-
-        fkyaml::node tuple(tuple_val);
-        validate(tuple);
-
-        // regression test for https://github.com/fktn-k/fkYAML/pull/467
-        std::tuple<> empty_tuple_val {};
-        fkyaml::node empty_tuple_node(empty_tuple_val);
-        REQUIRE(empty_tuple_node.is_sequence());
-        REQUIRE(empty_tuple_node.empty());
-    }
-
-    // mapping-like types
-
-    SECTION("std::map") {
-        std::map<fkyaml::node, fkyaml::node> map_node_val;
-        map_node_val.emplace("test", 123);
-        map_node_val.emplace("foo", -456);
-        std::map<std::string, int> map_val;
-        map_val.emplace("test", 123);
-        map_val.emplace("foo", -456);
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_mapping());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n.at("test").is_integer());
-            REQUIRE(n.at("test").as_int() == 123);
-            REQUIRE(n.at("foo").is_integer());
-            REQUIRE(n.at("foo").as_int() == -456);
-        };
-
-        fkyaml::node map_node(map_node_val);
-        validate(map_node);
-
-        fkyaml::node map(map_val);
-        validate(map);
-    }
-
-    SECTION("std::multimap") {
-        std::multimap<fkyaml::node, fkyaml::node> multimap_node_val;
-        multimap_node_val.emplace("test", 123);
-        multimap_node_val.emplace("foo", -456);
-        std::multimap<std::string, int> multimap_val;
-        multimap_val.emplace("test", 123);
-        multimap_val.emplace("foo", -456);
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_mapping());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n.at("test").is_integer());
-            REQUIRE(n.at("test").as_int() == 123);
-            REQUIRE(n.at("foo").is_integer());
-            REQUIRE(n.at("foo").as_int() == -456);
-        };
-
-        fkyaml::node multimap_node(multimap_node_val);
-        validate(multimap_node);
-
-        fkyaml::node multimap(multimap_val);
-        validate(multimap);
-    }
-
-    SECTION("std::unordered_map") {
-        std::unordered_map<fkyaml::node, fkyaml::node> unordered_map_node_val;
-        unordered_map_node_val.emplace("test", 123);
-        unordered_map_node_val.emplace("foo", -456);
-        std::unordered_map<std::string, int> unordered_map_val;
-        unordered_map_val.emplace("test", 123);
-        unordered_map_val.emplace("foo", -456);
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_mapping());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n.at("test").is_integer());
-            REQUIRE(n.at("test").as_int() == 123);
-            REQUIRE(n.at("foo").is_integer());
-            REQUIRE(n.at("foo").as_int() == -456);
-        };
-
-        fkyaml::node unordered_map_node(unordered_map_node_val);
-        validate(unordered_map_node);
-
-        fkyaml::node unordered_map(unordered_map_val);
-        validate(unordered_map);
-    }
-
-    SECTION("std::unordered_multimap") {
-        std::unordered_multimap<fkyaml::node, fkyaml::node> unordered_multimap_node_val;
-        unordered_multimap_node_val.emplace("test", 123);
-        unordered_multimap_node_val.emplace("foo", -456);
-        std::unordered_multimap<std::string, int> unordered_multimap_val;
-        unordered_multimap_val.emplace("test", 123);
-        unordered_multimap_val.emplace("foo", -456);
-
-        auto validate = [](const fkyaml::node& n) {
-            REQUIRE(n.is_mapping());
-            REQUIRE(n.size() == 2);
-            REQUIRE(n.at("test").is_integer());
-            REQUIRE(n.at("test").as_int() == 123);
-            REQUIRE(n.at("foo").is_integer());
-            REQUIRE(n.at("foo").as_int() == -456);
-        };
-
-        fkyaml::node unordered_multimap_node(unordered_multimap_node_val);
-        validate(unordered_multimap_node);
-
-        fkyaml::node unordered_multimap(unordered_multimap_val);
-        validate(unordered_multimap);
-    }
-
-    SECTION("std::nullptr_t") {
-        fkyaml::node node(nullptr);
-        REQUIRE(node.is_null());
-    }
-
-    SECTION("boolean") {
-        fkyaml::node node(true);
-        REQUIRE(node.is_boolean());
-        REQUIRE(node.as_bool() == true);
-    }
-
-    SECTION("integer") {
-        fkyaml::node node(23467);
-        REQUIRE(node.is_integer());
-        REQUIRE(node.as_int() == 23467);
-    }
-
-    SECTION("floating point") {
-        fkyaml::node node(3.14);
-        REQUIRE(node.is_float_number());
-        REQUIRE(node.as_float() == 3.14);
-    }
-
-    // string-like types
-
-    SECTION("std::string") {
-        fkyaml::node node(std::string("test"));
-        REQUIRE(node.is_string());
-        REQUIRE(node.size() == 4);
-        REQUIRE(node.as_str() == "test");
-    }
-
-    SECTION("C-style char array") {
-        fkyaml::node node("test");
-        REQUIRE(node.is_string());
-        REQUIRE(node.size() == 4);
-        REQUIRE(node.as_str() == "test");
-    }
-
-    SECTION("pointer to a null-terminated char sequence") {
-        const char buff[] = "test";
-        const char* p_buff = &buff[0];
-        fkyaml::node node(p_buff);
-        REQUIRE(node.is_string());
-        REQUIRE(node.size() == 4);
-        REQUIRE(node.as_str() == "test");
-    }
+}
+
+SECTION("std::vector") {
+    std::vector<fkyaml::node> vector_node_val{fkyaml::node(true), fkyaml::node(false)};
+    std::vector<bool> vector_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == true);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == false);
+    };
+
+    fkyaml::node vector_node(vector_node_val);
+    validate(vector_node);
+
+    fkyaml::node vector_bool(vector_bool_val);
+    validate(vector_bool);
+}
+
+SECTION("std::array") {
+    std::array<fkyaml::node, 2> array_node_val{{fkyaml::node(true), fkyaml::node(false)}};
+    std::array<bool, 2> array_bool_val{{true, false}};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == true);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == false);
+    };
+
+    fkyaml::node array_node(array_node_val);
+    validate(array_node);
+
+    fkyaml::node array_bool(array_bool_val);
+    validate(array_bool);
+}
+
+SECTION("std::valarray") {
+    std::valarray<fkyaml::node> valarray_node_val{fkyaml::node(true), fkyaml::node(false)};
+    std::valarray<bool> valarray_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == true);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == false);
+    };
+
+    fkyaml::node valarray_node(valarray_node_val);
+    validate(valarray_node);
+
+    fkyaml::node valarray_bool(valarray_bool_val);
+    validate(valarray_bool);
+}
+
+SECTION("std::forward_list") {
+    std::forward_list<fkyaml::node> forward_list_node_val{fkyaml::node(true), fkyaml::node(false)};
+    std::forward_list<bool> forward_list_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == true);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == false);
+    };
+
+    fkyaml::node forward_list_node(forward_list_node_val);
+    validate(forward_list_node);
+
+    fkyaml::node forward_list_bool(forward_list_bool_val);
+    validate(forward_list_bool);
+}
+
+SECTION("std::deque") {
+    std::deque<fkyaml::node> deque_node_val{fkyaml::node(true), fkyaml::node(false)};
+    std::deque<bool> deque_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == true);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == false);
+    };
+
+    fkyaml::node deque_node(deque_node_val);
+    validate(deque_node);
+
+    fkyaml::node deque_bool(deque_bool_val);
+    validate(deque_bool);
+}
+
+SECTION("std::list") {
+    std::list<fkyaml::node> list_node_val{fkyaml::node(true), fkyaml::node(false)};
+    std::list<bool> list_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == true);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == false);
+    };
+
+    fkyaml::node list_node(list_node_val);
+    validate(list_node);
+
+    fkyaml::node list_bool(list_bool_val);
+    validate(list_bool);
+}
+
+SECTION("std::set") {
+    std::set<fkyaml::node> set_node_val{fkyaml::node(true), fkyaml::node(false)};
+    std::set<bool> set_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == false);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == true);
+    };
+
+    fkyaml::node set_node(set_node_val);
+    validate(set_node);
+
+    fkyaml::node set_bool(set_bool_val);
+    validate(set_bool);
+}
+
+SECTION("std::multiset") {
+    std::multiset<fkyaml::node> multiset_node_val{fkyaml::node(true), fkyaml::node(false)};
+    std::multiset<bool> multiset_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        REQUIRE(n[0].get_value<bool>() == false);
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == true);
+    };
+
+    fkyaml::node multiset_node(multiset_node_val);
+    validate(multiset_node);
+
+    fkyaml::node multiset_bool(multiset_bool_val);
+    validate(multiset_bool);
+}
+
+SECTION("std::unordered_set") {
+    std::unordered_set<fkyaml::node> unordered_set_node_val{fkyaml::node(true),
+                                                            fkyaml::node(false)};
+    std::unordered_set<bool> unordered_set_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        bool ret = n[0].get_value<bool>();
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == !ret);
+    };
+
+    fkyaml::node unordered_set_node(unordered_set_node_val);
+    validate(unordered_set_node);
+
+    fkyaml::node unordered_set_bool(unordered_set_bool_val);
+    validate(unordered_set_bool);
+}
+
+SECTION("std::unordered_multiset") {
+    std::unordered_multiset<fkyaml::node> unordered_multiset_node_val{fkyaml::node(true),
+                                                                      fkyaml::node(false)};
+    std::unordered_multiset<bool> unordered_multiset_bool_val{true, false};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_boolean());
+        bool ret = n[0].get_value<bool>();
+        REQUIRE(n[1].is_boolean());
+        REQUIRE(n[1].get_value<bool>() == !ret);
+    };
+
+    fkyaml::node unordered_multiset_node(unordered_multiset_node_val);
+    validate(unordered_multiset_node);
+
+    fkyaml::node unordered_multiset_bool(unordered_multiset_bool_val);
+    validate(unordered_multiset_bool);
+}
+
+SECTION("std::pair") {
+    std::pair<fkyaml::node, fkyaml::node> pair_node_val = {"test", 123};
+    std::pair<std::string, int> pair_val = {"test", 123};
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n[0].is_string());
+        REQUIRE(n[0].as_str() == "test");
+        REQUIRE(n[1].is_integer());
+        REQUIRE(n[1].as_int() == 123);
+    };
+
+    fkyaml::node pair_node(pair_node_val);
+    validate(pair_node);
+
+    fkyaml::node pair(pair_val);
+    validate(pair);
+}
+
+SECTION("std::tuple") {
+    std::tuple<fkyaml::node, fkyaml::node, fkyaml::node> tuple_node_val("test", 123, true);
+    std::tuple<std::string, int, bool> tuple_val("test", 123, true);
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_sequence());
+        REQUIRE(n.size() == 3);
+        REQUIRE(n[0].is_string());
+        REQUIRE(n[0].as_str() == "test");
+        REQUIRE(n[1].is_integer());
+        REQUIRE(n[1].as_int() == 123);
+        REQUIRE(n[2].is_boolean());
+        REQUIRE(n[2].as_bool() == true);
+    };
+
+    fkyaml::node tuple_node(tuple_node_val);
+    validate(tuple_node);
+
+    fkyaml::node tuple(tuple_val);
+    validate(tuple);
+
+    // regression test for https://github.com/fktn-k/fkYAML/pull/467
+    std::tuple<> empty_tuple_val{};
+    fkyaml::node empty_tuple_node(empty_tuple_val);
+    REQUIRE(empty_tuple_node.is_sequence());
+    REQUIRE(empty_tuple_node.empty());
+}
+
+// mapping-like types
+
+SECTION("std::map") {
+    std::map<fkyaml::node, fkyaml::node> map_node_val;
+    map_node_val.emplace("test", 123);
+    map_node_val.emplace("foo", -456);
+    std::map<std::string, int> map_val;
+    map_val.emplace("test", 123);
+    map_val.emplace("foo", -456);
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_mapping());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n.at("test").is_integer());
+        REQUIRE(n.at("test").as_int() == 123);
+        REQUIRE(n.at("foo").is_integer());
+        REQUIRE(n.at("foo").as_int() == -456);
+    };
+
+    fkyaml::node map_node(map_node_val);
+    validate(map_node);
+
+    fkyaml::node map(map_val);
+    validate(map);
+}
+
+SECTION("std::multimap") {
+    std::multimap<fkyaml::node, fkyaml::node> multimap_node_val;
+    multimap_node_val.emplace("test", 123);
+    multimap_node_val.emplace("foo", -456);
+    std::multimap<std::string, int> multimap_val;
+    multimap_val.emplace("test", 123);
+    multimap_val.emplace("foo", -456);
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_mapping());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n.at("test").is_integer());
+        REQUIRE(n.at("test").as_int() == 123);
+        REQUIRE(n.at("foo").is_integer());
+        REQUIRE(n.at("foo").as_int() == -456);
+    };
+
+    fkyaml::node multimap_node(multimap_node_val);
+    validate(multimap_node);
+
+    fkyaml::node multimap(multimap_val);
+    validate(multimap);
+}
+
+SECTION("std::unordered_map") {
+    std::unordered_map<fkyaml::node, fkyaml::node> unordered_map_node_val;
+    unordered_map_node_val.emplace("test", 123);
+    unordered_map_node_val.emplace("foo", -456);
+    std::unordered_map<std::string, int> unordered_map_val;
+    unordered_map_val.emplace("test", 123);
+    unordered_map_val.emplace("foo", -456);
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_mapping());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n.at("test").is_integer());
+        REQUIRE(n.at("test").as_int() == 123);
+        REQUIRE(n.at("foo").is_integer());
+        REQUIRE(n.at("foo").as_int() == -456);
+    };
+
+    fkyaml::node unordered_map_node(unordered_map_node_val);
+    validate(unordered_map_node);
+
+    fkyaml::node unordered_map(unordered_map_val);
+    validate(unordered_map);
+}
+
+SECTION("std::unordered_multimap") {
+    std::unordered_multimap<fkyaml::node, fkyaml::node> unordered_multimap_node_val;
+    unordered_multimap_node_val.emplace("test", 123);
+    unordered_multimap_node_val.emplace("foo", -456);
+    std::unordered_multimap<std::string, int> unordered_multimap_val;
+    unordered_multimap_val.emplace("test", 123);
+    unordered_multimap_val.emplace("foo", -456);
+
+    auto validate = [](const fkyaml::node& n) {
+        REQUIRE(n.is_mapping());
+        REQUIRE(n.size() == 2);
+        REQUIRE(n.at("test").is_integer());
+        REQUIRE(n.at("test").as_int() == 123);
+        REQUIRE(n.at("foo").is_integer());
+        REQUIRE(n.at("foo").as_int() == -456);
+    };
+
+    fkyaml::node unordered_multimap_node(unordered_multimap_node_val);
+    validate(unordered_multimap_node);
+
+    fkyaml::node unordered_multimap(unordered_multimap_val);
+    validate(unordered_multimap);
+}
+
+SECTION("std::nullptr_t") {
+    fkyaml::node node(nullptr);
+    REQUIRE(node.is_null());
+}
+
+SECTION("boolean") {
+    fkyaml::node node(true);
+    REQUIRE(node.is_boolean());
+    REQUIRE(node.as_bool() == true);
+}
+
+SECTION("integer") {
+    fkyaml::node node(23467);
+    REQUIRE(node.is_integer());
+    REQUIRE(node.as_int() == 23467);
+}
+
+SECTION("floating point") {
+    fkyaml::node node(3.14);
+    REQUIRE(node.is_float_number());
+    REQUIRE(node.as_float() == 3.14);
+}
+
+// string-like types
+
+SECTION("std::string") {
+    fkyaml::node node(std::string("test"));
+    REQUIRE(node.is_string());
+    REQUIRE(node.size() == 4);
+    REQUIRE(node.as_str() == "test");
+}
+
+SECTION("C-style char array") {
+    fkyaml::node node("test");
+    REQUIRE(node.is_string());
+    REQUIRE(node.size() == 4);
+    REQUIRE(node.as_str() == "test");
+}
+
+SECTION("pointer to a null-terminated char sequence") {
+    const char buff[] = "test";
+    const char* p_buff = &buff[0];
+    fkyaml::node node(p_buff);
+    REQUIRE(node.is_string());
+    REQUIRE(node.size() == 4);
+    REQUIRE(node.as_str() == "test");
+}
 
 #ifdef FK_YAML_HAS_CXX_17
-    SECTION("Node_StringViewCtor") {
-        using namespace std::string_view_literals;
-        auto node = fkyaml::node("test"sv);
-        REQUIRE(node.is_string());
-        REQUIRE(node.size() == 4);
-        REQUIRE(node.as_str() == "test");
-    }
+SECTION("Node_StringViewCtor") {
+    using namespace std::string_view_literals;
+    auto node = fkyaml::node("test"sv);
+    REQUIRE(node.is_string());
+    REQUIRE(node.size() == 4);
+    REQUIRE(node.as_str() == "test");
+}
 #endif
 }
 
@@ -777,12 +773,11 @@ TEST_CASE("Node_AliasMoveCtor") {
 }
 
 TEST_CASE("Node_InitializerListCtor") {
-    fkyaml::node node = {
-        {"foo", 3.14},
-        {true, 123},
-        {567, {true, false}},
-        {{true, 1.57}, nullptr},
-        {{{"bar", nullptr}}, {{"baz", "qux"}}}};
+    fkyaml::node node = {{"foo", 3.14},
+                         {true, 123},
+                         {567, {true, false}},
+                         {{true, 1.57}, nullptr},
+                         {{{"bar", nullptr}}, {{"baz", "qux"}}}};
 
     REQUIRE(node.is_mapping());
     REQUIRE(node.size() == 5);
@@ -803,15 +798,15 @@ TEST_CASE("Node_InitializerListCtor") {
     REQUIRE(node[567][1].is_boolean());
     REQUIRE(node[567][1].as_bool() == false);
 
-    REQUIRE(node.contains(fkyaml::node {true, 1.57}));
-    REQUIRE(node[fkyaml::node {true, 1.57}].is_null());
+    REQUIRE(node.contains(fkyaml::node{true, 1.57}));
+    REQUIRE(node[fkyaml::node{true, 1.57}].is_null());
 
-    REQUIRE(node.contains(fkyaml::node {{"bar", nullptr}}));
-    REQUIRE(node[fkyaml::node {{"bar", nullptr}}].is_mapping());
-    REQUIRE(node[fkyaml::node {{"bar", nullptr}}].size() == 1);
-    REQUIRE(node[fkyaml::node {{"bar", nullptr}}].contains("baz"));
-    REQUIRE(node[fkyaml::node {{"bar", nullptr}}]["baz"].is_string());
-    REQUIRE(node[fkyaml::node {{"bar", nullptr}}]["baz"].as_str() == "qux");
+    REQUIRE(node.contains(fkyaml::node{{"bar", nullptr}}));
+    REQUIRE(node[fkyaml::node{{"bar", nullptr}}].is_mapping());
+    REQUIRE(node[fkyaml::node{{"bar", nullptr}}].size() == 1);
+    REQUIRE(node[fkyaml::node{{"bar", nullptr}}].contains("baz"));
+    REQUIRE(node[fkyaml::node{{"bar", nullptr}}]["baz"].is_string());
+    REQUIRE(node[fkyaml::node{{"bar", nullptr}}]["baz"].as_str() == "qux");
 }
 
 TEST_CASE("Node_CopyAssignmentOperator") {
@@ -842,9 +837,7 @@ public:
     using reference = value_type&;
 
     legacy_input_iterator() = default;
-    legacy_input_iterator(pointer p_val) noexcept
-        : mp_val(p_val) {
-    }
+    legacy_input_iterator(pointer p_val) noexcept: mp_val(p_val) {}
     legacy_input_iterator(const legacy_input_iterator&) = default;
     legacy_input_iterator(legacy_input_iterator&&) = default;
     legacy_input_iterator& operator=(const legacy_input_iterator&) = default;
@@ -856,9 +849,7 @@ public:
         return *this;
     }
 
-    reference operator*() noexcept {
-        return *mp_val;
-    }
+    reference operator*() noexcept { return *mp_val; }
 
     bool operator==(const legacy_input_iterator& rhs) const noexcept {
         return mp_val == rhs.mp_val;
@@ -869,7 +860,7 @@ public:
     }
 
 private:
-    pointer mp_val {nullptr};
+    pointer mp_val{nullptr};
 };
 
 TEST_CASE("Node_Deserialize") {
@@ -879,22 +870,19 @@ TEST_CASE("Node_Deserialize") {
     std::stringstream ss;
     ss << source;
 
-    auto begin = legacy_input_iterator<char> {&source[0]};
-    auto end = legacy_input_iterator<char> {&source[8]};
-    auto begin_u16 = legacy_input_iterator<char16_t> {&source_u16[0]};
-    auto end_u16 = legacy_input_iterator<char16_t> {&source_u16[8]};
-    auto begin_u32 = legacy_input_iterator<char32_t> {&source_u32[0]};
-    auto end_u32 = legacy_input_iterator<char32_t> {&source_u32[8]};
+    auto begin = legacy_input_iterator<char>{&source[0]};
+    auto end = legacy_input_iterator<char>{&source[8]};
+    auto begin_u16 = legacy_input_iterator<char16_t>{&source_u16[0]};
+    auto end_u16 = legacy_input_iterator<char16_t>{&source_u16[8]};
+    auto begin_u32 = legacy_input_iterator<char32_t>{&source_u32[0]};
+    auto end_u32 = legacy_input_iterator<char32_t>{&source_u32[8]};
 
     fkyaml::node node = GENERATE_REF(
-        fkyaml::node::deserialize("foo: bar"),
-        fkyaml::node::deserialize(source),
-        fkyaml::node::deserialize(&source[0], &source[8]),
-        fkyaml::node::deserialize(begin, end),
-        fkyaml::node::deserialize(begin_u16, end_u16),
-        fkyaml::node::deserialize(begin_u32, end_u32),
-        fkyaml::node::deserialize(std::string(source)),
-        fkyaml::node::deserialize(ss));
+            fkyaml::node::deserialize("foo: bar"), fkyaml::node::deserialize(source),
+            fkyaml::node::deserialize(&source[0], &source[8]),
+            fkyaml::node::deserialize(begin, end), fkyaml::node::deserialize(begin_u16, end_u16),
+            fkyaml::node::deserialize(begin_u32, end_u32),
+            fkyaml::node::deserialize(std::string(source)), fkyaml::node::deserialize(ss));
 
     REQUIRE(node.is_mapping());
     REQUIRE(node.size() == 1);
@@ -906,11 +894,11 @@ TEST_CASE("Node_Deserialize") {
 #if FK_YAML_HAS_CHAR8_T
 TEST_CASE("Node_Deserialize_char8_t") {
     char8_t source_u8[] = u8"foo: bar";
-    auto begin_u8 = legacy_input_iterator<char8_t> {&source_u8[0]};
-    auto end_u8 = legacy_input_iterator<char8_t> {&source_u8[8]};
+    auto begin_u8 = legacy_input_iterator<char8_t>{&source_u8[0]};
+    auto end_u8 = legacy_input_iterator<char8_t>{&source_u8[8]};
 
-    fkyaml::node node = GENERATE_REF(
-        fkyaml::node::deserialize(&source_u8[0], &source_u8[8]), fkyaml::node::deserialize(begin_u8, end_u8));
+    fkyaml::node node = GENERATE_REF(fkyaml::node::deserialize(&source_u8[0], &source_u8[8]),
+                                     fkyaml::node::deserialize(begin_u8, end_u8));
 
     REQUIRE(node.is_mapping());
     REQUIRE(node.size() == 1);
@@ -918,7 +906,7 @@ TEST_CASE("Node_Deserialize_char8_t") {
     REQUIRE(node["foo"].is_string());
     REQUIRE(node["foo"].as_str() == "bar");
 }
-#endif // FK_YAML_HAS_CHAR8_T
+#endif  // FK_YAML_HAS_CHAR8_T
 
 TEST_CASE("Node_DeserializeDocs") {
     char source[] = "foo: bar\n"
@@ -939,26 +927,26 @@ TEST_CASE("Node_DeserializeDocs") {
     std::stringstream ss;
     ss << source;
 
-    auto begin = legacy_input_iterator<char> {&source[0]};
-    auto end = legacy_input_iterator<char> {&source[33]};
-    auto begin_u16 = legacy_input_iterator<char16_t> {&source_u16[0]};
-    auto end_u16 = legacy_input_iterator<char16_t> {&source_u16[33]};
-    auto begin_u32 = legacy_input_iterator<char32_t> {&source_u32[0]};
-    auto end_u32 = legacy_input_iterator<char32_t> {&source_u32[33]};
+    auto begin = legacy_input_iterator<char>{&source[0]};
+    auto end = legacy_input_iterator<char>{&source[33]};
+    auto begin_u16 = legacy_input_iterator<char16_t>{&source_u16[0]};
+    auto end_u16 = legacy_input_iterator<char16_t>{&source_u16[33]};
+    auto begin_u32 = legacy_input_iterator<char32_t>{&source_u32[0]};
+    auto end_u32 = legacy_input_iterator<char32_t>{&source_u32[33]};
 
-    std::vector<fkyaml::node> docs = GENERATE_REF(
-        fkyaml::node::deserialize_docs("foo: bar\n"
-                                       "...\n"
-                                       "- true\n"
-                                       "- 3.14\n"
-                                       "- Null"),
-        fkyaml::node::deserialize_docs(source),
-        fkyaml::node::deserialize_docs(&source[0], &source[33]),
-        fkyaml::node::deserialize_docs(begin, end),
-        fkyaml::node::deserialize_docs(begin_u16, end_u16),
-        fkyaml::node::deserialize_docs(begin_u32, end_u32),
-        fkyaml::node::deserialize_docs(std::string(source)),
-        fkyaml::node::deserialize_docs(ss));
+    std::vector<fkyaml::node> docs =
+            GENERATE_REF(fkyaml::node::deserialize_docs("foo: bar\n"
+                                                        "...\n"
+                                                        "- true\n"
+                                                        "- 3.14\n"
+                                                        "- Null"),
+                         fkyaml::node::deserialize_docs(source),
+                         fkyaml::node::deserialize_docs(&source[0], &source[33]),
+                         fkyaml::node::deserialize_docs(begin, end),
+                         fkyaml::node::deserialize_docs(begin_u16, end_u16),
+                         fkyaml::node::deserialize_docs(begin_u32, end_u32),
+                         fkyaml::node::deserialize_docs(std::string(source)),
+                         fkyaml::node::deserialize_docs(ss));
 
     REQUIRE(docs.size() == 2);
     fkyaml::node& root0 = docs[0];
@@ -989,12 +977,12 @@ TEST_CASE("Node_DeserializeDocs_char8_t") {
                           "- true\n"
                           "- 3.14\n"
                           "- Null";
-    auto begin_u8 = legacy_input_iterator<char8_t> {&source_u8[0]};
-    auto end_u8 = legacy_input_iterator<char8_t> {&source_u8[33]};
+    auto begin_u8 = legacy_input_iterator<char8_t>{&source_u8[0]};
+    auto end_u8 = legacy_input_iterator<char8_t>{&source_u8[33]};
 
-    std::vector<fkyaml::node> docs = GENERATE_REF(
-        fkyaml::node::deserialize_docs(&source_u8[0], &source_u8[33]),
-        fkyaml::node::deserialize_docs(begin_u8, end_u8));
+    std::vector<fkyaml::node> docs =
+            GENERATE_REF(fkyaml::node::deserialize_docs(&source_u8[0], &source_u8[33]),
+                         fkyaml::node::deserialize_docs(begin_u8, end_u8));
 
     REQUIRE(docs.size() == 2);
     fkyaml::node& root0 = docs[0];
@@ -1017,7 +1005,7 @@ TEST_CASE("Node_DeserializeDocs_char8_t") {
     fkyaml::node& seq2 = root1[2];
     REQUIRE(seq2.is_null());
 }
-#endif // FK_YAML_HAS_CHAR8_T
+#endif  // FK_YAML_HAS_CHAR8_T
 
 TEST_CASE("Node_ExtractionOperator") {
     fkyaml::node node;
@@ -1219,7 +1207,7 @@ TEST_CASE("Node_MappingNodeFactory") {
     }
 
     SECTION("non-empty mapping node factory methods.") {
-        fkyaml::node::mapping_type map {{"test", true}};
+        fkyaml::node::mapping_type map{{"test", true}};
 
         SECTION("lvalue mapping") {
             fkyaml::node node = fkyaml::node::mapping(map);
@@ -1247,20 +1235,16 @@ TEST_CASE("Node_BooleanNodeFactory") {
 }
 
 TEST_CASE("Node_IntegerNodeFactory") {
-    auto integer = GENERATE(
-        std::numeric_limits<fkyaml::node::integer_type>::min(),
-        0,
-        std::numeric_limits<fkyaml::node::integer_type>::max());
+    auto integer = GENERATE(std::numeric_limits<fkyaml::node::integer_type>::min(), 0,
+                            std::numeric_limits<fkyaml::node::integer_type>::max());
     fkyaml::node node = integer;
     REQUIRE(node.is_integer());
     REQUIRE(node.as_int() == integer);
 }
 
 TEST_CASE("Node_FloatNumberNodeFactory") {
-    auto float_val = GENERATE(
-        std::numeric_limits<fkyaml::node::float_number_type>::min(),
-        3.141592,
-        std::numeric_limits<fkyaml::node::float_number_type>::max());
+    auto float_val = GENERATE(std::numeric_limits<fkyaml::node::float_number_type>::min(), 3.141592,
+                              std::numeric_limits<fkyaml::node::float_number_type>::max());
     fkyaml::node node = float_val;
     REQUIRE(node.is_float_number());
     REQUIRE(node.as_float() == float_val);
@@ -1322,7 +1306,7 @@ TEST_CASE("Node_AliasNodeFactory") {
 
 TEST_CASE("Node_SubscriptOperator") {
     SECTION("mapping") {
-        fkyaml::node::mapping_type map {{"test", fkyaml::node()}};
+        fkyaml::node::mapping_type map{{"test", fkyaml::node()}};
 
         SECTION("non-const string value") {
             fkyaml::node node = fkyaml::node::mapping(map);
@@ -1343,13 +1327,9 @@ TEST_CASE("Node_SubscriptOperator") {
             const fkyaml::node node = fkyaml::node::mapping(map);
             std::string key = "test";
 
-            SECTION("const lvalue string") {
-                REQUIRE_NOTHROW(node[key]);
-            }
+            SECTION("const lvalue string") { REQUIRE_NOTHROW(node[key]); }
 
-            SECTION("const rvalue string") {
-                REQUIRE_NOTHROW(node["test"]);
-            }
+            SECTION("const rvalue string") { REQUIRE_NOTHROW(node["test"]); }
         }
 
 #ifdef FK_YAML_HAS_CXX_17
@@ -1363,26 +1343,18 @@ TEST_CASE("Node_SubscriptOperator") {
             fkyaml::node node = fkyaml::node::mapping(map);
             fkyaml::node node_key = "test";
 
-            SECTION("non-const lvalue string node") {
-                REQUIRE_NOTHROW(node[node_key]);
-            }
+            SECTION("non-const lvalue string node") { REQUIRE_NOTHROW(node[node_key]); }
 
-            SECTION("non-const rvalue string node") {
-                REQUIRE_NOTHROW(node[std::move(node_key)]);
-            }
+            SECTION("non-const rvalue string node") { REQUIRE_NOTHROW(node[std::move(node_key)]); }
         }
 
         SECTION("const string node") {
             const fkyaml::node node = fkyaml::node::mapping(map);
             fkyaml::node node_key = "test";
 
-            SECTION("non-const lvalue string node") {
-                REQUIRE_NOTHROW(node[node_key]);
-            }
+            SECTION("non-const lvalue string node") { REQUIRE_NOTHROW(node[node_key]); }
 
-            SECTION("non-const rvalue string node") {
-                REQUIRE_NOTHROW(node[std::move(node_key)]);
-            }
+            SECTION("non-const rvalue string node") { REQUIRE_NOTHROW(node[std::move(node_key)]); }
         }
     }
 
@@ -1390,18 +1362,14 @@ TEST_CASE("Node_SubscriptOperator") {
         fkyaml::node node = fkyaml::node::sequence();
         node.as_seq().emplace_back();
 
-        SECTION("non-const integer value") {
-            REQUIRE_NOTHROW(node[0]);
-        }
+        SECTION("non-const integer value") { REQUIRE_NOTHROW(node[0]); }
 
         SECTION("const integer value") {
             const fkyaml::node const_node = node;
             REQUIRE_NOTHROW(const_node[0]);
         }
 
-        SECTION("non-const integer node") {
-            REQUIRE_NOTHROW(node[fkyaml::node(0)]);
-        }
+        SECTION("non-const integer node") { REQUIRE_NOTHROW(node[fkyaml::node(0)]); }
 
         SECTION("const integer node") {
             const fkyaml::node const_node = node;
@@ -1448,7 +1416,8 @@ TEST_CASE("Node_SubscriptOperator") {
     }
 
     SECTION("scalar") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
         fkyaml::node node_key = 0;
 
         SECTION("non-const node with an integer") {
@@ -1478,71 +1447,49 @@ TEST_CASE("Node_SubscriptOperator") {
 TEST_CASE("Node_EqualToOperator") {
     SECTION("The same type and value") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, nullptr},
-            fkyaml::node {true, true},
-            fkyaml::node {123, 123},
-            fkyaml::node {3.14, 3.14},
-            fkyaml::node {"foo", "foo"});
+                fkyaml::node{{true, 123, "foo"}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{nullptr, nullptr}, fkyaml::node{true, true}, fkyaml::node{123, 123},
+                fkyaml::node{3.14, 3.14}, fkyaml::node{"foo", "foo"});
         REQUIRE(params[0] == params[1]);
     }
 
     SECTION("The same type but different values") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {false, 456, "bar"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"baz", 456}, {"qux", false}}},
-            fkyaml::node {true, false},
-            fkyaml::node {123, 456},
-            fkyaml::node {3.14, 1.41},
-            fkyaml::node {"foo", "bar"});
+                fkyaml::node{{true, 123, "foo"}, {false, 456, "bar"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"baz", 456}, {"qux", false}}},
+                fkyaml::node{true, false}, fkyaml::node{123, 456}, fkyaml::node{3.14, 1.41},
+                fkyaml::node{"foo", "bar"});
         REQUIRE_FALSE(params[0] == params[1]);
     }
 
     SECTION("Different types") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {{true, 123, "foo"}, nullptr},
-            fkyaml::node {{true, 123, "foo"}, true},
-            fkyaml::node {{true, 123, "foo"}, 123},
-            fkyaml::node {{true, 123, "foo"}, 3.14},
-            fkyaml::node {{true, 123, "foo"}, "foo"},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, nullptr},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, true},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 123},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 3.14},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, "foo"},
-            fkyaml::node {nullptr, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, true},
-            fkyaml::node {nullptr, 123},
-            fkyaml::node {nullptr, 3.14},
-            fkyaml::node {nullptr, "foo"},
-            fkyaml::node {true, {true, 123, "foo"}},
-            fkyaml::node {true, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, nullptr},
-            fkyaml::node {true, 123},
-            fkyaml::node {true, 3.14},
-            fkyaml::node {true, "foo"},
-            fkyaml::node {123, {true, 123, "foo"}},
-            fkyaml::node {123, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {123, nullptr},
-            fkyaml::node {123, true},
-            fkyaml::node {123, 3.14},
-            fkyaml::node {123, "foo"},
-            fkyaml::node {3.14, {true, 123, "foo"}},
-            fkyaml::node {3.14, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {3.14, nullptr},
-            fkyaml::node {3.14, true},
-            fkyaml::node {3.14, 123},
-            fkyaml::node {3.14, "foo"},
-            fkyaml::node {"foo", {true, 123, "foo"}},
-            fkyaml::node {"foo", {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {"foo", nullptr},
-            fkyaml::node {"foo", true},
-            fkyaml::node {"foo", 123},
-            fkyaml::node {"foo", 3.14});
+                fkyaml::node{{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{{true, 123, "foo"}, nullptr}, fkyaml::node{{true, 123, "foo"}, true},
+                fkyaml::node{{true, 123, "foo"}, 123}, fkyaml::node{{true, 123, "foo"}, 3.14},
+                fkyaml::node{{true, 123, "foo"}, "foo"},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, nullptr},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, true},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 123},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 3.14},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, "foo"},
+                fkyaml::node{nullptr, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {{"foo", 123}, {"bar", true}}}, fkyaml::node{nullptr, true},
+                fkyaml::node{nullptr, 123}, fkyaml::node{nullptr, 3.14},
+                fkyaml::node{nullptr, "foo"}, fkyaml::node{true, {true, 123, "foo"}},
+                fkyaml::node{true, {{"foo", 123}, {"bar", true}}}, fkyaml::node{true, nullptr},
+                fkyaml::node{true, 123}, fkyaml::node{true, 3.14}, fkyaml::node{true, "foo"},
+                fkyaml::node{123, {true, 123, "foo"}},
+                fkyaml::node{123, {{"foo", 123}, {"bar", true}}}, fkyaml::node{123, nullptr},
+                fkyaml::node{123, true}, fkyaml::node{123, 3.14}, fkyaml::node{123, "foo"},
+                fkyaml::node{3.14, {true, 123, "foo"}},
+                fkyaml::node{3.14, {{"foo", 123}, {"bar", true}}}, fkyaml::node{3.14, nullptr},
+                fkyaml::node{3.14, true}, fkyaml::node{3.14, 123}, fkyaml::node{3.14, "foo"},
+                fkyaml::node{"foo", {true, 123, "foo"}},
+                fkyaml::node{"foo", {{"foo", 123}, {"bar", true}}}, fkyaml::node{"foo", nullptr},
+                fkyaml::node{"foo", true}, fkyaml::node{"foo", 123}, fkyaml::node{"foo", 3.14});
         REQUIRE_FALSE(params[0] == params[1]);
     }
 }
@@ -1550,71 +1497,49 @@ TEST_CASE("Node_EqualToOperator") {
 TEST_CASE("Node_NotEqualToOperator") {
     SECTION("The same type and value") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, nullptr},
-            fkyaml::node {true, true},
-            fkyaml::node {123, 123},
-            fkyaml::node {3.14, 3.14},
-            fkyaml::node {"foo", "foo"});
+                fkyaml::node{{true, 123, "foo"}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{nullptr, nullptr}, fkyaml::node{true, true}, fkyaml::node{123, 123},
+                fkyaml::node{3.14, 3.14}, fkyaml::node{"foo", "foo"});
         REQUIRE_FALSE(params[0] != params[1]);
     }
 
     SECTION("The same type but different values") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {false, 456, "bar"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"baz", 456}, {"qux", false}}},
-            fkyaml::node {true, false},
-            fkyaml::node {123, 456},
-            fkyaml::node {3.14, 1.41},
-            fkyaml::node {"foo", "bar"});
+                fkyaml::node{{true, 123, "foo"}, {false, 456, "bar"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"baz", 456}, {"qux", false}}},
+                fkyaml::node{true, false}, fkyaml::node{123, 456}, fkyaml::node{3.14, 1.41},
+                fkyaml::node{"foo", "bar"});
         REQUIRE(params[0] != params[1]);
     }
 
     SECTION("Different types") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {{true, 123, "foo"}, nullptr},
-            fkyaml::node {{true, 123, "foo"}, true},
-            fkyaml::node {{true, 123, "foo"}, 123},
-            fkyaml::node {{true, 123, "foo"}, 3.14},
-            fkyaml::node {{true, 123, "foo"}, "foo"},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, nullptr},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, true},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 123},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 3.14},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, "foo"},
-            fkyaml::node {nullptr, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, true},
-            fkyaml::node {nullptr, 123},
-            fkyaml::node {nullptr, 3.14},
-            fkyaml::node {nullptr, "foo"},
-            fkyaml::node {true, {true, 123, "foo"}},
-            fkyaml::node {true, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, nullptr},
-            fkyaml::node {true, 123},
-            fkyaml::node {true, 3.14},
-            fkyaml::node {true, "foo"},
-            fkyaml::node {123, {true, 123, "foo"}},
-            fkyaml::node {123, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {123, nullptr},
-            fkyaml::node {123, true},
-            fkyaml::node {123, 3.14},
-            fkyaml::node {123, "foo"},
-            fkyaml::node {3.14, {true, 123, "foo"}},
-            fkyaml::node {3.14, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {3.14, nullptr},
-            fkyaml::node {3.14, true},
-            fkyaml::node {3.14, 123},
-            fkyaml::node {3.14, "foo"},
-            fkyaml::node {"foo", {true, 123, "foo"}},
-            fkyaml::node {"foo", {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {"foo", nullptr},
-            fkyaml::node {"foo", true},
-            fkyaml::node {"foo", 123},
-            fkyaml::node {"foo", 3.14});
+                fkyaml::node{{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{{true, 123, "foo"}, nullptr}, fkyaml::node{{true, 123, "foo"}, true},
+                fkyaml::node{{true, 123, "foo"}, 123}, fkyaml::node{{true, 123, "foo"}, 3.14},
+                fkyaml::node{{true, 123, "foo"}, "foo"},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, nullptr},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, true},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 123},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 3.14},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, "foo"},
+                fkyaml::node{nullptr, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {{"foo", 123}, {"bar", true}}}, fkyaml::node{nullptr, true},
+                fkyaml::node{nullptr, 123}, fkyaml::node{nullptr, 3.14},
+                fkyaml::node{nullptr, "foo"}, fkyaml::node{true, {true, 123, "foo"}},
+                fkyaml::node{true, {{"foo", 123}, {"bar", true}}}, fkyaml::node{true, nullptr},
+                fkyaml::node{true, 123}, fkyaml::node{true, 3.14}, fkyaml::node{true, "foo"},
+                fkyaml::node{123, {true, 123, "foo"}},
+                fkyaml::node{123, {{"foo", 123}, {"bar", true}}}, fkyaml::node{123, nullptr},
+                fkyaml::node{123, true}, fkyaml::node{123, 3.14}, fkyaml::node{123, "foo"},
+                fkyaml::node{3.14, {true, 123, "foo"}},
+                fkyaml::node{3.14, {{"foo", 123}, {"bar", true}}}, fkyaml::node{3.14, nullptr},
+                fkyaml::node{3.14, true}, fkyaml::node{3.14, 123}, fkyaml::node{3.14, "foo"},
+                fkyaml::node{"foo", {true, 123, "foo"}},
+                fkyaml::node{"foo", {{"foo", 123}, {"bar", true}}}, fkyaml::node{"foo", nullptr},
+                fkyaml::node{"foo", true}, fkyaml::node{"foo", 123}, fkyaml::node{"foo", 3.14});
         REQUIRE(params[0] != params[1]);
     }
 }
@@ -1622,87 +1547,62 @@ TEST_CASE("Node_NotEqualToOperator") {
 TEST_CASE("Node_LessThanOperator") {
     SECTION("The same type and value") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, nullptr},
-            fkyaml::node {true, true},
-            fkyaml::node {123, 123},
-            fkyaml::node {3.14, 3.14},
-            fkyaml::node {"foo", "foo"});
+                fkyaml::node{{true, 123, "foo"}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{nullptr, nullptr}, fkyaml::node{true, true}, fkyaml::node{123, 123},
+                fkyaml::node{3.14, 3.14}, fkyaml::node{"foo", "foo"});
         REQUIRE_FALSE(params[0] < params[1]);
     }
 
     SECTION("The same type and the target value is less than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123}, {true, 123, "foo"}},
-            fkyaml::node {{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {false, true},
-            fkyaml::node {123, 456},
-            fkyaml::node {3.14, 4.25},
-            fkyaml::node {"foo", "qux"});
+        auto params = GENERATE(fkyaml::node{{true, 123}, {true, 123, "foo"}},
+                               fkyaml::node{{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                               fkyaml::node{false, true}, fkyaml::node{123, 456},
+                               fkyaml::node{3.14, 4.25}, fkyaml::node{"foo", "qux"});
         REQUIRE(params[0] < params[1]);
     }
 
     SECTION("The same type but the target value is greater than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
-            fkyaml::node {true, false},
-            fkyaml::node {456, 123},
-            fkyaml::node {4.25, 3.14},
-            fkyaml::node {"qux", "foo"});
+        auto params = GENERATE(fkyaml::node{{true, 123, "foo"}, {true, 123}},
+                               fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
+                               fkyaml::node{true, false}, fkyaml::node{456, 123},
+                               fkyaml::node{4.25, 3.14}, fkyaml::node{"qux", "foo"});
         REQUIRE_FALSE(params[0] < params[1]);
     }
 
     SECTION("The numeric value of the target type is less than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {{true, 123, "foo"}, nullptr},
-            fkyaml::node {{true, 123, "foo"}, true},
-            fkyaml::node {{true, 123, "foo"}, 123},
-            fkyaml::node {{true, 123, "foo"}, 3.14},
-            fkyaml::node {{true, 123, "foo"}, "foo"},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, nullptr},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, true},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 123},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 3.14},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, "foo"},
-            fkyaml::node {nullptr, true},
-            fkyaml::node {nullptr, 123},
-            fkyaml::node {nullptr, 3.14},
-            fkyaml::node {nullptr, "foo"},
-            fkyaml::node {true, 123},
-            fkyaml::node {true, 3.14},
-            fkyaml::node {true, "foo"},
-            fkyaml::node {123, 3.14},
-            fkyaml::node {123, "foo"},
-            fkyaml::node {3.14, "foo"});
+                fkyaml::node{{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{{true, 123, "foo"}, nullptr}, fkyaml::node{{true, 123, "foo"}, true},
+                fkyaml::node{{true, 123, "foo"}, 123}, fkyaml::node{{true, 123, "foo"}, 3.14},
+                fkyaml::node{{true, 123, "foo"}, "foo"},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, nullptr},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, true},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 123},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 3.14},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, "foo"}, fkyaml::node{nullptr, true},
+                fkyaml::node{nullptr, 123}, fkyaml::node{nullptr, 3.14},
+                fkyaml::node{nullptr, "foo"}, fkyaml::node{true, 123}, fkyaml::node{true, 3.14},
+                fkyaml::node{true, "foo"}, fkyaml::node{123, 3.14}, fkyaml::node{123, "foo"},
+                fkyaml::node{3.14, "foo"});
         REQUIRE(params[0] < params[1]);
     }
 
     SECTION("The numeric value of the target type is greater than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, {true, 123, "foo"}},
-            fkyaml::node {true, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, nullptr},
-            fkyaml::node {123, {true, 123, "foo"}},
-            fkyaml::node {123, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {123, nullptr},
-            fkyaml::node {123, true},
-            fkyaml::node {3.14, {true, 123, "foo"}},
-            fkyaml::node {3.14, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {3.14, nullptr},
-            fkyaml::node {3.14, true},
-            fkyaml::node {3.14, 123},
-            fkyaml::node {"foo", {true, 123, "foo"}},
-            fkyaml::node {"foo", {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {"foo", nullptr},
-            fkyaml::node {"foo", true},
-            fkyaml::node {"foo", 123},
-            fkyaml::node {"foo", 3.14});
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{true, {true, 123, "foo"}},
+                fkyaml::node{true, {{"foo", 123}, {"bar", true}}}, fkyaml::node{true, nullptr},
+                fkyaml::node{123, {true, 123, "foo"}},
+                fkyaml::node{123, {{"foo", 123}, {"bar", true}}}, fkyaml::node{123, nullptr},
+                fkyaml::node{123, true}, fkyaml::node{3.14, {true, 123, "foo"}},
+                fkyaml::node{3.14, {{"foo", 123}, {"bar", true}}}, fkyaml::node{3.14, nullptr},
+                fkyaml::node{3.14, true}, fkyaml::node{3.14, 123},
+                fkyaml::node{"foo", {true, 123, "foo"}},
+                fkyaml::node{"foo", {{"foo", 123}, {"bar", true}}}, fkyaml::node{"foo", nullptr},
+                fkyaml::node{"foo", true}, fkyaml::node{"foo", 123}, fkyaml::node{"foo", 3.14});
         REQUIRE_FALSE(params[0] < params[1]);
     }
 }
@@ -1710,87 +1610,62 @@ TEST_CASE("Node_LessThanOperator") {
 TEST_CASE("Node_LessThanOrEqualToOperator") {
     SECTION("The same type and value") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, nullptr},
-            fkyaml::node {true, true},
-            fkyaml::node {123, 123},
-            fkyaml::node {3.14, 3.14},
-            fkyaml::node {"foo", "foo"});
+                fkyaml::node{{true, 123, "foo"}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{nullptr, nullptr}, fkyaml::node{true, true}, fkyaml::node{123, 123},
+                fkyaml::node{3.14, 3.14}, fkyaml::node{"foo", "foo"});
         REQUIRE(params[0] <= params[1]);
     }
 
     SECTION("The same type and the target value is less than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123}, {true, 123, "foo"}},
-            fkyaml::node {{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {false, true},
-            fkyaml::node {123, 456},
-            fkyaml::node {3.14, 4.25},
-            fkyaml::node {"foo", "qux"});
+        auto params = GENERATE(fkyaml::node{{true, 123}, {true, 123, "foo"}},
+                               fkyaml::node{{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                               fkyaml::node{false, true}, fkyaml::node{123, 456},
+                               fkyaml::node{3.14, 4.25}, fkyaml::node{"foo", "qux"});
         REQUIRE(params[0] <= params[1]);
     }
 
     SECTION("The same type but the target value is greater than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
-            fkyaml::node {true, false},
-            fkyaml::node {456, 123},
-            fkyaml::node {4.25, 3.14},
-            fkyaml::node {"qux", "foo"});
+        auto params = GENERATE(fkyaml::node{{true, 123, "foo"}, {true, 123}},
+                               fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
+                               fkyaml::node{true, false}, fkyaml::node{456, 123},
+                               fkyaml::node{4.25, 3.14}, fkyaml::node{"qux", "foo"});
         REQUIRE_FALSE(params[0] <= params[1]);
     }
 
     SECTION("The numeric value of the target type is less than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {{true, 123, "foo"}, nullptr},
-            fkyaml::node {{true, 123, "foo"}, true},
-            fkyaml::node {{true, 123, "foo"}, 123},
-            fkyaml::node {{true, 123, "foo"}, 3.14},
-            fkyaml::node {{true, 123, "foo"}, "foo"},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, nullptr},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, true},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 123},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 3.14},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, "foo"},
-            fkyaml::node {nullptr, true},
-            fkyaml::node {nullptr, 123},
-            fkyaml::node {nullptr, 3.14},
-            fkyaml::node {nullptr, "foo"},
-            fkyaml::node {true, 123},
-            fkyaml::node {true, 3.14},
-            fkyaml::node {true, "foo"},
-            fkyaml::node {123, 3.14},
-            fkyaml::node {123, "foo"},
-            fkyaml::node {3.14, "foo"});
+                fkyaml::node{{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{{true, 123, "foo"}, nullptr}, fkyaml::node{{true, 123, "foo"}, true},
+                fkyaml::node{{true, 123, "foo"}, 123}, fkyaml::node{{true, 123, "foo"}, 3.14},
+                fkyaml::node{{true, 123, "foo"}, "foo"},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, nullptr},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, true},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 123},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 3.14},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, "foo"}, fkyaml::node{nullptr, true},
+                fkyaml::node{nullptr, 123}, fkyaml::node{nullptr, 3.14},
+                fkyaml::node{nullptr, "foo"}, fkyaml::node{true, 123}, fkyaml::node{true, 3.14},
+                fkyaml::node{true, "foo"}, fkyaml::node{123, 3.14}, fkyaml::node{123, "foo"},
+                fkyaml::node{3.14, "foo"});
         REQUIRE(params[0] <= params[1]);
     }
 
     SECTION("The numeric value of the target type is greater than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, {true, 123, "foo"}},
-            fkyaml::node {true, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, nullptr},
-            fkyaml::node {123, {true, 123, "foo"}},
-            fkyaml::node {123, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {123, nullptr},
-            fkyaml::node {123, true},
-            fkyaml::node {3.14, {true, 123, "foo"}},
-            fkyaml::node {3.14, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {3.14, nullptr},
-            fkyaml::node {3.14, true},
-            fkyaml::node {3.14, 123},
-            fkyaml::node {"foo", {true, 123, "foo"}},
-            fkyaml::node {"foo", {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {"foo", nullptr},
-            fkyaml::node {"foo", true},
-            fkyaml::node {"foo", 123},
-            fkyaml::node {"foo", 3.14});
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{true, {true, 123, "foo"}},
+                fkyaml::node{true, {{"foo", 123}, {"bar", true}}}, fkyaml::node{true, nullptr},
+                fkyaml::node{123, {true, 123, "foo"}},
+                fkyaml::node{123, {{"foo", 123}, {"bar", true}}}, fkyaml::node{123, nullptr},
+                fkyaml::node{123, true}, fkyaml::node{3.14, {true, 123, "foo"}},
+                fkyaml::node{3.14, {{"foo", 123}, {"bar", true}}}, fkyaml::node{3.14, nullptr},
+                fkyaml::node{3.14, true}, fkyaml::node{3.14, 123},
+                fkyaml::node{"foo", {true, 123, "foo"}},
+                fkyaml::node{"foo", {{"foo", 123}, {"bar", true}}}, fkyaml::node{"foo", nullptr},
+                fkyaml::node{"foo", true}, fkyaml::node{"foo", 123}, fkyaml::node{"foo", 3.14});
         REQUIRE_FALSE(params[0] <= params[1]);
     }
 }
@@ -1798,87 +1673,62 @@ TEST_CASE("Node_LessThanOrEqualToOperator") {
 TEST_CASE("Node_GreaterThanOperator") {
     SECTION("The same type and value") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, nullptr},
-            fkyaml::node {true, true},
-            fkyaml::node {123, 123},
-            fkyaml::node {3.14, 3.14},
-            fkyaml::node {"foo", "foo"});
+                fkyaml::node{{true, 123, "foo"}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{nullptr, nullptr}, fkyaml::node{true, true}, fkyaml::node{123, 123},
+                fkyaml::node{3.14, 3.14}, fkyaml::node{"foo", "foo"});
         REQUIRE_FALSE(params[0] > params[1]);
     }
 
     SECTION("The same type and the target value is less than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123}, {true, 123, "foo"}},
-            fkyaml::node {{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {false, true},
-            fkyaml::node {123, 456},
-            fkyaml::node {3.14, 4.25},
-            fkyaml::node {"foo", "qux"});
+        auto params = GENERATE(fkyaml::node{{true, 123}, {true, 123, "foo"}},
+                               fkyaml::node{{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                               fkyaml::node{false, true}, fkyaml::node{123, 456},
+                               fkyaml::node{3.14, 4.25}, fkyaml::node{"foo", "qux"});
         REQUIRE_FALSE(params[0] > params[1]);
     }
 
     SECTION("The same type but the target value is greater than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
-            fkyaml::node {true, false},
-            fkyaml::node {456, 123},
-            fkyaml::node {4.25, 3.14},
-            fkyaml::node {"qux", "foo"});
+        auto params = GENERATE(fkyaml::node{{true, 123, "foo"}, {true, 123}},
+                               fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
+                               fkyaml::node{true, false}, fkyaml::node{456, 123},
+                               fkyaml::node{4.25, 3.14}, fkyaml::node{"qux", "foo"});
         REQUIRE(params[0] > params[1]);
     }
 
     SECTION("The numeric value of the target type is less than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {{true, 123, "foo"}, nullptr},
-            fkyaml::node {{true, 123, "foo"}, true},
-            fkyaml::node {{true, 123, "foo"}, 123},
-            fkyaml::node {{true, 123, "foo"}, 3.14},
-            fkyaml::node {{true, 123, "foo"}, "foo"},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, nullptr},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, true},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 123},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 3.14},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, "foo"},
-            fkyaml::node {nullptr, true},
-            fkyaml::node {nullptr, 123},
-            fkyaml::node {nullptr, 3.14},
-            fkyaml::node {nullptr, "foo"},
-            fkyaml::node {true, 123},
-            fkyaml::node {true, 3.14},
-            fkyaml::node {true, "foo"},
-            fkyaml::node {123, 3.14},
-            fkyaml::node {123, "foo"},
-            fkyaml::node {3.14, "foo"});
+                fkyaml::node{{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{{true, 123, "foo"}, nullptr}, fkyaml::node{{true, 123, "foo"}, true},
+                fkyaml::node{{true, 123, "foo"}, 123}, fkyaml::node{{true, 123, "foo"}, 3.14},
+                fkyaml::node{{true, 123, "foo"}, "foo"},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, nullptr},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, true},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 123},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 3.14},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, "foo"}, fkyaml::node{nullptr, true},
+                fkyaml::node{nullptr, 123}, fkyaml::node{nullptr, 3.14},
+                fkyaml::node{nullptr, "foo"}, fkyaml::node{true, 123}, fkyaml::node{true, 3.14},
+                fkyaml::node{true, "foo"}, fkyaml::node{123, 3.14}, fkyaml::node{123, "foo"},
+                fkyaml::node{3.14, "foo"});
         REQUIRE_FALSE(params[0] > params[1]);
     }
 
     SECTION("The numeric value of the target type is greater than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, {true, 123, "foo"}},
-            fkyaml::node {true, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, nullptr},
-            fkyaml::node {123, {true, 123, "foo"}},
-            fkyaml::node {123, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {123, nullptr},
-            fkyaml::node {123, true},
-            fkyaml::node {3.14, {true, 123, "foo"}},
-            fkyaml::node {3.14, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {3.14, nullptr},
-            fkyaml::node {3.14, true},
-            fkyaml::node {3.14, 123},
-            fkyaml::node {"foo", {true, 123, "foo"}},
-            fkyaml::node {"foo", {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {"foo", nullptr},
-            fkyaml::node {"foo", true},
-            fkyaml::node {"foo", 123},
-            fkyaml::node {"foo", 3.14});
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{true, {true, 123, "foo"}},
+                fkyaml::node{true, {{"foo", 123}, {"bar", true}}}, fkyaml::node{true, nullptr},
+                fkyaml::node{123, {true, 123, "foo"}},
+                fkyaml::node{123, {{"foo", 123}, {"bar", true}}}, fkyaml::node{123, nullptr},
+                fkyaml::node{123, true}, fkyaml::node{3.14, {true, 123, "foo"}},
+                fkyaml::node{3.14, {{"foo", 123}, {"bar", true}}}, fkyaml::node{3.14, nullptr},
+                fkyaml::node{3.14, true}, fkyaml::node{3.14, 123},
+                fkyaml::node{"foo", {true, 123, "foo"}},
+                fkyaml::node{"foo", {{"foo", 123}, {"bar", true}}}, fkyaml::node{"foo", nullptr},
+                fkyaml::node{"foo", true}, fkyaml::node{"foo", 123}, fkyaml::node{"foo", 3.14});
         REQUIRE(params[0] > params[1]);
     }
 }
@@ -1886,87 +1736,62 @@ TEST_CASE("Node_GreaterThanOperator") {
 TEST_CASE("Node_GreaterThanOrEqualToOperator") {
     SECTION("The same type and value") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123, "foo"}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {nullptr, nullptr},
-            fkyaml::node {true, true},
-            fkyaml::node {123, 123},
-            fkyaml::node {3.14, 3.14},
-            fkyaml::node {"foo", "foo"});
+                fkyaml::node{{true, 123, "foo"}, {true, 123, "foo"}},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{nullptr, nullptr}, fkyaml::node{true, true}, fkyaml::node{123, 123},
+                fkyaml::node{3.14, 3.14}, fkyaml::node{"foo", "foo"});
         REQUIRE(params[0] >= params[1]);
     }
 
     SECTION("The same type and the target value is less than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123}, {true, 123, "foo"}},
-            fkyaml::node {{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {false, true},
-            fkyaml::node {123, 456},
-            fkyaml::node {3.14, 4.25},
-            fkyaml::node {"foo", "qux"});
+        auto params = GENERATE(fkyaml::node{{true, 123}, {true, 123, "foo"}},
+                               fkyaml::node{{{"bar", true}}, {{"foo", 123}, {"bar", true}}},
+                               fkyaml::node{false, true}, fkyaml::node{123, 456},
+                               fkyaml::node{3.14, 4.25}, fkyaml::node{"foo", "qux"});
         REQUIRE_FALSE(params[0] >= params[1]);
     }
 
     SECTION("The same type but the target value is greater than the compared one") {
-        auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {true, 123}},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
-            fkyaml::node {true, false},
-            fkyaml::node {456, 123},
-            fkyaml::node {4.25, 3.14},
-            fkyaml::node {"qux", "foo"});
+        auto params = GENERATE(fkyaml::node{{true, 123, "foo"}, {true, 123}},
+                               fkyaml::node{{{"foo", 123}, {"bar", true}}, {{"bar", true}}},
+                               fkyaml::node{true, false}, fkyaml::node{456, 123},
+                               fkyaml::node{4.25, 3.14}, fkyaml::node{"qux", "foo"});
         REQUIRE(params[0] >= params[1]);
     }
 
     SECTION("The numeric value of the target type is less than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {{true, 123, "foo"}, nullptr},
-            fkyaml::node {{true, 123, "foo"}, true},
-            fkyaml::node {{true, 123, "foo"}, 123},
-            fkyaml::node {{true, 123, "foo"}, 3.14},
-            fkyaml::node {{true, 123, "foo"}, "foo"},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, nullptr},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, true},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 123},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, 3.14},
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, "foo"},
-            fkyaml::node {nullptr, true},
-            fkyaml::node {nullptr, 123},
-            fkyaml::node {nullptr, 3.14},
-            fkyaml::node {nullptr, "foo"},
-            fkyaml::node {true, 123},
-            fkyaml::node {true, 3.14},
-            fkyaml::node {true, "foo"},
-            fkyaml::node {123, 3.14},
-            fkyaml::node {123, "foo"},
-            fkyaml::node {3.14, "foo"});
+                fkyaml::node{{true, 123, "foo"}, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{{true, 123, "foo"}, nullptr}, fkyaml::node{{true, 123, "foo"}, true},
+                fkyaml::node{{true, 123, "foo"}, 123}, fkyaml::node{{true, 123, "foo"}, 3.14},
+                fkyaml::node{{true, 123, "foo"}, "foo"},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, nullptr},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, true},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 123},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, 3.14},
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, "foo"}, fkyaml::node{nullptr, true},
+                fkyaml::node{nullptr, 123}, fkyaml::node{nullptr, 3.14},
+                fkyaml::node{nullptr, "foo"}, fkyaml::node{true, 123}, fkyaml::node{true, 3.14},
+                fkyaml::node{true, "foo"}, fkyaml::node{123, 3.14}, fkyaml::node{123, "foo"},
+                fkyaml::node{3.14, "foo"});
         REQUIRE_FALSE(params[0] >= params[1]);
     }
 
     SECTION("The numeric value of the target type is greater than that of the compared one") {
         auto params = GENERATE(
-            fkyaml::node {{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {true, 123, "foo"}},
-            fkyaml::node {nullptr, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, {true, 123, "foo"}},
-            fkyaml::node {true, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {true, nullptr},
-            fkyaml::node {123, {true, 123, "foo"}},
-            fkyaml::node {123, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {123, nullptr},
-            fkyaml::node {123, true},
-            fkyaml::node {3.14, {true, 123, "foo"}},
-            fkyaml::node {3.14, {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {3.14, nullptr},
-            fkyaml::node {3.14, true},
-            fkyaml::node {3.14, 123},
-            fkyaml::node {"foo", {true, 123, "foo"}},
-            fkyaml::node {"foo", {{"foo", 123}, {"bar", true}}},
-            fkyaml::node {"foo", nullptr},
-            fkyaml::node {"foo", true},
-            fkyaml::node {"foo", 123},
-            fkyaml::node {"foo", 3.14});
+                fkyaml::node{{{"foo", 123}, {"bar", true}}, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {true, 123, "foo"}},
+                fkyaml::node{nullptr, {{"foo", 123}, {"bar", true}}},
+                fkyaml::node{true, {true, 123, "foo"}},
+                fkyaml::node{true, {{"foo", 123}, {"bar", true}}}, fkyaml::node{true, nullptr},
+                fkyaml::node{123, {true, 123, "foo"}},
+                fkyaml::node{123, {{"foo", 123}, {"bar", true}}}, fkyaml::node{123, nullptr},
+                fkyaml::node{123, true}, fkyaml::node{3.14, {true, 123, "foo"}},
+                fkyaml::node{3.14, {{"foo", 123}, {"bar", true}}}, fkyaml::node{3.14, nullptr},
+                fkyaml::node{3.14, true}, fkyaml::node{3.14, 123},
+                fkyaml::node{"foo", {true, 123, "foo"}},
+                fkyaml::node{"foo", {{"foo", 123}, {"bar", true}}}, fkyaml::node{"foo", nullptr},
+                fkyaml::node{"foo", true}, fkyaml::node{"foo", 123}, fkyaml::node{"foo", 3.14});
         REQUIRE(params[0] >= params[1]);
     }
 }
@@ -1977,18 +1802,15 @@ TEST_CASE("Node_GreaterThanOrEqualToOperator") {
 
 TEST_CASE("Node_GetType") {
     using NodeTypePair = std::pair<fkyaml::node, fkyaml::node_type>;
-    auto type_pair = GENERATE(
-        NodeTypePair(fkyaml::node::sequence(), fkyaml::node_type::SEQUENCE),
-        NodeTypePair(fkyaml::node::mapping(), fkyaml::node_type::MAPPING),
-        NodeTypePair(fkyaml::node(), fkyaml::node_type::NULL_OBJECT),
-        NodeTypePair(fkyaml::node(false), fkyaml::node_type::BOOLEAN),
-        NodeTypePair(fkyaml::node(0), fkyaml::node_type::INTEGER),
-        NodeTypePair(fkyaml::node(0.0), fkyaml::node_type::FLOAT),
-        NodeTypePair(fkyaml::node(""), fkyaml::node_type::STRING));
+    auto type_pair = GENERATE(NodeTypePair(fkyaml::node::sequence(), fkyaml::node_type::SEQUENCE),
+                              NodeTypePair(fkyaml::node::mapping(), fkyaml::node_type::MAPPING),
+                              NodeTypePair(fkyaml::node(), fkyaml::node_type::NULL_OBJECT),
+                              NodeTypePair(fkyaml::node(false), fkyaml::node_type::BOOLEAN),
+                              NodeTypePair(fkyaml::node(0), fkyaml::node_type::INTEGER),
+                              NodeTypePair(fkyaml::node(0.0), fkyaml::node_type::FLOAT),
+                              NodeTypePair(fkyaml::node(""), fkyaml::node_type::STRING));
 
-    SECTION("non-alias node types") {
-        REQUIRE(type_pair.first.get_type() == type_pair.second);
-    }
+    SECTION("non-alias node types") { REQUIRE(type_pair.first.get_type() == type_pair.second); }
 
     SECTION("alias node types") {
         type_pair.first.add_anchor_name("anchor_name");
@@ -1999,18 +1821,16 @@ TEST_CASE("Node_GetType") {
 
 TEST_CASE("Node_Type(deprecated)") {
     using NodeTypePair = std::pair<fkyaml::node, fkyaml::node::node_t>;
-    auto type_pair = GENERATE(
-        NodeTypePair(fkyaml::node::sequence(), fkyaml::node::node_t::SEQUENCE),
-        NodeTypePair(fkyaml::node::mapping(), fkyaml::node::node_t::MAPPING),
-        NodeTypePair(fkyaml::node(), fkyaml::node::node_t::NULL_OBJECT),
-        NodeTypePair(fkyaml::node(false), fkyaml::node::node_t::BOOLEAN),
-        NodeTypePair(fkyaml::node(0), fkyaml::node::node_t::INTEGER),
-        NodeTypePair(fkyaml::node(0.0), fkyaml::node::node_t::FLOAT_NUMBER),
-        NodeTypePair(fkyaml::node(""), fkyaml::node::node_t::STRING));
+    auto type_pair =
+            GENERATE(NodeTypePair(fkyaml::node::sequence(), fkyaml::node::node_t::SEQUENCE),
+                     NodeTypePair(fkyaml::node::mapping(), fkyaml::node::node_t::MAPPING),
+                     NodeTypePair(fkyaml::node(), fkyaml::node::node_t::NULL_OBJECT),
+                     NodeTypePair(fkyaml::node(false), fkyaml::node::node_t::BOOLEAN),
+                     NodeTypePair(fkyaml::node(0), fkyaml::node::node_t::INTEGER),
+                     NodeTypePair(fkyaml::node(0.0), fkyaml::node::node_t::FLOAT_NUMBER),
+                     NodeTypePair(fkyaml::node(""), fkyaml::node::node_t::STRING));
 
-    SECTION("non-alias node types") {
-        REQUIRE(type_pair.first.type() == type_pair.second);
-    }
+    SECTION("non-alias node types") { REQUIRE(type_pair.first.type() == type_pair.second); }
 
     SECTION("alias node types") {
         type_pair.first.add_anchor_name("anchor_name");
@@ -2023,9 +1843,7 @@ TEST_CASE("Node_IsSequence") {
     SECTION("sequence node type") {
         fkyaml::node node = fkyaml::node::sequence();
 
-        SECTION("non-alias sequence node type") {
-            REQUIRE(node.is_sequence());
-        }
+        SECTION("non-alias sequence node type") { REQUIRE(node.is_sequence()); }
 
         SECTION("alias sequence node type") {
             node.add_anchor_name("anchor_name");
@@ -2035,17 +1853,10 @@ TEST_CASE("Node_IsSequence") {
     }
 
     SECTION("non-sequence node types") {
-        auto node = GENERATE(
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::mapping(), fkyaml::node(), fkyaml::node(false),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-alias non-sequence node types") {
-            REQUIRE_FALSE(node.is_sequence());
-        }
+        SECTION("non-alias non-sequence node types") { REQUIRE_FALSE(node.is_sequence()); }
 
         SECTION("alias non-sequence node types.") {
             node.add_anchor_name("anchor_name");
@@ -2059,9 +1870,7 @@ TEST_CASE("Node_IsMapping") {
     SECTION("mapping node type") {
         fkyaml::node node = fkyaml::node::mapping();
 
-        SECTION("non-alias mapping node type") {
-            REQUIRE(node.is_mapping());
-        }
+        SECTION("non-alias mapping node type") { REQUIRE(node.is_mapping()); }
 
         SECTION("alias mapping node type") {
             node.add_anchor_name("anchor_name");
@@ -2071,17 +1880,10 @@ TEST_CASE("Node_IsMapping") {
     }
 
     SECTION("non-mapping node types") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node(), fkyaml::node(false),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-alias non-mapping node types") {
-            REQUIRE_FALSE(node.is_mapping());
-        }
+        SECTION("non-alias non-mapping node types") { REQUIRE_FALSE(node.is_mapping()); }
 
         SECTION("alias non-mapping node types.") {
             node.add_anchor_name("anchor_name");
@@ -2095,9 +1897,7 @@ TEST_CASE("Node_IsNull") {
     SECTION("null node type") {
         fkyaml::node node = fkyaml::node();
 
-        SECTION("non-alias null node type") {
-            REQUIRE(node.is_null());
-        }
+        SECTION("non-alias null node type") { REQUIRE(node.is_null()); }
 
         SECTION("alias null node type") {
             node.add_anchor_name("anchor_name");
@@ -2107,17 +1907,10 @@ TEST_CASE("Node_IsNull") {
     }
 
     SECTION("non-null node types") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(false),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-alias non-null node types") {
-            REQUIRE_FALSE(node.is_null());
-        }
+        SECTION("non-alias non-null node types") { REQUIRE_FALSE(node.is_null()); }
 
         SECTION("alias non-null node types") {
             node.add_anchor_name("anchor_name");
@@ -2131,9 +1924,7 @@ TEST_CASE("Node_IsBoolean") {
     SECTION("boolean node type") {
         fkyaml::node node = false;
 
-        SECTION("non-alias boolean node type") {
-            REQUIRE(node.is_boolean());
-        }
+        SECTION("non-alias boolean node type") { REQUIRE(node.is_boolean()); }
 
         SECTION("alias boolean node type") {
             node.add_anchor_name("anchor_name");
@@ -2143,17 +1934,10 @@ TEST_CASE("Node_IsBoolean") {
     }
 
     SECTION("non-boolean node types") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-alias non-boolean node types") {
-            REQUIRE_FALSE(node.is_boolean());
-        }
+        SECTION("non-alias non-boolean node types") { REQUIRE_FALSE(node.is_boolean()); }
 
         SECTION("alias non-boolean node types") {
             node.add_anchor_name("anchor_name");
@@ -2167,9 +1951,7 @@ TEST_CASE("Node_IsInteger") {
     SECTION("integer node type.") {
         fkyaml::node node = 0;
 
-        SECTION("non-alias integer node type.") {
-            REQUIRE(node.is_integer());
-        }
+        SECTION("non-alias integer node type.") { REQUIRE(node.is_integer()); }
 
         SECTION("alias integer node type.") {
             node.add_anchor_name("anchor_name");
@@ -2179,17 +1961,10 @@ TEST_CASE("Node_IsInteger") {
     }
 
     SECTION("non-integer node types.") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-alias non-integer node types") {
-            REQUIRE_FALSE(node.is_integer());
-        }
+        SECTION("non-alias non-integer node types") { REQUIRE_FALSE(node.is_integer()); }
 
         SECTION("alias non-integer node types") {
             node.add_anchor_name("anchor_name");
@@ -2203,9 +1978,7 @@ TEST_CASE("Node_IsFloatNumber") {
     SECTION("float number node type") {
         fkyaml::node node = 0.0;
 
-        SECTION("non-alias float number node type") {
-            REQUIRE(node.is_float_number());
-        }
+        SECTION("non-alias float number node type") { REQUIRE(node.is_float_number()); }
 
         SECTION("alias float number node type") {
             node.add_anchor_name("anchor_name");
@@ -2215,17 +1988,10 @@ TEST_CASE("Node_IsFloatNumber") {
     }
 
     SECTION("non-float-number node types") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0), fkyaml::node(""));
 
-        SECTION("non-alias non-float-number node types") {
-            REQUIRE_FALSE(node.is_float_number());
-        }
+        SECTION("non-alias non-float-number node types") { REQUIRE_FALSE(node.is_float_number()); }
 
         SECTION("alias non-float-number node types") {
             node.add_anchor_name("anchor_name");
@@ -2239,9 +2005,7 @@ TEST_CASE("Node_IsString") {
     SECTION("string node type") {
         fkyaml::node node = "";
 
-        SECTION("non-alias string node type") {
-            REQUIRE(node.is_string());
-        }
+        SECTION("non-alias string node type") { REQUIRE(node.is_string()); }
 
         SECTION("alias string node type") {
             node.add_anchor_name("anchor_name");
@@ -2251,17 +2015,10 @@ TEST_CASE("Node_IsString") {
     }
 
     SECTION("non-string node types") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0));
 
-        SECTION("non-alias non-string node types") {
-            REQUIRE_FALSE(node.is_string());
-        }
+        SECTION("non-alias non-string node types") { REQUIRE_FALSE(node.is_string()); }
 
         SECTION("alias non-string node types") {
             node.add_anchor_name("anchor_name");
@@ -2273,11 +2030,10 @@ TEST_CASE("Node_IsString") {
 
 TEST_CASE("Node_IsScalar") {
     SECTION("scalar node types") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-alias scalar node types") {
-            REQUIRE(node.is_scalar());
-        }
+        SECTION("non-alias scalar node types") { REQUIRE(node.is_scalar()); }
 
         SECTION("alias scalar node types") {
             node.add_anchor_name("anchor_name");
@@ -2289,9 +2045,7 @@ TEST_CASE("Node_IsScalar") {
     SECTION("non-scalar node types") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-alias non-scalar node types") {
-            REQUIRE_FALSE(node.is_scalar());
-        }
+        SECTION("non-alias non-scalar node types") { REQUIRE_FALSE(node.is_scalar()); }
 
         SECTION("alias non-scalar node types") {
             node.add_anchor_name("anchor_name");
@@ -2308,7 +2062,8 @@ TEST_CASE("Node_IsScalar") {
 TEST_CASE("Node_Empty") {
     SECTION("container and string scalar nodes") {
         SECTION("empty node") {
-            auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(""));
+            auto node =
+                    GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(""));
 
             SECTION("empty non-alias node") {
                 REQUIRE_NOTHROW(node.empty());
@@ -2325,9 +2080,9 @@ TEST_CASE("Node_Empty") {
 
         SECTION("non-empty node") {
             auto node = GENERATE(
-                fkyaml::node::sequence(fkyaml::node::sequence_type(3)),
-                fkyaml::node::mapping(fkyaml::node::mapping_type {{"test", fkyaml::node()}}),
-                fkyaml::node("test"));
+                    fkyaml::node::sequence(fkyaml::node::sequence_type(3)),
+                    fkyaml::node::mapping(fkyaml::node::mapping_type{{"test", fkyaml::node()}}),
+                    fkyaml::node("test"));
 
             SECTION("non-empty non-alias node") {
                 REQUIRE_NOTHROW(node.empty());
@@ -2344,11 +2099,10 @@ TEST_CASE("Node_Empty") {
     }
 
     SECTION("non-string scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0));
+        auto node =
+                GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0));
 
-        SECTION("non-const non-alias node") {
-            REQUIRE_THROWS_AS(node.empty(), fkyaml::type_error);
-        }
+        SECTION("non-const non-alias node") { REQUIRE_THROWS_AS(node.empty(), fkyaml::type_error); }
 
         SECTION("const non-alias node") {
             const fkyaml::node const_node = node;
@@ -2377,9 +2131,7 @@ TEST_CASE("Node_Contains") {
     SECTION("mapping") {
         fkyaml::node node = fkyaml::node::mapping({{"test", fkyaml::node()}});
 
-        SECTION("mapping node with a string key") {
-            REQUIRE(node.contains("test"));
-        }
+        SECTION("mapping node with a string key") { REQUIRE(node.contains("test")); }
 
 #ifdef FK_YAML_HAS_CXX_17
         SECTION("mapping node with a string view key") {
@@ -2395,17 +2147,10 @@ TEST_CASE("Node_Contains") {
     }
 
     SECTION("non-mapping") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node(), fkyaml::node(false),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-mapping node with a key") {
-            REQUIRE_FALSE(node.contains("test"));
-        }
+        SECTION("non-mapping node with a key") { REQUIRE_FALSE(node.contains("test")); }
 
         SECTION("non-mapping node with a node key") {
             fkyaml::node node_key = "test";
@@ -2420,10 +2165,12 @@ TEST_CASE("Node_Contains") {
 
 TEST_CASE("Node_Size") {
     SECTION("container and string scalar nodes") {
-        auto node = GENERATE(
-            fkyaml::node::sequence({fkyaml::node(), fkyaml::node(), fkyaml::node()}),
-            fkyaml::node::mapping({{"test0", fkyaml::node()}, {"test1", fkyaml::node()}, {"test2", fkyaml::node()}}),
-            fkyaml::node("tmp"));
+        auto node =
+                GENERATE(fkyaml::node::sequence({fkyaml::node(), fkyaml::node(), fkyaml::node()}),
+                         fkyaml::node::mapping({{"test0", fkyaml::node()},
+                                                {"test1", fkyaml::node()},
+                                                {"test2", fkyaml::node()}}),
+                         fkyaml::node("tmp"));
 
         SECTION("non-const non-alias node") {
             REQUIRE_NOTHROW(node.size());
@@ -2452,11 +2199,10 @@ TEST_CASE("Node_Size") {
     }
 
     SECTION("non-string scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0));
+        auto node =
+                GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0));
 
-        SECTION("non-const non-alias node") {
-            REQUIRE_THROWS_AS(node.size(), fkyaml::type_error);
-        }
+        SECTION("non-const non-alias node") { REQUIRE_THROWS_AS(node.size(), fkyaml::type_error); }
 
         SECTION("const non-alias node") {
             const fkyaml::node const_node = node;
@@ -2483,7 +2229,7 @@ TEST_CASE("Node_Size") {
 
 TEST_CASE("Node_At") {
     SECTION("mapping with existing key argument") {
-        fkyaml::node::mapping_type map {{"test", fkyaml::node()}};
+        fkyaml::node::mapping_type map{{"test", fkyaml::node()}};
 
         SECTION("non-const string value") {
             fkyaml::node node = fkyaml::node::mapping(map);
@@ -2504,13 +2250,9 @@ TEST_CASE("Node_At") {
             const fkyaml::node node = fkyaml::node::mapping(map);
             std::string key = "test";
 
-            SECTION("const lvalue string node") {
-                REQUIRE_NOTHROW(node.at(key));
-            }
+            SECTION("const lvalue string node") { REQUIRE_NOTHROW(node.at(key)); }
 
-            SECTION("const rvalue string node") {
-                REQUIRE_NOTHROW(node.at("test"));
-            }
+            SECTION("const rvalue string node") { REQUIRE_NOTHROW(node.at("test")); }
         }
 
 #ifdef FK_YAML_HAS_CXX_17
@@ -2524,9 +2266,7 @@ TEST_CASE("Node_At") {
             fkyaml::node node = fkyaml::node::mapping(map);
             fkyaml::node node_key = "test";
 
-            SECTION("non-const lvalue string node") {
-                REQUIRE_NOTHROW(node.at(node_key));
-            }
+            SECTION("non-const lvalue string node") { REQUIRE_NOTHROW(node.at(node_key)); }
 
             SECTION("non-const rvalue string node") {
                 REQUIRE_NOTHROW(node.at(std::move(node_key)));
@@ -2537,9 +2277,7 @@ TEST_CASE("Node_At") {
             const fkyaml::node node = fkyaml::node::mapping(map);
             fkyaml::node node_key = "test";
 
-            SECTION("non-const lvalue string node") {
-                REQUIRE_NOTHROW(node.at(node_key));
-            }
+            SECTION("non-const lvalue string node") { REQUIRE_NOTHROW(node.at(node_key)); }
 
             SECTION("non-const rvalue string node") {
                 REQUIRE_NOTHROW(node.at(std::move(node_key)));
@@ -2597,18 +2335,14 @@ TEST_CASE("Node_At") {
         fkyaml::node node = fkyaml::node::sequence();
         node.as_seq().emplace_back();
 
-        SECTION("non-const integer value") {
-            REQUIRE_NOTHROW(node.at(0));
-        }
+        SECTION("non-const integer value") { REQUIRE_NOTHROW(node.at(0)); }
 
         SECTION("const integer value") {
             const fkyaml::node const_node = node;
             REQUIRE_NOTHROW(const_node.at(0));
         }
 
-        SECTION("non-const integer node") {
-            REQUIRE_NOTHROW(node.at(fkyaml::node(0)));
-        }
+        SECTION("non-const integer node") { REQUIRE_NOTHROW(node.at(fkyaml::node(0))); }
 
         SECTION("const integer node") {
             const fkyaml::node const_node = node;
@@ -2674,7 +2408,8 @@ TEST_CASE("Node_At") {
     }
 
     SECTION("scalar") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
         fkyaml::node node_key = 0;
 
         SECTION("non-const node with an integer.") {
@@ -2742,9 +2477,7 @@ TEST_CASE("Node_GetYamlVersion(deprecated)") {
 TEST_CASE("Node_IsAlias") {
     fkyaml::node node;
 
-    SECTION("without anchor name") {
-        REQUIRE_FALSE(node.is_alias());
-    }
+    SECTION("without anchor name") { REQUIRE_FALSE(node.is_alias()); }
 
     SECTION("an anchor node") {
         node.add_anchor_name("anchor");
@@ -2762,9 +2495,7 @@ TEST_CASE("Node_IsAlias") {
 TEST_CASE("Node_IsAnchor") {
     fkyaml::node node;
 
-    SECTION("without anchor name") {
-        REQUIRE_FALSE(node.is_anchor());
-    }
+    SECTION("without anchor name") { REQUIRE_FALSE(node.is_anchor()); }
 
     SECTION("an anchor node") {
         node.add_anchor_name("anchor");
@@ -2782,9 +2513,7 @@ TEST_CASE("Node_IsAnchor") {
 TEST_CASE("Node_HasAnchorName") {
     fkyaml::node node;
 
-    SECTION("without anchor name") {
-        REQUIRE_FALSE(node.has_anchor_name());
-    }
+    SECTION("without anchor name") { REQUIRE_FALSE(node.has_anchor_name()); }
 
     SECTION("with anchor name") {
         node.add_anchor_name("anchor_name");
@@ -2795,9 +2524,7 @@ TEST_CASE("Node_HasAnchorName") {
 TEST_CASE("Node_GetAnchorName") {
     fkyaml::node node;
 
-    SECTION("without anchor name") {
-        REQUIRE_THROWS_AS(node.get_anchor_name(), fkyaml::exception);
-    }
+    SECTION("without anchor name") { REQUIRE_THROWS_AS(node.get_anchor_name(), fkyaml::exception); }
 
     SECTION("with anchor name") {
         node.add_anchor_name("anchor_name");
@@ -2852,17 +2579,13 @@ TEST_CASE("Node_HasTagName") {
         REQUIRE(node.has_tag_name());
     }
 
-    SECTION("node without tag name") {
-        REQUIRE_FALSE(node.has_tag_name());
-    }
+    SECTION("node without tag name") { REQUIRE_FALSE(node.has_tag_name()); }
 }
 
 TEST_CASE("Node_GetTagName") {
     fkyaml::node node;
 
-    SECTION("node without tag name.") {
-        REQUIRE_THROWS_AS(node.get_tag_name(), fkyaml::exception);
-    }
+    SECTION("node without tag name.") { REQUIRE_THROWS_AS(node.get_tag_name(), fkyaml::exception); }
 
     SECTION("node with tag name.") {
         node.add_tag_name("tag_name");
@@ -2902,9 +2625,7 @@ TEST_CASE("Node_AddTagName") {
 
 struct not_default_constructible {
     not_default_constructible() = delete;
-    explicit not_default_constructible(int i)
-        : value(i) {
-    }
+    explicit not_default_constructible(int i): value(i) {}
     not_default_constructible(const not_default_constructible&) = default;
     int value;
 };
@@ -2918,7 +2639,7 @@ struct string_wrap {
         str = _str;
         return *this;
     }
-    std::string str {};
+    std::string str{};
 };
 
 template <typename T, typename U>
@@ -2926,23 +2647,25 @@ using get_value_fn_t = decltype(std::declval<T>().template get_value<U>());
 
 TEST_CASE("Node_GetValue_GetValueInplace") {
     SECTION("sequence") {
-        fkyaml::node node {true, false};
+        fkyaml::node node{true, false};
 
         SECTION("sequence value (1D C-style array)") {
-            STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int(&)[2]>::value);
+            STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&,
+                                                             int(&)[2]>::value);
 
-            int ints_1d[2] {0, 0};
-            fkyaml::node array_1d {1, 2};
+            int ints_1d[2]{0, 0};
+            fkyaml::node array_1d{1, 2};
             array_1d.get_value_inplace(ints_1d);
             REQUIRE(ints_1d[0] == 1);
             REQUIRE(ints_1d[1] == 2);
         }
 
         SECTION("sequence value (2D C-style array)") {
-            STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int(&)[3][3]>::value);
+            STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&,
+                                                             int(&)[3][3]>::value);
 
-            int ints_2d[3][3] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-            fkyaml::node array_2d {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            int ints_2d[3][3]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+            fkyaml::node array_2d{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
             array_2d.get_value_inplace(ints_2d);
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
@@ -2952,17 +2675,15 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         }
 
         SECTION("sequence value (3D C-style array)") {
-            STATIC_REQUIRE_FALSE(
-                fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int(&)[3][3][3]>::value);
+            STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&,
+                                                             int(&)[3][3][3]>::value);
 
-            int ints_3d[3][3][3] {
-                {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
-                {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
-                {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}};
-            fkyaml::node array_3d {
-                {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
-                {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}},
-                {{19, 20, 21}, {22, 23, 24}, {25, 26, 27}}};
+            int ints_3d[3][3][3]{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+                                 {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+                                 {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}};
+            fkyaml::node array_3d{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+                                  {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}},
+                                  {{19, 20, 21}, {22, 23, 24}, {25, 26, 27}}};
             array_3d.get_value_inplace(ints_3d);
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
@@ -2981,7 +2702,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(vector_node[1].is_boolean());
             REQUIRE(vector_node[1].get_value<bool>() == false);
 
-            std::vector<fkyaml::node> vector_node_inplace {};
+            std::vector<fkyaml::node> vector_node_inplace{};
             node.get_value_inplace(vector_node_inplace);
             REQUIRE(vector_node_inplace.size() == 2);
             REQUIRE(vector_node_inplace[0].is_boolean());
@@ -2994,7 +2715,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(vector_bool[0] == true);
             REQUIRE(vector_bool[1] == false);
 
-            std::vector<bool> vector_bool_inplace {};
+            std::vector<bool> vector_bool_inplace{};
             node.get_value_inplace(vector_bool_inplace);
             REQUIRE(vector_bool_inplace.size() == 2);
             REQUIRE(vector_bool_inplace[0] == true);
@@ -3008,7 +2729,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(array_node[1].is_boolean());
             REQUIRE(array_node[1].get_value<bool>() == false);
 
-            std::array<fkyaml::node, 2> array_node_inplace {{}};
+            std::array<fkyaml::node, 2> array_node_inplace{{}};
             node.get_value_inplace(array_node_inplace);
             REQUIRE(array_node_inplace[0].is_boolean());
             REQUIRE(array_node_inplace[0].get_value<bool>() == true);
@@ -3019,7 +2740,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(array_bool[0] == true);
             REQUIRE(array_bool[1] == false);
 
-            std::array<bool, 2> array_bool_inplace {{}};
+            std::array<bool, 2> array_bool_inplace{{}};
             node.get_value_inplace(array_bool_inplace);
             REQUIRE(array_bool_inplace[0] == true);
             REQUIRE(array_bool_inplace[1] == false);
@@ -3032,7 +2753,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(valarray_node[1].is_boolean());
             REQUIRE(valarray_node[1].get_value<bool>() == false);
 
-            std::valarray<fkyaml::node> valarray_node_inplace {};
+            std::valarray<fkyaml::node> valarray_node_inplace{};
             node.get_value_inplace(valarray_node_inplace);
             REQUIRE(valarray_node_inplace[0].is_boolean());
             REQUIRE(valarray_node_inplace[0].get_value<bool>() == true);
@@ -3043,7 +2764,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(valarray_bool[0] == true);
             REQUIRE(valarray_bool[1] == false);
 
-            std::valarray<bool> valarray_bool_inplace {};
+            std::valarray<bool> valarray_bool_inplace{};
             node.get_value_inplace(valarray_bool_inplace);
             REQUIRE(valarray_bool_inplace[0] == true);
             REQUIRE(valarray_bool_inplace[1] == false);
@@ -3056,7 +2777,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE((std::next(forward_list_node.begin()))->is_boolean());
             REQUIRE((std::next(forward_list_node.begin()))->get_value<bool>() == false);
 
-            std::forward_list<fkyaml::node> forward_list_node_inplace {};
+            std::forward_list<fkyaml::node> forward_list_node_inplace{};
             node.get_value_inplace(forward_list_node_inplace);
             REQUIRE(forward_list_node_inplace.begin()->is_boolean());
             REQUIRE(forward_list_node_inplace.begin()->get_value<bool>() == true);
@@ -3067,7 +2788,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(*forward_list_bool.begin() == true);
             REQUIRE(*std::next(forward_list_bool.begin()) == false);
 
-            std::forward_list<bool> forward_list_bool_inplace {};
+            std::forward_list<bool> forward_list_bool_inplace{};
             node.get_value_inplace(forward_list_bool_inplace);
             REQUIRE(*forward_list_bool_inplace.begin() == true);
             REQUIRE(*std::next(forward_list_bool_inplace.begin()) == false);
@@ -3081,7 +2802,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(deque_node[1].is_boolean());
             REQUIRE(deque_node[1].get_value<bool>() == false);
 
-            std::deque<fkyaml::node> deque_node_inplace {};
+            std::deque<fkyaml::node> deque_node_inplace{};
             node.get_value_inplace(deque_node_inplace);
             REQUIRE(deque_node_inplace.size() == 2);
             REQUIRE(deque_node_inplace[0].is_boolean());
@@ -3094,7 +2815,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(deque_bool[0] == true);
             REQUIRE(deque_bool[1] == false);
 
-            std::deque<bool> deque_bool_inplace {};
+            std::deque<bool> deque_bool_inplace{};
             node.get_value_inplace(deque_bool_inplace);
             REQUIRE(deque_bool_inplace.size() == 2);
             REQUIRE(deque_bool_inplace[0] == true);
@@ -3111,7 +2832,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(list_node_itr->is_boolean());
             REQUIRE(list_node_itr->get_value<bool>() == false);
 
-            std::list<fkyaml::node> list_node_inplace {};
+            std::list<fkyaml::node> list_node_inplace{};
             node.get_value_inplace(list_node_inplace);
             REQUIRE(list_node_inplace.size() == 2);
             auto list_node_inplace_itr = list_node_inplace.begin();
@@ -3126,7 +2847,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(*list_bool.begin() == true);
             REQUIRE(*(std::next(list_bool.begin())) == false);
 
-            std::list<bool> list_bool_inplace {};
+            std::list<bool> list_bool_inplace{};
             node.get_value_inplace(list_bool_inplace);
             REQUIRE(list_bool_inplace.size() == 2);
             REQUIRE(*list_bool_inplace.begin() == true);
@@ -3139,7 +2860,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(set_node.find(fkyaml::node(true)) != set_node.end());
             REQUIRE(set_node.find(fkyaml::node(false)) != set_node.end());
 
-            std::set<fkyaml::node> set_node_inplace {};
+            std::set<fkyaml::node> set_node_inplace{};
             node.get_value_inplace(set_node_inplace);
             REQUIRE(set_node_inplace.size() == 2);
             REQUIRE(set_node_inplace.find(fkyaml::node(true)) != set_node_inplace.end());
@@ -3150,7 +2871,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(set_bool.find(true) != set_bool.end());
             REQUIRE(set_bool.find(false) != set_bool.end());
 
-            std::set<bool> set_bool_inplace {};
+            std::set<bool> set_bool_inplace{};
             node.get_value_inplace(set_bool_inplace);
             REQUIRE(set_bool_inplace.size() == 2);
             REQUIRE(set_bool_inplace.find(true) != set_bool_inplace.end());
@@ -3163,7 +2884,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(mset_node.find(fkyaml::node(true)) != mset_node.end());
             REQUIRE(mset_node.find(fkyaml::node(false)) != mset_node.end());
 
-            std::multiset<fkyaml::node> mset_node_inplace {};
+            std::multiset<fkyaml::node> mset_node_inplace{};
             node.get_value_inplace(mset_node_inplace);
             REQUIRE(mset_node_inplace.size() == 2);
             REQUIRE(mset_node_inplace.find(fkyaml::node(true)) != mset_node_inplace.end());
@@ -3174,7 +2895,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(mset_bool.find(true) != mset_bool.end());
             REQUIRE(mset_bool.find(false) != mset_bool.end());
 
-            std::multiset<fkyaml::node> mset_bool_inplace {};
+            std::multiset<fkyaml::node> mset_bool_inplace{};
             node.get_value_inplace(mset_bool_inplace);
             REQUIRE(mset_bool_inplace.size() == 2);
             REQUIRE(mset_bool_inplace.find(true) != mset_bool_inplace.end());
@@ -3187,7 +2908,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(uset_node.find(fkyaml::node(true)) != uset_node.end());
             REQUIRE(uset_node.find(fkyaml::node(false)) != uset_node.end());
 
-            std::unordered_set<fkyaml::node> uset_node_inplace {};
+            std::unordered_set<fkyaml::node> uset_node_inplace{};
             node.get_value_inplace(uset_node_inplace);
             REQUIRE(uset_node_inplace.size() == 2);
             REQUIRE(uset_node_inplace.find(fkyaml::node(true)) != uset_node_inplace.end());
@@ -3198,7 +2919,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(uset_bool.find(true) != uset_bool.end());
             REQUIRE(uset_bool.find(false) != uset_bool.end());
 
-            std::unordered_set<bool> uset_bool_inplace {};
+            std::unordered_set<bool> uset_bool_inplace{};
             node.get_value_inplace(uset_bool_inplace);
             REQUIRE(uset_bool_inplace.size() == 2);
             REQUIRE(uset_bool_inplace.find(true) != uset_bool_inplace.end());
@@ -3211,7 +2932,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(umset_node.find(fkyaml::node(true)) != umset_node.end());
             REQUIRE(umset_node.find(fkyaml::node(false)) != umset_node.end());
 
-            std::unordered_multiset<fkyaml::node> umset_node_inplace {};
+            std::unordered_multiset<fkyaml::node> umset_node_inplace{};
             node.get_value_inplace(umset_node_inplace);
             REQUIRE(umset_node_inplace.size() == 2);
             REQUIRE(umset_node_inplace.find(fkyaml::node(true)) != umset_node_inplace.end());
@@ -3222,7 +2943,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(umset_bool.find(true) != umset_bool.end());
             REQUIRE(umset_bool.find(false) != umset_bool.end());
 
-            std::unordered_multiset<bool> umset_bool_inplace {};
+            std::unordered_multiset<bool> umset_bool_inplace{};
             node.get_value_inplace(umset_bool_inplace);
             REQUIRE(umset_bool_inplace.size() == 2);
             REQUIRE(umset_bool_inplace.find(true) != umset_bool_inplace.end());
@@ -3238,7 +2959,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(stack_node.top().is_boolean());
             REQUIRE(stack_node.top().get_value<bool>() == true);
 
-            std::stack<fkyaml::node> stack_node_inplace {};
+            std::stack<fkyaml::node> stack_node_inplace{};
             node.get_value_inplace(stack_node_inplace);
             REQUIRE(stack_node_inplace.size() == 2);
             REQUIRE(stack_node_inplace.top().is_boolean());
@@ -3253,7 +2974,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             stack_bool.pop();
             REQUIRE(stack_bool.top() == true);
 
-            std::stack<bool> stack_bool_inplace {};
+            std::stack<bool> stack_bool_inplace{};
             stack_bool_inplace.push(true);
             stack_bool_inplace.push(false);
             node.get_value_inplace(stack_bool_inplace);
@@ -3272,7 +2993,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(queue_node.front().is_boolean());
             REQUIRE(queue_node.front().get_value<bool>() == false);
 
-            std::queue<fkyaml::node> queue_node_inplace {};
+            std::queue<fkyaml::node> queue_node_inplace{};
             node.get_value_inplace(queue_node_inplace);
             REQUIRE(queue_node_inplace.size() == 2);
             REQUIRE(queue_node_inplace.front().is_boolean());
@@ -3287,7 +3008,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             queue_bool.pop();
             REQUIRE(queue_bool.front() == false);
 
-            std::queue<bool> queue_bool_inplace {};
+            std::queue<bool> queue_bool_inplace{};
             node.get_value_inplace(queue_bool_inplace);
             REQUIRE(queue_bool_inplace.size() == 2);
             REQUIRE(queue_bool_inplace.front() == true);
@@ -3304,7 +3025,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(pqueue_node.top().is_boolean());
             REQUIRE(pqueue_node.top().get_value<bool>() == false);
 
-            std::priority_queue<fkyaml::node> pqueue_node_inplace {};
+            std::priority_queue<fkyaml::node> pqueue_node_inplace{};
             node.get_value_inplace(pqueue_node_inplace);
             REQUIRE(pqueue_node_inplace.size() == 2);
             REQUIRE(pqueue_node_inplace.top().is_boolean());
@@ -3319,7 +3040,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             pqueue_bool.pop();
             REQUIRE(pqueue_bool.top() == false);
 
-            std::priority_queue<bool> pqueue_bool_inplace {};
+            std::priority_queue<bool> pqueue_bool_inplace{};
             node.get_value_inplace(pqueue_bool_inplace);
             REQUIRE(pqueue_bool_inplace.size() == 2);
             REQUIRE(pqueue_bool_inplace.top() == true);
@@ -3332,14 +3053,15 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE_THROWS_AS(node.get_value<std::nullptr_t>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::boolean_type>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::integer_type>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(node.get_value<fkyaml::node::float_number_type>(), fkyaml::type_error);
+            REQUIRE_THROWS_AS(node.get_value<fkyaml::node::float_number_type>(),
+                              fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::string_type>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<string_wrap>(), fkyaml::type_error);
         }
     }
 
     SECTION("mapping") {
-        fkyaml::node node {{"test", 123}, {"foo", -456}};
+        fkyaml::node node{{"test", 123}, {"foo", -456}};
 
         SECTION("mapping value (std::map)") {
             auto map_node = node.get_value<std::map<fkyaml::node, fkyaml::node>>();
@@ -3351,7 +3073,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(map_node.at("foo").is_integer());
             REQUIRE(map_node.at("foo").get_value<int>() == -456);
 
-            std::map<fkyaml::node, fkyaml::node> map_node_inplace {};
+            std::map<fkyaml::node, fkyaml::node> map_node_inplace{};
             node.get_value_inplace(map_node_inplace);
             REQUIRE(map_node_inplace.size() == 2);
             REQUIRE(map_node_inplace.find("test") != map_node_inplace.end());
@@ -3368,7 +3090,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(map_compat.find("foo") != map_compat.end());
             REQUIRE(map_compat.at("foo") == -456);
 
-            std::map<std::string, int> map_compat_inplace {};
+            std::map<std::string, int> map_compat_inplace{};
             node.get_value_inplace(map_compat_inplace);
             REQUIRE(map_compat_inplace.size() == 2);
             REQUIRE(map_compat_inplace.find("test") != map_compat_inplace.end());
@@ -3391,17 +3113,19 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(mmap_node_foo_range.first->second.is_integer());
             REQUIRE(mmap_node_foo_range.first->second.get_value<int>() == -456);
 
-            std::multimap<fkyaml::node, fkyaml::node> mmap_node_inplace {};
+            std::multimap<fkyaml::node, fkyaml::node> mmap_node_inplace{};
             node.get_value_inplace(mmap_node_inplace);
             REQUIRE(mmap_node_inplace.size() == 2);
             REQUIRE(mmap_node_inplace.find("test") != mmap_node_inplace.end());
             auto mmap_node_inplace_test_range = mmap_node_inplace.equal_range("test");
-            REQUIRE(std::distance(mmap_node_inplace_test_range.first, mmap_node_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(mmap_node_inplace_test_range.first,
+                                  mmap_node_inplace_test_range.second) == 1);
             REQUIRE(mmap_node_inplace_test_range.first->second.is_integer());
             REQUIRE(mmap_node_inplace_test_range.first->second.get_value<int>() == 123);
             REQUIRE(mmap_node_inplace.find("foo") != mmap_node_inplace.end());
             auto mmap_node_inplace_foo_range = mmap_node_inplace.equal_range("foo");
-            REQUIRE(std::distance(mmap_node_inplace_test_range.first, mmap_node_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(mmap_node_inplace_test_range.first,
+                                  mmap_node_inplace_test_range.second) == 1);
             REQUIRE(mmap_node_inplace_foo_range.first->second.is_integer());
             REQUIRE(mmap_node_inplace_foo_range.first->second.get_value<int>() == -456);
 
@@ -3409,23 +3133,27 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(mmap_compat.size() == 2);
             REQUIRE(mmap_compat.find("test") != mmap_compat.end());
             auto mmap_compat_test_range = mmap_compat.equal_range("test");
-            REQUIRE(std::distance(mmap_compat_test_range.first, mmap_compat_test_range.second) == 1);
+            REQUIRE(std::distance(mmap_compat_test_range.first, mmap_compat_test_range.second) ==
+                    1);
             REQUIRE(mmap_compat_test_range.first->second == 123);
             REQUIRE(mmap_compat.find("foo") != mmap_compat.end());
             auto mmap_compat_foo_range = mmap_compat.equal_range("foo");
-            REQUIRE(std::distance(mmap_compat_test_range.first, mmap_compat_test_range.second) == 1);
+            REQUIRE(std::distance(mmap_compat_test_range.first, mmap_compat_test_range.second) ==
+                    1);
             REQUIRE(mmap_compat_foo_range.first->second == -456);
 
-            std::multimap<std::string, int> mmap_compat_inplace {};
+            std::multimap<std::string, int> mmap_compat_inplace{};
             node.get_value_inplace(mmap_compat_inplace);
             REQUIRE(mmap_compat_inplace.size() == 2);
             REQUIRE(mmap_compat_inplace.find("test") != mmap_compat_inplace.end());
             auto mmap_compat_inplace_test_range = mmap_compat_inplace.equal_range("test");
-            REQUIRE(std::distance(mmap_compat_inplace_test_range.first, mmap_compat_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(mmap_compat_inplace_test_range.first,
+                                  mmap_compat_inplace_test_range.second) == 1);
             REQUIRE(mmap_compat_inplace_test_range.first->second == 123);
             REQUIRE(mmap_compat_inplace.find("foo") != mmap_compat_inplace.end());
             auto mmap_compat_inplace_foo_range = mmap_compat_inplace.equal_range("foo");
-            REQUIRE(std::distance(mmap_compat_inplace_test_range.first, mmap_compat_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(mmap_compat_inplace_test_range.first,
+                                  mmap_compat_inplace_test_range.second) == 1);
             REQUIRE(mmap_compat_inplace_foo_range.first->second == -456);
         }
 
@@ -3439,7 +3167,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(umap_node.at("foo").is_integer());
             REQUIRE(umap_node.at("foo").get_value<int>() == -456);
 
-            std::unordered_map<fkyaml::node, fkyaml::node> umap_node_inplace {};
+            std::unordered_map<fkyaml::node, fkyaml::node> umap_node_inplace{};
             node.get_value_inplace(umap_node_inplace);
             REQUIRE(umap_node_inplace.size() == 2);
             REQUIRE(umap_node_inplace.find("test") != umap_node_inplace.end());
@@ -3456,7 +3184,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(umap_compat.find("foo") != umap_compat.end());
             REQUIRE(umap_compat.at("foo") == -456);
 
-            std::unordered_map<std::string, int> umap_compat_inplace {};
+            std::unordered_map<std::string, int> umap_compat_inplace{};
             node.get_value_inplace(umap_compat_inplace);
             REQUIRE(umap_compat_inplace.size() == 2);
             REQUIRE(umap_compat_inplace.find("test") != umap_compat_inplace.end());
@@ -3464,15 +3192,15 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(umap_compat_inplace.find("foo") != umap_compat_inplace.end());
             REQUIRE(umap_compat_inplace.at("foo") == -456);
 
-            fkyaml::node mapping {
-                {{123, 456, 789}, nullptr},
-                {{{true, false}}, nullptr},
-                {nullptr, nullptr},
-                {true, nullptr},
-                {123, nullptr},
-                {3.14, nullptr},
-                {"foo", nullptr}};
-            auto umap_various_keys = mapping.get_value<std::unordered_map<fkyaml::node, fkyaml::node>>();
+            fkyaml::node mapping{{{123, 456, 789}, nullptr},
+                                 {{{true, false}}, nullptr},
+                                 {nullptr, nullptr},
+                                 {true, nullptr},
+                                 {123, nullptr},
+                                 {3.14, nullptr},
+                                 {"foo", nullptr}};
+            auto umap_various_keys =
+                    mapping.get_value<std::unordered_map<fkyaml::node, fkyaml::node>>();
             REQUIRE(umap_various_keys.size() == 7);
             REQUIRE(umap_various_keys.find({123, 456, 789}) != umap_various_keys.end());
             REQUIRE(umap_various_keys.find({{true, false}}) != umap_various_keys.end());
@@ -3481,7 +3209,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(umap_various_keys.find(123) != umap_various_keys.end());
             REQUIRE(umap_various_keys.find(3.14) != umap_various_keys.end());
             REQUIRE(umap_various_keys.find("foo") != umap_various_keys.end());
-            for (auto itr : umap_various_keys) {
+            for (auto itr: umap_various_keys) {
                 REQUIRE(itr.second.is_null());
             }
         }
@@ -3500,17 +3228,19 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(ummap_node_foo_range.first->second.is_integer());
             REQUIRE(ummap_node_foo_range.first->second.get_value<int>() == -456);
 
-            std::unordered_multimap<fkyaml::node, fkyaml::node> ummap_node_inplace {};
+            std::unordered_multimap<fkyaml::node, fkyaml::node> ummap_node_inplace{};
             node.get_value_inplace(ummap_node_inplace);
             REQUIRE(ummap_node_inplace.size() == 2);
             REQUIRE(ummap_node_inplace.find("test") != ummap_node_inplace.end());
             auto ummap_node_inplace_test_range = ummap_node_inplace.equal_range("test");
-            REQUIRE(std::distance(ummap_node_inplace_test_range.first, ummap_node_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(ummap_node_inplace_test_range.first,
+                                  ummap_node_inplace_test_range.second) == 1);
             REQUIRE(ummap_node_inplace_test_range.first->second.is_integer());
             REQUIRE(ummap_node_inplace_test_range.first->second.get_value<int>() == 123);
             REQUIRE(ummap_node_inplace.find("foo") != ummap_node_inplace.end());
             auto ummap_node_inplace_foo_range = ummap_node_inplace.equal_range("foo");
-            REQUIRE(std::distance(ummap_node_inplace_test_range.first, ummap_node_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(ummap_node_inplace_test_range.first,
+                                  ummap_node_inplace_test_range.second) == 1);
             REQUIRE(ummap_node_inplace_foo_range.first->second.is_integer());
             REQUIRE(ummap_node_inplace_foo_range.first->second.get_value<int>() == -456);
 
@@ -3518,33 +3248,37 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(ummap_compat.size() == 2);
             REQUIRE(ummap_compat.find("test") != ummap_compat.end());
             auto ummap_compat_test_range = ummap_compat.equal_range("test");
-            REQUIRE(std::distance(ummap_compat_test_range.first, ummap_compat_test_range.second) == 1);
+            REQUIRE(std::distance(ummap_compat_test_range.first, ummap_compat_test_range.second) ==
+                    1);
             REQUIRE(ummap_compat_test_range.first->second == 123);
             REQUIRE(ummap_compat.find("foo") != ummap_compat.end());
             auto ummap_compat_foo_range = ummap_compat.equal_range("foo");
-            REQUIRE(std::distance(ummap_compat_test_range.first, ummap_compat_test_range.second) == 1);
+            REQUIRE(std::distance(ummap_compat_test_range.first, ummap_compat_test_range.second) ==
+                    1);
             REQUIRE(ummap_compat_foo_range.first->second == -456);
 
-            std::unordered_multimap<std::string, int> ummap_compat_inplace {};
+            std::unordered_multimap<std::string, int> ummap_compat_inplace{};
             node.get_value_inplace(ummap_compat_inplace);
             REQUIRE(ummap_compat_inplace.size() == 2);
             REQUIRE(ummap_compat_inplace.find("test") != ummap_compat_inplace.end());
             auto ummap_compat_inplace_test_range = ummap_compat_inplace.equal_range("test");
-            REQUIRE(std::distance(ummap_compat_inplace_test_range.first, ummap_compat_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(ummap_compat_inplace_test_range.first,
+                                  ummap_compat_inplace_test_range.second) == 1);
             REQUIRE(ummap_compat_inplace_test_range.first->second == 123);
             REQUIRE(ummap_compat_inplace.find("foo") != ummap_compat_inplace.end());
             auto ummap_compat_inplace_foo_range = ummap_compat_inplace.equal_range("foo");
-            REQUIRE(std::distance(ummap_compat_inplace_test_range.first, ummap_compat_inplace_test_range.second) == 1);
+            REQUIRE(std::distance(ummap_compat_inplace_test_range.first,
+                                  ummap_compat_inplace_test_range.second) == 1);
             REQUIRE(ummap_compat_inplace_foo_range.first->second == -456);
         }
 
         SECTION("non-mapping values") {
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::sequence_type>(), fkyaml::type_error);
-            int dummy_array_1d[2] {};
+            int dummy_array_1d[2]{};
             REQUIRE_THROWS_AS(node.get_value_inplace(dummy_array_1d), fkyaml::type_error);
-            int dummy_array_2d[2][2] {};
+            int dummy_array_2d[2][2]{};
             REQUIRE_THROWS_AS(node.get_value_inplace(dummy_array_2d), fkyaml::type_error);
-            int dummy_array_3d[2][2][2] {};
+            int dummy_array_3d[2][2][2]{};
             REQUIRE_THROWS_AS(node.get_value_inplace(dummy_array_3d), fkyaml::type_error);
             using array_t = std::array<int, 2>;
             REQUIRE_THROWS_AS(node.get_value<array_t>(), fkyaml::type_error);
@@ -3558,7 +3292,8 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE_THROWS_AS(node.get_value<std::nullptr_t>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::boolean_type>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::integer_type>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(node.get_value<fkyaml::node::float_number_type>(), fkyaml::type_error);
+            REQUIRE_THROWS_AS(node.get_value<fkyaml::node::float_number_type>(),
+                              fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::string_type>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<string_wrap>(), fkyaml::type_error);
         }
@@ -3777,8 +3512,10 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         }
 
         SECTION("non-boolean incompatible types") {
-            REQUIRE_THROWS_AS(true_node.get_value<fkyaml::node::sequence_type>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(true_node.get_value<fkyaml::node::mapping_type>(), fkyaml::type_error);
+            REQUIRE_THROWS_AS(true_node.get_value<fkyaml::node::sequence_type>(),
+                              fkyaml::type_error);
+            REQUIRE_THROWS_AS(true_node.get_value<fkyaml::node::mapping_type>(),
+                              fkyaml::type_error);
             REQUIRE_THROWS_AS(true_node.get_value<std::nullptr_t>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(true_node.get_value<fkyaml::node::string_type>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(true_node.get_value<string_wrap>(), fkyaml::type_error);
@@ -3922,56 +3659,68 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         fkyaml::node node(3.14);
 
         SECTION("positive float values") {
-            REQUIRE(std::abs(node.get_value<float>() - 3.14) < std::numeric_limits<float>::epsilon());
+            REQUIRE(std::abs(node.get_value<float>() - 3.14) <
+                    std::numeric_limits<float>::epsilon());
             float float_inplace = 0.f;
             node.get_value_inplace(float_inplace);
             REQUIRE(std::abs(float_inplace - 3.14) < std::numeric_limits<float>::epsilon());
 
-            REQUIRE(std::abs(node.get_value<double>() - 3.14) < std::numeric_limits<double>::epsilon());
+            REQUIRE(std::abs(node.get_value<double>() - 3.14) <
+                    std::numeric_limits<double>::epsilon());
             double double_inplace = 0.;
             node.get_value_inplace(double_inplace);
             REQUIRE(std::abs(double_inplace - 3.14) < std::numeric_limits<double>::epsilon());
 
-            REQUIRE(std::abs(node.get_value<long double>() - 3.14) < std::numeric_limits<long double>::epsilon());
+            REQUIRE(std::abs(node.get_value<long double>() - 3.14) <
+                    std::numeric_limits<long double>::epsilon());
             long double long_double_inplace = 0.;
             node.get_value_inplace(long_double_inplace);
-            REQUIRE(std::abs(long_double_inplace - 3.14) < std::numeric_limits<long double>::epsilon());
+            REQUIRE(std::abs(long_double_inplace - 3.14) <
+                    std::numeric_limits<long double>::epsilon());
         }
 
         SECTION("zero float values") {
             node = 0.0;
-            REQUIRE(std::abs(node.get_value<float>() - 0.0) < std::numeric_limits<float>::epsilon());
+            REQUIRE(std::abs(node.get_value<float>() - 0.0) <
+                    std::numeric_limits<float>::epsilon());
             float float_inplace = 1.f;
             node.get_value_inplace(float_inplace);
             REQUIRE(std::abs(float_inplace - 0.0) < std::numeric_limits<float>::epsilon());
 
-            REQUIRE(std::abs(node.get_value<double>() - 0.0) < std::numeric_limits<double>::epsilon());
+            REQUIRE(std::abs(node.get_value<double>() - 0.0) <
+                    std::numeric_limits<double>::epsilon());
             double double_inplace = 1.;
             node.get_value_inplace(double_inplace);
             REQUIRE(std::abs(double_inplace - 0.0) < std::numeric_limits<double>::epsilon());
 
-            REQUIRE(std::abs(node.get_value<long double>() - 0.0) < std::numeric_limits<long double>::epsilon());
+            REQUIRE(std::abs(node.get_value<long double>() - 0.0) <
+                    std::numeric_limits<long double>::epsilon());
             long double long_double_inplace = 1.l;
             node.get_value_inplace(long_double_inplace);
-            REQUIRE(std::abs(long_double_inplace - 0.0) < std::numeric_limits<long double>::epsilon());
+            REQUIRE(std::abs(long_double_inplace - 0.0) <
+                    std::numeric_limits<long double>::epsilon());
         }
 
         SECTION("negative float values") {
             node = -3.14;
-            REQUIRE(std::abs(node.get_value<float>() - (-3.14)) < std::numeric_limits<float>::epsilon());
+            REQUIRE(std::abs(node.get_value<float>() - (-3.14)) <
+                    std::numeric_limits<float>::epsilon());
             float float_inplace = 0.f;
             node.get_value_inplace(float_inplace);
             REQUIRE(std::abs(float_inplace - (-3.14)) < std::numeric_limits<float>::epsilon());
 
-            REQUIRE(std::abs(node.get_value<double>() - (-3.14)) < std::numeric_limits<double>::epsilon());
+            REQUIRE(std::abs(node.get_value<double>() - (-3.14)) <
+                    std::numeric_limits<double>::epsilon());
             double double_inplace = 0.;
             node.get_value_inplace(double_inplace);
             REQUIRE(std::abs(double_inplace - (-3.14)) < std::numeric_limits<double>::epsilon());
 
-            REQUIRE(std::abs(node.get_value<long double>() - (-3.14)) < std::numeric_limits<long double>::epsilon());
+            REQUIRE(std::abs(node.get_value<long double>() - (-3.14)) <
+                    std::numeric_limits<long double>::epsilon());
             long double long_double_inplace = 0.;
             node.get_value_inplace(long_double_inplace);
-            REQUIRE(std::abs(long_double_inplace - (-3.14)) < std::numeric_limits<long double>::epsilon());
+            REQUIRE(std::abs(long_double_inplace - (-3.14)) <
+                    std::numeric_limits<long double>::epsilon());
         }
 
         SECTION("non-float compatible types (positive)") {
@@ -4106,12 +3855,14 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         }
 
         SECTION("underflowable float number type") {
-            fkyaml::node negative_float_node(std::numeric_limits<fkyaml::node::float_number_type>::lowest());
+            fkyaml::node negative_float_node(
+                    std::numeric_limits<fkyaml::node::float_number_type>::lowest());
             REQUIRE_THROWS_AS(negative_float_node.get_value<float>(), fkyaml::exception);
         }
 
         SECTION("overflowable float number type") {
-            fkyaml::node large_float_node(std::numeric_limits<fkyaml::node::float_number_type>::max());
+            fkyaml::node large_float_node(
+                    std::numeric_limits<fkyaml::node::float_number_type>::max());
             REQUIRE_THROWS_AS(large_float_node.get_value<float>(), fkyaml::exception);
         }
 
@@ -4133,7 +3884,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(str.size() == 4);
             REQUIRE(str == "test");
 
-            std::string str_inplace {};
+            std::string str_inplace{};
             node.get_value_inplace(str_inplace);
             REQUIRE(str_inplace.size() == 4);
             REQUIRE(str_inplace == "test");
@@ -4144,7 +3895,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(str_wrap.str.size() == 4);
             REQUIRE(str_wrap.str == "test");
 
-            string_wrap str_wrap_inplace {};
+            string_wrap str_wrap_inplace{};
             node.get_value_inplace(str_wrap_inplace);
             REQUIRE(str_wrap_inplace.str.size() == 4);
             REQUIRE(str_wrap_inplace.str == "test");
@@ -4155,7 +3906,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(str_view.size() == 4);
             REQUIRE(str_view == "test");
 
-            fkyaml::detail::str_view str_view_inplace {};
+            fkyaml::detail::str_view str_view_inplace{};
             node.get_value_inplace(str_view_inplace);
             REQUIRE(str_view_inplace.size() == 4);
             REQUIRE(str_view_inplace == "test");
@@ -4167,7 +3918,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE(str_view.size() == 4);
             REQUIRE(str_view == "test");
 
-            std::string_view str_view_inplace {};
+            std::string_view str_view_inplace{};
             node.get_value_inplace(str_view_inplace);
             REQUIRE(str_view_inplace.size() == 4);
             REQUIRE(str_view_inplace == "test");
@@ -4180,12 +3931,13 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
             REQUIRE_THROWS_AS(node.get_value<std::nullptr_t>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::boolean_type>(), fkyaml::type_error);
             REQUIRE_THROWS_AS(node.get_value<fkyaml::node::integer_type>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(node.get_value<fkyaml::node::float_number_type>(), fkyaml::type_error);
+            REQUIRE_THROWS_AS(node.get_value<fkyaml::node::float_number_type>(),
+                              fkyaml::type_error);
         }
     }
 
     SECTION("std::pair") {
-        fkyaml::node n {123, "test"};
+        fkyaml::node n{123, "test"};
 
         auto pair_node = n.get_value<std::pair<fkyaml::node, fkyaml::node>>();
         REQUIRE(pair_node.first.is_integer());
@@ -4193,7 +3945,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         REQUIRE(pair_node.second.is_string());
         REQUIRE(pair_node.second.get_value<std::string>() == "test");
 
-        std::pair<fkyaml::node, fkyaml::node> pair_node_inplace {};
+        std::pair<fkyaml::node, fkyaml::node> pair_node_inplace{};
         n.get_value_inplace(pair_node_inplace);
         REQUIRE(pair_node_inplace.first.is_integer());
         REQUIRE(pair_node_inplace.first.get_value<int>() == 123);
@@ -4204,14 +3956,14 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         REQUIRE(pair_val.first == 123);
         REQUIRE(pair_val.second == "test");
 
-        std::pair<int, std::string> pair_val_inplace {};
+        std::pair<int, std::string> pair_val_inplace{};
         n.get_value_inplace(pair_val_inplace);
         REQUIRE(pair_val_inplace.first == 123);
         REQUIRE(pair_val_inplace.second == "test");
     }
 
     SECTION("std::tuple") {
-        fkyaml::node n {123, "test", true};
+        fkyaml::node n{123, "test", true};
 
         auto tuple_node = n.get_value<std::tuple<fkyaml::node, fkyaml::node, fkyaml::node>>();
         REQUIRE(std::get<0>(tuple_node).is_integer());
@@ -4221,7 +3973,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         REQUIRE(std::get<2>(tuple_node).is_boolean());
         REQUIRE(std::get<2>(tuple_node).get_value<bool>() == true);
 
-        std::tuple<fkyaml::node, fkyaml::node, fkyaml::node> tuple_node_inplace {};
+        std::tuple<fkyaml::node, fkyaml::node, fkyaml::node> tuple_node_inplace{};
         n.get_value_inplace(tuple_node_inplace);
         REQUIRE(std::get<0>(tuple_node_inplace).is_integer());
         REQUIRE(std::get<0>(tuple_node_inplace).get_value<int>() == 123);
@@ -4235,7 +3987,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         REQUIRE(std::get<1>(tuple_val) == "test");
         REQUIRE(std::get<2>(tuple_val) == true);
 
-        std::tuple<int, std::string, bool> tuple_val_inplace {};
+        std::tuple<int, std::string, bool> tuple_val_inplace{};
         n.get_value_inplace(tuple_val_inplace);
         REQUIRE(std::get<0>(tuple_val_inplace) == 123);
         REQUIRE(std::get<1>(tuple_val_inplace) == "test");
@@ -4243,13 +3995,13 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
 
         fkyaml::node empty_seq = fkyaml::node::sequence();
         REQUIRE_NOTHROW(empty_seq.get_value<std::tuple<>>());
-        std::tuple<> empty_tuple_inplace {};
+        std::tuple<> empty_tuple_inplace{};
         REQUIRE_NOTHROW(empty_seq.get_value_inplace(empty_tuple_inplace));
     }
 
 #ifdef FK_YAML_HAS_CXX_17
     SECTION("std::optional") {
-        fkyaml::node n {true, false};
+        fkyaml::node n{true, false};
 
         auto opt_vec = n.get_value<std::optional<std::vector<bool>>>();
         REQUIRE(opt_vec.has_value());
@@ -4257,7 +4009,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         REQUIRE(opt_vec.value().at(0) == true);
         REQUIRE(opt_vec.value().at(1) == false);
 
-        std::optional<std::vector<bool>> opt_vec_inplace {};
+        std::optional<std::vector<bool>> opt_vec_inplace{};
         n.get_value_inplace(opt_vec_inplace);
         REQUIRE(opt_vec_inplace.has_value());
         REQUIRE(opt_vec_inplace.value().size() == 2);
@@ -4267,7 +4019,7 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
         auto opt_bool = n.get_value<std::optional<bool>>();
         REQUIRE_FALSE(opt_bool.has_value());
 
-        std::optional<bool> opt_bool_inplace {};
+        std::optional<bool> opt_bool_inplace{};
         n.get_value_inplace(opt_bool_inplace);
         REQUIRE_FALSE(opt_bool_inplace.has_value());
     }
@@ -4286,8 +4038,8 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
 
     SECTION("not default constructible type") {
         // get_value() requires its output type to be default constructible
-        STATIC_REQUIRE_FALSE(
-            fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, not_default_constructible>::value);
+        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&,
+                                                         not_default_constructible>::value);
 
         // but get_value_inplace() accepts types which are not default constructible.
         not_default_constructible ndc(0);
@@ -4297,9 +4049,12 @@ TEST_CASE("Node_GetValue_GetValueInplace") {
     }
 
     SECTION("unsupported types") {
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int*>::value);
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int(&)[2]>::value);
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int&>::value);
+        STATIC_REQUIRE_FALSE(
+                fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int*>::value);
+        STATIC_REQUIRE_FALSE(
+                fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int(&)[2]>::value);
+        STATIC_REQUIRE_FALSE(
+                fkyaml::detail::is_detected<get_value_fn_t, const fkyaml::node&, int&>::value);
     }
 }
 
@@ -4310,9 +4065,10 @@ TEST_CASE("Node_GetValueOr") {
     SECTION("sequence (success)") {
         fkyaml::node node = {true, false};
 
-        std::vector<fkyaml::node> vector_node_def {false, true};
+        std::vector<fkyaml::node> vector_node_def{false, true};
         auto vector_node_ldef_ret = node.get_value_or<std::vector<fkyaml::node>>(vector_node_def);
-        auto vector_node_rdef_ret = node.get_value_or<std::vector<fkyaml::node>>(std::move(vector_node_def));
+        auto vector_node_rdef_ret =
+                node.get_value_or<std::vector<fkyaml::node>>(std::move(vector_node_def));
 
         auto validate_nodes = [](const std::vector<fkyaml::node>& nodes) {
             REQUIRE(nodes.size() == 2);
@@ -4324,9 +4080,10 @@ TEST_CASE("Node_GetValueOr") {
         validate_nodes(vector_node_ldef_ret);
         validate_nodes(vector_node_rdef_ret);
 
-        std::vector<bool> vector_bool_def {false, true};
+        std::vector<bool> vector_bool_def{false, true};
         auto vector_bool_ldef_ret = node.get_value_or<std::vector<bool>>(vector_bool_def);
-        auto vector_bool_rdef_ret = node.get_value_or<std::vector<bool>>(std::move(vector_bool_def));
+        auto vector_bool_rdef_ret =
+                node.get_value_or<std::vector<bool>>(std::move(vector_bool_def));
 
         auto validate_bools = [](const std::vector<bool>& bools) {
             REQUIRE(bools.size() == 2);
@@ -4340,9 +4097,10 @@ TEST_CASE("Node_GetValueOr") {
     SECTION("sequence (failure)") {
         fkyaml::node node = nullptr;
 
-        std::vector<fkyaml::node> vector_node_def {false, true};
+        std::vector<fkyaml::node> vector_node_def{false, true};
         auto vector_node_ldef_ret = node.get_value_or<std::vector<fkyaml::node>>(vector_node_def);
-        auto vector_node_rdef_ret = node.get_value_or<std::vector<fkyaml::node>>(std::move(vector_node_def));
+        auto vector_node_rdef_ret =
+                node.get_value_or<std::vector<fkyaml::node>>(std::move(vector_node_def));
 
         auto validate_nodes = [](const std::vector<fkyaml::node>& nodes) {
             REQUIRE(nodes.size() == 2);
@@ -4354,9 +4112,10 @@ TEST_CASE("Node_GetValueOr") {
         // validate_nodes(vector_node_ldef_ret);
         validate_nodes(vector_node_rdef_ret);
 
-        std::vector<bool> vector_bool_def {false, true};
+        std::vector<bool> vector_bool_def{false, true};
         auto vector_bool_ldef_ret = node.get_value_or<std::vector<bool>>(vector_bool_def);
-        auto vector_bool_rdef_ret = node.get_value_or<std::vector<bool>>(std::move(vector_bool_def));
+        auto vector_bool_rdef_ret =
+                node.get_value_or<std::vector<bool>>(std::move(vector_bool_def));
 
         auto validate_bools = [](const std::vector<bool>& bools) {
             REQUIRE(bools.size() == 2);
@@ -4370,9 +4129,11 @@ TEST_CASE("Node_GetValueOr") {
     SECTION("mapping (success)") {
         fkyaml::node node = {{"foo", true}, {"bar", false}};
 
-        std::map<fkyaml::node, fkyaml::node> map_node_def {{"foo", false}, {"bar", true}};
-        auto map_node_ldef_ret = node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(map_node_def);
-        auto map_node_rdef_ret = node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(std::move(map_node_def));
+        std::map<fkyaml::node, fkyaml::node> map_node_def{{"foo", false}, {"bar", true}};
+        auto map_node_ldef_ret =
+                node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(map_node_def);
+        auto map_node_rdef_ret =
+                node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(std::move(map_node_def));
 
         auto validate_nodes = [](const std::map<fkyaml::node, fkyaml::node>& nodes) {
             REQUIRE(nodes.size() == 2);
@@ -4384,9 +4145,10 @@ TEST_CASE("Node_GetValueOr") {
         validate_nodes(map_node_ldef_ret);
         validate_nodes(map_node_rdef_ret);
 
-        std::map<std::string, bool> map_bool_def {{"foo", false}, {"bar", true}};
+        std::map<std::string, bool> map_bool_def{{"foo", false}, {"bar", true}};
         auto map_bool_ldef_ret = node.get_value_or<std::map<std::string, bool>>(map_bool_def);
-        auto map_bool_rdef_ret = node.get_value_or<std::map<std::string, bool>>(std::move(map_bool_def));
+        auto map_bool_rdef_ret =
+                node.get_value_or<std::map<std::string, bool>>(std::move(map_bool_def));
 
         auto validate_bools = [](const std::map<std::string, bool>& bools) {
             REQUIRE(bools.size() == 2);
@@ -4400,9 +4162,11 @@ TEST_CASE("Node_GetValueOr") {
     SECTION("mapping (failure)") {
         fkyaml::node node = nullptr;
 
-        std::map<fkyaml::node, fkyaml::node> map_node_def {{"foo", false}, {"bar", true}};
-        auto map_node_ldef_ret = node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(map_node_def);
-        auto map_node_rdef_ret = node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(std::move(map_node_def));
+        std::map<fkyaml::node, fkyaml::node> map_node_def{{"foo", false}, {"bar", true}};
+        auto map_node_ldef_ret =
+                node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(map_node_def);
+        auto map_node_rdef_ret =
+                node.get_value_or<std::map<fkyaml::node, fkyaml::node>>(std::move(map_node_def));
 
         auto validate_nodes = [](const std::map<fkyaml::node, fkyaml::node>& nodes) {
             REQUIRE(nodes.size() == 2);
@@ -4414,9 +4178,10 @@ TEST_CASE("Node_GetValueOr") {
         validate_nodes(map_node_ldef_ret);
         validate_nodes(map_node_rdef_ret);
 
-        std::map<std::string, bool> map_bool_def {{"foo", false}, {"bar", true}};
+        std::map<std::string, bool> map_bool_def{{"foo", false}, {"bar", true}};
         auto map_bool_ldef_ret = node.get_value_or<std::map<std::string, bool>>(map_bool_def);
-        auto map_bool_rdef_ret = node.get_value_or<std::map<std::string, bool>>(std::move(map_bool_def));
+        auto map_bool_rdef_ret =
+                node.get_value_or<std::map<std::string, bool>>(std::move(map_bool_def));
 
         auto validate_bools = [](const std::map<std::string, bool>& bools) {
             REQUIRE(bools.size() == 2);
@@ -4511,17 +4276,22 @@ TEST_CASE("Node_GetValueOr") {
 
     SECTION("unsupported types") {
         // C-style array types
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int(&)[2]>::value);
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int(&)[3][3]>::value);
-        STATIC_REQUIRE_FALSE(
-            fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int(&)[3][3][3]>::value);
+        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&,
+                                                         int(&)[2]>::value);
+        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&,
+                                                         int(&)[3][3]>::value);
+        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&,
+                                                         int(&)[3][3][3]>::value);
 
         // pointer types
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int*>::value);
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int(&)[2]>::value);
+        STATIC_REQUIRE_FALSE(
+                fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int*>::value);
+        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&,
+                                                         int(&)[2]>::value);
 
         // reference types
-        STATIC_REQUIRE_FALSE(fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int&>::value);
+        STATIC_REQUIRE_FALSE(
+                fkyaml::detail::is_detected<get_value_or_fn_t, const fkyaml::node&, int&>::value);
     }
 }
 
@@ -4531,8 +4301,8 @@ TEST_CASE("Node_GetValueOr") {
 
 TEST_CASE("Node_AsSeq") {
     SECTION("sequence") {
-        fkyaml::node node =
-            fkyaml::node::sequence(fkyaml::node::sequence_type {fkyaml::node(), fkyaml::node(), fkyaml::node()});
+        fkyaml::node node = fkyaml::node::sequence(
+                fkyaml::node::sequence_type{fkyaml::node(), fkyaml::node(), fkyaml::node()});
 
         SECTION("non-alias sequence node") {
             REQUIRE_NOTHROW(node.as_seq());
@@ -4573,13 +4343,8 @@ TEST_CASE("Node_AsSeq") {
     }
 
     SECTION("non-sequence") {
-        auto node = GENERATE(
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::mapping(), fkyaml::node(), fkyaml::node(false),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
         SECTION("non-alias non-sequence nodes") {
             REQUIRE_THROWS_AS(node.as_seq(), fkyaml::type_error);
@@ -4606,8 +4371,8 @@ TEST_CASE("Node_AsSeq") {
 
 TEST_CASE("Node_AsMap") {
     SECTION("mapping") {
-        fkyaml::node node = fkyaml::node::mapping(fkyaml::node::mapping_type {
-            {"test0", fkyaml::node()}, {"test1", fkyaml::node()}, {"test2", fkyaml::node()}});
+        fkyaml::node node = fkyaml::node::mapping(fkyaml::node::mapping_type{
+                {"test0", fkyaml::node()}, {"test1", fkyaml::node()}, {"test2", fkyaml::node()}});
 
         SECTION("non-alias mapping node") {
             REQUIRE_NOTHROW(node.as_map());
@@ -4647,13 +4412,8 @@ TEST_CASE("Node_AsMap") {
     }
 
     SECTION("non-mapping") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node(), fkyaml::node(false),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
         SECTION("non-alias non-mapping nodes") {
             REQUIRE_THROWS_AS(node.as_map(), fkyaml::type_error);
@@ -4709,13 +4469,8 @@ TEST_CASE("Node_AsBool") {
     }
 
     SECTION("non-boolean") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(0),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
 
         SECTION("non-alias non-boolean nodes") {
             REQUIRE_THROWS_AS(node.as_bool(), fkyaml::type_error);
@@ -4772,13 +4527,8 @@ TEST_CASE("Node_AsInt") {
     }
 
     SECTION("non-integer") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0.0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0.0), fkyaml::node(""));
 
         SECTION("non-alias non-integer nodes") {
             REQUIRE_THROWS_AS(node.as_int(), fkyaml::type_error);
@@ -4835,13 +4585,8 @@ TEST_CASE("Node_AsFloat") {
     }
 
     SECTION("not floating point number") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0), fkyaml::node(""));
 
         SECTION("non-alias non-float-number nodes") {
             REQUIRE_THROWS_AS(node.as_float(), fkyaml::type_error);
@@ -4898,13 +4643,8 @@ TEST_CASE("Node_AsStr") {
     }
 
     SECTION("non-string") {
-        auto node = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node::mapping(),
-            fkyaml::node(),
-            fkyaml::node(false),
-            fkyaml::node(0),
-            fkyaml::node(0.0));
+        auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0));
 
         SECTION("non-alias non-string nodes") {
             REQUIRE_THROWS_AS(node.as_str(), fkyaml::type_error);
@@ -4938,15 +4678,12 @@ TEST_CASE("Node_GetValueRef(deprecated)") {
         }
 
         SECTION("invalid") {
-            auto non_seq = GENERATE(
-                fkyaml::node::mapping(),
-                fkyaml::node(),
-                fkyaml::node(false),
-                fkyaml::node(0),
-                fkyaml::node(0.0),
-                fkyaml::node(""));
-            REQUIRE_THROWS_AS(non_seq.get_value_ref<fkyaml::node::sequence_type&>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(non_seq.get_value_ref<const fkyaml::node::sequence_type&>(), fkyaml::type_error);
+            auto non_seq = GENERATE(fkyaml::node::mapping(), fkyaml::node(), fkyaml::node(false),
+                                    fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+            REQUIRE_THROWS_AS(non_seq.get_value_ref<fkyaml::node::sequence_type&>(),
+                              fkyaml::type_error);
+            REQUIRE_THROWS_AS(non_seq.get_value_ref<const fkyaml::node::sequence_type&>(),
+                              fkyaml::type_error);
         }
     }
 
@@ -4958,15 +4695,12 @@ TEST_CASE("Node_GetValueRef(deprecated)") {
         }
 
         SECTION("invalid") {
-            auto non_map = GENERATE(
-                fkyaml::node::sequence(),
-                fkyaml::node(),
-                fkyaml::node(false),
-                fkyaml::node(0),
-                fkyaml::node(0.0),
-                fkyaml::node(""));
-            REQUIRE_THROWS_AS(non_map.get_value_ref<fkyaml::node::mapping_type&>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(non_map.get_value_ref<const fkyaml::node::mapping_type&>(), fkyaml::type_error);
+            auto non_map = GENERATE(fkyaml::node::sequence(), fkyaml::node(), fkyaml::node(false),
+                                    fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+            REQUIRE_THROWS_AS(non_map.get_value_ref<fkyaml::node::mapping_type&>(),
+                              fkyaml::type_error);
+            REQUIRE_THROWS_AS(non_map.get_value_ref<const fkyaml::node::mapping_type&>(),
+                              fkyaml::type_error);
         }
     }
 
@@ -4978,15 +4712,13 @@ TEST_CASE("Node_GetValueRef(deprecated)") {
         }
 
         SECTION("invalid") {
-            auto non_bool = GENERATE(
-                fkyaml::node::sequence(),
-                fkyaml::node::mapping(),
-                fkyaml::node(),
-                fkyaml::node(0),
-                fkyaml::node(0.0),
-                fkyaml::node(""));
-            REQUIRE_THROWS_AS(non_bool.get_value_ref<fkyaml::node::boolean_type&>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(non_bool.get_value_ref<const fkyaml::node::boolean_type&>(), fkyaml::type_error);
+            auto non_bool =
+                    GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+            REQUIRE_THROWS_AS(non_bool.get_value_ref<fkyaml::node::boolean_type&>(),
+                              fkyaml::type_error);
+            REQUIRE_THROWS_AS(non_bool.get_value_ref<const fkyaml::node::boolean_type&>(),
+                              fkyaml::type_error);
         }
     }
 
@@ -4998,15 +4730,13 @@ TEST_CASE("Node_GetValueRef(deprecated)") {
         }
 
         SECTION("invalid") {
-            auto non_int = GENERATE(
-                fkyaml::node::sequence(),
-                fkyaml::node::mapping(),
-                fkyaml::node(),
-                fkyaml::node(false),
-                fkyaml::node(0.0),
-                fkyaml::node(""));
-            REQUIRE_THROWS_AS(non_int.get_value_ref<fkyaml::node::integer_type&>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(non_int.get_value_ref<const fkyaml::node::integer_type&>(), fkyaml::type_error);
+            auto non_int =
+                    GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0.0), fkyaml::node(""));
+            REQUIRE_THROWS_AS(non_int.get_value_ref<fkyaml::node::integer_type&>(),
+                              fkyaml::type_error);
+            REQUIRE_THROWS_AS(non_int.get_value_ref<const fkyaml::node::integer_type&>(),
+                              fkyaml::type_error);
         }
     }
 
@@ -5018,15 +4748,13 @@ TEST_CASE("Node_GetValueRef(deprecated)") {
         }
 
         SECTION("invalid") {
-            auto non_float = GENERATE(
-                fkyaml::node::sequence(),
-                fkyaml::node::mapping(),
-                fkyaml::node(),
-                fkyaml::node(false),
-                fkyaml::node(0),
-                fkyaml::node(""));
-            REQUIRE_THROWS_AS(non_float.get_value_ref<fkyaml::node::float_number_type&>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(non_float.get_value_ref<const fkyaml::node::float_number_type&>(), fkyaml::type_error);
+            auto non_float =
+                    GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0), fkyaml::node(""));
+            REQUIRE_THROWS_AS(non_float.get_value_ref<fkyaml::node::float_number_type&>(),
+                              fkyaml::type_error);
+            REQUIRE_THROWS_AS(non_float.get_value_ref<const fkyaml::node::float_number_type&>(),
+                              fkyaml::type_error);
         }
     }
 
@@ -5038,15 +4766,13 @@ TEST_CASE("Node_GetValueRef(deprecated)") {
         }
 
         SECTION("invalid") {
-            auto non_string = GENERATE(
-                fkyaml::node::sequence(),
-                fkyaml::node::mapping(),
-                fkyaml::node(),
-                fkyaml::node(false),
-                fkyaml::node(0),
-                fkyaml::node(0.0));
-            REQUIRE_THROWS_AS(non_string.get_value_ref<fkyaml::node::string_type&>(), fkyaml::type_error);
-            REQUIRE_THROWS_AS(non_string.get_value_ref<const fkyaml::node::string_type&>(), fkyaml::type_error);
+            auto non_string =
+                    GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping(), fkyaml::node(),
+                             fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0));
+            REQUIRE_THROWS_AS(non_string.get_value_ref<fkyaml::node::string_type&>(),
+                              fkyaml::type_error);
+            REQUIRE_THROWS_AS(non_string.get_value_ref<const fkyaml::node::string_type&>(),
+                              fkyaml::type_error);
         }
     }
 }
@@ -5059,9 +4785,7 @@ TEST_CASE("Node_Begin") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.begin());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.begin()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5082,11 +4806,10 @@ TEST_CASE("Node_Begin") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-const node") {
-            REQUIRE_THROWS_AS(node.begin(), fkyaml::type_error);
-        }
+        SECTION("non-const node") { REQUIRE_THROWS_AS(node.begin(), fkyaml::type_error); }
 
         SECTION("const node") {
             const fkyaml::node const_node = node;
@@ -5099,9 +4822,7 @@ TEST_CASE("Node_ConstBegin") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.cbegin());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.cbegin()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5122,11 +4843,10 @@ TEST_CASE("Node_ConstBegin") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-const node") {
-            REQUIRE_THROWS_AS(node.cbegin(), fkyaml::type_error);
-        }
+        SECTION("non-const node") { REQUIRE_THROWS_AS(node.cbegin(), fkyaml::type_error); }
 
         SECTION("const node") {
             const fkyaml::node const_node = node;
@@ -5139,9 +4859,7 @@ TEST_CASE("Node_End") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.end());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.end()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5162,11 +4880,10 @@ TEST_CASE("Node_End") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-const throwing node") {
-            REQUIRE_THROWS_AS(node.end(), fkyaml::type_error);
-        }
+        SECTION("non-const throwing node") { REQUIRE_THROWS_AS(node.end(), fkyaml::type_error); }
 
         SECTION("const throwing node") {
             const fkyaml::node const_node = node;
@@ -5179,9 +4896,7 @@ TEST_CASE("Node_ConstEnd") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.cend());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.cend()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5202,11 +4917,10 @@ TEST_CASE("Node_ConstEnd") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-const throwing node") {
-            REQUIRE_THROWS_AS(node.cend(), fkyaml::type_error);
-        }
+        SECTION("non-const throwing node") { REQUIRE_THROWS_AS(node.cend(), fkyaml::type_error); }
 
         SECTION("const throwing node") {
             const fkyaml::node const_node = node;
@@ -5219,9 +4933,7 @@ TEST_CASE("Node_ReverseBegin") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.rbegin());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.rbegin()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5242,11 +4954,10 @@ TEST_CASE("Node_ReverseBegin") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-const throwing node") {
-            REQUIRE_THROWS_AS(node.rbegin(), fkyaml::type_error);
-        }
+        SECTION("non-const throwing node") { REQUIRE_THROWS_AS(node.rbegin(), fkyaml::type_error); }
 
         SECTION("const throwing node") {
             const fkyaml::node const_node = node;
@@ -5259,9 +4970,7 @@ TEST_CASE("Node_ConstReverseBegin") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.crbegin());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.crbegin()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5282,7 +4991,8 @@ TEST_CASE("Node_ConstReverseBegin") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
         SECTION("non-const throwing node") {
             REQUIRE_THROWS_AS(node.crbegin(), fkyaml::type_error);
@@ -5299,9 +5009,7 @@ TEST_CASE("Node_ReverseEnd") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.rend());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.rend()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5322,11 +5030,10 @@ TEST_CASE("Node_ReverseEnd") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-const throwing node") {
-            REQUIRE_THROWS_AS(node.rend(), fkyaml::type_error);
-        }
+        SECTION("non-const throwing node") { REQUIRE_THROWS_AS(node.rend(), fkyaml::type_error); }
 
         SECTION("const throwing node") {
             const fkyaml::node const_node = node;
@@ -5339,9 +5046,7 @@ TEST_CASE("Node_ConstReverseEnd") {
     SECTION("container nodes") {
         auto node = GENERATE(fkyaml::node::sequence(), fkyaml::node::mapping());
 
-        SECTION("non-const non-alias container node") {
-            REQUIRE_NOTHROW(node.crend());
-        }
+        SECTION("non-const non-alias container node") { REQUIRE_NOTHROW(node.crend()); }
 
         SECTION("const non-alias container node") {
             const fkyaml::node const_node = node;
@@ -5362,11 +5067,10 @@ TEST_CASE("Node_ConstReverseEnd") {
     }
 
     SECTION("scalar nodes") {
-        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0), fkyaml::node(0.0), fkyaml::node(""));
+        auto node = GENERATE(fkyaml::node(), fkyaml::node(false), fkyaml::node(0),
+                             fkyaml::node(0.0), fkyaml::node(""));
 
-        SECTION("non-const throwing node") {
-            REQUIRE_THROWS_AS(node.crend(), fkyaml::type_error);
-        }
+        SECTION("non-const throwing node") { REQUIRE_THROWS_AS(node.crend(), fkyaml::type_error); }
 
         SECTION("const throwing node") {
             const fkyaml::node const_node = node;
@@ -5383,14 +5087,14 @@ TEST_CASE("Node_MapItems") {
     SECTION("non-const version") {
         fkyaml::node map = {{"foo", 123}, {"bar", -456}};
 
-        for (auto& entry : map.map_items()) {
+        for (auto& entry: map.map_items()) {
             REQUIRE(entry.key() == keys[i]);
             REQUIRE(entry.value() == values[i]);
             ++i;
         }
 
         i = 0;
-        for (const auto& entry : map.map_items()) {
+        for (const auto& entry: map.map_items()) {
             REQUIRE(entry.key() == keys[i]);
             REQUIRE(entry.value() == values[i]);
             ++i;
@@ -5400,7 +5104,7 @@ TEST_CASE("Node_MapItems") {
     SECTION("const version") {
         const fkyaml::node c_map = {{"foo", 123}, {"bar", -456}};
 
-        for (const auto& c_entry : c_map.map_items()) {
+        for (const auto& c_entry: c_map.map_items()) {
             REQUIRE(c_entry.key() == keys[i]);
             REQUIRE(c_entry.value() == values[i]);
             ++i;
@@ -5408,13 +5112,9 @@ TEST_CASE("Node_MapItems") {
     }
 
     SECTION("not mapping") {
-        auto non_mapping = GENERATE(
-            fkyaml::node::sequence(),
-            fkyaml::node(nullptr),
-            fkyaml::node(true),
-            fkyaml::node(123),
-            fkyaml::node(3.14),
-            fkyaml::node("foo"));
+        auto non_mapping =
+                GENERATE(fkyaml::node::sequence(), fkyaml::node(nullptr), fkyaml::node(true),
+                         fkyaml::node(123), fkyaml::node(3.14), fkyaml::node("foo"));
         const auto const_non_mapping = non_mapping;
         REQUIRE_THROWS_AS(non_mapping.map_items(), fkyaml::type_error);
         REQUIRE_THROWS_AS(const_non_mapping.map_items(), fkyaml::type_error);
@@ -5424,7 +5124,7 @@ TEST_CASE("Node_MapItems") {
     SECTION("structured bindings") {
         fkyaml::node map = {{"foo", 123}, {"bar", -456}};
 
-        for (auto& [key, value] : map.map_items()) {
+        for (auto& [key, value]: map.map_items()) {
             REQUIRE(key == keys[i]);
             REQUIRE(value == values[i]);
             ++i;

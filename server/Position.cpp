@@ -50,7 +50,7 @@ Coordinate Position::getCenter() const {
 }
 
 bool Position::operator<(const Position &other) const {
-    return this->reference < other.reference && this->width == other.width && this->height == other.height; //TODO: Comprobar que esto funcione bien.
+    return this->reference < other.reference && this->width == other.width && this->height == other.height;
 }
 
 bool Position::intersects(const Position &position) const {

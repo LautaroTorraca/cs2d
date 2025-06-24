@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -9,23 +9,22 @@
 #include <limits>
 
 #include <catch2/catch.hpp>
-
 #include <fkYAML/node.hpp>
 
 TEST_CASE("Serializer_SequenceNode") {
     using node_str_pair_t = std::pair<fkyaml::node, std::string>;
-    auto node_str_pair = GENERATE(
-        node_str_pair_t({true, false}, "- true\n- false\n"),
-        node_str_pair_t({{{"foo", -1234}, {"bar", nullptr}}}, "-\n  bar: null\n  foo: -1234\n"));
+    auto node_str_pair = GENERATE(node_str_pair_t({true, false}, "- true\n- false\n"),
+                                  node_str_pair_t({{{"foo", -1234}, {"bar", nullptr}}},
+                                                  "-\n  bar: null\n  foo: -1234\n"));
     fkyaml::detail::basic_serializer<fkyaml::node> serializer;
     REQUIRE(serializer.serialize(node_str_pair.first) == node_str_pair.second);
 }
 
 TEST_CASE("Serializer_MappingNode") {
     using node_str_pair_t = std::pair<fkyaml::node, std::string>;
-    auto node_str_pair = GENERATE(
-        node_str_pair_t({{"foo", -1234}, {"bar", nullptr}}, "bar: null\nfoo: -1234\n"),
-        node_str_pair_t({{"foo", {true, false}}}, "foo:\n  - true\n  - false\n"));
+    auto node_str_pair =
+            GENERATE(node_str_pair_t({{"foo", -1234}, {"bar", nullptr}}, "bar: null\nfoo: -1234\n"),
+                     node_str_pair_t({{"foo", {true, false}}}, "foo:\n  - true\n  - false\n"));
     fkyaml::detail::basic_serializer<fkyaml::node> serializer;
     REQUIRE(serializer.serialize(node_str_pair.first) == node_str_pair.second);
 }
@@ -93,18 +92,15 @@ TEST_CASE("Serializer_IntegerNode") {
 TEST_CASE("SerializeClassTest_FloatNode", "[SerializeClassTest]") {
     using node_str_pair_t = std::pair<fkyaml::node, std::string>;
     auto node_str_pair = GENERATE(
-        node_str_pair_t(0.0, "0.0"),
-        node_str_pair_t(-2.0, "-2.0"),
-        node_str_pair_t(2.0, "2.0"),
-        node_str_pair_t(-2.10, "-2.1"),
-        node_str_pair_t(2.10, "2.1"),
-        node_str_pair_t(3.14, "3.14"),
-        node_str_pair_t(-53.97, "-53.97"),
-        node_str_pair_t(23000000.0, "2.3e+07"),
-        node_str_pair_t(-23000000.0, "-2.3e+07"),
-        node_str_pair_t(std::numeric_limits<fkyaml::node::float_number_type>::infinity(), ".inf"),
-        node_str_pair_t(-1 * std::numeric_limits<fkyaml::node::float_number_type>::infinity(), "-.inf"),
-        node_str_pair_t(std::nan(""), ".nan"));
+            node_str_pair_t(0.0, "0.0"), node_str_pair_t(-2.0, "-2.0"), node_str_pair_t(2.0, "2.0"),
+            node_str_pair_t(-2.10, "-2.1"), node_str_pair_t(2.10, "2.1"),
+            node_str_pair_t(3.14, "3.14"), node_str_pair_t(-53.97, "-53.97"),
+            node_str_pair_t(23000000.0, "2.3e+07"), node_str_pair_t(-23000000.0, "-2.3e+07"),
+            node_str_pair_t(std::numeric_limits<fkyaml::node::float_number_type>::infinity(),
+                            ".inf"),
+            node_str_pair_t(-1 * std::numeric_limits<fkyaml::node::float_number_type>::infinity(),
+                            "-.inf"),
+            node_str_pair_t(std::nan(""), ".nan"));
     fkyaml::detail::basic_serializer<fkyaml::node> serializer;
     REQUIRE(serializer.serialize(node_str_pair.first) == node_str_pair.second);
 }
@@ -112,42 +108,27 @@ TEST_CASE("SerializeClassTest_FloatNode", "[SerializeClassTest]") {
 TEST_CASE("Serializer_StringNode") {
     using node_str_pair_t = std::pair<fkyaml::node, std::string>;
     auto node_str_pair = GENERATE_REF(
-        node_str_pair_t("test", "test"),
-        node_str_pair_t("foo bar", "foo bar"),
-        node_str_pair_t("null", "\"null\""),
-        node_str_pair_t("Null", "\"Null\""),
-        node_str_pair_t("NULL", "\"NULL\""),
-        node_str_pair_t("~", "\"~\""),
-        node_str_pair_t("true", "\"true\""),
-        node_str_pair_t("True", "\"True\""),
-        node_str_pair_t("TRUE", "\"TRUE\""),
-        node_str_pair_t("false", "\"false\""),
-        node_str_pair_t("False", "\"False\""),
-        node_str_pair_t("FALSE", "\"FALSE\""),
-        node_str_pair_t("123", "\"123\""),
-        node_str_pair_t("-567", "\"-567\""),
-        node_str_pair_t("3.14", "\"3.14\""),
-        node_str_pair_t("1.23e-4", "\"1.23e-4\""),
-        node_str_pair_t(".inf", "\".inf\""),
-        node_str_pair_t(".Inf", "\".Inf\""),
-        node_str_pair_t(".INF", "\".INF\""),
-        node_str_pair_t("-.inf", "\"-.inf\""),
-        node_str_pair_t("-.Inf", "\"-.Inf\""),
-        node_str_pair_t("-.INF", "\"-.INF\""),
-        node_str_pair_t(".nan", "\".nan\""),
-        node_str_pair_t(".NaN", "\".NaN\""),
-        node_str_pair_t(".NAN", "\".NAN\""),
-        node_str_pair_t("foo\"bar", "\"foo\\\"bar\""),
-        node_str_pair_t(fkyaml::node::string_type({char(0xC2u), char(0xA1u)}), std::string({char(0xC2u), char(0xA1u)})),
-        node_str_pair_t(
-            fkyaml::node::string_type({char(0xE3u), char(0x80u), char(0xA8u)}),
-            std::string({char(0xE3u), char(0x80u), char(0xA8u)})),
-        node_str_pair_t(
-            fkyaml::node::string_type({char(0xE2u), char(0x81u), char(0xA8u)}),
-            std::string({char(0xE2u), char(0x81u), char(0xA8u)})),
-        node_str_pair_t(
-            fkyaml::node::string_type({char(0xE2u), char(0x80u), char(0xAAu)}),
-            std::string({char(0xE2u), char(0x80u), char(0xAAu)})));
+            node_str_pair_t("test", "test"), node_str_pair_t("foo bar", "foo bar"),
+            node_str_pair_t("null", "\"null\""), node_str_pair_t("Null", "\"Null\""),
+            node_str_pair_t("NULL", "\"NULL\""), node_str_pair_t("~", "\"~\""),
+            node_str_pair_t("true", "\"true\""), node_str_pair_t("True", "\"True\""),
+            node_str_pair_t("TRUE", "\"TRUE\""), node_str_pair_t("false", "\"false\""),
+            node_str_pair_t("False", "\"False\""), node_str_pair_t("FALSE", "\"FALSE\""),
+            node_str_pair_t("123", "\"123\""), node_str_pair_t("-567", "\"-567\""),
+            node_str_pair_t("3.14", "\"3.14\""), node_str_pair_t("1.23e-4", "\"1.23e-4\""),
+            node_str_pair_t(".inf", "\".inf\""), node_str_pair_t(".Inf", "\".Inf\""),
+            node_str_pair_t(".INF", "\".INF\""), node_str_pair_t("-.inf", "\"-.inf\""),
+            node_str_pair_t("-.Inf", "\"-.Inf\""), node_str_pair_t("-.INF", "\"-.INF\""),
+            node_str_pair_t(".nan", "\".nan\""), node_str_pair_t(".NaN", "\".NaN\""),
+            node_str_pair_t(".NAN", "\".NAN\""), node_str_pair_t("foo\"bar", "\"foo\\\"bar\""),
+            node_str_pair_t(fkyaml::node::string_type({char(0xC2u), char(0xA1u)}),
+                            std::string({char(0xC2u), char(0xA1u)})),
+            node_str_pair_t(fkyaml::node::string_type({char(0xE3u), char(0x80u), char(0xA8u)}),
+                            std::string({char(0xE3u), char(0x80u), char(0xA8u)})),
+            node_str_pair_t(fkyaml::node::string_type({char(0xE2u), char(0x81u), char(0xA8u)}),
+                            std::string({char(0xE2u), char(0x81u), char(0xA8u)})),
+            node_str_pair_t(fkyaml::node::string_type({char(0xE2u), char(0x80u), char(0xAAu)}),
+                            std::string({char(0xE2u), char(0x80u), char(0xAAu)})));
 
     fkyaml::detail::basic_serializer<fkyaml::node> serializer;
     REQUIRE(serializer.serialize(node_str_pair.first) == node_str_pair.second);
@@ -216,7 +197,7 @@ TEST_CASE("Serializer_TaggedNode") {
     fkyaml::node root = fkyaml::node::mapping();
     fkyaml::node str_node("foo");
     str_node.add_tag_name("!!str");
-    fkyaml::node null_node {};
+    fkyaml::node null_node{};
     null_node.add_tag_name("!!null");
     fkyaml::node bool_node(true);
     bool_node.add_tag_name("!<tag:yaml.org,2002:bool>");
@@ -328,7 +309,8 @@ TEST_CASE("Serializer_MultipleDocuments") {
                                "...\n"
                                "123: true\n";
 
-        REQUIRE_NOTHROW(docs = deserializer.deserialize_docs(fkyaml::detail::input_adapter(expected)));
+        REQUIRE_NOTHROW(
+                docs = deserializer.deserialize_docs(fkyaml::detail::input_adapter(expected)));
         REQUIRE(serializer.serialize_docs(docs) == expected);
     }
 
@@ -341,7 +323,8 @@ TEST_CASE("Serializer_MultipleDocuments") {
                                "---\n"
                                "test: !t!result success\n";
 
-        REQUIRE_NOTHROW(docs = deserializer.deserialize_docs(fkyaml::detail::input_adapter(expected)));
+        REQUIRE_NOTHROW(
+                docs = deserializer.deserialize_docs(fkyaml::detail::input_adapter(expected)));
         REQUIRE(serializer.serialize_docs(docs) == expected);
     }
 }

@@ -35,14 +35,17 @@ namespace {
         ServerLobbyOrder& lobbyOrder = dynamic_cast<ServerLobbyOrder &>(*order);
         std::vector<std::string> games;
         games.push_back(lobbyOrder.getGameName());
-        GamesListDTO gamesList(0, games);
+        std::vector<GameLobbyDTO> lobbies;
+        lobbies.push_back(GameLobbyDTO("Partida", 2, MapType::DUST,  4));
+        GamesListDTO gamesList(0, lobbies);
         protocol.sendGamesList(gamesList);
         GamesList list = clientProtocol.getGamesList();
         std::unique_ptr<Order> listRawOrder = protocol.getNextOrder();
         ServerLobbyOrder& listOrder = dynamic_cast<ServerLobbyOrder &>(*listRawOrder);
         bool result = listOrder.getOrderType() == LOBBY_LIST &&
             listOrder.getClientId() == 0;
-        result = result && list.games.size() == 1 && list.games.at(0) == lobbyOrder.getGameName();
+        result = result && list.gamesLobbies.size() == 1 && list.gamesLobbies.at(0).gameName == lobbyOrder.getGameName();
+        result = result && list.gamesLobbies.at(0).rounds == lobbyOrder.getRoundCount() && list.gamesLobbies.at(0).mapType == lobbyOrder.getMapType();
         protocol.end();
         std::unique_ptr<Order> exitOrder = protocol.getNextOrder();
         protocol.disconnect({0});
@@ -57,10 +60,11 @@ namespace {
         bool result = lobbyOrder.getOrderType() == LOBBY_JOIN &&
             lobbyOrder.getClientId() == 0 &&
                 lobbyOrder.getGameName() == "hola";
-        LobbyConnectionDTO lobbyConnection(lobbyOrder.getClientId(), ConnectionStatus::SUCCESS);
+        LobbyConnectionDTO lobbyConnection(lobbyOrder.getClientId(), ConnectionStatus::SUCCESS, "good");
         protocol.sendLobbyConnectionStatus(lobbyConnection);
         LobbyConnectionDTO connectionStatus = clientProtocol.getLobbyConnection();
         result = result && connectionStatus.status == ConnectionStatus::SUCCESS;
+        result = result && connectionStatus.info == "good";
         protocol.end();
         std::unique_ptr<Order> exitOrder = protocol.getNextOrder();
         protocol.disconnect({0});
@@ -258,7 +262,7 @@ TEST(InGameReadPreSnapshotTest, Check)
         projectilesInfo.push_back(projectile);
         weaponsInfo.push_back({30, WeaponType::GLOCK, projectilesInfo});
         WeaponInfoDTO actualWeapon(30, WeaponType::GLOCK);
-        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0, 0, PlayerStatus::LIVING});
+        playersInfo.push_back({0, "Zoro", Skin::GERMAN_GSG9, {280, 112}, 90, 500, 100, weaponsInfo, actualWeapon, 0, 0, PlayerStatus::LIVING, 500});
         std::vector<DropDTO> dropsInfo;
         WeaponInfoDTO droppedWeapon(30, WeaponType::AK47);
         dropsInfo.push_back({droppedWeapon, {48, 48}});

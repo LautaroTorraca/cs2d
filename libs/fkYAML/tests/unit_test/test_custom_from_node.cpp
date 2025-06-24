@@ -1,6 +1,6 @@
 //  _______   __ __   __  _____   __  __  __
-// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting code)
-// |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
+// |   __| |_/  |  \_/  |/  _  \ /  \/  \|  |     fkYAML: A C++ header-only YAML library (supporting
+// code) |   __|  _  < \_   _/|  ___  |    _   |  |___  version 0.4.2
 // |__|  |_| \__|  |_|  |_|   |_|___||___|______| https://github.com/fktn-k/fkYAML
 //
 // SPDX-FileCopyrightText: 2023-2025 Kensuke Fukutani <fktn.dev@gmail.com>
@@ -12,7 +12,6 @@
 #include <vector>
 
 #include <catch2/catch.hpp>
-
 #include <fkYAML/node.hpp>
 
 namespace test {
@@ -32,13 +31,9 @@ struct color {
     int value;
 };
 
-bool operator<(const color& lhs, const color& rhs) noexcept {
-    return lhs.value < rhs.value;
-}
+bool operator<(const color& lhs, const color& rhs) noexcept { return lhs.value < rhs.value; }
 
-bool operator==(const color& lhs, const color& rhs) noexcept {
-    return lhs.value == rhs.value;
-}
+bool operator==(const color& lhs, const color& rhs) noexcept { return lhs.value == rhs.value; }
 
 void from_node(const fkyaml::node& node, color& color) {
     color.value = node["color"].get_value<int>();
@@ -60,7 +55,7 @@ void from_node(const fkyaml::node& node, rgb& rgb) {
     rgb.b = node["b"].get_value<int>();
 }
 
-} // namespace test
+}  // namespace test
 
 // std::hash specialization for std::unordered_map
 namespace std {
@@ -79,7 +74,7 @@ struct hash<test::rgb> {
     }
 };
 
-} // namespace std
+}  // namespace std
 
 TEST_CASE("FromNode_UserDefinedType") {
     std::string input = "title: Robinson Crusoe\n"
@@ -142,18 +137,18 @@ TEST_CASE("FromNode_UserDefinedTypeMap") {
     fkyaml::node node = fkyaml::node::deserialize(input);
 
     auto colors = node["colors"].get_value<std::map<test::color, test::rgb>>();
-    REQUIRE(colors.find(test::color {0xFFFFFF}) != colors.end());
-    REQUIRE(colors.at(test::color {0xFFFFFF}).r == 0xFF);
-    REQUIRE(colors.at(test::color {0xFFFFFF}).g == 0xFF);
-    REQUIRE(colors.at(test::color {0xFFFFFF}).b == 0xFF);
-    REQUIRE(colors.find(test::color {0x808080}) != colors.end());
-    REQUIRE(colors.at(test::color {0x808080}).r == 0x80);
-    REQUIRE(colors.at(test::color {0x808080}).g == 0x80);
-    REQUIRE(colors.at(test::color {0x808080}).b == 0x80);
-    REQUIRE(colors.find(test::color {0x586776}) != colors.end());
-    REQUIRE(colors.at(test::color {0x586776}).r == 0x58);
-    REQUIRE(colors.at(test::color {0x586776}).g == 0x67);
-    REQUIRE(colors.at(test::color {0x586776}).b == 0x76);
+    REQUIRE(colors.find(test::color{0xFFFFFF}) != colors.end());
+    REQUIRE(colors.at(test::color{0xFFFFFF}).r == 0xFF);
+    REQUIRE(colors.at(test::color{0xFFFFFF}).g == 0xFF);
+    REQUIRE(colors.at(test::color{0xFFFFFF}).b == 0xFF);
+    REQUIRE(colors.find(test::color{0x808080}) != colors.end());
+    REQUIRE(colors.at(test::color{0x808080}).r == 0x80);
+    REQUIRE(colors.at(test::color{0x808080}).g == 0x80);
+    REQUIRE(colors.at(test::color{0x808080}).b == 0x80);
+    REQUIRE(colors.find(test::color{0x586776}) != colors.end());
+    REQUIRE(colors.at(test::color{0x586776}).r == 0x58);
+    REQUIRE(colors.at(test::color{0x586776}).g == 0x67);
+    REQUIRE(colors.at(test::color{0x586776}).b == 0x76);
 
     auto colors_umap = node["colors"].get_value<std::unordered_map<test::color, test::rgb>>();
 }
