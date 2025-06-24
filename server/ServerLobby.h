@@ -24,6 +24,7 @@ public:
     void handle(const std::unique_ptr<Order>& order) const;
     void createGame(const ServerLobbyOrder& order);
     void joinGame(const ServerLobbyOrder& order);
-    void leaveGame(const ServerLobbyOrder& order) const;
-    void listGames(const ServerLobbyOrder & order) const;
+    void leaveGame(const ServerLobbyOrder& order);
+    void listGames(const ServerLobbyOrder& order) const;
+    void erase(const std::string& gameName);
 };

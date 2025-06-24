@@ -9,7 +9,7 @@
 #define DEFAULT_CONNECTION_MESSAGE "Good."
 
 ServerLobby::ServerLobby(ServerLobbyProtocolInterface& protocol, ServerGameLobby& serverGameLobby) :
-protocol(protocol), gameLobbyserver(serverGameLobby), lobby(gameLobbyserver) { setupTranslators(); }
+protocol(protocol), gameLobbyserver(serverGameLobby) { setupTranslators(); }
 
 void ServerLobby::setupTranslators() {
   translator[LOBBY_CREATE] = [&](const ServerLobbyOrder &order) { this->createGame(order); };
@@ -57,14 +57,18 @@ void ServerLobby::joinGame(const ServerLobbyOrder &order) {
   }
 }
 
-void ServerLobby::leaveGame(const ServerLobbyOrder &order) const {
-  DisconnectionDTO disconnectionInfo(order.getClientId());
-  this->protocol.disconnect(disconnectionInfo);
+void ServerLobby::leaveGame(const ServerLobbyOrder &order) {
+    DisconnectionDTO disconnectionInfo(order.getClientId());
+    this->lobby.erase(order.getClientId());
+    this->protocol.disconnect(disconnectionInfo);
 }
 
-void ServerLobby::listGames(const ServerLobbyOrder &order) const {
-  size_t id = order.getClientId();
-  GamesListDTO gamesList = this->gameLobbyserver.listLobbies(id);
+void ServerLobby::listGames(const ServerLobbyOrder& order) const {
+    size_t id = order.getClientId();
+    GamesListDTO gamesList = this->gameLobbyserver.listLobbies(id);
 
-  this->protocol.sendGamesList(gamesList);
+    this->protocol.sendGamesList(gamesList);
+}
+void ServerLobby::erase(const std::string& gameName) {
+    this->lobby.erase(gameName);
 }

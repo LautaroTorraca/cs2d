@@ -54,13 +54,6 @@ void ServerGameLobby::exit(const GameLobbyOrder& order) {
         this->serverInGame.addNewGame(gameName, gameLobbyInfo);
     }
 }
-void ServerGameLobby::add(const std::string& gameName, const size_t& id, std::map<std::string, std::vector<size_t>>& lobbies) const {
-    if (this->gameLobbies.contains(gameName)) {
-        throw GameAlreadyExistsException("The lobby already exists.");
-    }
-    this->serverInGame.add(gameName, id, lobbies);
-
-}
 
 GamesListDTO ServerGameLobby::listLobbies(const size_t& id) {
   std::vector<GameLobbyDTO> gameLobbies;

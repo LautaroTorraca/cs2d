@@ -1,15 +1,14 @@
 #include "ServerInGame.h"
 
 #include <ranges>
-
+#include <utility>
 #include "Monitor/GameMonitor.h"
-
 #include "OrderNotImplementedException.h"
 
 #define SHOP_PATH "../gameConstants/shop.yaml"
 #define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 
-ServerInGame::ServerInGame(InGameProtocolInterface& protocol) : protocol(protocol) {
+ServerInGame::ServerInGame(InGameProtocolInterface& protocol, const std::function<void(const std::string&)>& eraser) : protocol(protocol), eraser(eraser) {
     setupTranslators();
     this->eraserThread = std::thread(&ServerInGame::erase, this);
 }
@@ -65,10 +64,11 @@ void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInf
   this->games.at(gameName)->start();
 }
 
-void ServerInGame::leaveGameLobby(const size_t &id) {
-  if (!this->playerToGame.contains(id)) return;
-  std::string gameName = this->playerToGame.at(id);
-  this->games.at(gameName)->kick(id);
+void ServerInGame::leaveGameLobby(const size_t& id) {
+    if (!this->playerToGame.contains(id))
+        return;
+    std::string gameName = this->playerToGame.at(id);
+    this->games.at(gameName)->kick(id);
 }
 
 void ServerInGame::move(const InGameOrder &order) {
@@ -143,6 +143,7 @@ void ServerInGame::eraseGame(const std::string& gameName) {
     std::erase_if(this->playerToGame, [&](const auto& pair) {
         return pair.second == gameName;
     });
+    this->eraser(gameName);
 }
 
 void ServerInGame::exit(const InGameOrder& order) {
@@ -173,11 +174,4 @@ ServerInGame::~ServerInGame() {
         game->stop();
         game->join();
     }
-}
-void ServerInGame::add(const std::string& gameName, const size_t& id,
-                        std::map<std::string, std::vector<unsigned long>>& lobbies) {
-    if (this->games.contains(gameName)) {
-        throw std::runtime_error("The game already exists.");
-    }
-    lobbies[gameName].push_back(id);
 }
