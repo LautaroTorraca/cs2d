@@ -391,18 +391,19 @@ void GameRenderer::setRoundWinMenu(GameStatus state) {
     renderText(text, {textPosX, pading.y + 10 - yOffset}, 20, lightGreen);
 }
 void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players) {
-    RgbValue gray(80, 80, 80, 180);
+    RgbValue gray(80, 80, 80, 80);
     RgbValue lightGreen(150, 255, 150, 255);
-    RgbValue textColorTT(220, 0, 0);
-    RgbValue textColorCT(0, 0, 220);
+    RgbValue textColorCT(48, 69, 86);
+    RgbValue textColorTT(141, 93, 35);
     Sint16 rad = 8;
 
     int boardWidth = RES_WIDTH_BASE * 0.8;
-    int boardHeight = RES_HEIGTH_BASE * 0.7;
+    int boardHeight = RES_HEIGTH_BASE - 30;
 
     double boardX = (RES_WIDTH_BASE - boardWidth) / 2.0;
-    double boardY = (RES_HEIGTH_BASE - boardHeight) / 2.0;
+    double boardY = (RES_HEIGTH_BASE - boardHeight) / 2.0 + 10;
 
+    boxRGBA(renderer.Get(), (RES_WIDTH_BASE), 0, 0, (RES_HEIGTH_BASE), 0, 0, 0, 100);
     roundedBoxRGBA(renderer.Get(), boardX, boardY, boardX + boardWidth, boardY + boardHeight, rad,
                    gray.r, gray.g, gray.b, gray.a);
 
@@ -451,47 +452,58 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
               });
 
 
-    for (const PlayerInformation& player: sortedTT) {
+    for (int x = 0; x < 5; x++) {
 
-        std::string displayName = player.name;
-        if (displayName.length() > 10) {
-            displayName = displayName.substr(0, 7) + "...";
-        }
-        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorTT);
+        for (const PlayerInformation& player: sortedTT) {
 
-        renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.kills, 2, 2, textColorTT, numberStreamHeight, numberStreamWidth);
-        renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.deaths, 2, 2, textColorTT, numberStreamHeight, numberStreamWidth);
-        renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.collectedMoney, 5, 2, textColorTT, numberStreamHeight,
-                           numberStreamWidth);
+            std::string displayName = player.name;
+            if (displayName.length() > 10) {
+                displayName = displayName.substr(0, 7) + "...";
+            }
+            renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorTT);
 
-        startY += lineHeight;
-        if (startY > boardY + boardHeight - lineHeight) {
-            break;
+            renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                               player.kills, 2, 2, textColorTT, numberStreamHeight,
+                               numberStreamWidth);
+            renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                               player.deaths, 2, 2, textColorTT, numberStreamHeight,
+                               numberStreamWidth);
+            renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                               player.collectedMoney, 5, 2, textColorTT, numberStreamHeight,
+                               numberStreamWidth);
+
+            startY += lineHeight;
+            if (startY > boardY + boardHeight - lineHeight) {
+                break;
+            }
         }
     }
 
-    for (const PlayerInformation& player: sortedCT) {
+    startY += 30;
 
-        std::string displayName = player.name;
-        if (displayName.length() > 10) {
-            displayName = displayName.substr(0, 7) + "...";
-        }
-        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorCT);
+    for (int x = 0; x < 5; x++) {
+        for (const PlayerInformation& player: sortedCT) {
 
-        renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.kills, 2, 2, textColorCT, numberStreamHeight, numberStreamWidth);
-        renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.deaths, 2, 2, textColorCT, numberStreamHeight, numberStreamWidth);
-        renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.collectedMoney, 5, 2, textColorCT, numberStreamHeight,
-                           numberStreamWidth);
+            std::string displayName = player.name;
+            if (displayName.length() > 10) {
+                displayName = displayName.substr(0, 7) + "...";
+            }
+            renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorCT);
 
-        startY += lineHeight;
-        if (startY > boardY + boardHeight - lineHeight) {
-            break;
+            renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                               player.kills, 2, 2, textColorCT, numberStreamHeight,
+                               numberStreamWidth);
+            renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                               player.deaths, 2, 2, textColorCT, numberStreamHeight,
+                               numberStreamWidth);
+            renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                               player.collectedMoney, 5, 2, textColorCT, numberStreamHeight,
+                               numberStreamWidth);
+
+            startY += lineHeight;
+            if (startY > boardY + boardHeight - lineHeight) {
+                break;
+            }
         }
     }
 }
