@@ -21,8 +21,8 @@ public:
     static MapType askMap(QWidget* parent);
     static std::pair<uint8_t, uint8_t> askConfig(QWidget* parent);
 
-    static Team askTeam(QWidget* parent);
-    static Skin askSkin(uint8_t teamId, QWidget* parent);
+    static Team askTeam(QWidget* parent, Protocol& protocol);
+    static Skin askSkin(uint8_t teamId, QWidget* parent, Protocol& protocol);
 
     static void showError(QWidget* parent, const QString& title, const QString& message);
 };

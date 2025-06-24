@@ -1,10 +1,14 @@
 #pragma once
 
-#include <QDialog>
 #include <QComboBox>
-#include <QPushButton>
+#include <QDialog>
 #include <QLabel>
+#include <QPushButton>
 #include <QStringList>
+
+#include "client/Protocol.h"
+
+using namespace Client;
 
 class SkinSelectionDialog : public QDialog {
     Q_OBJECT
@@ -15,6 +19,7 @@ private:
     void loadSkinsForTeam(uint8_t teamId);
     void updateSkinImage(int index);
     void handleConfirm();
+    void closeEvent(QCloseEvent* event);
 
     QComboBox* skinComboBox;
     QPushButton* confirmButton;
@@ -22,9 +27,10 @@ private:
 
     QStringList skinPaths;
     uint8_t selectedSkin;
+    Protocol& protocol;
 
 public:
-    explicit SkinSelectionDialog(uint8_t teamId, QWidget* parent = nullptr);
+    SkinSelectionDialog(uint8_t teamId, Protocol& protocol , QWidget* parent = nullptr);
     uint8_t getSelectedSkin() const;
 
 };

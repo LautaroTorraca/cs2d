@@ -3,11 +3,12 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <thread>
 
 #include "server/Team.h"
 
-TeamSelectionDialog::TeamSelectionDialog(QWidget* parent)
-        : QDialog(parent), selectedTeam("") {
+TeamSelectionDialog::TeamSelectionDialog(Protocol& protocol, QWidget* parent)
+        : QDialog(parent), selectedTeam(""), protocol(protocol) {
     setWindowTitle("Choose Your Team");
     setModal(true);
     resize(380, 240);
@@ -81,4 +82,15 @@ void TeamSelectionDialog::selectTT() {
 Team TeamSelectionDialog::getSelectedTeam() const {
     if (selectedTeam == "CT") return Team::COUNTER_TERRORISTS;
     return Team::TERRORISTS;
+}
+
+void TeamSelectionDialog::closeEvent(QCloseEvent* event) {
+
+    std::thread([this]() {
+        try {
+            protocol.leaveGameLobby();
+        } catch (...) {}
+    }).detach();
+
+    QDialog::closeEvent(event);
 }
