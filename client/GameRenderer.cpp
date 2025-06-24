@@ -12,6 +12,7 @@
 #include "SDL2pp/Texture.hh"
 #include "server/Constants/MapTypeConstants.h"
 #include "server/GameStatus.h"
+#include "server/ProductType.h"
 
 #include "CoordinateInformation.h"
 #include "EntityConstants.h"
@@ -28,7 +29,7 @@
 
 
 GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId, double width,
-                           double height):
+                           double height, std::map<ProductType, double> shopInfo):
         resolution_width(width),
         resolution_heigth(height),
         window("CS-Go 2D???", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resolution_width,
@@ -37,7 +38,8 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
         textureManager(renderer, resolution_width, resolution_heigth),
         tileMap(tileMap),
         clientID(clientId),
-        explotion(renderer, textureManager.getExplotion(), soundManager) {}
+        explotion(renderer, textureManager.getExplotion(), soundManager),
+        shopInfo(shopInfo) {}
 
 bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
@@ -56,8 +58,6 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     renderPlayers(gameSnapshot.playersInfo);
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
 
-
-    setLeaderBoard(gameSnapshot.playersInfo);
 
     if (gameSnapshot.status == GameStatus::GAME_OVER) {
         setLeaderBoard(gameSnapshot.playersInfo);
@@ -363,6 +363,7 @@ void GameRenderer::setRoundWinMenu(GameStatus state) {
     renderText(text, {textPosX, pading.y + 10 - yOffset}, 20, lightGreen);
 }
 void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players) {
+
     RgbValue gray(80, 80, 80, 80);
     RgbValue lightGreen(150, 255, 150, 255);
     RgbValue textColorCT(48, 69, 86);
@@ -493,25 +494,25 @@ void GameRenderer::setBuyMenu() {
 
     renderText("AK-47", {90, 60}, 20, lightGreen);
     renderWeaponGlyph({160, 100}, EntityType::AK47, none, 1.5);
-    renderBuyButton({170, 100}, 1, 500);
+    renderBuyButton({170, 100}, 1, shopInfo.at(ProductType::AK_47_WEAPON));
 
     renderText("   M3", {90, 130}, 20, lightGreen);
     renderWeaponGlyph({160, 170}, EntityType::M3, none, 1.5);
-    renderBuyButton({170, 170}, 2, 1500);
+    renderBuyButton({170, 170}, 2, shopInfo.at(ProductType::M3_WEAPON));
 
     renderText("  AWP", {90, 200}, 20, lightGreen);
     renderWeaponGlyph({160, 240}, EntityType::AWP, none, 1.5);
-    renderBuyButton({170, 240}, 3, 2500);
+    renderBuyButton({170, 240}, 3, shopInfo.at(ProductType::AWP_WEAPON));
 
     renderText("PRIMARY", {260, 73}, 12, lightGreen);
     renderText("    AMMO", {260, 85}, 12, lightGreen);
     renderWeaponGlyph({320, 120}, EntityType::P_AMMO, none, 3);
-    renderBuyButton({330, 100}, 9, 100);
+    renderBuyButton({330, 100}, 9, shopInfo.at(ProductType::PRIMARY_AMMO));
 
     renderText("SECONDARY", {260, 153}, 12, lightGreen);
     renderText("    AMMO", {260, 165}, 12, lightGreen);
     renderWeaponGlyph({330, 215}, EntityType::S_AMMO, none, 4.5);
-    renderBuyButton({330, 200}, 0, 50);
+    renderBuyButton({330, 200}, 0, shopInfo.at(ProductType::SECONDARY_AMMO));
 }
 void GameRenderer::renderBuyButton(CoordinateInformation pos, int button, int price) {
 

@@ -11,7 +11,6 @@
 #include "server/Constants/MapTypeConstants.h"
 
 #include "InputHandler.h"
-#include "MainWindow.h"
 #include "SDL_timer.h"
 #include "fixedOverWritingQueue.h"
 using std::stringstream;
@@ -35,74 +34,14 @@ GameClient::GameClient(Protocol& protocol):
         dataReceiver(protocol, snapshotQueue),
         parser("../settings.yaml") {}
 
-GameClient::GameClient(char* port):
-        running(true),
-        protocol(HOSTNAME, port),
-        inputHandler(protocol),
-        dataReceiver(protocol, snapshotQueue),
-        parser("../settings.yaml") {}
+// GameClient::GameClient(char* port):
+//         running(true),
+//         protocol(HOSTNAME, port),
+//         inputHandler(protocol),
+//         dataReceiver(protocol, snapshotQueue),
+//         parser("../settings.yaml") {}
 
-void GameClient::run() {}
-void GameClient::run(int argc, char* argv[]) {
-
-    QApplication app(argc, argv);
-    MainWindow mainMenu;
-    if (mainMenu.exec() == QDialog::Accepted) {
-        ConnectionChoice choice = mainMenu.getChoice();
-
-        switch (choice) {
-            case ConnectionChoice::None: {
-                std::cout << "nada\n";
-                break;
-            }
-            case ConnectionChoice::Create: {
-                std::cout << "crear\n";
-                LobbyDTO lobby("hola", MapType::TRAINING_ZONE, 2, 2);
-                protocol.createLobby(lobby);
-                std::cout << "aca llego=?\n\n";
-                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                std::cout << "lobbyStatus, id: " << lobbyStatus.id
-                          << ", status: " << (int)lobbyStatus.status << std::endl;
-                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                    std::cout << "se creo el lobby correctamente\n";
-                } else {
-                    std::cout << "fallo xd\n";
-                }
-                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::PHOENIX);
-                protocol.ready(playerChoices);
-                GameLobbyDTO gameLobby = protocol.getGameLobby();
-                while (gameLobby.status != READY_STATUS) {
-                    std::cout << "todavia no se creo el game correctamente\n";
-                    gameLobby = protocol.getGameLobby();
-                }
-                std::cout << "Se creo el game correctamente\n";
-                break;
-            }
-            case ConnectionChoice::Join: {
-
-                std::cout << "unirse\n";
-                LobbyDTO lobby("hola");
-                protocol.joinLobby(lobby);
-                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                    std::cout << "se creo el lobby correctamente\n";
-                } else {
-                    std::cout << "fallo xd\n";
-                }
-                PlayerChoicesDTO playerChoices(4321, "pablo", Team::COUNTER_TERRORISTS,
-                                               Skin::UK_SAS);
-                protocol.ready(playerChoices);
-                GameLobbyDTO gameLobby = protocol.getGameLobby();
-                while (gameLobby.status != READY_STATUS) {
-                    std::cout << "todavia no se creo el game correctamente\n";
-                    GameLobbyDTO gameLobby = protocol.getGameLobby();
-                }
-                std::cout << "Se creo el game correctamente\n";
-                break;
-            }
-        }
-    }
-    std::cout << "hasta aca todo joya no?\n";
+void GameClient::run(const MapType& mapType) {
 
     // HACK: fix constant loop rate.
     double res_width = parser.getResolution("resolution_width");
@@ -111,9 +50,10 @@ void GameClient::run(int argc, char* argv[]) {
     std::cout << "res width de parser " << res_width << "\n";
     std::cout << "res geight de parser " << res_height << "\n";
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
-    GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
+    GameRenderer renderer(preSnapshot.map, preSnapshot.clientId, res_width, res_height,
+                          preSnapshot.shopInfo);
+
     try {
-        std::cout << "try" << std::endl;
         dataReceiver.start();
         bool running = true;
         const int FPS = 60;
@@ -121,8 +61,6 @@ void GameClient::run(int argc, char* argv[]) {
         uint32_t frameStart = SDL_GetTicks();
         int frameTime;
         SDL sdl(SDL_INIT_VIDEO);
-        std::cout << "antes del while" << std::endl;
-
         while (running) {
             SDL_Event event;
             frameTime = SDL_GetTicks() - frameStart;
@@ -137,8 +75,7 @@ void GameClient::run(int argc, char* argv[]) {
                 // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
                 // renderer.
 
-                running = renderer.setScreen(gameSnapshot, mapType,
-                                             inputHandler.getMouseCoords());
+                running = renderer.setScreen(gameSnapshot, mapType, inputHandler.getMouseCoords());
 
 
                 if (inputHandler.isInMenu()) {
@@ -154,5 +91,4 @@ void GameClient::run(int argc, char* argv[]) {
     }
     dataReceiver.close();
     dataReceiver.join();
-
 }

@@ -43,6 +43,8 @@ private:
     bool roundBombExploded = false;
     GameStatus prevStatus;
     SoundManager soundManager;
+    std::map<ProductType, double> shopInfo;
+
     std::unordered_map<size_t, PlayerSprite> playerSprites;
 
     void renderMap(std::vector<std::vector<uint8_t>> tileMap, MapType map);
@@ -82,7 +84,7 @@ private:
 
 public:
     GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t clientId, double width,
-                 double height);
+                 double height, std::map<ProductType, double> shopInfo);
 
     bool setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords);
     void setBuyMenu();
