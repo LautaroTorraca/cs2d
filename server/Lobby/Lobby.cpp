@@ -23,7 +23,7 @@ GameLobby Lobby::createGameLobby(const size_t &id, const std::string &gameName, 
         throw std::invalid_argument("The selected map cannot accept that amount of players ");
     }
     this->maxPlayers.emplace(gameName, playersCount);
-    return GameLobby(this->mapsPaths.at(map), map, gameName, rounds);
+    return GameLobby(this->mapsPaths.at(map), map, gameName, rounds, this->maxPlayers.at(gameName));
 }
 
 void Lobby::joinGame(const size_t &id, const std::string &gameName) {
