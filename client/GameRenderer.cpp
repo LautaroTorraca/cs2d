@@ -62,7 +62,7 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
         setLeaderBoard(gameSnapshot.playersInfo, gameSnapshot.countersWinsRounds,
                        gameSnapshot.terroristsWinsRounds);
         render();
-        SDL_Delay(1000);
+        SDL_Delay(10000);
         return false;
     }
 

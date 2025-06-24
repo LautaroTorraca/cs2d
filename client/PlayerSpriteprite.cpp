@@ -117,7 +117,7 @@ void PlayerSprite::renderHeldWeapon() {
 }
 
 void PlayerSprite::renderDefusing() {
-    if (playerInfo.status != PlayerStatus::DEFUSING || isClient) {
+    if (playerInfo.status != PlayerStatus::DEFUSING || !isClient) {
         return;
     }
     Texture font = textureManager.getFont(15, "defusing", {0, 255, 0, 180});
