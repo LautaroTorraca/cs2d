@@ -58,11 +58,11 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     renderPlayers(gameSnapshot.playersInfo);
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
 
-
     if (gameSnapshot.status == GameStatus::GAME_OVER) {
-        setLeaderBoard(gameSnapshot.playersInfo);
+        setLeaderBoard(gameSnapshot.playersInfo, gameSnapshot.countersWinsRounds,
+                       gameSnapshot.terroristsWinsRounds);
         render();
-        SDL_Delay(10000);
+        SDL_Delay(1000);
         return false;
     }
 
@@ -362,19 +362,20 @@ void GameRenderer::setRoundWinMenu(GameStatus state) {
 
     renderText(text, {textPosX, pading.y + 10 - yOffset}, 20, lightGreen);
 }
-void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players) {
 
+void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players, uint8_t ct_rounds,
+                                  uint8_t tt_rounds) {
     RgbValue gray(80, 80, 80, 80);
     RgbValue lightGreen(150, 255, 150, 255);
     RgbValue textColorCT(48, 69, 86);
     RgbValue textColorTT(141, 93, 35);
-    Sint16 rad = 8;
 
+    Sint16 rad = 8;
     int boardWidth = RES_WIDTH_BASE * 0.8;
-    int boardHeight = RES_HEIGTH_BASE - 30;
+    int boardHeight = RES_HEIGTH_BASE - 90;
 
     double boardX = (RES_WIDTH_BASE - boardWidth) / 2.0;
-    double boardY = (RES_HEIGTH_BASE - boardHeight) / 2.0 + 10;
+    double boardY = (RES_HEIGTH_BASE - boardHeight) / 2.0;
 
     boxRGBA(renderer.Get(), (RES_WIDTH_BASE), 0, 0, (RES_HEIGTH_BASE), 0, 0, 0, 100);
     roundedBoxRGBA(renderer.Get(), boardX, boardY, boardX + boardWidth, boardY + boardHeight, rad,
@@ -384,6 +385,23 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
     int titleWidth = textureManager.getFont(titleFontSize, "Leaderboard", lightGreen).GetWidth();
     renderText("Leaderboard", {boardX + (boardWidth - titleWidth) / 2.0, boardY + 10},
                titleFontSize, lightGreen);
+
+    titleFontSize += 5;
+    if (ct_rounds > tt_rounds) {
+
+        renderText("Counters Terrorist Wins",
+                   {boardX - 50 + (boardWidth - titleWidth) / 2.0, boardY - 30}, titleFontSize,
+                   textColorCT);
+    } else if (ct_rounds < tt_rounds) {
+
+        renderText("    Terrorist Wins    ",
+                   {boardX - 45 + (boardWidth - titleWidth) / 2.0, boardY - 30}, titleFontSize,
+                   textColorTT);
+    } else {
+        renderText("               Tie     ",
+                   {boardX - 43 + (boardWidth - titleWidth) / 2.0, boardY - 30}, titleFontSize,
+                   lightGreen);
+    }
 
     int headerFontSize = 14;
     int colPadding = 10;
@@ -425,8 +443,6 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
               });
 
 
-    // for (int x = 0; x < 5; x++) {
-
     for (const PlayerInformation& player: sortedTT) {
 
         std::string displayName = player.name;
@@ -448,11 +464,8 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
             break;
         }
     }
-    // }
-    // std::cout << "VALOR DE START Y: " << startY << "\n";
-    startY = 210;
+    startY = 215;
 
-    // for (int x = 0; x < 5; x++) {
     for (const PlayerInformation& player: sortedCT) {
 
         std::string displayName = player.name;
@@ -474,7 +487,6 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
             break;
         }
     }
-    // }
 }
 
 void GameRenderer::setBuyMenu() {

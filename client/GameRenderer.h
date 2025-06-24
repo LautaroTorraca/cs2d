@@ -78,7 +78,8 @@ private:
     void renderText(std::string text, CoordinateInformation pos, int fontSize, RgbValue color);
     void renderBuyButton(CoordinateInformation pos, int button, int price);
     void setRoundWinMenu(GameStatus state);
-    void setLeaderBoard(const std::vector<PlayerInformation>& players);
+    void setLeaderBoard(const std::vector<PlayerInformation>& players, uint8_t ct_rounds,
+                        uint8_t tt_rounds);
     void stateSounds(GameStatus state);
     PlayerInformation& fillPlayerStatesAndFindClient(Snapshot& snapshot);
 

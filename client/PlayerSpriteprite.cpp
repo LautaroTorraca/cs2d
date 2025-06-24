@@ -46,6 +46,7 @@ void PlayerSprite::render() {
 
     if (playerInfo.status != PlayerStatus::DEAD) {
         renderPlayer();
+        renderDefusing();
         renderBullets2();
         renderHeldWeapon();
     } else if (isClient) {
@@ -113,6 +114,14 @@ void PlayerSprite::renderHeldWeapon() {
     Point pivot(16 - 2, 16 + 5);
     renderer.Copy(weaponTex, NullOpt, Rect(x, y, PLAYER_WIDTH, PLAYER_HEIGTH), playerInfo.angle,
                   pivot);
+}
+
+void PlayerSprite::renderDefusing() {
+    if (playerInfo.status != PlayerStatus::DEFUSING || isClient) {
+        return;
+    }
+    Texture font = textureManager.getFont(15, "defusing", {0, 255, 0, 180});
+    renderer.Copy(font, SDL2pp::NullOpt, {200, 200});
 }
 
 void PlayerSprite::renderBullets() {

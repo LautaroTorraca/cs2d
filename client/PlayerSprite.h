@@ -31,6 +31,7 @@ private:
 
     void renderPlayer();
     void renderHeldWeapon();
+    void renderDefusing();
     void renderBullets();
     void renderBullets2();
     void playSound();
