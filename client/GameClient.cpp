@@ -80,8 +80,6 @@ void GameClient::run(const MapType& mapType ) {
         std::cout << "catcheo en gameClient\n\n";
     }
     dataReceiver.close();
-    std::cout << "antes de join" << std::endl;
     dataReceiver.join();
-    std::cout << "antes de join" << std::endl;
 
 }

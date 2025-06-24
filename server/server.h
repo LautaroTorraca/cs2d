@@ -22,7 +22,6 @@ class Server {
     void setupLobbyOrders();
     void setupGameLobbyOrders();
     void setupInGameOrders();
-    void eraseGame(const std::string& gameName);
 
 public:
   explicit Server(const std::string& port);

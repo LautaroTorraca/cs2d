@@ -70,4 +70,7 @@ void GameLobby::kick(const size_t& id) {
     if (this->canStart()) {
         this->status = READY_STATUS;
     }
+    if (this->joinedPlayers.empty()) {
+        this->status = INVALID_STATUS;
+    }
 }

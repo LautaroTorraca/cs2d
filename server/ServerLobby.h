@@ -26,5 +26,5 @@ public:
     void joinGame(const ServerLobbyOrder& order);
     void leaveGame(const ServerLobbyOrder& order);
     void listGames(const ServerLobbyOrder& order) const;
-    void erase(const std::string& gameName);
+    void erase(const size_t& id);
 };

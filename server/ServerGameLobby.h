@@ -17,11 +17,13 @@ class ServerGameLobby {
     std::map<size_t, std::string> playersToLobby;
     ServerInGame& serverInGame;
     GameLobbyProtocolInterface& protocol;
+    const std::function<void(const size_t&)> eraser;
     void setupTranslators();
+    void deleteAndCreate(GameLobbyDTO& gameLobbyInfo);
 
 public:
 
-    ServerGameLobby(ServerInGame& serverInGame, GameLobbyProtocolInterface& protocol);
+    ServerGameLobby(ServerInGame& serverInGame, GameLobbyProtocolInterface& protocol, const std::function<void(const size_t&)>& eraser);
 
     void ready(const GameLobbyOrder & order);
 
@@ -29,7 +31,7 @@ public:
 
     void add(const std::string& gameName, GameLobby& gameLobby);
 
-    void join(const std::string & gameName, const size_t & playerId);
+    void join(const std::string& gameName, const size_t& playerId);
 
     void exit(const GameLobbyOrder & order);
 

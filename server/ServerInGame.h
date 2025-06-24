@@ -23,7 +23,7 @@ class ServerInGame {
     std::thread eraserThread;
     Queue<std::string> gamesToErase;
     std::mutex mutex;
-    std::function<void(const std::string&)> eraser;
+    std::function<void(const size_t&)> eraser;
     void setupTranslators();
     void move(const InGameOrder &order);
     void attack(const InGameOrder & order);
@@ -39,7 +39,7 @@ class ServerInGame {
     void erase();
 
 public:
-    explicit ServerInGame(InGameProtocolInterface& protocol, const std::function<void(const std::string&)>& eraser);
+    explicit ServerInGame(InGameProtocolInterface& protocol, const std::function<void(const size_t&)>& eraser);
     void handle(const std::unique_ptr<Order>& order) const;
     void addNewGame(std::string& gameName, const GameLobbyDTO& gameInfo);
     void leaveGameLobby(const size_t& id);

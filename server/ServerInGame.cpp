@@ -8,7 +8,7 @@
 #define SHOP_PATH "../gameConstants/shop.yaml"
 #define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 
-ServerInGame::ServerInGame(InGameProtocolInterface& protocol, const std::function<void(const std::string&)>& eraser) : protocol(protocol), eraser(eraser) {
+ServerInGame::ServerInGame(InGameProtocolInterface& protocol, const std::function<void(const size_t&)>& eraser) : protocol(protocol), eraser(eraser) {
     setupTranslators();
     this->eraserThread = std::thread(&ServerInGame::erase, this);
 }
@@ -137,13 +137,13 @@ void ServerInGame::eraseGame(const std::string& gameName) {
     this->games.at(gameName)->join();
     std::vector<size_t> ids = this->getGameIds(gameName);
     for (auto& id: ids) {
+        this->eraser(id);
         this->playerToGame.erase(id);
     }
     this->games.erase(gameName);
     std::erase_if(this->playerToGame, [&](const auto& pair) {
         return pair.second == gameName;
     });
-    this->eraser(gameName);
 }
 
 void ServerInGame::exit(const InGameOrder& order) {
@@ -151,9 +151,9 @@ void ServerInGame::exit(const InGameOrder& order) {
     if (!this->playerToGame.contains(order.getPlayerId()))
         return;
     std::string gameName = this->playerToGame.at(order.getPlayerId());
+    this->eraser(order.getPlayerId());
     this->games.at(gameName)->kick(order.getPlayerId());
     this->playerToGame.erase(order.getPlayerId());
-    this->protocol.disconnect({order.getPlayerId()});
 }
 void ServerInGame::erase() {
     while (true) {

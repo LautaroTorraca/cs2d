@@ -60,7 +60,8 @@ public:
 
   void sendLobby(const GameLobbyDTO &gameLobbyInfo) override;
 
-  void sendSnapshot(const GameInfoDTO & gameInfo) override;
+  void sendSnapshot(const GameInfoDTO& gameInfo) override;
+  void sendSnapshot(const GameInfoDTO& gameInfo, const size_t& id) override;
   void sendPreSnapshot(const PreSnapshot &preSnapshot) override;
 
   void end();

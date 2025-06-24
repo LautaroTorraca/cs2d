@@ -395,7 +395,7 @@ void WaitingRoomDialog::onExitClicked() {
 
     std::thread([this]() {
         try {
-            protocol.exit();
+            protocol.leaveGameLobby();
         } catch (...) {
         }
     }).detach();

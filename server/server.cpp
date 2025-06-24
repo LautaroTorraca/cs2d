@@ -4,8 +4,8 @@
 
 Server::Server(const std::string& port) :
               protocol(port),
-              inGameServer(protocol, [&] (const std::string& gameName) {this->eraseGame(gameName);}),
-              gameLobbyServer(inGameServer, protocol),
+              inGameServer(protocol, [&] (const size_t& id) {this->serverLobby.erase(id);}),
+              gameLobbyServer(inGameServer, protocol , [&] (const size_t& id) {this->serverLobby.erase(id);}),
               serverLobby(protocol, this->gameLobbyServer) {
 
     setupLobbyOrders();
@@ -81,9 +81,6 @@ void Server::setupInGameOrders() {
     orderTranslator[IN_GAME_EXIT] = [this](const std::unique_ptr<Order>& order) {
         inGameServer.handle(order);
     };
-}
-void Server::eraseGame(const std::string& gameName) {
-    this->serverLobby.erase(gameName);
 }
 
 void Server::run() {

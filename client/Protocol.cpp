@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+#include <sys/socket.h>
+
 #include "server/Constants/ProtocolContants.h"
 #include "server/DTO/GamesListDTO.h"
 

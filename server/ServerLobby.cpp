@@ -69,6 +69,6 @@ void ServerLobby::listGames(const ServerLobbyOrder& order) const {
 
     this->protocol.sendGamesList(gamesList);
 }
-void ServerLobby::erase(const std::string& gameName) {
-    this->lobby.erase(gameName);
+void ServerLobby::erase(const size_t& id) {
+    this->lobby.erase(id);
 }

@@ -38,15 +38,21 @@ void ClientHandler::setDisconnectionFetcher() {
     };
 
     this->disconnectionFetcher[IN_GAME_LOBBY] = [&] () {
-        std::map<std::string, std::vector<char>> message;
-        message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_LOBBY));
-        this->requestsQueue.push(std::make_shared<Request>(this->id, message));
+        std::map<std::string, std::vector<char>> cleanMessage;
+        cleanMessage.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_LOBBY));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, cleanMessage));
+        std::map<std::string, std::vector<char>> disconnectionMessage;
+        disconnectionMessage.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_DISCONNECT));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, disconnectionMessage));
     };
 
     this->disconnectionFetcher[IN_GAME] = [&] () {
         std::map<std::string, std::vector<char>> message;
         message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_GAME));
         this->requestsQueue.push(std::make_shared<Request>(this->id, message));
+        std::map<std::string, std::vector<char>> disconnectionMessage;
+        disconnectionMessage.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_DISCONNECT));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, disconnectionMessage));
     };
 }
 

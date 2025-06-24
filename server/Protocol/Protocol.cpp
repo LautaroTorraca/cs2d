@@ -175,6 +175,10 @@ void Protocol::sendSnapshot(const GameInfoDTO& gameInfo) {
     }
 }
 
+void Protocol::sendSnapshot(const GameInfoDTO& gameInfo, const size_t& id) {
+    this->clientsHandlers.at(id)->sendSnapshot(gameInfo);
+}
+
 void Protocol::sendPreSnapshot(const PreSnapshot& preSnapshot) {
     this->clientsHandlers.at(preSnapshot.clientId)->sendPreSnapshot(preSnapshot);
 }

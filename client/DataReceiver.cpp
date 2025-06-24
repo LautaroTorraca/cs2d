@@ -32,5 +32,4 @@ void DataReceiver::run() {
 
 void DataReceiver::close() {
     running = false;
-    protocol.exit();  //  XXX: esto cierra aca tambien? o solo aca?? idk
 }
