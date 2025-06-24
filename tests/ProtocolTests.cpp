@@ -51,6 +51,7 @@ namespace {
         protocol.disconnect({0});
         EXPECT_EQ(result, true);
     }
+
     TEST(JoinGameTest, Check) {
         Protocol protocol("8080");
         Client::Protocol clientProtocol("localhost", "8080");

@@ -412,7 +412,7 @@ void WaitingRoomDialog::closeEvent(QCloseEvent* event) {
 
     std::thread([this]() {
         try {
-            protocol.exit();
+            protocol.leaveGameLobby();
         } catch (...) {}
     }).detach();
 

@@ -1,17 +1,18 @@
 #include "SkinSelectionDialog.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPixmap>
-#include <QIcon>
 #include <QCoreApplication>
+#include <QHBoxLayout>
+#include <QIcon>
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <thread>
 
+#include "client/Login/Assets/SkinRepository.h"
 #include "server/Skin.h"
 #include "server/Team.h"
-#include "Login/Assets/SkinRepository.h"
 
-SkinSelectionDialog::SkinSelectionDialog(uint8_t teamId, QWidget* parent)
-        : QDialog(parent), selectedSkin(0) {
+SkinSelectionDialog::SkinSelectionDialog(uint8_t teamId, Protocol& protocol, QWidget* parent)
+        : QDialog(parent), selectedSkin(0), protocol(protocol) {
     setWindowTitle("Select Skin");
     setModal(true);
     resize(680, 320);
@@ -157,4 +158,15 @@ void SkinSelectionDialog::handleConfirm() {
 
 uint8_t SkinSelectionDialog::getSelectedSkin() const {
     return selectedSkin;
+}
+
+void SkinSelectionDialog::closeEvent(QCloseEvent* event) {
+
+    std::thread([this]() {
+        try {
+            protocol.leaveGameLobby();
+        } catch (...) {}
+    }).detach();
+
+    QDialog::closeEvent(event);
 }

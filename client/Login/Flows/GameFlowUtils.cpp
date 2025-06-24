@@ -1,14 +1,16 @@
 #include "GameFlowUtils.h"
 
 #include <stdexcept>
-#include "Login/Dialogs/CreateGameDialog.h"
-#include "Login/Dialogs/GameNameDialog.h"
-#include "Login/Dialogs/MapSelectionDialog.h"
-#include "Login/Dialogs/SkinSelectionDialog.h"
-#include "Login/Dialogs/TeamSelectionDialog.h"
-#include "Login/Mappers/SkinTraslator.h"
-#include "Login/Mappers/MapMapper.h"
-#include "Login/MessageBox.h"
+
+#include "client/Login/Dialogs/CreateGameDialog.h"
+#include "client/Login/Dialogs/GameNameDialog.h"
+#include "client/Login/Dialogs/MapSelectionDialog.h"
+#include "client/Login/Dialogs/SkinSelectionDialog.h"
+#include "client/Login/Dialogs/TeamSelectionDialog.h"
+#include "client/Login/Mappers/MapMapper.h"
+#include "client/Login/Mappers/SkinTraslator.h"
+#include "client/Login/MessageBox.h"
+#include "client/Login/Dialogs/TeamSelectionDialog.h"
 
 QString GameFlowUtils::getUsername(QLineEdit* input, QWidget* parent) {
     QString name = input->text().trimmed();
@@ -58,8 +60,8 @@ std::pair<uint8_t, uint8_t> GameFlowUtils::askConfig(QWidget* parent) {
     return {players, rounds};
 }
 
-Team GameFlowUtils::askTeam(QWidget* parent) {
-    TeamSelectionDialog dialog(parent);
+Team GameFlowUtils::askTeam(QWidget* parent, Protocol& protocol) {
+    TeamSelectionDialog dialog(protocol, parent);
     int result = dialog.exec();
     if (result != QDialog::Accepted) {
         throw std::runtime_error("Team selection cancelled");
@@ -68,8 +70,8 @@ Team GameFlowUtils::askTeam(QWidget* parent) {
     return dialog.getSelectedTeam();
 }
 
-Skin GameFlowUtils::askSkin(uint8_t teamId, QWidget* parent) {
-    SkinSelectionDialog dialog(teamId, parent);
+Skin GameFlowUtils::askSkin(uint8_t teamId, QWidget* parent, Protocol& protocol) {
+    SkinSelectionDialog dialog(teamId, protocol, parent);
     int result = dialog.exec();
     if (result != QDialog::Accepted) {
         throw std::runtime_error("Skin selection cancelled");

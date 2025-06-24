@@ -2,10 +2,10 @@
 
 #include "GameFlowUtils.h"
 #include "../Mappers/SkinTraslator.h"
-#include "Login/Mappers/TeamMapper.h"
-#include "Login/Dialogs/TeamSelectionDialog.h"
-#include "Login/Dialogs/SkinSelectionDialog.h"
-#include "Login/Dialogs/WaitingRoomDialog.h"
+#include "client/Login/Mappers/TeamMapper.h"
+#include "client/Login/Dialogs/TeamSelectionDialog.h"
+#include "client/Login/Dialogs/SkinSelectionDialog.h"
+#include "client/Login/Dialogs/WaitingRoomDialog.h"
 
 GameFlowBase::GameFlowBase(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
         : usernameInput(usernameInput), protocol(protocol), parent(parent), menu(menu) {}
@@ -34,11 +34,11 @@ void GameFlowBase::showWaitingRoom(const QString& username, Team team, Skin skin
 }
 
 Team GameFlowBase::askTeam() {
-    uint8_t teamId = GameFlowUtils::askTeam(parent);
+    uint8_t teamId = GameFlowUtils::askTeam(parent, protocol);
     return static_cast<Team>(teamId);
 }
 
 Skin GameFlowBase::askSkin(Team team) {
-    uint8_t skinId = GameFlowUtils::askSkin(static_cast<uint8_t>(team), parent);
+    uint8_t skinId = GameFlowUtils::askSkin(static_cast<uint8_t>(team), parent, protocol);
     return static_cast<Skin>(skinId);
 }
