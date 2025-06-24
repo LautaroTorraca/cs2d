@@ -106,6 +106,7 @@ if(TALLER_CLIENT)
   add_subdirectory(client)
   add_subdirectory(libs/SDL2_gfx)
   add_executable(taller_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+  find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
   target_include_directories(taller_client
                              PRIVATE ${SDL2_mixer_SOURCE_DIR}/include)
   # client/LobbyDTO.h client/GamesList.h client/BuyOrder.h
@@ -120,7 +121,8 @@ if(TALLER_CLIENT)
     SDL2_mixer
     SDL2_gfx
     SDL2_ttf
-    Qt6::Widgets)
+    Qt6::Widgets
+    Qt6::Multimedia)
 endif()
 
 if(TALLER_SERVER)

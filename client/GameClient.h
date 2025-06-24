@@ -13,13 +13,11 @@ constexpr std::string HOSTNAME = "127.0.0.1";
 class GameClient {
     bool running;
     QueueFixed<Snapshot> snapshotQueue;
-    Protocol protocol;
+    Protocol& protocol;
     InputHandler inputHandler;
     DataReceiver dataReceiver;
 
 public:
-    GameClient(char* port);
     GameClient(Protocol& protocol);
-    void run(int argc, char* argv[]);
-    void run();
+    void run(const MapType& mapType);
 };

@@ -1,19 +1,19 @@
 #pragma once
 
+#include <QCloseEvent>
 #include <QDialog>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QScrollArea>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QCloseEvent>
+#include <atomic>
 #include <thread>
 #include <vector>
-#include <atomic>
 
+#include "client/Login/ServerMenu.h"
 #include "client/Protocol.h"
 #include "server/DTO/PlayerChoicesDTO.h"
-#include "Login/ServerMenu.h"
 
 using namespace Client;
 
@@ -65,8 +65,8 @@ private:
     void restoreMenu();
 
     // Event handlers
-    void handleGameStart();
-    void closeMenuAndStartGame();
+    void handleGameStart(const MapType& mapType);
+    void closeMenuAndStartGame(const MapType& mapType);
     void handleConnectionError(const std::string& error);
 
 

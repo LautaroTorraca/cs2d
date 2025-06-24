@@ -30,82 +30,18 @@ using namespace DTO;
 
 GameClient::GameClient(Protocol& protocol):
         running(true),
-        protocol(HOSTNAME, PORT),
+        protocol(protocol),
         inputHandler(protocol),
         dataReceiver(protocol, snapshotQueue) {}
 
-GameClient::GameClient(char* port):
-        running(true),
-        protocol(HOSTNAME, port),
-        inputHandler(protocol),
-        dataReceiver(protocol, snapshotQueue) {}
-
-void GameClient::run() {}
-void GameClient::run(int argc, char* argv[]) {
-
-    QApplication app(argc, argv);
-    MainWindow mainMenu;
-    if (mainMenu.exec() == QDialog::Accepted) {
-        ConnectionChoice choice = mainMenu.getChoice();
-
-        switch (choice) {
-            case ConnectionChoice::None: {
-                std::cout << "nada\n";
-                break;
-            }
-            case ConnectionChoice::Create: {
-                std::cout << "crear\n";
-                LobbyDTO lobby("hola", MapType::TRAINING_ZONE, 2, 2);
-                protocol.createLobby(lobby);
-                std::cout << "aca llego=?\n\n";
-                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                std::cout << "lobbyStatus, id: " << lobbyStatus.id
-                          << ", status: " << (int)lobbyStatus.status << std::endl;
-                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                    std::cout << "se creo el lobby correctamente\n";
-                } else {
-                    std::cout << "fallo xd\n";
-                }
-                PlayerChoicesDTO playerChoices(1234, "jorge", Team::TERRORISTS, Skin::PHOENIX);
-                protocol.ready(playerChoices);
-                GameLobbyDTO gameLobby = protocol.getGameLobby();
-                while (gameLobby.status != READY_STATUS) {
-                    std::cout << "todavia no se creo el game correctamente\n";
-                    gameLobby = protocol.getGameLobby();
-                }
-                std::cout << "Se creo el game correctamente\n";
-                break;
-            }
-            case ConnectionChoice::Join: {
-
-                std::cout << "unirse\n";
-                LobbyDTO lobby("hola");
-                protocol.joinLobby(lobby);
-                LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
-                if (lobbyStatus.status == ConnectionStatus::SUCCESS) {
-                    std::cout << "se creo el lobby correctamente\n";
-                } else {
-                    std::cout << "fallo xd\n";
-                }
-                PlayerChoicesDTO playerChoices(4321, "pablo", Team::COUNTER_TERRORISTS,
-                                               Skin::UK_SAS);
-                protocol.ready(playerChoices);
-                GameLobbyDTO gameLobby = protocol.getGameLobby();
-                while (gameLobby.status != READY_STATUS) {
-                    std::cout << "todavia no se creo el game correctamente\n";
-                    GameLobbyDTO gameLobby = protocol.getGameLobby();
-                }
-                std::cout << "Se creo el game correctamente\n";
-                break;
-            }
-        }
-    }
-    std::cout << "hasta aca todo joya no?\n";
-
-    // HACK: fix constant loop rate.
+void GameClient::run(const MapType& mapType ) {
+    std::cout << "run client" << std::endl;
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
+    std::cout << "pre snap" << std::endl;
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
+    std::cout << "renderer" << std::endl;
     try {
+        std::cout << "try" << std::endl;
         dataReceiver.start();
         bool running = true;
         const int FPS = 60;
@@ -113,7 +49,7 @@ void GameClient::run(int argc, char* argv[]) {
         uint32_t frameStart = SDL_GetTicks();
         int frameTime;
         SDL sdl(SDL_INIT_VIDEO);
-
+        std::cout << "antes del while" << std::endl;
 
         while (running) {
             SDL_Event event;
@@ -128,7 +64,7 @@ void GameClient::run(int argc, char* argv[]) {
                 // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
                 // renderer.
 
-                running = renderer.setScreen(gameSnapshot, MapType::TRAINING_ZONE,
+                running = renderer.setScreen(gameSnapshot, mapType,
                                              inputHandler.getMouseCoords());
                 if (inputHandler.isInMenu()) {
                     renderer.setBuyMenu();

@@ -14,15 +14,16 @@ void ListGameFlow::run() {
     if (username.isEmpty()) return;
 
     try {
+
         GamesList gameList = protocol.getGamesList();
-        if (gameList.games.empty()) {
+        if (gameList.gamesLobbies.empty()) {
             GameFlowUtils::showError(parent, "No Games Found", "There are no active games right now.");
             return;
         }
 
         QStringList formattedGames;
-        for (const std::string& game : gameList.games) {
-            QString clean = QString::fromStdString(game);
+        for (const auto& game : gameList.gamesLobbies) {
+            QString clean = QString::fromStdString(game.gameName);
             clean.remove('\n');
             clean.remove('\r');
             formattedGames << clean;

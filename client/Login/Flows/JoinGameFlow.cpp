@@ -23,8 +23,8 @@ void JoinGameFlow::run() {
 
         GamesList gameList = protocol.getGamesList();
         bool gameExists = false;
-        for (const std::string& game : gameList.games) {
-            if (QString::fromStdString(game) == gameName) {
+        for (const auto& game : gameList.gamesLobbies) {
+            if (QString::fromStdString(game.gameName) == gameName) {
                 gameExists = true;
                 break;
             }

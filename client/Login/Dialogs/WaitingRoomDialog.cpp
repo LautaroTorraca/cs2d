@@ -153,6 +153,7 @@ void WaitingRoomDialog::pollLobby() {
     while (!shouldStop && !gameStarted) {
         try {
             GameLobbyDTO lobby = protocol.getGameLobby();
+            MapType mapType = lobby.mapType;
 
             // Verificar si cambió la lista de jugadores
             std::vector<std::string> currentPlayerNames;
@@ -176,8 +177,8 @@ void WaitingRoomDialog::pollLobby() {
             if (lobby.status == READY_STATUS && !gameStarted) {
                 gameStarted = true;
 
-                QMetaObject::invokeMethod(this, [this]() {
-                    handleGameStart();
+                QMetaObject::invokeMethod(this, [this, &mapType]() {
+                    handleGameStart(mapType);
                 }, Qt::QueuedConnection);
 
                 return;
@@ -278,7 +279,7 @@ void WaitingRoomDialog::clearPlayerLabels() {
     playerLabels.clear();
 }
 
-void WaitingRoomDialog::handleGameStart() {
+void WaitingRoomDialog::handleGameStart(const MapType& mapType) {
     setWindowTitle("🎮 Starting Game...");
     readyBtn->setEnabled(false);
     readyBtn->setText("🚀 Game Starting...");
@@ -293,12 +294,12 @@ void WaitingRoomDialog::handleGameStart() {
     startingLabel->setAlignment(Qt::AlignCenter);
     playersLayout->addWidget(startingLabel);
 
-    QTimer::singleShot(2000, this, [this]() {
-        closeMenuAndStartGame();
+    QTimer::singleShot(2000, this, [this, &mapType]() {
+        closeMenuAndStartGame(mapType);
     });
 }
 
-void WaitingRoomDialog::closeMenuAndStartGame() {
+void WaitingRoomDialog::closeMenuAndStartGame(const MapType& mapType) {
     if (menu && menu->getMusicManager()) {
         menu->getMusicManager()->setVolume(0.0f);
     }
@@ -307,7 +308,7 @@ void WaitingRoomDialog::closeMenuAndStartGame() {
 
     try {
         GameClient gameClient(protocol);
-        gameClient.run();
+        gameClient.run(mapType);
 
         restoreMenu();
 
