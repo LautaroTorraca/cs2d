@@ -16,7 +16,9 @@
 
 GameLobby::GameLobby(GameLobby &&other) noexcept :
 parser(std::move(other.parser)), mapPath(std::move(other.mapPath)), mapType(other.mapType), gameName(std::move(other.gameName)),
-playersChoices(std::move(other.playersChoices)), rounds(other.rounds), joinedPlayers(std::move(other.joinedPlayers)), status(other.status), teams(std::move(other.teams)) {
+playersChoices(std::move(other.playersChoices)), rounds(other.rounds),
+joinedPlayers(std::move(other.joinedPlayers)), status(other.status), teams(std::move(other.teams)),
+maxPlayers(other.maxPlayers) {
     if (this != &other) {
         other.gameName = "";
         other.mapPath = "";
@@ -26,6 +28,7 @@ playersChoices(std::move(other.playersChoices)), rounds(other.rounds), joinedPla
         other.joinedPlayers = std::map<size_t, bool>();
         other.status = INVALID_STATUS;
         other.teams = std::array<std::vector<size_t>, 2>();
+        other.maxPlayers = 0;
     }
 }
 
@@ -56,8 +59,7 @@ GameLobbyDTO GameLobby::getInfo() const {
             std::get<Team>(playerChoices.at(PLAYER_TEAM_INDEX)),
             std::get<Skin>(playerChoices.at(PLAYER_SKIN_INDEX)));
     }
-    uint8_t maxPlayers = this->parser.getMaxPlayersPerTeam() * 2;
-    return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath, this->mapType, maxPlayers};
+    return GameLobbyDTO{this->status, playersChoices, this->gameName, this->rounds, this->mapPath, this->mapType, this->maxPlayers};
 }
 
 void GameLobby::kick(const size_t& id) {
