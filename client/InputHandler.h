@@ -16,6 +16,7 @@ private:
 
 public:
     InputHandler(Protocol& protocol);
+    void checkDiagonalMovement();
     bool processEvents(SDL_Event& event, GameStatus status);
     bool isInMenu();
     Coords getMouseCoords();

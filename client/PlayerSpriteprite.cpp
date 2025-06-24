@@ -1,5 +1,5 @@
 #include <cmath>
-#include <iostream>
+// #include <iostream>
 
 #include "Constants/ClientConstants.h"
 #include "server/PlayerStatus.h"
@@ -18,14 +18,19 @@ PlayerSprite::PlayerSprite(SDL2pp::Renderer& renderer, TextureManager& textureMa
         prevPlayerInfo(info),
         frame(0),
         isClient(isClient),
-        skin(textureManager.getSkin(info.skin)),
+        // skin(textureManager.getSkin(info.skin)),
         prevState(PlayerStatus::LIVING) {}
 
 void PlayerSprite::update(const PlayerInformation newPlayerInfo,
                           const CoordinateInformation offset) {
     prevPlayerInfo = playerInfo;
+    prevPlayerInfo.skin = playerInfo.skin;
+
     prevState = playerInfo.status;
+
     playerInfo = newPlayerInfo;
+    // playerInfo.skin = newPlayerInfo.skin;
+
     prevOffSet = offSet;
     offSet = offset;
 
@@ -44,9 +49,9 @@ void PlayerSprite::render() {
         renderBullets2();
         renderHeldWeapon();
     } else if (isClient) {
-        skin.SetColorAndAlphaMod({40, 210, 210, 90});
+        textureManager.getSkin(playerInfo.skin).SetColorAndAlphaMod({40, 210, 210, 90});
         renderPlayer();
-        skin.SetColorAndAlphaMod({255, 255, 255, 255});
+        textureManager.getSkin(playerInfo.skin).SetColorAndAlphaMod({255, 255, 255, 255});
     }
     playSound();
 }
@@ -91,7 +96,8 @@ void PlayerSprite::renderPlayer() {
     int x = playerInfo.position.x - offSet.x - offsetX;
     int y = playerInfo.position.y - offSet.y - offsetY;
 
-    renderer.Copy(skin, Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
+    renderer.Copy(textureManager.getSkin(playerInfo.skin),
+                  Rect(posSrcX, posSrcY, TILE_SRC_SIZE, TILE_SRC_SIZE),
                   Rect(x, y, PLAYER_WIDTH, PLAYER_HEIGTH), playerInfo.angle);
 }
 

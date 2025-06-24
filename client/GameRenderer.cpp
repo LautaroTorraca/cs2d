@@ -36,9 +36,6 @@ GameRenderer::GameRenderer(std::vector<std::vector<uint8_t>> tileMap, size_t cli
 
 bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoords) {
 
-    if (gameSnapshot.status == GameStatus::GAME_OVER) {
-        return false;
-    }
 
     if (playerSprites.size() == 0) {
 
@@ -67,7 +64,9 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     }
 
     for (PlayerInformation player: gameSnapshot.playersInfo) {
-        std::cout << "collectedMoney: " << player.collectedMoney << ", deaths: " << (int)player.deaths << ", kills:" << (int)player.kills << std::endl;
+        std::cout << "collectedMoney: " << player.collectedMoney
+                  << ", deaths: " << (int)player.deaths << ", kills:" << (int)player.kills
+                  << std::endl;
     }
     PlayerInformation& currentPlayer = gameSnapshot.playersInfo.at(index);
 
@@ -85,12 +84,19 @@ bool GameRenderer::setScreen(Snapshot gameSnapshot, MapType map, Coords mouseCoo
     renderBomb(gameSnapshot.plantedBombPosition, gameSnapshot.status);
     renderPlayers(gameSnapshot.playersInfo);
     drawFOVStencil(currentPlayer.position, currentPlayer.angle, 60, 50);
+
+
+    if (gameSnapshot.status == GameStatus::GAME_OVER) {
+        setLeaderBoard(gameSnapshot.playersInfo);
+        render();
+        SDL_Delay(10000);
+        return false;
+    }
+
+
     renderUI(gameSnapshot.playersInfo.at(index), gameSnapshot, mouseCoords);
     setRoundWinMenu(gameSnapshot.status);
     stateSounds(gameSnapshot.status);
-
-    if (gameSnapshot.status == GameStatus::GAME_OVER)
-        setLeaderBoard(gameSnapshot.playersInfo);
 
     prevStatus = gameSnapshot.status;
     return true;
@@ -387,7 +393,8 @@ void GameRenderer::setRoundWinMenu(GameStatus state) {
 void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players) {
     RgbValue gray(80, 80, 80, 180);
     RgbValue lightGreen(150, 255, 150, 255);
-    RgbValue textColor(220, 220, 220);
+    RgbValue textColorTT(220, 0, 0);
+    RgbValue textColorCT(0, 0, 220);
     Sint16 rad = 8;
 
     int boardWidth = RES_WIDTH_BASE * 0.8;
@@ -400,7 +407,6 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
                    gray.r, gray.g, gray.b, gray.a);
 
     int titleFontSize = 20;
-    // Calculate title position to truly center it horizontally
     int titleWidth = textureManager.getFont(titleFontSize, "Leaderboard", lightGreen).GetWidth();
     renderText("Leaderboard", {boardX + (boardWidth - titleWidth) / 2.0, boardY + 10},
                titleFontSize, lightGreen);
@@ -424,27 +430,63 @@ void GameRenderer::setLeaderBoard(const std::vector<PlayerInformation>& players)
     int numberStreamHeight = 12;
     int numberStreamWidth = 9;
 
+    std::vector<PlayerInformation> sortedTT;
+    std::vector<PlayerInformation> sortedCT;
 
-    std::vector<PlayerInformation> sortedPlayers = players;
-    std::sort(sortedPlayers.begin(), sortedPlayers.end(),
+    for (PlayerInformation player: players) {
+        if (player.skin < 5)
+            sortedTT.push_back(player);
+        else
+            sortedCT.push_back(player);
+    }
+
+    std::sort(sortedTT.begin(), sortedTT.end(),
               [](const PlayerInformation& a, const PlayerInformation& b) {
                   return a.kills > b.kills;
               });
 
-    for (const PlayerInformation& player: sortedPlayers) {
+    std::sort(sortedCT.begin(), sortedCT.end(),
+              [](const PlayerInformation& a, const PlayerInformation& b) {
+                  return a.kills > b.kills;
+              });
+
+
+    for (const PlayerInformation& player: sortedTT) {
 
         std::string displayName = player.name;
         if (displayName.length() > 10) {
             displayName = displayName.substr(0, 7) + "...";
         }
-        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColor);
+        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorTT);
 
         renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.kills, 2, 2, textColor, numberStreamHeight, numberStreamWidth);
+                           player.kills, 2, 2, textColorTT, numberStreamHeight, numberStreamWidth);
         renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.deaths, 2, 2, textColor, numberStreamHeight, numberStreamWidth);
+                           player.deaths, 2, 2, textColorTT, numberStreamHeight, numberStreamWidth);
         renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
-                           player.totalMoney, 5, 2, textColor, numberStreamHeight,
+                           player.collectedMoney, 5, 2, textColorTT, numberStreamHeight,
+                           numberStreamWidth);
+
+        startY += lineHeight;
+        if (startY > boardY + boardHeight - lineHeight) {
+            break;
+        }
+    }
+
+    for (const PlayerInformation& player: sortedCT) {
+
+        std::string displayName = player.name;
+        if (displayName.length() > 10) {
+            displayName = displayName.substr(0, 7) + "...";
+        }
+        renderText(displayName, {nameX, startY}, playerInfoFontSize, textColorCT);
+
+        renderNumberStream({killsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.kills, 2, 2, textColorCT, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({deathsX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.deaths, 2, 2, textColorCT, numberStreamHeight, numberStreamWidth);
+        renderNumberStream({moneyX - 5, startY + (lineHeight - numberStreamHeight) / 2.0 + 12},
+                           player.collectedMoney, 5, 2, textColorCT, numberStreamHeight,
                            numberStreamWidth);
 
         startY += lineHeight;

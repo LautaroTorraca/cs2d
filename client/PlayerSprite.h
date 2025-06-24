@@ -28,7 +28,6 @@ private:
 
     bool isClient;
     int frame;
-    Texture& skin;
 
     void renderPlayer();
     void renderHeldWeapon();

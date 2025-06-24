@@ -55,7 +55,7 @@ void GameClient::run(int argc, char* argv[]) {
             }
             case ConnectionChoice::Create: {
                 std::cout << "crear\n";
-                LobbyDTO lobby("hola", MapType::DUST, 2, 6);
+                LobbyDTO lobby("hola", MapType::TRAINING_ZONE, 2, 2);
                 protocol.createLobby(lobby);
                 std::cout << "aca llego=?\n\n";
                 LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
@@ -128,7 +128,7 @@ void GameClient::run(int argc, char* argv[]) {
                 // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
                 // renderer.
 
-                running = renderer.setScreen(gameSnapshot, MapType::DUST,
+                running = renderer.setScreen(gameSnapshot, MapType::TRAINING_ZONE,
                                              inputHandler.getMouseCoords());
                 if (inputHandler.isInMenu()) {
                     renderer.setBuyMenu();

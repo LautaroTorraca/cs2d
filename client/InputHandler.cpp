@@ -30,15 +30,19 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
                         break;
                     case SDLK_w:
                         protocol.move(Up);
+                        checkDiagonalMovement();
                         break;
                     case SDLK_s:
                         protocol.move(Down);
+                        checkDiagonalMovement();
                         break;
                     case SDLK_a:
                         protocol.move(Left);
+                        checkDiagonalMovement();
                         break;
                     case SDLK_d:
                         protocol.move(Right);
+                        checkDiagonalMovement();
                         break;
                     case SDLK_1:
                         if (inBuyMenu)
@@ -107,3 +111,16 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status) {
 }
 Coords InputHandler::getMouseCoords() { return mouseCoords; }
 bool InputHandler::isInMenu() { return inBuyMenu; }
+
+void InputHandler::checkDiagonalMovement() {
+    const Uint8* keyState = SDL_GetKeyboardState(NULL);
+
+    if (keyState[SDL_SCANCODE_W])
+        protocol.move(Up);
+    if (keyState[SDL_SCANCODE_S])
+        protocol.move(Down);
+    if (keyState[SDL_SCANCODE_A])
+        protocol.move(Left);
+    if (keyState[SDL_SCANCODE_D])
+        protocol.move(Right);
+}
