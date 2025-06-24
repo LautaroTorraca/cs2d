@@ -58,7 +58,7 @@ void Projectile::damage(uint8_t& healthPoints) {
     this->stopped = true;
     double damage = this->getDamage();
     this->damagePoints = 0;
-    if (damage > healthPoints) {
+    if (damage >= healthPoints) {
         healthPoints = damage;
         this->killed = true;
     }

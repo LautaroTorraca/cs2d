@@ -1,15 +1,19 @@
 #pragma once
+
 #include <QWidget>
 #include <QVBoxLayout>
 #include "client/Protocol.h"
+using namespace Client;
 
 class UsernameInput;
 class CreateGameButton;
 class JoinGameButton;
 class ListGamesButton;
 class ExitGameButton;
+class MusicManager;
 
-using namespace Client;
+
+
 class ServerMenu : public QWidget {
     Q_OBJECT
 
@@ -18,7 +22,10 @@ private:
     void setupBackground();
     void setupInput();
     void setupButtons();
+    void setupBackgroundMusic();
     void resizeEvent(QResizeEvent* event) override;
+
+    std::string port;
 
     Protocol protocol;
     QWidget* overlayWidget;
@@ -30,7 +37,9 @@ private:
     ListGamesButton* listGamesButton;
     ExitGameButton* exitGameButton;
 
+    MusicManager* musicManager;
+
 public:
     explicit ServerMenu(const char* port, QWidget *parent = nullptr);
+    MusicManager* getMusicManager() const;
 };
-

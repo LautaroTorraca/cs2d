@@ -8,7 +8,7 @@
 
 #include "server/Skin.h"
 #include "server/Team.h"
-#include "client/Login/Assets/SkinRepository.h"
+#include "Login/Assets/SkinRepository.h"
 
 SkinSelectionDialog::SkinSelectionDialog(uint8_t teamId, QWidget* parent)
         : QDialog(parent), selectedSkin(0) {

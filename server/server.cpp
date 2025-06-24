@@ -4,8 +4,8 @@
 
 Server::Server(const std::string& port) :
               protocol(port),
-              inGameServer(protocol),
-              gameLobbyServer(inGameServer, protocol),
+              inGameServer(protocol, [&] (const size_t& id) {this->serverLobby.erase(id);}),
+              gameLobbyServer(inGameServer, protocol , [&] (const size_t& id) {this->serverLobby.erase(id);}),
               serverLobby(protocol, this->gameLobbyServer) {
 
     setupLobbyOrders();
@@ -62,10 +62,9 @@ void Server::setupInGameOrders() {
         inGameServer.handle(order);
     };
 
-    orderTranslator[IN_GAME_CHANGE_ANGLE] =
-        [this](const std::unique_ptr<Order> &order) {
-          inGameServer.handle(order);
-        };
+    orderTranslator[IN_GAME_CHANGE_ANGLE] = [this](const std::unique_ptr<Order>& order) {
+        inGameServer.handle(order);
+    };
 
     orderTranslator[IN_GAME_SWITCH_WEAPON] = [this](const std::unique_ptr<Order>& order) {
         inGameServer.handle(order);

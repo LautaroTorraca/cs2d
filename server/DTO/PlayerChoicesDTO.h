@@ -26,6 +26,7 @@ struct PlayerChoicesDTO {
         skin = other.skin;
         return *this;
     }
+
 };
 
 #endif //PLAYERCHOICESDTO_H

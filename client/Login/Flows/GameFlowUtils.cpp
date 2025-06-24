@@ -1,14 +1,14 @@
 #include "GameFlowUtils.h"
 
 #include <stdexcept>
-#include "client/Login/Dialogs/CreateGameDialog.h"
-#include "client/Login/Dialogs/GameNameDialog.h"
-#include "client/Login/Dialogs/MapSelectionDialog.h"
-#include "client/Login/Dialogs/SkinSelectionDialog.h"
-#include "client/Login/Dialogs/TeamSelectionDialog.h"
-#include "client/Login/Mappers/SkinTraslator.h"
-#include "client/Login/Mappers/MapMapper.h"
-#include "client/Login/MessageBox.h"
+#include "Login/Dialogs/CreateGameDialog.h"
+#include "Login/Dialogs/GameNameDialog.h"
+#include "Login/Dialogs/MapSelectionDialog.h"
+#include "Login/Dialogs/SkinSelectionDialog.h"
+#include "Login/Dialogs/TeamSelectionDialog.h"
+#include "Login/Mappers/SkinTraslator.h"
+#include "Login/Mappers/MapMapper.h"
+#include "Login/MessageBox.h"
 
 QString GameFlowUtils::getUsername(QLineEdit* input, QWidget* parent) {
     QString name = input->text().trimmed();
@@ -25,7 +25,14 @@ QString GameFlowUtils::askGameName(QWidget* parent) {
     if (result != QDialog::Accepted) {
         throw std::runtime_error("Game name selection cancelled");
     }
-    return dialog.getGameName();
+
+    QString name = dialog.getGameName();
+
+    if (name.isEmpty()) {
+        throw std::runtime_error("Game name cannot be empty");
+    }
+
+    return name;
 }
 
 MapType GameFlowUtils::askMap(QWidget* parent) {

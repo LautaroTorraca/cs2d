@@ -3,7 +3,6 @@
 #include <QLineEdit>
 #include "GameMenuButton.h"
 #include "client/Protocol.h"
-
 using namespace Client;
 
 class JoinGameButton : public GameMenuButton {

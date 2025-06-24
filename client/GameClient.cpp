@@ -30,7 +30,7 @@ using namespace DTO;
 
 GameClient::GameClient(Protocol& protocol):
         running(true),
-        protocol(HOSTNAME, PORT),
+        protocol(protocol),
         inputHandler(protocol),
         dataReceiver(protocol, snapshotQueue),
         parser("../settings.yaml") {}
@@ -111,9 +111,9 @@ void GameClient::run(int argc, char* argv[]) {
     std::cout << "res width de parser " << res_width << "\n";
     std::cout << "res geight de parser " << res_height << "\n";
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
-
-    GameRenderer renderer(preSnapshot.map, preSnapshot.clientId, res_width, res_height);
+    GameRenderer renderer(preSnapshot.map, preSnapshot.clientId);
     try {
+        std::cout << "try" << std::endl;
         dataReceiver.start();
         bool running = true;
         const int FPS = 60;
@@ -121,7 +121,7 @@ void GameClient::run(int argc, char* argv[]) {
         uint32_t frameStart = SDL_GetTicks();
         int frameTime;
         SDL sdl(SDL_INIT_VIDEO);
-
+        std::cout << "antes del while" << std::endl;
 
         while (running) {
             SDL_Event event;
@@ -137,8 +137,10 @@ void GameClient::run(int argc, char* argv[]) {
                 // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
                 // renderer.
 
-                running = renderer.setScreen(gameSnapshot, MapType::TRAINING_ZONE,
+                running = renderer.setScreen(gameSnapshot, mapType,
                                              inputHandler.getMouseCoords());
+
+
                 if (inputHandler.isInMenu()) {
                     renderer.setBuyMenu();
                 }
@@ -150,7 +152,7 @@ void GameClient::run(int argc, char* argv[]) {
     } catch (...) {
         std::cout << "catcheo en gameClient\n\n";
     }
-    protocol.exit();
     dataReceiver.close();
     dataReceiver.join();
+
 }

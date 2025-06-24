@@ -2,14 +2,13 @@
 
 #include "GameFlowUtils.h"
 #include "../Mappers/SkinTraslator.h"
-#include "client/Login/Mappers/TeamMapper.h"
-#include "client/Login/Dialogs/TeamSelectionDialog.h"
-#include "client/Login/Dialogs/SkinSelectionDialog.h"
-#include "client/Login/Dialogs/WaitingRoomDialog.h"
+#include "Login/Mappers/TeamMapper.h"
+#include "Login/Dialogs/TeamSelectionDialog.h"
+#include "Login/Dialogs/SkinSelectionDialog.h"
+#include "Login/Dialogs/WaitingRoomDialog.h"
 
-
-GameFlowBase::GameFlowBase(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent)
-        : usernameInput(usernameInput), protocol(protocol), parent(parent) {}
+GameFlowBase::GameFlowBase(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
+        : usernameInput(usernameInput), protocol(protocol), parent(parent), menu(menu) {}
 
 QString GameFlowBase::getUsername() {
     return GameFlowUtils::getUsername(usernameInput, parent);
@@ -24,13 +23,15 @@ PlayerChoicesDTO GameFlowBase::getPlayerChoices() {
 
 void GameFlowBase::showWaitingRoom(const QString& username, Team team, Skin skin) {
     SkinMapper skinMapper;
-    QString teamStr = TeamMapper::toString(team);
+    TeamMapper teamMapper;
+    QString teamStr = teamMapper.toString(team);
     QString skinStr = skinMapper.toString(skin);
 
-    WaitingRoomDialog waitingRoom(username, teamStr, skinStr, protocol, parent);
-    waitingRoom.exec();
-}
+    WaitingRoomDialog waitingRoom(username, teamStr, skinStr, protocol, menu, parent);
 
+    waitingRoom.exec();
+
+}
 
 Team GameFlowBase::askTeam() {
     uint8_t teamId = GameFlowUtils::askTeam(parent);

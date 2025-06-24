@@ -80,6 +80,7 @@ bool InputHandler::processEvents(SDL_Event& event, GameStatus status, double res
                         break;
                     case SDLK_ESCAPE:
                         protocol.exit();
+                        return false;
                 }
             } else if (event.type == SDL_MOUSEBUTTONDOWN) {
 

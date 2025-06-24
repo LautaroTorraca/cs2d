@@ -1,15 +1,14 @@
 #include "ServerInGame.h"
 
 #include <ranges>
-
+#include <utility>
 #include "Monitor/GameMonitor.h"
-
 #include "OrderNotImplementedException.h"
 
 #define SHOP_PATH "../gameConstants/shop.yaml"
 #define WEAPONS_INFO_PATH "../gameConstants/WeaponsConfig.yaml"
 
-ServerInGame::ServerInGame(InGameProtocolInterface& protocol) : protocol(protocol) {
+ServerInGame::ServerInGame(InGameProtocolInterface& protocol, const std::function<void(const size_t&)>& eraser) : protocol(protocol), eraser(eraser) {
     setupTranslators();
     this->eraserThread = std::thread(&ServerInGame::erase, this);
 }
@@ -65,10 +64,11 @@ void ServerInGame::addNewGame(std::string &gameName, const GameLobbyDTO &gameInf
   this->games.at(gameName)->start();
 }
 
-void ServerInGame::leaveGameLobby(const size_t &id) {
-  if (!this->playerToGame.contains(id)) return;
-  std::string gameName = this->playerToGame.at(id);
-  this->games.at(gameName)->kick(id);
+void ServerInGame::leaveGameLobby(const size_t& id) {
+    if (!this->playerToGame.contains(id))
+        return;
+    std::string gameName = this->playerToGame.at(id);
+    this->games.at(gameName)->kick(id);
 }
 
 void ServerInGame::move(const InGameOrder &order) {
@@ -137,6 +137,7 @@ void ServerInGame::eraseGame(const std::string& gameName) {
     this->games.at(gameName)->join();
     std::vector<size_t> ids = this->getGameIds(gameName);
     for (auto& id: ids) {
+        this->eraser(id);
         this->playerToGame.erase(id);
     }
     this->games.erase(gameName);
@@ -150,9 +151,9 @@ void ServerInGame::exit(const InGameOrder& order) {
     if (!this->playerToGame.contains(order.getPlayerId()))
         return;
     std::string gameName = this->playerToGame.at(order.getPlayerId());
+    this->eraser(order.getPlayerId());
     this->games.at(gameName)->kick(order.getPlayerId());
     this->playerToGame.erase(order.getPlayerId());
-    this->protocol.disconnect({order.getPlayerId()});
 }
 void ServerInGame::erase() {
     while (true) {
@@ -173,11 +174,4 @@ ServerInGame::~ServerInGame() {
         game->stop();
         game->join();
     }
-}
-void ServerInGame::add(const std::string& gameName, const size_t& id,
-                        std::map<std::string, std::vector<unsigned long>>& lobbies) {
-    if (this->games.contains(gameName)) {
-        throw std::runtime_error("The game already exists.");
-    }
-    lobbies[gameName].push_back(id);
 }

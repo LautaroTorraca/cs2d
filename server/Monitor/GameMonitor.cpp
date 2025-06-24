@@ -97,6 +97,9 @@ GameInfoDTO GameMonitor::getInfo() {
 void GameMonitor::kick(const size_t &id) {
     std::lock_guard<std::mutex> lock(this->mutex);
     this->game.kick(id);
+    GameInfoDTO info = this->game.getInfo();
+    info.setStatus(GAME_OVER);
+    this->protocol.sendSnapshot(info, id);
 }
 
 
@@ -150,6 +153,8 @@ void GameMonitor::run() {
             if (gameInfo.getCurrentRound() == gameInfo.getRounds() / 2) {
                 this->game.clearPlayers();
                 this->changeTeam(gameInfo.getPlayersInfo());
+                this->game.setCountersWinRounds(gameInfo.getTerroristsWinsRounds());
+                this->game.setTerroristsWinRounds(gameInfo.getCountersWinsRounds());
             }
             game.nextRound(time);
         }

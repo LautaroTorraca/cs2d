@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QDialog>
-#include "client/Login/GameDTO.h"
+#include "Login/GameDTO.h"
 
 class QSpinBox;
 class QPushButton;

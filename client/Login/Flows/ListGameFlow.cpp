@@ -1,36 +1,54 @@
 #include "ListGameFlow.h"
-#include "client/Login/Dialogs/GameListDialog.h"
-#include "client/Login/MessageBox.h"
-#include "client/Login/Flows/GameFlowUtils.h"
 
 #include <QStringList>
+#include <iostream>
 #include <stdexcept>
 
-ListGameFlow::ListGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent)
-        : GameFlowBase(usernameInput, protocol, parent) {}
+#include "Login/Dialogs/GameListDialog.h"
+#include "Login/Flows/GameFlowUtils.h"
+#include "Login/Mappers/MapMapper.h"
+#include "Login/MessageBox.h"
+
+ListGameFlow::ListGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
+        : GameFlowBase(usernameInput, protocol, parent, menu) {}
 
 void ListGameFlow::run() {
     QString username = getUsername();
     if (username.isEmpty()) return;
 
     try {
+
         GamesList gameList = protocol.getGamesList();
         if (gameList.gamesLobbies.empty()) {
             GameFlowUtils::showError(parent, "No Games Found", "There are no active games right now.");
             return;
         }
 
+        MapMapper mapMapper;
         QStringList formattedGames;
         for (const auto& game : gameList.gamesLobbies) {
-            formattedGames << QString::fromStdString(game.gameName);
+            std::ostringstream oss;
+            oss << game.gameName
+                << " | Rounds: " << static_cast<int>(game.rounds)
+                << " | Map: " << mapMapper.toString(game.mapType).toStdString()
+                << " | Max Players: " << static_cast<int>(game.maxPlayers);
+
+            QString entry = QString::fromStdString(oss.str());
+            entry.remove('\n');
+            entry.remove('\r');
+            formattedGames << entry;
         }
+
 
         GameListDialog dialog(formattedGames, parent);
         if (dialog.exec() != QDialog::Accepted) return;
 
         QString selected = dialog.getSelectedGame();
-
-        protocol.joinLobby(selected.toStdString());
+        std::stringstream gameInfo(selected.toStdString());
+        std::string gameName;
+        gameInfo >> gameName;
+        std::cout << gameName << std::endl;
+        protocol.joinLobby(gameName);
 
         LobbyConnectionDTO lobbyStatus = protocol.getLobbyConnection();
         if (lobbyStatus.status != ConnectionStatus::SUCCESS) {

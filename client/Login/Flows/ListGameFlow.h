@@ -2,10 +2,8 @@
 
 #include "GameFlowBase.h"
 
-using namespace Client;
-
 class ListGameFlow : public GameFlowBase {
 public:
-    ListGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent);
+    ListGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu);
     void run();
 };

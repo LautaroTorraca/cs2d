@@ -1,6 +1,7 @@
 #pragma once
 #include "GameMenuButton.h"
 
+
 class ExitGameButton : public GameMenuButton {
     Q_OBJECT
 

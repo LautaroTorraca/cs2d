@@ -18,7 +18,8 @@ void DataReceiver::run() {
         while (running) {
             Snapshot snapshot = protocol.receiveSnapshot();
             snapshotQueue.push(snapshot);
-            // SDL_Delay(500);
+            if(snapshot.status == GAME_OVER)
+                return;
         }
     } catch (const ClosedQueue&) {
         std::cout << "queue ded\n";
@@ -26,11 +27,9 @@ void DataReceiver::run() {
     } catch (...) {
         std::cout << "queue ded and other error\n";
         snapshotQueue.close();
-        return;
     }
 }
 
 void DataReceiver::close() {
     running = false;
-    protocol.exit();  //  XXX: esto cierra aca tambien? o solo aca?? idk
 }

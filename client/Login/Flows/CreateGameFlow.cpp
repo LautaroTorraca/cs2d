@@ -1,19 +1,28 @@
 #include "CreateGameFlow.h"
-#include "GameFlowUtils.h"
-#include "../MessageBox.h"
-#include "client/Login/Dialogs/MapSelectionDialog.h"
+
 #include <stdexcept>
 
+#include "../MessageBox.h"
+#include "Login/Dialogs/MapSelectionDialog.h"
+#include "Login/ServerMenu.h"
+#include "Login/Audio/MusicManager.h"
 
-CreateGameFlow::CreateGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent)
-        : GameFlowBase(usernameInput, protocol, parent) {}
+#include "GameFlowUtils.h"
+
+CreateGameFlow::CreateGameFlow(QLineEdit* usernameInput, Protocol& protocol, QWidget* parent, ServerMenu* menu)
+        : GameFlowBase(usernameInput, protocol, parent, menu) {}
 
 void CreateGameFlow::run() {
     QString username = getUsername();
     if (username.isEmpty()) return;
 
     try {
-        QString gameName = GameFlowUtils::askGameName(parent);
+        QString gameName = GameFlowUtils::askGameName(parent).trimmed();
+        if (gameName.isEmpty()) {
+            GameFlowUtils::showError(parent, "⚠️ Invalid Name", "You must enter a valid game name.");
+            return;
+        }
+
         MapType map = GameFlowUtils::askMap(parent);
         auto config = GameFlowUtils::askConfig(parent);
 

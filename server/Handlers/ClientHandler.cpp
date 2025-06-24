@@ -38,15 +38,21 @@ void ClientHandler::setDisconnectionFetcher() {
     };
 
     this->disconnectionFetcher[IN_GAME_LOBBY] = [&] () {
-        std::map<std::string, std::vector<char>> message;
-        message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_LOBBY));
-        this->requestsQueue.push(std::make_shared<Request>(this->id, message));
+        std::map<std::string, std::vector<char>> cleanMessage;
+        cleanMessage.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_LOBBY));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, cleanMessage));
+        std::map<std::string, std::vector<char>> disconnectionMessage;
+        disconnectionMessage.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_DISCONNECT));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, disconnectionMessage));
     };
 
     this->disconnectionFetcher[IN_GAME] = [&] () {
         std::map<std::string, std::vector<char>> message;
         message.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_EXIT_GAME));
         this->requestsQueue.push(std::make_shared<Request>(this->id, message));
+        std::map<std::string, std::vector<char>> disconnectionMessage;
+        disconnectionMessage.emplace(opCodeKey, std::vector<char>(SINGLE_VALUE, OPCODE_DISCONNECT));
+        this->requestsQueue.push(std::make_shared<Request>(this->id, disconnectionMessage));
     };
 }
 
@@ -115,13 +121,13 @@ void ClientHandler::sendSnapshot(const GameInfoDTO& gameInfo) {
         this->sender.send(playerInfo);
     }
     this->sender.send(STOP);
-    uint8_t status = gameInfo.getStatus();
+    uint8_t gameStatus = gameInfo.getStatus();
     this->sender.send(gameInfo.getCurrentRound());
     this->sender.send(gameInfo.getCountersWinsRounds());
     this->sender.send(gameInfo.getTerroristsWinsRounds());
     this->sender.send(gameInfo.getPlantedBombPosition());
     this->sender.send(gameInfo.getBombTimer());
-    this->sender.send(status);
+    this->sender.send(gameStatus);
     for (auto& drop: gameInfo.getDropsInfo()) {
         this->sender.send(NEW);
         this->sender.send(drop);
@@ -165,12 +171,12 @@ void ClientHandler::sendGamesList(GamesListDTO& gamesList) {
 
 void ClientHandler::sendGameLobby(const GameLobbyDTO& gameLobbyInfo) {
     std::vector<PlayerChoicesDTO> playersChoices = gameLobbyInfo.playersChoices;
-    uint8_t status = gameLobbyInfo.status;
+    uint8_t lobbyStatus = (uint8_t)gameLobbyInfo.status;
     uint8_t mapType = static_cast<uint8_t>(gameLobbyInfo.mapType);
     if (gameLobbyInfo.status == READY_STATUS) {
         this->status = IN_GAME;
     }
-    this->sender.send(status);
+    this->sender.send(lobbyStatus);
     for (const auto &playerChoice : playersChoices) {
         uint8_t skin = playerChoice.skin;
         uint8_t team = playerChoice.team;
