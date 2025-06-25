@@ -99,7 +99,6 @@ void Server::run() {
 
             orderTranslator.at(type)(order);
         } catch (std::exception& e) {
-            std::cout << "Main server: " << e.what() << std::endl;
             break;
         }
     }

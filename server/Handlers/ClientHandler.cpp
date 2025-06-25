@@ -106,7 +106,6 @@ void ClientHandler::run() {
             this->requestsQueue.push(std::make_shared<Request>(std::move(request)));
         } catch (ConnectionClosed& e) {
             this->stop();
-            std::cout << "Client " << this->id << " disconnected. " << e.what() << std::endl;
         }
     }
     if (!this->ended)
