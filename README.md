@@ -1,45 +1,73 @@
-# Ejemplo de CMAKE para el TP Final
+# 🎮 TP Final - CS2D
 
-**Importante:** el primer commit de este repositorio tiene el setup
-básico para el TP Final que incluye la instalación de la lib de Google
-Tests, `SDL2` y `SDL2pp` (el wrapper de C++).
+Este proyecto es el Trabajo Práctico Final de la materia Taller de Programación, catedra Veiga. Desarrollamos un videojuego 2D multijugador con arquitectura cliente-servidor usando C++, SDL2pp, y Qt.
 
-El resto de los commits son a modo de ejemplo de como se pueden
-agregar mas código fuente al proyecto.
+📌 Descripción
 
-Este ejemplo **no** incluye instalarse otras libs que son dependencias
-tanto de `SDL2` como de `SDL2pp` (pero si estan documentadas en el
-`CMakeFile` para Xubuntu 24.04).
+Este proyecto busca aplicar los conocimientos adquiridos a lo largo del cuatrimestre desarrollando un juego funcional con:
 
-Este repo **no** incluye tampoco un instalador.
+    Gráficos en 2D.
 
-**Se deben agregar las librerias necesarias y el instalador.**
+    Interacción en tiempo real.
 
-También el ejemplo usa una estructura de carpetas muy simple:
+    Un sistema de compra, disparo, colisiones y más.
 
-```
-client/
-server/
-editor/
-common/
-```
+🧰 Tecnologías Usadas
 
-Bien se puede mejorar (cambiando el cmakefile) agregando mas
-sub-carpetas.
+    C++
 
-Asi tambien **deben** ser cambiados los *targets* del cmake (`taller_client`,
-`taller_server`, ...) por nombres mas acordes al TP que se este
-haciendo.
+    SDL2
 
-Tambien, por default solo se compila una version *debug* sin
-optimizar. Si se quiere compilar binarios optimizados
-(lo que cmake llama *release*) se puede, solo hay modificar
-cmake.
+    SDL2_image / SDL2_mixer / SDL2_ttf
 
-Aprender del ejemplo para saber como extenderlo!
+    SDL2pp (wrapper C++)
 
-**Importante:** este repositorio **no** incluye pre-commits hooks,
-ni scripts adicionales (como correr valgrind).
+    Qt
 
-**Eso esta a cargo de los estudiantes,** tal como fue mostrado
-en los tps individuales, recaps y hands-on.
+    CMake
+
+    GoogleTest (para pruebas)
+
+    Git
+
+## ⚙️ Instalación y Ejecución
+
+🔧 Requisitos
+
+Probado en Ubuntu 24.04. Necesitás tener instaladas las siguientes dependencias:
+
+sudo apt update\
+sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev\
+sudo apt install qt6-base-dev qt6-tools-dev-tools\
+sudo apt install libsdl2-gfx-dev\
+sudo apt install qt6-multimedia-dev
+
+🧱 Compilar el proyecto
+
+    Clonar el repositorio:
+
+git clone https://github.com/totoruiz00/tp-grupal-taller-CS2D cs2d\
+cd cs2d
+
+    Creá la carpeta de build y generá el proyecto:
+
+mkdir build\
+cd build\
+cmake ..\
+make\
+
+    Ejecutá los binarios:
+
+./taller_server [port] \
+./taller_client [port]
+
+🗂️ Estructura del Proyecto
+
+client/        # Código fuente del cliente (renderizado, input, audio)
+server/        # Lógica del servidor y comunicación con clientes
+common/        # Código compartido entre cliente y servidor (modelos, constantes, utilidades)
+tests/         # Tests con GoogleTest
+maps/          # Archivos YAML con los mapas disponibles
+gameConstants/ # Archivos YAML con configuracion del juego
+settings.yaml  # Configuracion de la resolución.
+CMakeLists.txt
