@@ -1,10 +1,12 @@
 #pragma once
 
-#include "server/Constants/MapTypeConstants.h"
-#include "Order.h"
-#include "OrderType.h"
 #include <map>
 #include <string>
+
+#include "common/Constants/MapTypeConstants.h"
+
+#include "Order.h"
+#include "OrderType.h"
 
 class ServerLobbyOrder final : public Order {
   OrderType orderType;

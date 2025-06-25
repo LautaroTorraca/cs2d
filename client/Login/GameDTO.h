@@ -2,7 +2,7 @@
 
 #include <qt6/QtCore/QString>
 
-#include "server/Constants/MapTypeConstants.h"
+#include "common/Constants/MapTypeConstants.h"
 
 class GameDTO {
 public:

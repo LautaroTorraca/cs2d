@@ -7,9 +7,8 @@
 #include <QVBoxLayout>
 #include <thread>
 
+#include "Constants/Skin.h"
 #include "client/Login/Assets/SkinRepository.h"
-#include "server/Skin.h"
-#include "server/Team.h"
 
 SkinSelectionDialog::SkinSelectionDialog(uint8_t teamId, Protocol& protocol, QWidget* parent)
         : QDialog(parent), selectedSkin(0), protocol(protocol) {

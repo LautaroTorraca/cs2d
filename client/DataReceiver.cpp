@@ -22,10 +22,8 @@ void DataReceiver::run() {
                 return;
         }
     } catch (const ClosedQueue&) {
-        std::cout << "queue ded\n";
         snapshotQueue.close();
     } catch (...) {
-        std::cout << "queue ded and other error\n";
         snapshotQueue.close();
     }
 }

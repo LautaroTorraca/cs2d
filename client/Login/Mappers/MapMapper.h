@@ -1,10 +1,11 @@
 #pragma once
 
 #include <QString>
+#include <cstdint>
 #include <map>
 #include <vector>
-#include <cstdint>
-#include "server/Constants/MapTypeConstants.h"
+
+#include "common/Constants/MapTypeConstants.h"
 
 class MapMapper {
 private:

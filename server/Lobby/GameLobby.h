@@ -6,11 +6,12 @@
 #define GAMELOBBY_H
 #include <variant>
 
+#include "common/Constants/MapTypeConstants.h"
+#include "common/Constants/Team.h"
+#include "common/DTO/GameLobbyDTO.h"
+
 #include "GameLobbyStatus.h"
-#include "server/Constants/MapTypeConstants.h"
-#include "server/GameMapParser.h"
-#include "server/Team.h"
-#include "server/DTO/GameLobbyDTO.h"
+#include "GameMapParser.h"
 
 class GameLobby {
     GameMapParser parser;

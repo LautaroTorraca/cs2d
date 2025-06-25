@@ -1,9 +1,9 @@
 #include "ExplotionSprite.h"
 
+#include "DTO/CoordinateInformation.h"
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
 
-#include "CoordinateInformation.h"
 #include "EntityConstants.h"
 #include "SoundManager.h"
 

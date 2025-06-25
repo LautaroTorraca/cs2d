@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "server.h"
+#include "server/GameLogic/Servers/server.h"
 
 #define PORT 1
 #define RIGHT_ARGUMENTS_AMOUNT 2

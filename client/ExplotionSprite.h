@@ -1,8 +1,8 @@
 #pragma once
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
+#include "common/DTO/CoordinateInformation.h"
 
-#include "CoordinateInformation.h"
 #include "SoundManager.h"
 #define MAX_FRAME 22
 

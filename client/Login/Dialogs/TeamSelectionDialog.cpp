@@ -5,7 +5,6 @@
 #include <QVBoxLayout>
 #include <thread>
 
-#include "server/Team.h"
 
 TeamSelectionDialog::TeamSelectionDialog(Protocol& protocol, QWidget* parent)
         : QDialog(parent), selectedTeam(""), protocol(protocol) {

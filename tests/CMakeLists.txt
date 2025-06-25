@@ -52,9 +52,9 @@ target_sources(taller_tests
         ../server/Protocol/InGameProtocol.cpp
         ../server/Protocol/Protocol.cpp
         ../server/Protocol/ServerLobbyProtocol.cpp
-        ../server/Readers/Reader.cpp
+        ../common/Readers/Reader.cpp
         ../server/Requests/Request.cpp
-        ../server/Sender/Sender.cpp
+        ../common/Sender/Sender.cpp
         ../server/ActivatedBacker.cpp
         ../server/Coordinate.cpp
         ../server/CounterPlayer.cpp
@@ -69,7 +69,7 @@ target_sources(taller_tests
         ../server/Product.cpp
         ../server/TerroristPlayer.cpp
         ../server/TerroristsTeam.cpp
-        ../server/PlayerInfoDTO.cpp
+        ../common/DTO/PlayerInfoDTO.cpp
         ../server/Shop.cpp
         ../server/ShopParser.cpp
         ../server/Wallet.cpp
@@ -88,17 +88,17 @@ target_sources(taller_tests
         ../server/Knife.cpp
         ../server/Bomb.cpp
         ../server/PrimaryWeapon.cpp
-        ../server/WeaponInfoDTO.cpp
+        ../common/DTO/WeaponInfoDTO.cpp
         ../server/CountersTeam.cpp
         ../server/WeaponsInfoParser.cpp
         ../server/Projectile.cpp
         ../server/ActivedDrop.cpp
         ../server/DeactivatedDrop.cpp
         ../server/DropBox.cpp
-        ../server/DropDTO.cpp
+        ../common/DTO/DropDTO.cpp
         ../server/Randomizator.cpp
         ../server/DirectProjectile.cpp
-        ../server/ProjectileDTO.cpp
+        ../common/DTO/ProjectileDTO.cpp
         ../server/GameInfoDTO.cpp
         ../server/GenericWeapon.cpp
         ../server/DistanceWeapon.cpp
@@ -140,22 +140,22 @@ target_sources(taller_tests
         ../client/Login/MessageBox.h
         ../client/Login/ServerMenu.h
         ../client/BuyOrder.h
-        ../client/CoordinateInformation.h
-        ../client/DropInformation.h
+        ../common/DTO/CoordinateInformation.h
+        ../common/DTO/DropInformation.h
         ../client/GameClient.h
         ../client/GameRenderer.h
         ../client/GamesList.h
         ../client/InputHandler.h
         ../client/LobbyDTO.h
         ../client/MoveConstants.h
-        ../client/PlayerInformation.h
+        ../common/DTO/PlayerInformation.h
         ../client/PositionDTO.h
-        ../client/ProjectileInformation.h
+        ../common/DTO/ProjectileInformation.h
         ../client/Protocol.h
         ../client/Protocol_testing.h
         ../client/TextureManager.h
         ../client/WeaponChanger.h
-        ../client/WeaponInformation.h
+        ../common/Constants/WeaponInformation.h
         ../common/Constants/PlayerDataConstants.h
         ../common/Constants/SnapshotConstants.h
         ../common/foo.h
@@ -168,19 +168,19 @@ target_sources(taller_tests
         ../server/Constants/ConnectionStatus.h
         ../server/Constants/GameDataConstant.h
         ../server/Constants/KeyContants.h
-        ../server/Constants/MapTypeConstants.h
+        ../common/Constants/MapTypeConstants.h
         ../server/Constants/Movement.h
         ../server/Constants/MovementConstants.h
         ../server/Constants/OpCodesConstans.h
-        ../server/Constants/ProtocolContants.h
+        ../common/DTO/ProtocolContants.h
         ../server/Constants/ProtocolDefaults.h
-        ../server/Constants/TeamConstants.h
+        ../common/Constants/TeamConstants.h
         ../server/Constants/WeaponConstants.h
         ../server/DTO/DisconnectionDTO.h
-        ../server/DTO/GameLobbyDTO.h
-        ../server/DTO/GamesListDTO.h
-        ../server/DTO/LobbyConnectionDTO.h
-        ../server/DTO/PlayerChoicesDTO.h
+        ../common/DTO/GameLobbyDTO.h
+        ../common/DTO/GamesListDTO.h
+        ../common/DTO/LobbyConnectionDTO.h
+        ../common/DTO/PlayerChoicesDTO.h
         ../server/Handlers/ClientHandler.h
         ../server/Handlers/ClientStatus.h
         ../server/Handlers/GameLobbyHandler.h
@@ -203,15 +203,15 @@ target_sources(taller_tests
         ../server/Protocol/InGameProtocol.h
         ../server/Protocol/Protocol.h
         ../server/Protocol/ServerLobbyProtocol.h
-        ../server/Readers/Reader.h
+        ../common/Readers/Reader.h
         ../server/Requests/Request.h
-        ../server/Sender/Sender.h
+        ../common/Sender/Sender.h
         ../server/ActivatedBacker.h
         ../server/Addable.h
         ../server/Backer.h
         ../server/Buyer.h
         ../server/Coordinate.h
-        ../server/CoordinateDTO.h
+        ../common/DTO/CoordinateDTO.h
         ../server/CounterPlayer.h
         ../server/Damageable.h
         ../server/Damager.h
@@ -227,11 +227,11 @@ target_sources(taller_tests
         ../server/Player.h
         ../server/Position.h
         ../server/Positionable.h
-        ../server/Team.h
+        ../common/DTO/Team.h
         ../server/TerroristPlayer.h
         ../server/TerroristsTeam.h
         ../server/Tile.h
-        ../server/PlayerInfoDTO.h
+        ../common/DTO/PlayerInfoDTO.h
         ../server/Shop.h
         ../server/ShopParser.h
         ../server/Wallet.h
@@ -251,7 +251,7 @@ target_sources(taller_tests
         ../server/Knife.h
         ../server/Bomb.h
         ../server/PrimaryWeapon.h
-        ../server/WeaponInfoDTO.h
+        ../common/DTO/WeaponInfoDTO.h
         ../server/CountersTeam.h
         ../server/WeaponsInfoParser.h
         ../server/Advancer.h
@@ -261,13 +261,13 @@ target_sources(taller_tests
         ../server/ActivedDrop.h
         ../server/DeactivatedDrop.h
         ../server/DropBox.h
-        ../server/DropDTO.h
+        ../common/DTO/DropDTO.h
         ../server/Randomizator.h
         ../server/DirectProjectile.h
-        ../server/ProjectileDTO.h
+        ../common/DTO/ProjectileDTO.h
         ../server/Explosive.h
         ../server/Finalizable.h
-        ../server/GameStatus.h
+        ../common/Constants/GameStatus.h
         ../server/Spawner.h
         ../server/GameInfoDTO.h
         ../server/Informable.h

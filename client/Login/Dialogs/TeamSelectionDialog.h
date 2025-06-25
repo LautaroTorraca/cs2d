@@ -3,7 +3,7 @@
 #include <QString>
 
 #include "client/Protocol.h"
-#include "server/Team.h"
+#include "common/Constants/Team.h"
 
 class QPushButton;
 class QVBoxLayout;

@@ -2,9 +2,9 @@
 
 #include <iostream>
 
+#include "Constants/GameStatus.h"
 #include "Constants/PlayerDataConstants.h"
-#include "server/GameStatus.h"
-#include "server/ProductType.h"
+#include "Constants/ProductType.h"
 
 #include "MoveConstants.h"
 #include "SDL_events.h"

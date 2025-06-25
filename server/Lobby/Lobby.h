@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-#include "server/Constants/MapTypeConstants.h"
+#include "common/Constants/MapTypeConstants.h"
 
 #include "GameLobby.h"
 

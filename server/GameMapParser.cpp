@@ -8,13 +8,14 @@
 
 #include <fkYAML/node.hpp>
 
-#include "AKFactory.h"
-#include "Awp.h"
-#include "Drop.h"
-#include "DropBox.h"
-#include "M3.h"
-#include "Position.h"
-#include "Wall.h"
+#include "GameLogic/Interfaces/Drop.h"
+#include "GameLogic/Utils/DropBox.h"
+#include "GameLogic/Utils/Position.h"
+#include "GameLogic/Utils/Wall.h"
+#include "GameLogic/Weapons/AKFactory.h"
+#include "GameLogic/Weapons/Awp.h"
+#include "GameLogic/Weapons/M3.h"
+
 #include "fstream"
 
 #define GAME_MAP_KEY "gameMap"

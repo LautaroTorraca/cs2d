@@ -7,10 +7,9 @@
 
 #include "Constants/ClientConstants.h"
 #include "SDL2pp/Texture.hh"
-#include "server/Constants/MapTypeConstants.h"
-#include "server/Skin.h"
+#include "common/Constants/Skin.h"
+#include "common/Constants/MapTypeConstants.h"
 
-// #include "Explotion.h"
 #include "EntityConstants.h"
 #include "RgbValue.h"
 

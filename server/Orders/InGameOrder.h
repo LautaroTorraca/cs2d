@@ -1,12 +1,13 @@
 #pragma once
 
-#include "Order.h"
-#include "OrderType.h"
 #include <cstdint>
 #include <map>
 
+#include "Constants/ProductType.h"
 #include "server/Constants/Movement.h"
-#include "server/ProductType.h"
+
+#include "Order.h"
+#include "OrderType.h"
 
 class InGameOrder final : public Order {
     OrderType orderType;

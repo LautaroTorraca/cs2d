@@ -1,10 +1,11 @@
+#include "common/Constants/ProductType.h"
+#include "common/Constants/WeaponConstants.h"
+#include "common/DTO/PlayerInfoDTO.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "server/Game.h"
+#include "server/GameLogic/Game.h"
+#include "server/GameLogic/Utils/Coordinate.h"
 #include "server/GameParser.h"
-#include "server/PlayerInfoDTO.h"
-#include "server/ProductType.h"
-#include "server/WeaponConstants.h"
 
 using ::testing::AllOf;
 using ::testing::HasSubstr;

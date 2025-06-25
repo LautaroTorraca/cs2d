@@ -6,7 +6,7 @@
 
 #include <ranges>
 
-#include "server/Constants/MapTypeConstants.h"
+#include "common/Constants/MapTypeConstants.h"
 #define PLAYER_NAME_INDEX 0
 #define PLAYER_TEAM_INDEX 1
 #define PLAYER_SKIN_INDEX 2

@@ -1,16 +1,15 @@
 #include "ClientHandler.h"
 
 #include <iostream>
-#include <sstream>
 #include <string>
 
 #include <sys/socket.h>
 
+#include "Exception/ConnectionClosed.h"
 #include "server/Constants/KeyContants.h"
 #include "server/Constants/OpCodesConstans.h"
-#include "server/GameInfoDTO.h"
+#include "server/GameLogic/GameInfoDTO.h"
 
-#include "server/ConnectionClosed.h"
 #include "liberror.h"
 
 ClientHandler::ClientHandler(Socket& socket, const size_t& clientId,

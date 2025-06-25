@@ -4,7 +4,7 @@
 
 #ifndef GAMEMONITOR_H
 #define GAMEMONITOR_H
-#include "server/Game.h"
+#include "server/GameLogic/Game.h"
 #include "server/Interfaces/InGameProtocolInterface.h"
 
 #include "queue.h"

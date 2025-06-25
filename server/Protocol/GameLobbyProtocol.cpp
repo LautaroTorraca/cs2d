@@ -1,8 +1,8 @@
 #include "GameLobbyProtocol.h"
 
+#include "common/Constants/ProtocolContants.h"
 #include "server/Constants/KeyContants.h"
-#include "server/Constants/ProtocolContants.h"
-#include "server/OrderNotImplementedException.h"
+#include "server/GameLogic/Exceptions/OrderNotImplementedException.h"
 
 
 GameLobbyProtocol::GameLobbyProtocol() {

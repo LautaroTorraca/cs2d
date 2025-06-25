@@ -5,11 +5,10 @@
 
 #include <sys/socket.h>
 
-#include "server/Constants/KeyContants.h"
-#include "server/Constants/ProtocolContants.h"
-#include "Constants/SnapshotConstants.h"
-#include "server/Handlers/ClientHandler.h"
+#include "common/Constants/SnapshotConstants.h"
+#include "common/Constants/ProtocolContants.h"
 #include "common/liberror.h"
+#include "server/Constants/KeyContants.h"
 
 #include "ServerLobbyProtocol.h"
 
@@ -111,7 +110,6 @@ void Protocol::handleNewConnection() {
                                                             this->requestsQueue));
             this->clientsHandlers.at(userId)->start();
         } catch (LibError& e) {
-            std::cerr << "Connection lost error: "<< e.what() << std::endl;
             break;
         }
     }

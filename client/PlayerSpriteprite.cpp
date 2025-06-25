@@ -2,10 +2,10 @@
 // #include <iostream>
 
 #include "Constants/ClientConstants.h"
-#include "server/PlayerStatus.h"
+#include "DTO/PlayerInformation.h"
+#include "common/Constants/PlayerStatus.h"
 
 #include "EntityConstants.h"
-#include "PlayerInformation.h"
 #include "PlayerSprite.h"
 #include "SoundManager.h"
 

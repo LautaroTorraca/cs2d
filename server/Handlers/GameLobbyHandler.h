@@ -4,7 +4,7 @@
 
 #include "server/Requests/Request.h"
 #include "common/socket.h"
-#include "server/Readers/Reader.h"
+#include "common/Readers/Reader.h"
 
 class GameLobbyHandler {
 

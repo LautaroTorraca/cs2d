@@ -1,12 +1,8 @@
 #include "ServerLobbyProtocol.h"
 
-#include <sstream>
-
+#include "common/Constants/ProtocolContants.h"
 #include "server/Constants/KeyContants.h"
-#include "server/Constants/ProtocolContants.h"
-#include "server/Sender/Sender.h"
-
-#include "server/OrderNotImplementedException.h"
+#include "server/GameLogic/Exceptions/OrderNotImplementedException.h"
 
 
 ServerLobbyProtocol::ServerLobbyProtocol()

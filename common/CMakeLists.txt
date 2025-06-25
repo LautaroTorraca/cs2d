@@ -19,6 +19,7 @@ target_include_directories(
         taller_common
         PRIVATE ${CMAKE_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/server
+
 )
 
 # Agrega las fuentes a la librería 'taller_common' definida en root CMakeLists
@@ -30,4 +31,8 @@ target_sources(taller_common
 
 # Incluye la carpeta actual para headers
 target_include_directories(taller_common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/Constants)
+        ${CMAKE_CURRENT_SOURCE_DIR}/Constants
+        ${CMAKE_CURRENT_SOURCE_DIR}/Sender
+        ${CMAKE_CURRENT_SOURCE_DIR}/Readers
+        ${CMAKE_CURRENT_SOURCE_DIR}/DTO
+        ${CMAKE_CURRENT_SOURCE_DIR}/Exception)

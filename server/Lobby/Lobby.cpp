@@ -4,12 +4,9 @@
 
 #include "Lobby.h"
 
-#include <iostream>
-#include <ranges>
 #include <stdexcept>
 
-#include "GameAlreadyExistsException.h"
-#include "Player.h"
+#include "server/GameLogic/Exceptions/GameAlreadyExistsException.h"
 
 
 Lobby::Lobby() {
@@ -30,7 +27,7 @@ GameLobby Lobby::createGameLobby(const size_t &id, const std::string &gameName, 
     }
     this->maxPlayers.emplace(gameName, playersCount);
     this->clientToLobby.emplace(id, gameName);
-    return GameLobby(this->mapsPaths.at(map), map, gameName, rounds, this->maxPlayers.at(gameName));
+    return GameLobby(  this->mapsPaths.at(map), map, gameName, rounds, this->maxPlayers.at(gameName));
 }
 
 void Lobby::joinGame(const size_t& id, const std::string& gameName) {

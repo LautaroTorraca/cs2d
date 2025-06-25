@@ -7,8 +7,8 @@
 #include <qapplication.h>
 #include <qdialog.h>
 
+#include "common/Constants/MapTypeConstants.h"
 #include "client/GameRenderer.h"
-#include "server/Constants/MapTypeConstants.h"
 
 #include "InputHandler.h"
 #include "SDL_timer.h"
@@ -18,14 +18,6 @@ using std::stringstream;
 using namespace SDL2pp;
 using namespace DTO;
 
-// TODO: sonido.
-// TODO: cuchillazos.
-// TODO: movimiento simulateno. a chequear.
-// TODO: tiros mas facheros.
-// TODO: MENU masomenos
-// TODO: terminar UI. Cuadros y colores.
-
-// NOTE: refactorizar codigo.....
 
 GameClient::GameClient(Protocol& protocol):
         running(true),
@@ -34,21 +26,12 @@ GameClient::GameClient(Protocol& protocol):
         dataReceiver(protocol, snapshotQueue),
         parser("../settings.yaml") {}
 
-// GameClient::GameClient(char* port):
-//         running(true),
-//         protocol(HOSTNAME, port),
-//         inputHandler(protocol),
-//         dataReceiver(protocol, snapshotQueue),
-//         parser("../settings.yaml") {}
 
 void GameClient::run(const MapType& mapType) {
 
-    // HACK: fix constant loop rate.
     double res_width = parser.getResolution("resolution_width");
     double res_height = parser.getResolution("resolution_height");
 
-    std::cout << "res width de parser " << res_width << "\n";
-    std::cout << "res geight de parser " << res_height << "\n";
     PreSnapshot preSnapshot = protocol.receivePreSnapshot();
     GameRenderer renderer(preSnapshot.map, preSnapshot.clientId, res_width, res_height,
                           preSnapshot.shopInfo);
@@ -71,9 +54,7 @@ void GameClient::run(const MapType& mapType) {
 
                 running = inputHandler.processEvents(event, gameSnapshot.status, res_width,
                                                      res_height);
-                // FIX: cambiar harcodeada de mapa.
-                // HACK: tambien sacar el maptype como argumento, que entre cuando se crea el
-                // renderer.
+
 
                 running = renderer.setScreen(gameSnapshot, mapType, inputHandler.getMouseCoords());
 
@@ -87,7 +68,6 @@ void GameClient::run(const MapType& mapType) {
             SDL_Delay(10);
         }
     } catch (...) {
-        std::cout << "catcheo en gameClient\n\n";
     }
     dataReceiver.close();
     dataReceiver.join();

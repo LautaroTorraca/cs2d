@@ -3,20 +3,20 @@
 #include <functional>
 #include <unordered_map>
 
-#include "../DTO/GameLobbyDTO.h"
 #include "../Interfaces/DisconnectableProtocol.h"
 #include "../Requests/Request.h"
 #include "../common/queue.h"
 #include "../common/socket.h"
 #include "../common/thread.h"
-#include "Constants/SnapshotConstants.h"
-#include "server/DTO/LobbyConnectionDTO.h"
-#include "server/GameInfoDTO.h"
-#include "server/Sender/Sender.h"
+#include "common/Constants/SnapshotConstants.h"
+#include "common/DTO/GameLobbyDTO.h"
+#include "common/DTO/GamesListDTO.h"
+#include "common/DTO/LobbyConnectionDTO.h"
+#include "common/Sender/Sender.h"
+#include "server/GameLogic//GameInfoDTO.h"
 
 #include "ClientStatus.h"
 #include "GameLobbyHandler.h"
-#include "server/DTO/GamesListDTO.h"
 #include "InGameHandler.h"
 #include "LobbyHandler.h"
 

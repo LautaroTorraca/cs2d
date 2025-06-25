@@ -1,9 +1,9 @@
 #pragma once
 #include <unordered_map>
 #include <functional>
-#include "../common/socket.h"
-#include "../Requests/Request.h"
-#include "../Readers/Reader.h"
+#include "common/socket.h"
+#include "server/Requests/Request.h"
+#include "common/Readers/Reader.h"
 
 class LobbyHandler {
     Socket& userSocket;

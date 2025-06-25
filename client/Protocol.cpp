@@ -1,13 +1,10 @@
 #include "Protocol.h"
-
-// #include <iostream>
-#include <sstream>
 #include <string>
 
 #include <sys/socket.h>
 
-#include "server/Constants/ProtocolContants.h"
-#include "server/DTO/GamesListDTO.h"
+#include "common/DTO/GamesListDTO.h"
+#include "common/Constants/ProtocolContants.h"
 
 #define NEW 0X6E
 Client::Protocol::Protocol(const std::string& hostName, const std::string& port):

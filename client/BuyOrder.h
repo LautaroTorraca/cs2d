@@ -4,7 +4,7 @@
 
 #ifndef BUYORDER_H
 #define BUYORDER_H
-#include "server/ProductType.h"
+#include "common/Constants/ProductType.h"
 
 #define DEFAULT_AMOUNT 1
 

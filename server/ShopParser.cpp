@@ -5,13 +5,14 @@
 #include "ShopParser.h"
 
 #include <fstream>
+
 #include <fkYAML/node.hpp>
 
-#include "AKFactory.h"
-#include "M3Factory.h"
-#include "AwpFactory.h"
-#include "PrimaryAmmoFactory.h"
-#include "SecondaryAmmoFactory.h"
+#include "GameLogic/Weapons/AKFactory.h"
+#include "GameLogic/Weapons/AwpFactory.h"
+#include "GameLogic/Weapons/M3Factory.h"
+#include "GameLogic/Weapons/PrimaryAmmoFactory.h"
+#include "GameLogic/Weapons/SecondaryAmmoFactory.h"
 
 #define PRICES_KEY "productsPrices"
 #define AK_KEY "ak"

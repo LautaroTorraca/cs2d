@@ -1,6 +1,6 @@
 #pragma once
 #include "common/Constants/SnapshotConstants.h"
-#include "server/GameInfoDTO.h"
+#include "server/GameLogic/GameInfoDTO.h"
 
 #include "Disconnectable.h"
 

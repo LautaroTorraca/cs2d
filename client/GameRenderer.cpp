@@ -1,23 +1,22 @@
 #include "GameRenderer.h"
 
 #include <cstdint>
-// #include <iostream>
-// #include <iostream>
+
 #include <exception>
 #include <string>
 
 #include "Constants/ClientConstants.h"
 #include "Constants/PlayerDataConstants.h"
+#include "Constants/ProductType.h"
+#include "common/DTO/CoordinateInformation.h"
+#include "common/Constants/GameStatus.h"
+#include "common/Constants/MapTypeConstants.h"
+#include "common/DTO/PlayerInformation.h"
 #include "SDL2pp/Optional.hh"
 #include "SDL2pp/Texture.hh"
-#include "server/Constants/MapTypeConstants.h"
-#include "server/GameStatus.h"
-#include "server/ProductType.h"
 
-#include "CoordinateInformation.h"
 #include "EntityConstants.h"
 #include "ExplotionSprite.h"
-#include "PlayerInformation.h"
 #include "PlayerSprite.h"
 #include "RgbValue.h"
 #include "SDL2_gfxPrimitives.h"
@@ -287,16 +286,8 @@ int16_t GameRenderer::renderWeaponGlyph(CoordinateInformation posInScreen, Entit
                                         RgbValue color, double mult) {
 
     Texture& sprite = textureManager.getWeapon(weapon);
-    // double multH = static_cast<double>(HUD_NUM_H) / sprite.GetHeight();
     sprite.SetColorMod(color.r, color.g, color.b);
-    // int offX = 0;
-    // int offY = -5;
-    // if (weapon == EntityType::KNIFE || weapon == EntityType::P_AMMO ||
-    //     weapon == EntityType::S_AMMO) {
-    //     multH = 1.5;
-    // offY = 0;
-    // offX = -20;
-    // }
+
     renderer.Copy(sprite, NullOpt,
                   Rect((posInScreen.x - (sprite.GetWidth() * mult)),
                        posInScreen.y - (sprite.GetHeight() * mult / 2), sprite.GetWidth() * (mult),

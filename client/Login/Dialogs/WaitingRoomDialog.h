@@ -13,7 +13,7 @@
 
 #include "client/Login/ServerMenu.h"
 #include "client/Protocol.h"
-#include "server/DTO/PlayerChoicesDTO.h"
+#include "common/DTO/PlayerChoicesDTO.h"
 
 using namespace Client;
 

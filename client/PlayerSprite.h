@@ -3,10 +3,10 @@
 #include "Constants/ClientConstants.h"
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
-#include "server/PlayerStatus.h"
+#include "common/Constants/PlayerStatus.h"
+#include "common/DTO/CoordinateInformation.h"
+#include "common/DTO/PlayerInformation.h"
 
-#include "CoordinateInformation.h"
-#include "PlayerInformation.h"
 #include "SoundManager.h"
 #include "TextureManager.h"
 

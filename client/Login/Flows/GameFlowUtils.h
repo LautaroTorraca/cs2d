@@ -1,15 +1,14 @@
 #pragma once
 
+#include <QLineEdit>
 #include <QString>
 #include <QWidget>
-#include <QLineEdit>
-
 #include <utility>
 
 #include "client/Protocol.h"
-#include "server/Constants/MapTypeConstants.h"
-#include "server/Constants/TeamConstants.h"
-#include "server/Skin.h"
+#include "common/Constants/Skin.h"
+#include "common/Constants/MapTypeConstants.h"
+#include "common/Constants/TeamConstants.h"
 using namespace Client;
 
 

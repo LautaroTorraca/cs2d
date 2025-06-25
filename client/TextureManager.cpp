@@ -3,15 +3,13 @@
 #include <string>
 
 #include "Constants/ClientConstants.h"
+#include "common/Constants/MapTypeConstants.h"
 #include "SDL2pp/Renderer.hh"
 #include "SDL2pp/Texture.hh"
-#include "server/Constants/MapTypeConstants.h"
 
 #include "SDL_ttf.h"
-// #include "server/ProductType.h"
-#include "server/Skin.h"
+#include "common/Constants/Skin.h"
 
-// #include "Explotion.h"
 #include "EntityConstants.h"
 #include "RgbValue.h"
 

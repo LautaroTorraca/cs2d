@@ -1,12 +1,10 @@
 #include "InGameProtocol.h"
 
 #include <cstring>
-#include <iostream>
 
+#include "common/Constants/ProtocolContants.h"
 #include "server/Constants/KeyContants.h"
-#include "server/Constants/ProtocolContants.h"
-
-#include "server/OrderNotImplementedException.h"
+#include "server/GameLogic/Exceptions/OrderNotImplementedException.h"
 
 InGameProtocol::InGameProtocol(){
   using namespace ProtocolConstants;

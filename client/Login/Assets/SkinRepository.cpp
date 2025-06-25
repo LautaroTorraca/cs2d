@@ -1,6 +1,7 @@
 #include "SkinRepository.h"
-#include "server/Skin.h"
-#include "server/Team.h"
+
+#include "Constants/Skin.h"
+#include "common/Constants/Team.h"
 
 QVector<SkinInfo> SkinRepository::getSkinsForTeam(uint8_t teamId) {
     if (teamId == Team::TERRORISTS) {

@@ -1,7 +1,6 @@
 #include "client/Protocol.h"
-#include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "common/foo.h"
+#include "gtest/gtest.h"
 #include "server/GameParser.h"
 #include "server/Protocol/Protocol.h"
 

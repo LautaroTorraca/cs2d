@@ -1,9 +1,10 @@
 #pragma once
 
 #include <QString>
-#include <map>
 #include <cstdint>
-#include "server/Skin.h"
+#include <map>
+
+#include "common/Constants/Skin.h"
 
 class SkinMapper {
 private:

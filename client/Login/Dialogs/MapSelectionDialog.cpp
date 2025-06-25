@@ -1,6 +1,8 @@
-#include <QLabel>
 #include "MapSelectionDialog.h"
-#include "server/Constants/MapTypeConstants.h"
+
+#include <QLabel>
+
+#include "common/Constants/MapTypeConstants.h"
 MapSelectionDialog::MapSelectionDialog(QWidget* parent)
         : QDialog(parent), selectedMap(static_cast<uint8_t>(MapType::DUST)) {
     setWindowTitle("Select Map");

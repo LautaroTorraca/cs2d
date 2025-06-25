@@ -8,10 +8,11 @@
 #include <map>
 #include <string>
 
-#include "Coordinate.h"
-#include "Drop.h"
-#include "Path.h"
-#include "TileType.h"
+#include "GameLogic/Interfaces/Drop.h"
+#include "GameLogic/Utils/Coordinate.h"
+#include "GameLogic/Utils/Path.h"
+#include "GameLogic/Utils/TileType.h"
+
 #include "WeaponsInfoParser.h"
 class GameMapParser {
     std::vector<std::vector<uint8_t>> gameMap;

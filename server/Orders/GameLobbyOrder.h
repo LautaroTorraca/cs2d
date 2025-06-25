@@ -1,11 +1,13 @@
 #pragma once
 
-#include "server/Constants/TeamConstants.h"
-#include "Order.h"
-#include "OrderType.h"
 #include <cstdint>
 #include <map>
 #include <string>
+
+#include "common/Constants/TeamConstants.h"
+
+#include "Order.h"
+#include "OrderType.h"
 
 class GameLobbyOrder final : public Order {
   OrderType orderType;

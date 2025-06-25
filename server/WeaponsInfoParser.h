@@ -6,9 +6,11 @@
 #define WEAPONSINFOPARSER_H
 #include <map>
 #include <string>
+
 #include <fkYAML/node.hpp>
-#include "WeaponConstants.h"
-#include "WeaponInformer.h"
+
+#include "Constants/WeaponConstants.h"
+#include "server/GameLogic/Weapons/WeaponInformer.h"
 #define BOMB_ACTIVATION_TIME_KEY "activationTime"
 #define BOMB_DEACTIVATION_TIME_KEY "deactivationTime"
 

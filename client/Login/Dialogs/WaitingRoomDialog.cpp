@@ -327,17 +327,11 @@ void WaitingRoomDialog::handleConnectionError(const std::string& error) {
 }
 
 void WaitingRoomDialog::restoreMenu() {
-    std::cout << "restore menu" << std::endl;
     if (menu) {
-        std::cout << "adentro if  restore" << std::endl;
         menu->getMusicManager()->setVolume(0.4f);
-        std::cout << " music" << std::endl;
         menu->show();
-        std::cout << "show" << std::endl;
         menu->raise();
-        std::cout << "raise" << std::endl;
         menu->activateWindow();
-        std::cout << "active windowu" << std::endl;
     }
 }
 

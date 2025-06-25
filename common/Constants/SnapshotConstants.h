@@ -2,10 +2,11 @@
 #include <map>
 #include <vector>
 
-#include "client/DropInformation.h"
-#include "client/PlayerInformation.h"
-#include "server/GameStatus.h"
-#include "server/ProductType.h"
+#include "common/DTO/DropInformation.h"
+#include "common/DTO/PlayerInformation.h"
+
+#include "GameStatus.h"
+#include "ProductType.h"
 
 struct PreSnapshot {
     const size_t clientId;

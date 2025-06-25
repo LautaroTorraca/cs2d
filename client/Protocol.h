@@ -2,18 +2,17 @@
 #include <string>
 
 #include "common/Constants/SnapshotConstants.h"
+#include "common/DTO/GameLobbyDTO.h"
+#include "common/DTO/LobbyConnectionDTO.h"
+#include "common/DTO/PlayerChoicesDTO.h"
+#include "common/Readers/Reader.h"
+#include "common/Sender/Sender.h"
 #include "common/socket.h"
-#include "server/DTO/GameLobbyDTO.h"
-#include "server/DTO/LobbyConnectionDTO.h"
-#include "server/DTO/PlayerChoicesDTO.h"
-#include "server/Readers/Reader.h"
-#include "server/Sender/Sender.h"
 
 #include "BuyOrder.h"
 #include "GamesList.h"
 #include "LobbyDTO.h"
 #include "MoveConstants.h"
-// #include "PositionDTO.h"
 #include "WeaponChanger.h"
 
 namespace Client {

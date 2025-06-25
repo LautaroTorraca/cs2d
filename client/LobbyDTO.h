@@ -4,7 +4,7 @@
 #pragma once
 #include <string>
 
-#include "server/Constants/MapTypeConstants.h"
+#include "common/Constants/MapTypeConstants.h"
 
 struct LobbyDTO {
     const std::string gameName;

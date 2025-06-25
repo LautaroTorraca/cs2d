@@ -1,6 +1,7 @@
 #pragma once
 #include <QString>
-#include "server/Team.h"
+
+#include "common/Constants/Team.h"
 
 class TeamMapper {
 public:

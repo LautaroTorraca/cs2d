@@ -1,7 +1,6 @@
 #include "InGameHandler.h"
 
 #include <cstring>
-#include <iostream>
 #include <stdexcept>
 
 #include <netinet/in.h>

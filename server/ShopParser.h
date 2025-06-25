@@ -9,9 +9,10 @@
 #include <map>
 #include <memory>
 #include <string>
-#include "Factory.h"
-#include "ProductType.h"
-#include "WeaponInformer.h"
+
+#include "Constants/ProductType.h"
+#include "GameLogic/Interfaces/Factory.h"
+#include "server/GameLogic/Weapons/WeaponInformer.h"
 
 
 class ShopParser {
